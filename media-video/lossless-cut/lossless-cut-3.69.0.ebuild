@@ -28,14 +28,14 @@ YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
-ELECTRON_BUILDER_PV="26.15.7"
+ELECTRON_BUILDER_PV="26.16.1" # 26.15.7 works
 
 inherit secure-version secure-version-node
 
 NODE_GYP_PV="12.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# Bugged, it will show the show problem report and not cut
+	# Bugged, it will show the UI and then popup with problem report and be unable to load file so no video appears in UI
 	# Ebuild maintainer preference
 	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}" # Cr 150.0.7871.129, node 24.18.0
 else
@@ -108,7 +108,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_43
+ebuild_revision_44
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
