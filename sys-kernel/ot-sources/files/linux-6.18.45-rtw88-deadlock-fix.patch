@@ -561,24 +561,6 @@ Fix:
  	ieee80211_free_hw(hw);
 --- a/net/mac80211/mlme.c.orig	2026-09-20 13:46:26.727889813 -0700
 +++ b/net/mac80211/mlme.c	2026-09-20 13:49:27.075063555 -0700
-@@ -1286,12 +1286,14 @@ static int ieee80211_config_bw(struct ie
- 					      &ap_chandef);
- 
- 	if (ap_mode != link->u.mgd.conn.mode) {
-+		/* The 2 BSSID access point for 2.4G or 5G advertises VHT then legacy with TX power 127 - ignore */
- 		link_info(link,
--			  "AP %pM appears to change mode (expected %s, found %s) in %s, disconnect\n",
-+			  "AP %pM mode flip %s -> %s in %s ignored, keeping %s\n",
- 			  link->u.mgd.bssid,
- 			  ieee80211_conn_mode_str(link->u.mgd.conn.mode),
--			  ieee80211_conn_mode_str(ap_mode), frame);
--		return -EINVAL;
-+			  ieee80211_conn_mode_str(ap_mode), frame,
-+			  ieee80211_conn_mode_str(link->u.mgd.conn.mode));
-+		return 0;
- 	}
- 
- 	chanreq.oper = ap_chandef;
 @@ -3222,14 +3225,32 @@ static u64 ieee80211_handle_pwr_constr(s
  		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
  			channel, country_ie, country_ie_len,

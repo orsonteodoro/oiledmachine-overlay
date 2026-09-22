@@ -772,6 +772,9 @@ eerror "QA:  ELECTRON_BUILDER_PV must be defined."
 # See also URIs in https://github.com/electron/electron/releases/
 # See also https://www.npmjs.com/package/@electron-builder/electron-download
 #
+# Update the lockfile if you see something like
+# ⨯ Response code 404 (Not Found) for https://github.com/electron/electron/releases/download/v39.8.10/electron-v44.4.3-linux-x64.zip  failedTask=build stackTrace=HTTPError: Response code 404 (Not Found)
+#
 	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"v${ELECTRON_APP_ELECTRON_PV}"}
 
 	if [[ -z "${ELECTRON_BUILDER_PV}" ]] ; then
