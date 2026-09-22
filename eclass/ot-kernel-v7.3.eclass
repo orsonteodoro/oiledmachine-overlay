@@ -1085,7 +1085,7 @@ PDEPEND+="
 ot-kernel_pkg_setup_cb() {
 ewarn
 ewarn "Upstream security update delay from live:  0"
-ewarn "Release quality:  Live release candidate (RC3 out of RC7, development quality for WIP code, production quality for mature code)"
+ewarn "Release quality:  Live release candidate (RC4 out of RC7, development quality for WIP code, production quality for mature code)"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
