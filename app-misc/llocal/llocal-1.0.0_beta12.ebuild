@@ -47,6 +47,12 @@ NPM_AUDIT_FIX_ARGS=(
 	"--prefer-offline"
 )
 
+NPM_DEDUPE_ARGS=(
+	#"--legacy-peer-deps"
+	"--force"
+	"--prefer-offline"
+)
+
 NPM_INSTALL_ARGS=(
 	#"--legacy-peer-deps"
 	"--force"
@@ -208,6 +214,7 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
+		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 	fi
 }
 
