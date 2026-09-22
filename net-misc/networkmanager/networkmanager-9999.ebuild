@@ -319,7 +319,7 @@ einfo "Estimated scores for your use case (10 is better)"
 einfo
 einfo "| Topic                     | wpa_supplicant | iwd    | Notes                                                                                         |"
 einfo "|---------------------------|----------------|--------|-----------------------------------------------------------------------------------------------|"
-einfo "| AP robustness             | 9              | 6      | iwd is strict but wpa_supplicant has better quirky access point (AP) compatiblity             |"
+einfo "| AP robustness             | 9              | 6      | iwd is strict but wpa_supplicant has better quirky access point (AP) compatibility            |"
 einfo "| Audit & CVE track record  | 6              | 8      | wpa_supplicant trades off compatibility with security                                         |"
 einfo "| Defensive cybersecurity   | 6.5            | 8.5    | iwd has a lower attack surface                                                                |"
 einfo "| Dongle/antenna robustness | 9.5            | 6      | iwd doesn't handle legacy or WEXT dongles well                                                |"
