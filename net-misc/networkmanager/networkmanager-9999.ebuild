@@ -4,6 +4,7 @@
 EAPI=8
 
 # This ebuild and init script contains AI generated data.
+# This ebuild contains synthetic info to better clarify backends.
 
 MY_PN="NetworkManager"
 
@@ -311,6 +312,23 @@ eerror "QA: NM_CAPS:  ${NM_CAPS}"
 
 multilib_src_configure() {
 	chkl_check_many_timestamps
+
+	if use wifi ; then
+einfo
+einfo "Estimated scores for your use case (10 is better)"
+einfo
+einfo "| Topic                     | wpa_supplicant | iwd    | Notes                                                                                         |"
+einfo "|---------------------------|----------------|--------|-----------------------------------------------------------------------------------------------|"
+einfo "| AP Robustness             | 9              | 6      | iwd is strict but wpa_supplicant has better quirky access point (AP) compatiblity             |"
+einfo "| Audit & CVE track record  | 6              | 8      | wpa_supplicant trades off compatibility with security                                         |"
+einfo "| Defensive cybersecurity   | 6.5            | 8.5    | iwd has a lower attack surface                                                                |"
+einfo "| Dongle/antenna robustness | 9.5            | 6      | iwd doesn't handle legacy or WEXT dongles well                                                |"
+einfo "| Latency                   | 6              | 9      | wpa_supplicant has latency issues                                                             |"
+einfo "| Roaming                   | 7              | 9      | iwd is designed for it and wpa_supplicant has issues with unsticking from degraded APs/signal |"
+einfo "| Security protocols        | 10             | 7.5    | wpa_supplicant has better enterprise support                                                  |"
+einfo "| Throughput                | 9              | 9      | Both are identical                                                                            |"
+einfo
+	fi
 
 	# Currently disabled till the issue is isolated.
 	#cflags-hardened_append
