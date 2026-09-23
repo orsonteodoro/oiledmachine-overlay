@@ -804,7 +804,7 @@ these **keywords** are detected in the commit message for projects:
 | Attack                         |                       | A vulnerability exists                                                                                                      |
 | Attacker controlled            |                       | The commit has a security issue                                                                                             |
 | Crash                          | CRSH                  | Possible denial of service if attacker controlled, but still remediated to improve software quality                         |
-| Container escape               | CB                    | Privilege escalation or blast radius scope increase                                                                         |
+| Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase                                   |
 | Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss          |
 | CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site           |
 | Dangling pointer               | DP                    | Precondition for UAF, pointer to invalid address                                                                            |
@@ -813,7 +813,7 @@ these **keywords** are detected in the commit message for projects:
 | Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                         |
 | Heap overflow                  | HO                    | Possible code execution or memory corruption                                                                                |
 | Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time                                                     |
-| Infinite recursion             | IR, DoS               | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                     |
+| Infinite recursion             | IR                    | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                     |
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                   |
 | Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                                   |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                |
@@ -824,7 +824,7 @@ these **keywords** are detected in the commit message for projects:
 | Local privilege escalation     | LPE                   | Possibility that attacker at unprivileged grants themself privileged                                                        |
 | Memory corruption              | MC                    | Possible data tampering or code execution                                                                                   |
 | Memory leak                    | ML                    | Data loss, reset button, thrashing HDD, slow computer                                                                       |
-| NULL check                     | IV, NPD               | Remediation that hints of an existence of a vulnerability.  NPD is explicit "null pointer dereference" but IV preferred     |
+| NULL check                     | IV, NPD, DoS          | Remediation that hints of an existence of a vulnerability.  NPD is explicit "null pointer dereference" but IV preferred     |
 | Overflow                       | OF                    | Possible denial of service                                                                                                  |
 | Out of bounds access           | OOBA                  | Any possible variation leading to data leak, data tampering, crash                                                          |
 | Out of bounds read             | OOBR                  | Possible sensitive data leak                                                                                                |
@@ -841,7 +841,7 @@ these **keywords** are detected in the commit message for projects:
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation or security bypass                                                                            |
 | Type confusion                 | TC                    | Can lead to code execution, memory corruption, crash, heap leak, OOBW/OOBR                                                  |
 | Null pointer dereference       | NPD                   | Likely a crash                                                                                                              |
-| Uncontrolled recursion         | IR, DoS               | Usually a denial of service, slow computer, lag                                                                             |
+| Uncontrolled recursion         | IR                    | Usually a denial of service, slow computer, lag                                                                             |
 | Uncontrolled resource use      | DoS                   | Usually a denial of service, slow computer, lag                                                                             |
 | Undefined behavior             | UB                    | Possible security bypass or serendipitous running of attacker controlled code or leaking into attacker controlled variables |
 | Uninitalized memory            | UM                    | Possible sensitive data leak                                                                                                |
