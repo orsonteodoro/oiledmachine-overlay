@@ -817,12 +817,14 @@ these **keywords** are detected in the commit message for projects:
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                   |
 | Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                                   |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                |
+| Improper validation            | IV                    | Possible business logic abuse, avoid injection attack, or avoiding denial of service attack                                 |
 | Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion or code execution                                           |
 | Integer overflow               | IO                    | Possible zero click vulernability                                                                                           |
 | Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                          |
 | Local privilege escalation     | LPE                   | Possibility that attacker at unprivileged grants themself privileged                                                        |
 | Memory corruption              | MC                    | Possible data tampering or code execution                                                                                   |
 | Memory leak                    | ML                    | Data loss, reset button, thrashing HDD, slow computer                                                                       |
+| NULL check                     | IV, NPD               | Remediation that hints of an existence of a vulnerability.  NPD is explicit "null pointer dereference" but IV preferred     |
 | Overflow                       | OF                    | Possible denial of service                                                                                                  |
 | Out of bounds access           | OOBA                  | Any possible variation leading to data leak, data tampering, crash                                                          |
 | Out of bounds read             | OOBR                  | Possible sensitive data leak                                                                                                |
