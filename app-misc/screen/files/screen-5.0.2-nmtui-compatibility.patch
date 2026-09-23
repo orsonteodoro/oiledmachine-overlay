@@ -1,0 +1,84 @@
+diff '--color=auto' -urp screen-5.0.2.orig/ansi.c screen-5.0.2/ansi.c
+--- screen-5.0.2.orig/ansi.c	2026-07-11 05:23:46.000000000 -0700
++++ screen-5.0.2/ansi.c	2026-09-22 21:04:03.853158374 -0700
+@@ -30,6 +30,7 @@
+ 
+ #include "ansi.h"
+ 
++#include <stdlib.h>
+ #include <sys/types.h>
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+@@ -179,6 +180,11 @@ int GetAnsiStatus(Window *win, char *buf
+ 
+ void ResetCharsets(Window *win)
+ {
++	if (getenv("NEWT_ASCII")) {
++		win->w_charsets[0]=win->w_charsets[1]=win->w_charsets[2]=win->w_charsets[3]='B';
++		win->w_Charset=win->w_CharsetR=0;
++		return;
++	}
+ 	win->w_gr = nwin_default.gr;
+ 	win->w_c1 = nwin_default.c1;
+ 	SetCharsets(win, "BBBB02");
+diff '--color=auto' -urp screen-5.0.2.orig/encoding.c screen-5.0.2/encoding.c
+--- screen-5.0.2.orig/encoding.c	2026-07-11 05:23:46.000000000 -0700
++++ screen-5.0.2/encoding.c	2026-09-22 21:06:42.021735455 -0700
+@@ -25,6 +25,7 @@
+ 
+ #include "encoding.h"
+ 
++#include <stdlib.h>
+ #include <sys/types.h>
+ #include <stdint.h>
+ #include <wchar.h>
+@@ -1246,6 +1247,14 @@ int EncodeChar(char *bp, int c, int enco
+ {
+ 	int t, f, l;
+ 
++	if (getenv("NEWT_ASCII")) {
++		if (c >= 0x2500 && c <= 0x257F) {
++			if (bp) bp[0] = (c == 0x2502? '|' : (c == 0x2500? '-' : '+'));
++			if (fontp) *fontp = 0;
++			return 1;
++		}
++	}
++
+ 	if (c == -1 && fontp) {
+ 		if (*fontp == 0)
+ 			return 0;
+@@ -1405,6 +1414,13 @@ int PrepareEncodedChar(int c)
+ 	int t = 0;
+ 	int f;
+ 
++	if (getenv("NEWT_ASCII")) {
++		if (c >= 0x2500 && c <= 0x257F) {
++		/* force caller to treat as non-encodable -> fallback to ascii handled in EncodeChar */
++			return 0;
++		}
++	}
++
+ 	encoding = D_encoding;
+ 	f = D_rend.font;
+ 	t = D_mbcs;
+diff '--color=auto' -urp screen-5.0.2.orig/process.c screen-5.0.2/process.c
+--- screen-5.0.2.orig/process.c	2026-07-11 05:23:46.000000000 -0700
++++ screen-5.0.2/process.c	2026-09-22 21:04:03.855036259 -0700
+@@ -35,6 +35,7 @@
+ 
+ #include "process.h"
+ 
++#include <stdlib.h>
+ #include <fcntl.h>
+ #include <signal.h>
+ #include <sys/ioctl.h>
+@@ -4030,6 +4031,9 @@ static void DoCommandDefcharset(struct a
+ 	char **args = act->args;
+ 	size_t len;
+ 
++	if (getenv("NEWT_ASCII"))
++		return;
++
+ 	if (*args == NULL) {
+ 		char buf[256] = { 0 };
+ 		if (nwin_default.charset)

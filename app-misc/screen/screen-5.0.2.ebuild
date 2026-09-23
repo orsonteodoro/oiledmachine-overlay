@@ -33,7 +33,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE="
 debug nethack pam selinux utempter multiuser
-ebuild_revision_21
+ebuild_revision_22
 "
 DEPEND="
 	>=sys-libs/ncurses-${NCURSES_PV}:=
@@ -57,6 +57,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-utmp-musl.patch"
+	"${FILESDIR}/${PN}-5.0.2-nmtui-compatibility.patch"
 )
 
 src_prepare() {

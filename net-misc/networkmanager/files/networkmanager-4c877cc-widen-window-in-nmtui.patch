@@ -1,6 +1,6 @@
 diff '--color=auto' -urp networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.c networkmanager-9999/src/libnmt-newt/nmt-newt-form.c
---- networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.c	2026-09-22 18:52:55.210689072 -0700
-+++ networkmanager-9999/src/libnmt-newt/nmt-newt-form.c	2026-09-22 18:56:18.046646060 -0700
+--- networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.c	2026-09-22 19:28:40.658413350 -0700
++++ networkmanager-9999/src/libnmt-newt/nmt-newt-form.c	2026-09-22 19:29:13.300293509 -0700
 @@ -17,6 +17,8 @@
  #include <signal.h>
  #include <slang.h>
@@ -122,9 +122,11 @@ diff '--color=auto' -urp networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.
      newtOpenWindow(priv->x, priv->y, priv->width, priv->height, priv->title_lc);
  }
  
+Only in networkmanager-9999/src/libnmt-newt: nmt-newt-form.c.orig
+Only in networkmanager-9999/src/libnmt-newt: nmt-newt-form.c.rej
 diff '--color=auto' -urp networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.h networkmanager-9999/src/libnmt-newt/nmt-newt-form.h
---- networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.h	2026-09-22 18:52:55.210689072 -0700
-+++ networkmanager-9999/src/libnmt-newt/nmt-newt-form.h	2026-09-22 18:53:12.375154173 -0700
+--- networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.h	2026-09-22 19:28:40.658413350 -0700
++++ networkmanager-9999/src/libnmt-newt/nmt-newt-form.h	2026-09-22 19:28:58.183919892 -0700
 @@ -50,4 +50,6 @@ void nmt_newt_form_add_hotkey(NmtNewtFor
  
  void nmt_newt_form_set_stable_width(NmtNewtForm *form);
@@ -133,8 +135,8 @@ diff '--color=auto' -urp networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.
 +
  #endif /* NMT_NEWT_FORM_H */
 diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c networkmanager-9999/src/nmtui/nmt-connect-connection-list.c
---- networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c	2026-09-22 18:52:56.293475663 -0700
-+++ networkmanager-9999/src/nmtui/nmt-connect-connection-list.c	2026-09-22 18:53:12.375320725 -0700
+--- networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c	2026-09-22 19:28:41.688824976 -0700
++++ networkmanager-9999/src/nmtui/nmt-connect-connection-list.c	2026-09-22 19:28:58.184123065 -0700
 @@ -68,6 +68,10 @@ nmt_connect_connection_list_new(void)
                          NMT_NEWT_LISTBOX_SCROLL | NMT_NEWT_LISTBOX_BORDER,
                          "skip-null-keys",
@@ -147,8 +149,8 @@ diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmt-connect-connecti
  }
  
 diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmtui-connect.c networkmanager-9999/src/nmtui/nmtui-connect.c
---- networkmanager-9999.orig/src/nmtui/nmtui-connect.c	2026-09-22 18:52:55.313627890 -0700
-+++ networkmanager-9999/src/nmtui/nmtui-connect.c	2026-09-22 18:53:12.375562721 -0700
+--- networkmanager-9999.orig/src/nmtui/nmtui-connect.c	2026-09-22 19:28:40.766409760 -0700
++++ networkmanager-9999/src/nmtui/nmtui-connect.c	2026-09-22 19:28:58.184359438 -0700
 @@ -14,6 +14,8 @@
  #include "libnm-client-aux-extern/nm-default-client.h"
  
