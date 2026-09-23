@@ -1,0 +1,161 @@
+diff '--color=auto' -urp networkmanager-9999.orig/src/libnmc-base/nm-client-utils.c networkmanager-9999/src/libnmc-base/nm-client-utils.c
+--- networkmanager-9999.orig/src/libnmc-base/nm-client-utils.c	2026-09-22 17:19:31.291111517 -0700
++++ networkmanager-9999/src/libnmc-base/nm-client-utils.c	2026-09-22 17:20:17.242676667 -0700
+@@ -685,6 +685,21 @@ nmc_wifi_security_icon(gboolean is_prote
+     return can_show_graphics() ? /* 🔒 */ "\360\237\224\222" : "[+]";
+ }
+ 
++const char *
++nmc_wifi_speed_emoji(guint32 freq)
++{
++    if (freq == 0)
++        return ""; // not NULL - prevents (null)
++
++    if (freq >= 5945)
++        return "6G";
++    if (freq >= 5000)
++        return "5G";
++    if (freq > 0)
++        return "2.4G";
++    return "";
++}
++
+ /**
+  * nmc_utils_password_subst_char:
+  *
+diff '--color=auto' -urp networkmanager-9999.orig/src/libnmc-base/nm-client-utils.h networkmanager-9999/src/libnmc-base/nm-client-utils.h
+--- networkmanager-9999.orig/src/libnmc-base/nm-client-utils.h	2026-09-22 17:19:31.291111517 -0700
++++ networkmanager-9999/src/libnmc-base/nm-client-utils.h	2026-09-22 17:19:48.126661513 -0700
+@@ -59,6 +59,7 @@ NMActiveConnectionState nmc_activation_g
+ const char *nmc_wifi_strength_bars(guint8 strength);
+ 
+ const char *nmc_wifi_security_icon(gboolean is_protected);
++const char *nmc_wifi_speed_emoji (guint32 freq_mhz);
+ 
+ const char *nmc_password_subst_char(void);
+ 
+diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c networkmanager-9999/src/nmtui/nmt-connect-connection-list.c
+--- networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c	2026-09-22 17:19:31.393702586 -0700
++++ networkmanager-9999/src/nmtui/nmt-connect-connection-list.c	2026-09-22 17:22:48.854143446 -0700
+@@ -19,6 +19,7 @@
+ #include "nmt-connect-connection-list.h"
+ #include "nmt-utils.h"
+ #include "libnmc-base/nm-client-utils.h"
++#include <sys/ioctl.h>
+ 
+ G_DEFINE_TYPE(NmtConnectConnectionList, nmt_connect_connection_list, NMT_TYPE_NEWT_LISTBOX)
+ 
+@@ -493,13 +494,30 @@ append_section_header(NmtNewtListbox *li
+     nmt_newt_listbox_append(listbox, header, NULL);
+ }
+ 
++static int
++get_max_name_disp(void)
++{
++    struct winsize ws;
++    int cols = 80;
++    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0)
++        cols = ws.ws_col;
++
++    // overhead: " * " + " [WPA2 5G] " ~ 20 chars
++    // 80 col vga -> 80-8-20=52
++    // 236 col kms -> 236-8-20=208
++    int max = cols - 28;
++    if (max < 18) max = 18;
++    if (max > 192) max = 192;
++    return max;
++}
++
+ static void
+ nmt_connect_connection_list_rebuild(NmtConnectConnectionList *list)
+ {
+     NmtConnectConnectionListPrivate *priv    = NMT_CONNECT_CONNECTION_LIST_GET_PRIVATE(list);
+     NmtNewtListbox                  *listbox = NMT_NEWT_LISTBOX(list);
+     const GPtrArray                 *devices, *acs, *connections;
+-    int                              max_width;
++    int                              max_width = 0;
+     char                           **names, *row, active_col;
+     const char                      *strength_col, *security_col;
+     GSList                          *nmt_devices, *diter, *citer;
+@@ -507,6 +525,7 @@ nmt_connect_connection_list_rebuild(NmtC
+     NmtConnectConnection            *nmtconn;
+     gboolean                         did_group;
+     int                              n_matches = 0;
++    const char *speed_col = NULL;
+ 
+     g_slist_free_full(priv->nmt_devices, (GDestroyNotify) nmt_connect_device_free);
+     priv->nmt_devices = NULL;
+@@ -527,16 +546,6 @@ nmt_connect_connection_list_rebuild(NmtC
+ 
+     nmt_devices = g_slist_sort(nmt_devices, sort_nmt_devices);
+ 
+-    max_width = 0;
+-    for (diter = nmt_devices; diter; diter = diter->next) {
+-        nmtdev = diter->data;
+-        for (citer = nmtdev->conns; citer; citer = citer->next) {
+-            nmtconn = citer->data;
+-
+-            max_width = NM_MAX(max_width, nmt_newt_text_width(nmtconn->name));
+-        }
+-    }
+-
+     did_group = FALSE;
+     for (diter = nmt_devices; diter; diter = diter->next) {
+         gboolean show_split;
+@@ -592,25 +601,43 @@ nmt_connect_connection_list_rebuild(NmtC
+             } else
+                 active_col = ' ';
+ 
+-            if (nmtconn->ap) {
+-                guint8 strength = nm_access_point_get_strength(nmtconn->ap);
+ 
+-                strength_col = nmc_wifi_strength_bars(strength);
++            if (nmtconn->ap) {
++                strength_col = nmc_wifi_strength_bars(nm_access_point_get_strength(nmtconn->ap));
+                 security_col = nmc_wifi_security_icon(nmtconn_ap_is_protected(nmtconn->ap));
++                guint32 freq = nm_access_point_get_frequency(nmtconn->ap);
++                speed_col = nmc_wifi_speed_emoji(freq); // never NULL now
+             } else {
+-                strength_col = NULL;
+-                security_col = NULL;
++                strength_col = "";
++                security_col = "";
++                speed_col = "";
++            }
++
++            int max_name_disp = get_max_name_disp();
++            char *name_print = nmtconn->name;
++            int name_disp = nmt_newt_text_width(nmtconn->name);
++            if (name_disp > max_name_disp) {
++                char *q = nmtconn->name;
++                int w=0;
++                while (*q && w < max_name_disp) {
++                    gunichar ch = g_utf8_get_char(q);
++                    w += g_unichar_iswide(ch) ? 2 : 1;
++                    if (w > max_name_disp) break;
++                    q = g_utf8_next_char(q);
++                }
++                name_print = g_strndup(nmtconn->name, q - nmtconn->name);
++                name_disp = max_name_disp;
+             }
+ 
+-            row = g_strdup_printf("%c %s%-*s%s%s%s%s",
++            row = g_strdup_printf("%c %-*.*s %s %s %s",
+                                   active_col,
+-                                  nmtconn->name,
+-                                  (int) (max_width - nmt_newt_text_width(nmtconn->name)),
+-                                  "",
+-                                  strength_col ? " " : "",
+-                                  strength_col ?: "",
+-                                  security_col ? " " : "",
+-                                  security_col ?: "");
++                                  max_name_disp, max_name_disp, name_print,
++                                  strength_col,
++                                  security_col,
++                                  speed_col); // no ?: needed, never NULL
++
++            if (name_print != nmtconn->name) g_free(name_print);
++            // DO NOT g_strchomp - that kills the 40
+ 
+             nmt_newt_listbox_append(listbox, row, nmtconn);
+             g_free(row);

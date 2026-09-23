@@ -1,0 +1,33 @@
+diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmtui.c networkmanager-9999/src/nmtui/nmtui.c
+--- networkmanager-9999.orig/src/nmtui/nmtui.c	2026-09-22 16:44:07.450606785 -0700
++++ networkmanager-9999/src/nmtui/nmtui.c	2026-09-22 16:45:12.483948421 -0700
+@@ -196,6 +196,13 @@ GOptionEntry entries[] = {{"sleep",
+                            NULL},
+                           {NULL}};
+ 
++static gboolean
++is_linux_console(void)
++{
++    const char *term = g_getenv("TERM");
++    return term && strstr(term, "linux") != NULL; // catches linux, screen.linux, tmux-linux
++}
++
+ int
+ main(int argc, char **argv)
+ {
+@@ -210,6 +217,15 @@ main(int argc, char **argv)
+     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+     textdomain(GETTEXT_PACKAGE);
+ 
++    // force ASCII for all linux consoles, including screen/tmux
++    if (is_linux_console()) {
++        g_setenv("LANG", "C", 1);
++        g_setenv("LC_ALL", "C", 1);
++        setlocale(LC_ALL, "C");
++        g_setenv("NEWT_ASCII", "1", 1);
++        g_setenv("NCURSES_NO_UTF8_ACS", "1", 1);
++    }
++
+     opts = g_option_context_new(NULL);
+     g_option_context_add_main_entries(opts, entries, NULL);
+ 

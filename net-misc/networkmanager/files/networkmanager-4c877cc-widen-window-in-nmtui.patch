@@ -1,0 +1,196 @@
+diff '--color=auto' -urp networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.c networkmanager-9999/src/libnmt-newt/nmt-newt-form.c
+--- networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.c	2026-09-22 18:52:55.210689072 -0700
++++ networkmanager-9999/src/libnmt-newt/nmt-newt-form.c	2026-09-22 18:56:18.046646060 -0700
+@@ -17,6 +17,8 @@
+ #include <signal.h>
+ #include <slang.h>
+ #include <unistd.h>
++#include <sys/ioctl.h>
++#include <newt.h>
+ 
+ #include "nmt-newt-form.h"
+ #include "nmt-newt-button.h"
+@@ -175,6 +177,31 @@ nmt_newt_form_set_content(NmtNewtForm *f
+         parent_class->add(NMT_NEWT_CONTAINER(form), content);
+ }
+ 
++int get_dynamic_width(void)
++{
++    struct winsize ws;
++    int cols = 80, rows = 24;
++
++    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0)
++        cols = ws.ws_col;
++    else
++        newtGetScreenSize(&cols, &rows);
++
++    // tty/x11/kms: 232, vga: 80 - both work
++    // leave 2 char border + 2 char margin
++    int w = cols - 4;
++
++    const char *term = g_getenv("TERM");
++    gboolean is_x11 = term && (strstr(term, "xterm") || strstr(term, "vte"));
++
++    // don't let it get tiny in 80-col, don't overflow in 232-col
++    if (w < 40) w = 40;
++    if (w > 232 && is_x11) w = 232; // 232 - 4
++    if (w > 235 && !is_x11) w = 235; // 235 - 4
++
++    return w;
++}
++
+ static void
+ nmt_newt_form_build(NmtNewtForm *form)
+ {
+@@ -198,23 +225,65 @@ nmt_newt_form_build(NmtNewtForm *form)
+         form_width           = priv->form_width_max;
+     }
+ 
+-    if (!priv->fixed_width)
+-        priv->width = NM_MIN(form_width + 2 * ((gint64) priv->padding), screen_width - 2);
++    const char *term = g_getenv("TERM");
++    gboolean is_x11 = term && (strstr(term, "xterm") || strstr(term, "vte"));
++
++    // --- replace your 2 blocks with this one ---
++    if (!priv->fixed_width) {
++        struct winsize ws;
++        int cols = screen_width;
++        int sw;
++
++        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0)
++            cols = ws.ws_col;
++
++        sw = cols - 4;
++        if (sw < 40)
++            sw = 40;
++        if (sw > 232 && is_x11)
++            sw = 232;
++        if (sw > 235 && !is_x11)
++            sw = 235;
++
++        // both sides gint now, no NM_STATIC_ASSERT fail
++        priv->width = NM_MAX((int)(form_width + 2 * ((gint64) priv->padding)), sw);
++        if (priv->width > (guint)(screen_width - 2))
++            priv->width = screen_width - 2;
++    }
+     if (!priv->fixed_height)
+         priv->height = NM_MIN(form_height + 2 * ((gint64) priv->padding), screen_height - 2);
+ 
+     if (!priv->fixed_x)
+-        priv->x = (screen_width - form_width) / 2;
++        priv->x = (screen_width - priv->width) / 2; // was form_width -> bug
+     if (!priv->fixed_y)
+-        priv->y = (screen_height - form_height) / 2;
++        priv->y = (screen_height - priv->height) / 2;
+ 
+     if (priv->fullscreen_horizontal) {
+         priv->x     = 2;
+         priv->width = screen_width - 4;
+     }
+     if (priv->fullscreen_vertical) {
+-        priv->y      = 2;
+-        priv->height = screen_height - 4;
++        int sw, sh;
++        struct winsize ws;
++        // leave 2 char blue border on each side
++        sw = screen_width - 4;  
++        sh = screen_height - 5;
++        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0) {
++            if (ws.ws_col > 10) sw = ws.ws_col - 4;
++            if (ws.ws_row > 10) sh = ws.ws_row - 5;
++        }
++        if (sw < 60) sw = 60;
++        if (sh < 20) sh = 20;
++        if (sw > 232 && is_x11) sw = 232;
++        if (sw > 235 && !is_x11) sw = 235; // your kms max
++
++        priv->width = sw;
++        priv->height = sh;
++        priv->x = 2;
++        priv->y = 2;
++        priv->fixed_width = TRUE;
++        priv->fixed_height = TRUE;
++
+     }
+ 
+     if ((int) priv->x < 0)
+@@ -266,6 +335,7 @@ nmt_newt_form_build(NmtNewtForm *form)
+         newtFormSetScrollPosition(priv->form, priv->scroll_position);
+ #endif
+ 
++    int sw = get_dynamic_width();
+     newtOpenWindow(priv->x, priv->y, priv->width, priv->height, priv->title_lc);
+ }
+ 
+diff '--color=auto' -urp networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.h networkmanager-9999/src/libnmt-newt/nmt-newt-form.h
+--- networkmanager-9999.orig/src/libnmt-newt/nmt-newt-form.h	2026-09-22 18:52:55.210689072 -0700
++++ networkmanager-9999/src/libnmt-newt/nmt-newt-form.h	2026-09-22 18:53:12.375154173 -0700
+@@ -50,4 +50,6 @@ void nmt_newt_form_add_hotkey(NmtNewtFor
+ 
+ void nmt_newt_form_set_stable_width(NmtNewtForm *form);
+ 
++int get_dynamic_width(void);
++
+ #endif /* NMT_NEWT_FORM_H */
+diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c networkmanager-9999/src/nmtui/nmt-connect-connection-list.c
+--- networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c	2026-09-22 18:52:56.293475663 -0700
++++ networkmanager-9999/src/nmtui/nmt-connect-connection-list.c	2026-09-22 18:53:12.375320725 -0700
+@@ -68,6 +68,10 @@ nmt_connect_connection_list_new(void)
+                         NMT_NEWT_LISTBOX_SCROLL | NMT_NEWT_LISTBOX_BORDER,
+                         "skip-null-keys",
+                         TRUE,
++                        // let form decide width - don't force 40
++                        // was "width", 40,
++                        "height",
++                        15,
+                         NULL);
+ }
+ 
+diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmtui-connect.c networkmanager-9999/src/nmtui/nmtui-connect.c
+--- networkmanager-9999.orig/src/nmtui/nmtui-connect.c	2026-09-22 18:52:55.313627890 -0700
++++ networkmanager-9999/src/nmtui/nmtui-connect.c	2026-09-22 18:53:12.375562721 -0700
+@@ -14,6 +14,8 @@
+ #include "libnm-client-aux-extern/nm-default-client.h"
+ 
+ #include <stdlib.h>
++#include <sys/ioctl.h>
++#include <unistd.h>
+ 
+ #include "libnmt-newt/nmt-newt.h"
+ 
+@@ -603,6 +605,14 @@ nmt_connect_connection_list(gboolean is_
+     RescanBatch                 *batch_data;
+     gs_unref_ptrarray GPtrArray *all_active_wifi_devices = NULL;
+ 
++    // shorten label on narrow screens
++    struct winsize ws;
++    int cols = 80;
++    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0 && ws.ws_col > 0)
++        cols = ws.ws_col;
++
++    const char *rescan_label = (cols < 100) ? _("Rescan") : _("Rescan Wi-Fi");
++
+     form = g_object_new(NMT_TYPE_NEWT_FORM, "fullscreen-vertical", TRUE, NULL);
+ 
+     grid = nmt_newt_grid_new();
+@@ -617,7 +627,10 @@ nmt_connect_connection_list(gboolean is_
+ 
+     bbox = nmt_newt_button_box_new(NMT_NEWT_BUTTON_BOX_VERTICAL);
+     nmt_newt_grid_add(NMT_NEWT_GRID(grid), bbox, 1, 0);
+-    nmt_newt_widget_set_padding(bbox, 1, 1, 0, 1);
++    nmt_newt_grid_set_flags(NMT_NEWT_GRID(grid),
++                            bbox,
++                            NMT_NEWT_GRID_FILL_Y); // no FILL_X / EXPAND_X
++    nmt_newt_widget_set_padding(bbox, 1, 0, 0, 0); // was 1,1
+ 
+     activate = nmt_newt_button_box_add_start(NMT_NEWT_BUTTON_BOX(bbox), _("Activate"));
+     g_signal_connect(list, "notify::active", G_CALLBACK(listbox_active_changed), activate);
+@@ -626,7 +639,7 @@ nmt_connect_connection_list(gboolean is_
+ 
+     all_active_wifi_devices = active_wifi_devices();
+     if (all_active_wifi_devices && all_active_wifi_devices->len > 0) {
+-        rescan = nmt_newt_button_box_add_start(NMT_NEWT_BUTTON_BOX(bbox), _("Rescan Wi-Fi"));
++        rescan = nmt_newt_button_box_add_start(NMT_NEWT_BUTTON_BOX(bbox), rescan_label);
+ 
+         batch_data                  = g_new0(RescanBatch, 1);
+         batch_data->activate_button = activate;

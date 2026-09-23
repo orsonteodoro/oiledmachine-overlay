@@ -198,6 +198,12 @@ BDEPEND="
 			dev-python/pygobject:3[${PYTHON_USEDEP}]')
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-4c877cc-add-band-speed-in-nmtui.patch"
+	"${FILESDIR}/${PN}-4c877cc-replace-lock-emoji-with-text-in-nmtui.patch"
+	"${FILESDIR}/${PN}-4c877cc-fix-borders-in-nmtui.patch"
+	"${FILESDIR}/${PN}-4c877cc-widen-window-in-nmtui.patch"
+)
 
 python_check_deps() {
 	if use introspection; then

@@ -1,0 +1,65 @@
+# AI generated patch
+diff '--color=auto' -urp networkmanager-9999.orig/src/libnmc-base/nm-client-utils.c networkmanager-9999/src/libnmc-base/nm-client-utils.c
+--- networkmanager-9999.orig/src/libnmc-base/nm-client-utils.c	2026-09-22 14:48:03.624541263 -0700
++++ networkmanager-9999/src/libnmc-base/nm-client-utils.c	2026-09-22 14:48:18.937635573 -0700
+@@ -678,11 +678,24 @@ nmc_wifi_strength_bars(guint8 strength)
+  * they read as unmarked.
+  */
+ const char *
+-nmc_wifi_security_icon(gboolean is_protected)
++nmc_wifi_security_icon(NMAccessPoint *ap)
+ {
+-    if (!is_protected)
+-        return NULL;
+-    return can_show_graphics() ? /* 🔒 */ "\360\237\224\222" : "[+]";
++    if (!ap)
++        return "OPEN";
++
++    NM80211ApSecurityFlags rsn = nm_access_point_get_rsn_flags(ap);
++    NM80211ApSecurityFlags wpa = nm_access_point_get_wpa_flags(ap);
++
++    if (rsn & NM_802_11_AP_SEC_KEY_MGMT_SAE)
++        return "WPA3";
++    if (rsn != NM_802_11_AP_SEC_NONE)
++        return "WPA2";
++    if (wpa != NM_802_11_AP_SEC_NONE)
++        return "WPA";
++    if (nm_access_point_get_flags(ap) & NM_802_11_AP_FLAGS_PRIVACY)
++        return "WEP";
++
++    return "OPEN"; // was NULL before - that's your (null)
+ }
+ 
+ const char *
+diff '--color=auto' -urp networkmanager-9999.orig/src/libnmc-base/nm-client-utils.h networkmanager-9999/src/libnmc-base/nm-client-utils.h
+--- networkmanager-9999.orig/src/libnmc-base/nm-client-utils.h	2026-09-22 14:48:03.625067474 -0700
++++ networkmanager-9999/src/libnmc-base/nm-client-utils.h	2026-09-22 14:49:04.749655999 -0700
+@@ -9,6 +9,7 @@
+ #include "nm-active-connection.h"
+ #include "nm-device.h"
+ #include "libnm-core-aux-intern/nm-libnm-core-utils.h"
++#include <NetworkManager.h> // <- add this, defines NMAccessPoint
+ 
+ const NMObject **nmc_objects_sort_by_path(const NMObject *const *objs, gssize len);
+ 
+@@ -58,7 +59,7 @@ NMActiveConnectionState nmc_activation_g
+ 
+ const char *nmc_wifi_strength_bars(guint8 strength);
+ 
+-const char *nmc_wifi_security_icon(gboolean is_protected);
++const char *nmc_wifi_security_icon(NMAccessPoint *ap);
+ const char *nmc_wifi_speed_emoji (guint32 freq_mhz);
+ 
+ const char *nmc_password_subst_char(void);
+diff '--color=auto' -urp networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c networkmanager-9999/src/nmtui/nmt-connect-connection-list.c
+--- networkmanager-9999.orig/src/nmtui/nmt-connect-connection-list.c	2026-09-22 14:48:03.625912775 -0700
++++ networkmanager-9999/src/nmtui/nmt-connect-connection-list.c	2026-09-22 14:48:18.938097847 -0700
+@@ -586,7 +586,7 @@ nmt_connect_connection_list_rebuild(NmtC
+ 
+             if (nmtconn->ap) {
+                 strength_col = nmc_wifi_strength_bars(nm_access_point_get_strength(nmtconn->ap));
+-                security_col = nmc_wifi_security_icon(nmtconn_ap_is_protected(nmtconn->ap));
++                security_col = nmc_wifi_security_icon(nmtconn->ap);
+                 guint32 freq = nm_access_point_get_frequency(nmtconn->ap);
+                 speed_col = nmc_wifi_speed_emoji(freq);
+             } else {
