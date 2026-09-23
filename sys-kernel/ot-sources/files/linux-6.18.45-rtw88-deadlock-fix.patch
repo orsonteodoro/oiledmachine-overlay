@@ -178,7 +178,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +647,52 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +647,54 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -187,6 +187,7 @@ Fix:
 +	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, usb_reset_work);
 +	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
 +	struct usb_device *udev;
++	int ret;
 +
 +	if (rtwdev->disconnecting)
 +		return;
@@ -217,12 +218,13 @@ Fix:
 +	ieee80211_stop_queues(rtwdev->hw);
 +
 +	/* usb_reset_device keeps high-speed, power cycle doesn't */
-+	usb_reset_device(udev);
-+	msleep(200);
-+	rtwdev->fail = false;
-+	atomic_set(&rtwdev->fail_count, 0);
-+	atomic_set(&rtw_usb_cycling, 0);
-+	ieee80211_wake_queues(rtwdev->hw);
++	ret = usb_reset_device(udev);
++	msleep(500); // let fw re-enum 24.11.0
++	if (ret == 0) {
++		rtwdev->fail = false;
++		atomic_set(&rtwdev->fail_count, 0);
++		ieee80211_wake_queues(rtwdev->hw);
++	}
 +
 +	usb_put_dev(udev);
 +	atomic_set(&rtw_usb_cycling, 0);
