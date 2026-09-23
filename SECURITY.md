@@ -796,7 +796,7 @@ Core threats
 When inspecting each individual package at the source code level, the commit
 messages are inspected, versions or fallback-commits are bumped to the next
 commit or tagged release, or tagged ebuilds converted to live ebuilds, if one of
-these keywords are detected in the commit message for projects:
+these **keywords** are detected in the commit message for projects:
 
 | Vulnerability                  | Abbrev / note         | Meaning and implications                                                                                                    |
 | ---                            | ---                   | ---                                                                                                                         |
