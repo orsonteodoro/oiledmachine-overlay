@@ -820,14 +820,15 @@ these keywords are detected in the commit message for projects:
 | Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion or code execution                                           |
 | Integer overflow               | IO                    | Possible zero click vulernability                                                                                           |
 | Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                          |
+| Local privilege escalation     | LPE                   | Possibility that attacker at unprivileged grants themself privileged                                                        |
 | Memory corruption              | MC                    | Possible data tampering or code execution                                                                                   |
 | Memory leak                    | ML                    | Data loss, reset button, thrashing HDD, slow computer                                                                       |
 | Overflow                       | OF                    | Possible denial of service                                                                                                  |
 | Out of bounds access           | OOBA                  | Any possible variation leading to data leak, data tampering, crash                                                          |
 | Out of bounds read             | OOBR                  | Possible sensitive data leak                                                                                                |
 | Out of bounds write            | OOBW                  | Possibly a crash or data tampering                                                                                          |
+| Privilege escalation           | PE                    | General or miscellaneous unauthorized or unlimited access                                                                   |
 | Prototype pollution            | "prototype pollution" | Leads to ACE, PE, DoS, XSS, SB                                                                                              |
-| Privilege escalation           | PE                    | Unauthorized or unlimited access                                                                                            |
 | Race                           | RC                    | Likely a deadlock but also possibly a TOCTOU                                                                                |
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                               |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                               |
