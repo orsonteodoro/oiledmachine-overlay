@@ -817,7 +817,7 @@ these **keywords** are detected in the commit message for projects:
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                   |
 | Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                                   |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                |
-| Improper validation            | IV                    | Possible business logic abuse, avoid injection attack, or avoiding denial of service attack                                 |
+| Improper validation            | IV                    | Possible business logic abuse, injection, or denial of service                                                              |
 | Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion or code execution                                           |
 | Integer overflow               | IO                    | Possible zero click vulernability                                                                                           |
 | Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                          |
