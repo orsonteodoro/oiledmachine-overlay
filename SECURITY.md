@@ -790,3 +790,61 @@ Core threats
 * STRIDE covers CE, PE, DoS, DT, ID, PT.
 * NVD/CVSS covers ZC, CE, PE, DoS, DT, ID, SE, UB, PT, HV, SCI, MC, MV.
 * GLSA covers CE, PE, DoS, SCI, MC, MV.
+
+## Per-project auditing
+
+When inspecting each individual package at the source code level, the commit
+messages are inspected, versions or fallback-commits are bumped to the next
+commit or tagged release, or tagged ebuilds converted to live ebuilds, if one of
+these keywords are detected in the commit message for projects:
+
+| Vulnerability                  | Abbrev / note         | Meaning and implications                                                                                           |
+| ---                            | ---                   | ---                                                                                                                |
+| [Researcher exploit name]      |                       | A vulnerability exists that deserves a version or fallback-commit bump or a security patch                         |
+| Attack                         |                       | A vulnerability exists                                                                                             |
+| Attacker controlled            |                       | The commit has a security issue                                                                                    |
+| Crash                          | CRSH                  | Possible denial of service if attacker controlled, but still remediated to improve software quality                |
+| Container escape               | CB                    | Privilege escalation or blast radius scope increase                                                                |
+| Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss |
+| CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site  |
+| Dangling pointer               | DP                    | Precondition for UAF, pointer to invalid address                                                                   |
+| Deadlock                       | DL                    | Possible denial of service, hard reset, data loss                                                                  |
+| Double free                    | DF                    | Possible denial of service, crash                                                                                  |
+| Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                |
+| Heap overflow                  | HO                    | Possible code execution or memory corruption                                                                       |
+| Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                          |
+| Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                          |
+| Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation       |
+| Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion or code execution                                  |
+| Integer overflow               | IO                    | Possible zero click vulernability                                                                                  |
+| Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                 |
+| Memory corruption              | MC                    | Possible data tampering or code execution                                                                          |
+| Memory leak                    | ML                    | Data loss, reset button, thrashing HDD, slow computer                                                              |
+| Overflow                       | OF                    | Possible denial of service                                                                                         |
+| Out of bounds access           | OOBA                  | Any possible variation leading to data leak, data tampering, crash                                                 |
+| Out of bounds read             | OOBR                  | Possible sensitive data leak                                                                                       |
+| Out of bounds write            | OOBW                  | Possibly a crash or data tampering                                                                                 |
+| Prototype pollution            | "prototype pollution" | Leads to ACE, PE, DoS, XSS, SB                                                                                     |
+| Privilege escalation           | PE                    | Unauthorized or unlimited access                                                                                   |
+| Race                           | RC                    | Likely a deadlock but also possibly a TOCTOU                                                                       |
+| Reject                         | IV                    | Improper validation, possible security bypass                                                                      |
+| ReDoS                          | REDOS                 | DoS using regular expressions                                                                                      |
+| Resource leak                  | RL                    | Possible denial of service                                                                                         |
+| Shift overflow                 | IO                    | Likely a denial of service or uncontrolled memory allocation or uncontrolled work limit                            |
+| Stack overflow                 | SO                    | Possible code execution                                                                                            |
+| Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation or security bypass                                                                   |
+| Type confusion                 | TC                    | Can lead to code execution, memory corruption, crash, heap leak, OOBW/OOBR                                         |
+| Null pointer dereference       | NPD                   | Likely a crash                                                                                                     |
+| Uncontrolled recursion         | DoS                   | Usually a denial of service, slow computer, lag                                                                    |
+| Uncontrolled resource use      | DoS                   | Usually a denial of service, slow computer, lag                                                                    |
+| Undefined behavior             | UB                    | Possible security bypass or serendipitous running of attacker code                                                 |
+| Uninitalized memory            | UM                    | Possible sensitive data leak                                                                                       |
+| Uninitalized pointer           | UPTR                  | Possible sensitive kernel address leak, ASLR bypass, or improper cleanup/teardown                                  |
+| Uninitalized variable          | UVAR                  | Possible sensitive data leak, crash, random program misbehavior                                                    |
+| Use-after-free                 | UAF                   | Possible code execution or privilge escalation                                                                     |
+| Validate                       | IV                    | Improper validation, possible security bypass                                                                      |
+
+This is just a sample of common.  Bumps are also provided for those that are not
+easily classified but have a disclosed/undisclosed GHSA or CVE entry.
+
+The full list of abbreviations can be found in the [vf.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass#L96).
