@@ -830,6 +830,7 @@ these keywords are detected in the commit message for projects:
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                      |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                      |
 | Resource leak                  | RL                    | Possible denial of service                                                                                         |
+| Security bypass                | SB                    | Removes guardrail to protect integrity                                                                             |
 | Shift overflow                 | IO                    | Likely a denial of service or uncontrolled memory allocation or uncontrolled work limit                            |
 | Stack overflow                 | SO                    | Possible code execution                                                                                            |
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation or security bypass                                                                   |
