@@ -836,7 +836,7 @@ these **keywords** are detected in the commit message for projects:
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                                                |
 | Resource leak                  | RL                    | Possible denial of service                                                                                                                   |
 | Security bypass                | SB                    | Removes guardrail to protect integrity                                                                                                       |
-| Signed shift overflow          | IO                    | The compiler may inappropriately delete security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
+| Signed shift overflow          | IO                    | The compiler may inappropriately delete the security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
 | Unsigned shift overflow        | IO, DoS               | The compiler will keep the check but relies on the project developer(s) to prevent a denial of service caused by overallocation              |
 | Stack overflow                 | SO                    | Possible code execution                                                                                                                      |
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation or security bypass                                                                                             |
