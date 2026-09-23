@@ -850,8 +850,9 @@ these **keywords** are detected in the commit message for projects:
 | Use-after-free                 | UAF                   | Possible code execution or privilge escalation                                                                              |
 | Validate                       | IV                    | Improper validation, possible security bypass                                                                               |
 
-This is just a sample of common.  Bumps are also provided for those that are not
-easily classified but have a disclosed/undisclosed GHSA or CVE entry.
+This is just a sample of common vulnerabilities.  Bumps are also provided for
+those that are not easily classified but have a disclosed/undisclosed GHSA or
+CVE entry.
 
 The full list of abbreviations can be found in the [vf.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass#L96).
 
