@@ -812,6 +812,8 @@ these keywords are detected in the commit message for projects:
 | Double free                    | DF                    | Possible denial of service, crash                                                                                           |
 | Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                         |
 | Heap overflow                  | HO                    | Possible code execution or memory corruption                                                                                |
+| Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time                                                     |
+| Infinite recursion             | IR, DoS               | Same as uncontrolled recursion that causes severe lag                                                                       |
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                   |
 | Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                                   |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                |
@@ -836,7 +838,7 @@ these keywords are detected in the commit message for projects:
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation or security bypass                                                                            |
 | Type confusion                 | TC                    | Can lead to code execution, memory corruption, crash, heap leak, OOBW/OOBR                                                  |
 | Null pointer dereference       | NPD                   | Likely a crash                                                                                                              |
-| Uncontrolled recursion         | DoS                   | Usually a denial of service, slow computer, lag                                                                             |
+| Uncontrolled recursion         | IR, DoS               | Usually a denial of service, slow computer, lag                                                                             |
 | Uncontrolled resource use      | DoS                   | Usually a denial of service, slow computer, lag                                                                             |
 | Undefined behavior             | UB                    | Possible security bypass or serendipitous running of attacker controlled code or leaking into attacker controlled variables |
 | Uninitalized memory            | UM                    | Possible sensitive data leak                                                                                                |
