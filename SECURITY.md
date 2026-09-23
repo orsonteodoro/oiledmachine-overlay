@@ -815,7 +815,7 @@ these **keywords** are detected in the commit message for projects:
 | Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time in a multi process environment or never processes to the next step   |
 | Infinite recursion             | IR                    | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                                      |
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                                    |
-| Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                                                    |
+| Improper secret sanitization   | ID                    | Reducing or accelerating the search space, weakening security, leaking partially or completely sensitive data                                |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                                 |
 | Improper validation            | IV                    | Possible business logic abuse, injection, or denial of service                                                                               |
 | Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion or code execution                                                            |
