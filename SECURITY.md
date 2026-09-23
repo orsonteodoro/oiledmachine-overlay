@@ -849,3 +849,6 @@ This is just a sample of common.  Bumps are also provided for those that are not
 easily classified but have a disclosed/undisclosed GHSA or CVE entry.
 
 The full list of abbreviations can be found in the [vf.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass#L96).
+
+When tagged release is properly secure, the live ebuild may convert back to
+tagged versioning.
