@@ -807,7 +807,7 @@ these **keywords** are detected in the commit message for projects:
 | Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase                                                    |
 | Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss                           |
 | CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site                            |
-| Dangling pointer               | DP                    | Precondition for UAF, pointer to invalid address                                                                                             |
+| Dangling pointer               | DP                    | Precondition for UAF, pointer to a reusable invalid attacker controlled address                                                              |
 | Deadlock                       | DL                    | Possible denial of service, hard reset, data loss                                                                                            |
 | Double free                    | DF                    | Possible denial of service, crash or at worst attacker controlled execution or attacker controlled data capture                              |
 | Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
