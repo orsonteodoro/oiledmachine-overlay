@@ -45,7 +45,7 @@ DESCRIPTION="A collection of tools and libraries for many image formats"
 HOMEPAGE="https://imagemagick.org"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="d956bba0bacd70dc1fbe0d8dc3b87dca14086496"
+	FALLBACK_COMMIT="8caa6a0c62a3ac1f81b19a2ee929fbfe46ee0323"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/ImageMagick/ImageMagick.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -78,7 +78,7 @@ IUSE+=" avif bzip2 corefonts +cxx djvu fftw fontconfig fpx graphviz hardened hdr
 IUSE+=" jbig jpeg jpeg2k jpegxl lcms lqr lzma opencl openexr openmp pango perl ${GENTOO_PERL_USESTRING}"
 IUSE+=" +png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf"
 IUSE+=" X xml zip zlib"
-IUSE+=" ebuild_revision_9"
+IUSE+=" ebuild_revision_11"
 
 REQUIRED_USE="
 	corefonts? ( truetype )
