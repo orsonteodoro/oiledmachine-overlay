@@ -837,7 +837,7 @@ these **keywords** are detected in the commit message for projects:
 | Resource leak                  | RL                    | Possible denial of service                                                                                                                   |
 | Security bypass                | SB                    | Removes guardrail to protect integrity                                                                                                       |
 | Signed shift overflow          | IO                    | The compiler may inappropriately delete security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
-| Unsigned shift overflow        | IO, DoS               | The compiler will keep it but it is up to the program to prevent a denial of service caused by overallocation                                |
+| Unsigned shift overflow        | IO, DoS               | The compiler will keep it but relies on the project developer(s) to prevent a denial of service caused by overallocation                     |
 | Stack overflow                 | SO                    | Possible code execution                                                                                                                      |
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation or security bypass                                                                                             |
 | Type confusion                 | TC                    | Can lead to code execution, memory corruption, crash, heap leak, OOBW/OOBR                                                                   |
