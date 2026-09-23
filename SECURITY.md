@@ -813,7 +813,7 @@ these keywords are detected in the commit message for projects:
 | Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                         |
 | Heap overflow                  | HO                    | Possible code execution or memory corruption                                                                                |
 | Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time                                                     |
-| Infinite recursion             | IR, DoS               | Same as uncontrolled recursion that causes severe lag                                                                       |
+| Infinite recursion             | IR, DoS               | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                     |
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                   |
 | Improper secret sanitization   | ID                    | Reducing search space, weakening security, leaking partially or completely sensitive data                                   |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                |
