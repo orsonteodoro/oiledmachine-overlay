@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl flag-o-matic multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="54707ce5660a144ba29380f2b8559fe2708b3633"
+	FALLBACK_COMMIT="b8ccbeedd80dc6c23290863a28ba4e16fab22e73"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/lib${P}"
 	EGIT_REPO_URI="https://github.com/libgd/libgd.git"
@@ -41,7 +41,7 @@ SLOT="${PV_MAJOR}/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos ~x64-solaris"
 IUSE+="
 avif cpu_flags_x86_sse fontconfig +jpeg heif +png static-libs test tiff truetype webp xpm zlib
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
