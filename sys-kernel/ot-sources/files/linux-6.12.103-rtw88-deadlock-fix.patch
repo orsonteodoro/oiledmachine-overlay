@@ -132,8 +132,8 @@ Fix:
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-18 14:42:10.974829569 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-18 14:45:48.846862327 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-09-22 21:44:41.759860173 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-09-22 21:54:24.528545274 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -178,7 +178,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -611,6 +627,48 @@ static void rtw_reset_vif_iter(void *dat
+@@ -611,6 +627,52 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -218,7 +218,11 @@ Fix:
 +
 +	/* usb_reset_device keeps high-speed, power cycle doesn't */
 +	usb_reset_device(udev);
-+	/* or: usb_reset_device(udev); */
++	msleep(200);
++	rtwdev->fail = false;
++	atomic_set(&rtwdev->fail_count, 0);
++	atomic_set(&rtw_usb_cycling, 0);
++	ieee80211_wake_queues(rtwdev->hw);
 +
 +	usb_put_dev(udev);
 +	atomic_set(&rtw_usb_cycling, 0);
@@ -227,7 +231,7 @@ Fix:
  void rtw_fw_recovery(struct rtw_dev *rtwdev)
  {
  	if (!test_bit(RTW_FLAG_RESTARTING, rtwdev->flags))
-@@ -624,6 +683,12 @@ static void __fw_recovery_work(struct rt
+@@ -624,6 +686,12 @@ static void __fw_recovery_work(struct rt
  	set_bit(RTW_FLAG_RESTARTING, rtwdev->flags);
  	clear_bit(RTW_FLAG_RESTART_TRIGGERING, rtwdev->flags);
  
@@ -240,7 +244,7 @@ Fix:
  	ret = rtw_fwcd_prep(rtwdev);
  	if (ret)
  		goto free;
-@@ -641,6 +706,7 @@ free:
+@@ -641,6 +709,7 @@ free:
  
  	WARN(1, "firmware crash, start reset and recover\n");
  
@@ -248,7 +252,7 @@ Fix:
  	rcu_read_lock();
  	rtw_iterate_keys_rcu(rtwdev, NULL, rtw_reset_key_iter, rtwdev);
  	rcu_read_unlock();
-@@ -648,17 +714,25 @@ free:
+@@ -648,17 +717,25 @@ free:
  	rtw_iterate_vifs_atomic(rtwdev, rtw_reset_vif_iter, rtwdev);
  	bitmap_zero(rtwdev->hw_port, RTW_PORT_NUM);
  	rtw_enter_ips(rtwdev);
@@ -277,7 +281,7 @@ Fix:
  	ieee80211_restart_hw(rtwdev->hw);
  }
  
-@@ -1357,6 +1431,13 @@ static int rtw_power_on(struct rtw_dev *
+@@ -1357,6 +1434,13 @@ static int rtw_power_on(struct rtw_dev *
  	bool wifi_only;
  	int ret;
  
@@ -291,7 +295,7 @@ Fix:
  	ret = rtw_hci_setup(rtwdev);
  	if (ret) {
  		rtw_err(rtwdev, "failed to setup hci\n");
-@@ -2127,6 +2208,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2127,6 +2211,7 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	INIT_WORK(&rtwdev->fw_recovery_work, rtw_fw_recovery_work);
  	INIT_WORK(&rtwdev->update_beacon_work, rtw_fw_update_beacon_work);
  	INIT_WORK(&rtwdev->ba_work, rtw_txq_ba_work);
@@ -299,7 +303,7 @@ Fix:
  	skb_queue_head_init(&rtwdev->c2h_queue);
  	skb_queue_head_init(&rtwdev->coex.queue);
  	skb_queue_head_init(&rtwdev->tx_report.queue);
-@@ -2137,6 +2219,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
+@@ -2137,6 +2222,10 @@ int rtw_core_init(struct rtw_dev *rtwdev
  	mutex_init(&rtwdev->mutex);
  	mutex_init(&rtwdev->hal.tx_power_mutex);
  
@@ -310,9 +314,9 @@ Fix:
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-18 14:42:25.658985666 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-18 14:45:41.439094506 -0700
-@@ -26,6 +26,18 @@ struct rtw_usb_txcb {
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-09-22 21:45:33.585778007 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-22 21:54:01.841185526 -0700
+@@ -26,6 +26,20 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
  
@@ -324,6 +328,8 @@ Fix:
 +		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
 +			rtwdev->fail = true;
 +			pr_warn("rtw88: -110 storm detected, scheduling USB reset work\n");
++			if (!rtwdev->disconnecting && !work_pending(&rtwdev->usb_reset_work))
++				schedule_work(&rtwdev->usb_reset_work);
 +		}
 +	}
 +}
@@ -331,7 +337,7 @@ Fix:
  static void rtw_usb_fill_tx_checksum(struct rtw_usb *rtwusb,
  				     struct sk_buff *skb, int agg_num)
  {
-@@ -59,13 +71,20 @@ static void rtw_usb_reg_sec(struct rtw_d
+@@ -59,13 +73,20 @@ static void rtw_usb_reg_sec(struct rtw_d
  	if (!reg_on_section)
  		return;
  
@@ -353,7 +359,7 @@ Fix:
  }
  
  static u32 rtw_usb_read(struct rtw_dev *rtwdev, u32 addr, u16 len)
-@@ -77,11 +96,12 @@ static u32 rtw_usb_read(struct rtw_dev *
+@@ -77,11 +98,12 @@ static u32 rtw_usb_read(struct rtw_dev *
  	int idx, ret;
  	static int count;
  
@@ -368,7 +374,7 @@ Fix:
  	spin_unlock_irqrestore(&rtwusb->usb_lock, flags);
  
  	data = &rtwusb->usb_data[idx];
-@@ -93,6 +113,11 @@ static u32 rtw_usb_read(struct rtw_dev *
+@@ -93,6 +115,11 @@ static u32 rtw_usb_read(struct rtw_dev *
  		rtw_err(rtwdev, "read register 0x%x failed with %d\n",
  			addr, ret);
  
@@ -380,7 +386,7 @@ Fix:
  	if (rtwdev->chip->id == RTW_CHIP_TYPE_8822C ||
  	    rtwdev->chip->id == RTW_CHIP_TYPE_8822B ||
  	    rtwdev->chip->id == RTW_CHIP_TYPE_8821C)
-@@ -113,6 +138,8 @@ static u16 rtw_usb_read16(struct rtw_dev
+@@ -113,6 +140,8 @@ static u16 rtw_usb_read16(struct rtw_dev
  
  static u32 rtw_usb_read32(struct rtw_dev *rtwdev, u32 addr)
  {
@@ -389,7 +395,7 @@ Fix:
  	return (u32)rtw_usb_read(rtwdev, addr, 4);
  }
  
-@@ -125,15 +152,15 @@ static void rtw_usb_write(struct rtw_dev
+@@ -125,15 +154,15 @@ static void rtw_usb_write(struct rtw_dev
  	int idx, ret;
  	static int count;
  
@@ -408,7 +414,7 @@ Fix:
  	*data = cpu_to_le32(val);
  
  	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
-@@ -141,7 +168,12 @@ static void rtw_usb_write(struct rtw_dev
+@@ -141,7 +170,12 @@ static void rtw_usb_write(struct rtw_dev
  			      addr, 0, data, len, 500);
  	if (ret < 0 && ret != -ENODEV && count++ < 4)
  		rtw_err(rtwdev, "write register 0x%x failed with %d\n",
@@ -422,7 +428,7 @@ Fix:
  
  	if (rtwdev->chip->id == RTW_CHIP_TYPE_8822C ||
  	    rtwdev->chip->id == RTW_CHIP_TYPE_8822B ||
-@@ -161,6 +193,8 @@ static void rtw_usb_write16(struct rtw_d
+@@ -161,6 +195,8 @@ static void rtw_usb_write16(struct rtw_d
  
  static void rtw_usb_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
  {
@@ -431,7 +437,7 @@ Fix:
  	rtw_usb_write(rtwdev, addr, val, 4);
  }
  
-@@ -399,10 +433,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
+@@ -399,10 +435,16 @@ static bool rtw_usb_tx_agg_skb(struct rt
  	unsigned int align_next = 0;
  	u8 qsel;
  	int ret;
@@ -448,7 +454,7 @@ Fix:
  	txcb = kmalloc(sizeof(*txcb), GFP_ATOMIC);
  	if (!txcb)
  		return false;
-@@ -459,9 +499,22 @@ queue:
+@@ -459,9 +501,22 @@ queue:
  	ret = rtw_usb_write_port(rtwdev, qsel, skb_head,
  				 rtw_usb_write_port_tx_complete, txcb);
  	if (ret) {
@@ -474,7 +480,7 @@ Fix:
  	}
  
  	return true;
-@@ -522,11 +575,28 @@ static int rtw_usb_write_data(struct rtw
+@@ -522,11 +577,28 @@ static int rtw_usb_write_data(struct rtw
  	rtw_tx_fill_tx_desc(pkt_info, skb);
  	rtw_tx_fill_txdesc_checksum(rtwdev, pkt_info, skb->data);
  
@@ -503,7 +509,7 @@ Fix:
  	}
  
  	return ret;
-@@ -1085,6 +1155,19 @@ int rtw_usb_probe(struct usb_interface *
+@@ -1085,6 +1157,19 @@ int rtw_usb_probe(struct usb_interface *
  
  	rtwusb = rtw_get_usb_priv(rtwdev);
  	rtwusb->rtwdev = rtwdev;
@@ -523,7 +529,7 @@ Fix:
  
  	ret = rtw_usb_alloc_rx_bufs(rtwusb);
  	if (ret)
-@@ -1170,17 +1253,31 @@ void rtw_usb_disconnect(struct usb_inter
+@@ -1170,17 +1255,31 @@ void rtw_usb_disconnect(struct usb_inter
  	rtwdev = hw->priv;
  	rtwusb = rtw_get_usb_priv(rtwdev);
  
