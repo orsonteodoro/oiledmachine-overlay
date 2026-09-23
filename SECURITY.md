@@ -808,6 +808,7 @@ these **keywords** are detected in the commit message for projects:
 | Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss                           |
 | CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site                            |
 | Dangling pointer               | DP                    | Precondition for UAF, pointer to a reusable temporary-invalid attacker controlled address                                                    |
+| Data race                      | DR                    | A type of undefined behavior with a write without synchronization that may lead to incorrect results, corruption, altering security-critical data (e.g. access control bits). |
 | Deadlock                       | DL                    | Possible denial of service, hard reset, data loss                                                                                            |
 | Double free                    | DF                    | Possible denial of service, crash or at worst attacker controlled execution or attacker controlled data capture                              |
 | Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
@@ -831,7 +832,7 @@ these **keywords** are detected in the commit message for projects:
 | Out of bounds write            | OOBW                  | Possibly a crash or data tampering                                                                                                           |
 | Privilege escalation           | PE                    | General or miscellaneous unauthorized or unlimited access                                                                                    |
 | Prototype pollution            | "prototype pollution" | Leads to ACE, PE, DoS, XSS, SB                                                                                                               |
-| Race                           | RC                    | Likely a deadlock but also possibly a TOCTOU                                                                                                 |
+| Race (condition)               | RC                    | Likely a deadlock but also possibly a TOCTOU                                                                                                 |
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                                                |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                                                |
 | Resource leak                  | RL                    | Possible denial of service                                                                                                                   |
