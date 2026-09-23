@@ -849,7 +849,7 @@ these **keywords** are detected in the commit message for projects:
 | Uninitalized pointer           | UPTR                  | Possible sensitive kernel address leak, ASLR bypass, or improper cleanup/teardown                                                            |
 | Uninitalized variable          | UVAR                  | Possible sensitive data leak, crash, random program misbehavior                                                                              |
 | Use-after-free                 | UAF                   | Possible code execution or privilge escalation                                                                                               |
-| Validate                       | IV                    | Improper validation, possible security bypass                                                                                                |
+| Validate                       | IV                    | Improper validation, possible security bypass or missing a guardrail to prevent a crash or overallocation (DoS)                              |
 
 This is just a sample of common vulnerabilities.  Bumps are also provided for
 those that are not easily classified but have a disclosed/undisclosed GHSA or
