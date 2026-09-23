@@ -178,7 +178,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +647,54 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +647,49 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -195,11 +195,6 @@ Fix:
 +	if (atomic_xchg(&rtw_usb_cycling, 1))
 +		return;
 +
-+	if (time_before(jiffies, rtw_usb_last_cycle + msecs_to_jiffies(5000))) {
-+		atomic_set(&rtw_usb_cycling, 0);
-+		return;
-+	}
-+
 +	rtwusb = rtw_get_usb_priv(rtwdev);
 +	if (!rtwusb || !rtwusb->udev) {
 +		atomic_set(&rtw_usb_cycling, 0);
@@ -208,23 +203,23 @@ Fix:
 +
 +	udev = rtwusb->udev;
 +	usb_get_dev(udev);
-+	rtw_usb_last_cycle = jiffies;
 +
-+	pr_warn("rtw88: -110 storm on %s, resetting not power cycling\n",
++	pr_warn("rtw88: -110 storm on %s, resetting\n",
 +		dev_name(&udev->dev));
 +
-+	/* stop spamming registers */
 +	rtwdev->fail = true;
 +	ieee80211_stop_queues(rtwdev->hw);
 +
-+	/* usb_reset_device keeps high-speed, power cycle doesn't */
++	/* usb_reset_device keeps high-speed, unlike power cycle fallback to ohci */
++	usb_lock_device(udev);
 +	ret = usb_reset_device(udev);
-+	msleep(500); // let fw re-enum 24.11.0
-+	if (ret == 0) {
-+		rtwdev->fail = false;
-+		atomic_set(&rtwdev->fail_count, 0);
-+		ieee80211_wake_queues(rtwdev->hw);
-+	}
++	usb_unlock_device(udev);
++
++	msleep(500);
++	rtwdev->fail = false;
++	atomic_set(&rtwdev->fail_count, 0);
++	rtw_usb_last_cycle = jiffies;
++	ieee80211_wake_queues(rtwdev->hw);
 +
 +	usb_put_dev(udev);
 +	atomic_set(&rtw_usb_cycling, 0);
@@ -318,7 +313,7 @@ Fix:
  	init_completion(&rtwdev->fw_scan_density);
 --- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-08-16 14:32:26.000000000 -0700
 +++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-09-22 21:22:28.057753028 -0700
-@@ -27,6 +27,20 @@ struct rtw_usb_txcb {
+@@ -27,6 +27,26 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
  
@@ -327,12 +322,18 @@ Fix:
 +static void rtw_usb_mark_fail(struct rtw_dev *rtwdev, int status)
 +{
 +	if (status == -110 || status == -ENODEV || status == -EPROTO || status == -2) {
-+		if (atomic_inc_return(&rtwdev->fail_count) >= 3 && !rtwdev->fail) {
-+			rtwdev->fail = true;
-+			pr_warn("rtw88: -110 storm detected, scheduling USB reset work\n");
-+			if (!rtwdev->disconnecting && !work_pending(&rtwdev->usb_reset_work))
++		if (atomic_inc_return(&rtwdev->fail_count) >= 2) {
++			if (!rtwdev->disconnecting &&
++			    !rtwdev->fail &&
++			    !work_pending(&rtwdev->usb_reset_work)) {
++				rtwdev->fail = true;
++				pr_warn("rtw88: -110 storm detected, scheduling USB reset work\n");
 +				schedule_work(&rtwdev->usb_reset_work);
++			}
 +		}
++	} else {
++		/* good IO, reset counter */
++		atomic_set(&rtwdev->fail_count, 0);
 +	}
 +}
 +
