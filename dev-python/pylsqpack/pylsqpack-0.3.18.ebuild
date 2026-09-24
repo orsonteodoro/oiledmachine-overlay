@@ -36,11 +36,6 @@ LICENSE="
 "
 SLOT="0"
 IUSE+=" doc test"
-RDEPEND+="
-"
-DEPEND+="
-	${RDEPEND}
-"
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
