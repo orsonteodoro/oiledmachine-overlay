@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 PYTHON_COMPAT=( python3_{10..14} )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 )
 
 inherit cflags-hardened chkl meson-multilib python-any-r1 secure-version
@@ -22,7 +22,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE="
 icu +idn test static-libs
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
