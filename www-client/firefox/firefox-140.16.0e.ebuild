@@ -216,7 +216,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/speech-dispatcher-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.90.9999"
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/libevent-9999"
 	"dev-libs/libffi-9999"
 	"dev-libs/nspr-9999"
@@ -538,7 +538,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 system-pipewire
 system-png +system-webp systemd -telemetry test +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_37
+ebuild_revision_38
 "
 
 # Firefox-only IUSE
