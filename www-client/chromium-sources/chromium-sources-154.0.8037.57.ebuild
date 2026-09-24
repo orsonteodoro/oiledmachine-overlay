@@ -219,6 +219,7 @@ pkg_preinst() {
 		if [[ "${y}" != "${PV}" ]] ; then
 einfo "Removing ${PN}:${y}"
 			rm -rf "/usr/share/chromium/${y}/sources" >/dev/null 2>&1 || true
+			rm -rf "/var/cache/distfiles/chromium-src/${y}" >/dev/null 2>&1 || true
 		fi
 	done
 }
@@ -238,6 +239,10 @@ einfo "Removing ${PN} unislot"
 		if [[ -e "/usr/share/chromium/${PV%.*}" ]] ; then
 einfo "Removing messed up install of ${PN}-${PV%.*}"
 			rm -rf "/usr/share/chromium/${PV%.*}" >/dev/null 2>&1 || true
+		fi
+		if [[ -e "/var/cache/distfiles/chromium-src" ]] ; then
+einfo "Removing depot_tools cache"
+			rm -rf "/var/cache/distfiles/chromium-src" >/dev/null 2>&1 || true
 		fi
 	fi
 }

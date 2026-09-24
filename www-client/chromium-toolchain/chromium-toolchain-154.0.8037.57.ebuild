@@ -9,7 +9,7 @@ EAPI=8
 # guardrail.
 
 # To obtain expected file count numbers, use
-# `USE="-system-clang -system-rust" ebuild chromium-toolchain-153.0.8010.52.ebuild digest clean unpack prepare compile install merge`
+# `USE="-system-clang -system-rust" ebuild chromium-toolchain-154.0.8037.57.ebuild digest clean unpack prepare compile install merge`
 
 inherit dhms
 
@@ -23,22 +23,23 @@ inherit dhms
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
-# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/153.0.8010.52/DEPS#L567
-GN_COMMIT="e8a8e0932a5e42a99e5896aa58e3b8290f4e5b8c"
-GN_PV="0.2517" # See get_gn_ver.sh to obtain the version.
+# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/154.0.8037.57/DEPS#L571
+GN_COMMIT="150a9d6ba0aa7f407aa4feeabc5f03ce9aa7e04b"
+GN_PV="0.254" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
 INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
 LIBCXX_USEDEP_SKIP=1
 LLVM_SYSTEM_SLOT="24" # We use the latest to mitigate miscompilation vulnerabilities.
 LLVM_SYSTEM_SLOT_LIVE="1"
 LLVM_SYSTEM_TIMESTAMP_LIVE="Aug 2, 2026 5:18 PM PDT" # Unvendored timestamp for system-clang corresponding to https://github.com/llvm/llvm-project/commit/41322057c3af16d75e239ec6679c6c2bf7aec157
-# Vendored LLVM commit reference:  https://github.com/chromium/chromium/blob/153.0.8010.52/DEPS#L1074 \
+# Vendored LLVM commit reference:  https://github.com/chromium/chromium/blob/154.0.8037.57/DEPS#L1074 \
+# Vendored LLVM commit reference (CLANG_SUB_REVISION):  https://github.com/chromium/chromium/blob/154.0.8037.57/tools/clang/scripts/update.py
 # Vendored is before -rc release before -rc1 miscompile fixes.
 LLVM_VENDORED_COMMIT="20e97c4b" # without the g prefix; See also https://github.com/llvm/llvm-project/blob/20e97c4b/cmake/Modules/LLVMVersion.cmake
 LLVM_VENDORED_N_COMMITS="3796" # The number to the right of -init- in llvmorg-24-init-3796-g20e97c4b
 LLVM_VENDORED_SLOT="24" # Cr official slot
-LLVM_VENDORED_SUB_REV="2" # Same as CLANG_SUB_REVISION
-# Vendored Rust commit reference:  https://github.com/chromium/chromium/blob/153.0.8010.52/tools/rust/update_rust.py#L37 \
+LLVM_VENDORED_SUB_REV="27" # Same as CLANG_SUB_REVISION
+# Vendored Rust commit reference:  https://github.com/chromium/chromium/blob/154.0.8037.57/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_SYSTEM_LIVE_TIMESTAMP="Jul 5, 2026 8:11 AM PDT" # Same as Rust 1.99.0 timestamp
 RUST_SYSTEM_LIVE_VER="1.100.0"
