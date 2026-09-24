@@ -37,7 +37,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/libarchive-9999"
 	"dev-db/sqlite-9999"
 	"dev-libs/glib-2.90.9999"
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
@@ -89,7 +89,7 @@ declare -gA QT6_IUSE=(
 )
 IUSE+="
 ${QT6_IUSE[*]}
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	?? ( journald syslog )
