@@ -832,7 +832,7 @@ these **keywords** are detected in the commit message for projects:
 | Out of bounds read             | OOBR                  | Possible sensitive data leak                                                                                                                 |
 | Out of bounds write            | OOBW                  | Possibly a crash or data tampering                                                                                                           |
 | Privilege escalation           | PE                    | General or miscellaneous unauthorized or unlimited access                                                                                    |
-| Prototype pollution            | "prototype pollution" | Leads to CE, PE, DoS, XSS, SB                                                                                                               |
+| Prototype pollution            | "prototype pollution" | Leads to CE, PE, DoS, XSS, SB                                                                                                                |
 | Race (condition)               | RC                    | Likely a deadlock but also possibly a TOCTOU                                                                                                 |
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                                                |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                                                |
@@ -850,7 +850,7 @@ these **keywords** are detected in the commit message for projects:
 | Uninitalized pointer           | UPTR                  | Possible sensitive kernel address leak, ASLR bypass, or improper cleanup/teardown                                                            |
 | Uninitalized variable          | UVAR                  | Possible sensitive data leak, crash, random program misbehavior                                                                              |
 | Unsigned shift overflow        | IO, DoS               | The compiler will keep the check but relies on the project developer(s) to prevent a denial of service caused by overallocation              |
-| Use-after-free                 | UAF                   | Possible code execution or privilge escalation                                                                                               |
+| Use-after-free                 | UAF                   | Possible code execution or privilege escalation                                                                                              |
 | Validate                       | IV                    | Improper validation, possible security bypass or missing a guardrail to prevent a crash or overallocation (DoS)                              |
 
 This is just a sample of common vulnerabilities.  Bumps are also provided for
