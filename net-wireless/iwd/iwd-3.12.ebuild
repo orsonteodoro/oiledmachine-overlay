@@ -13,7 +13,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl flag-o-matic linux-info secure-version systemd
 
 #Set this variable to the required external ell version
-ELL_REQ="0.80"
+ELL_REQ="0.82" # At least d11f9d4
 
 if [[ ${PV} == *9999* ]]; then
 	inherit autotools git-r3
