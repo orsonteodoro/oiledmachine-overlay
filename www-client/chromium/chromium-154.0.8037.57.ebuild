@@ -1587,7 +1587,7 @@ LIBVA_DEPEND="
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		virtual/vaapi:=[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
-			$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]' 'single')
+			$(secure-version_gen_ffmpeg_depends '9.0' '[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]' 'single')
 		)
 	)
 "
@@ -1829,7 +1829,7 @@ COMMON_DEPEND="
 		system-opus? (
 			>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
 		)
-		$(secure-version_gen_ffmpeg_depends '8.0' '[${MULTILIB_USEDEP}]' 'single')
+		$(secure-version_gen_ffmpeg_depends '9.0' '[${MULTILIB_USEDEP}]' 'single')
 	)
 	system-flac? (
 		>=media-libs/flac-${FLAC_PV}:=[${MULTILIB_USEDEP}]
