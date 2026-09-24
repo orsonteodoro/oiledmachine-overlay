@@ -18,7 +18,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-qt/qtbase-6.9999"
 )
 
@@ -32,7 +32,7 @@ fi
 
 IUSE+="
 +gui icu qml
-ebuild_revision_3
+ebuild_revision_4
 "
 
 RDEPEND="
