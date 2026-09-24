@@ -804,6 +804,7 @@ these **keywords** are detected in the commit message for projects:
 | Attack                         |                       | A vulnerability exists                                                                                                                       |
 | Attacker controlled            |                       | The commit has a security issue                                                                                                              |
 | Crash                          | CRSH                  | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
+| Cross-site scripting attack    | XSS                   | Possible injection, redirection to phishing/attacker site, impersonation or unauthorized actions, theft                                      |
 | Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase                                                    |
 | Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss                           |
 | CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site                            |
@@ -831,14 +832,13 @@ these **keywords** are detected in the commit message for projects:
 | Out of bounds read             | OOBR                  | Possible sensitive data leak                                                                                                                 |
 | Out of bounds write            | OOBW                  | Possibly a crash or data tampering                                                                                                           |
 | Privilege escalation           | PE                    | General or miscellaneous unauthorized or unlimited access                                                                                    |
-| Prototype pollution            | "prototype pollution" | Leads to ACE, PE, DoS, XSS, SB                                                                                                               |
+| Prototype pollution            | "prototype pollution" | Leads to CE, PE, DoS, XSS, SB                                                                                                               |
 | Race (condition)               | RC                    | Likely a deadlock but also possibly a TOCTOU                                                                                                 |
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                                                |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                                                |
 | Resource leak                  | RL                    | Possible denial of service                                                                                                                   |
 | Security bypass                | SB                    | Removes guardrail to protect integrity                                                                                                       |
 | Signed shift overflow          | IO                    | The compiler may inappropriately delete the security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
-| Unsigned shift overflow        | IO, DoS               | The compiler will keep the check but relies on the project developer(s) to prevent a denial of service caused by overallocation              |
 | Stack overflow                 | SO                    | Possible code execution                                                                                                                      |
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation, security bypass, login bypass                                                                                 |
 | Type confusion                 | TC                    | Can lead to code execution, memory corruption, crash, heap leak, OOBW/OOBR                                                                   |
@@ -849,6 +849,7 @@ these **keywords** are detected in the commit message for projects:
 | Uninitalized memory            | UM                    | Possible sensitive data leak                                                                                                                 |
 | Uninitalized pointer           | UPTR                  | Possible sensitive kernel address leak, ASLR bypass, or improper cleanup/teardown                                                            |
 | Uninitalized variable          | UVAR                  | Possible sensitive data leak, crash, random program misbehavior                                                                              |
+| Unsigned shift overflow        | IO, DoS               | The compiler will keep the check but relies on the project developer(s) to prevent a denial of service caused by overallocation              |
 | Use-after-free                 | UAF                   | Possible code execution or privilge escalation                                                                                               |
 | Validate                       | IV                    | Improper validation, possible security bypass or missing a guardrail to prevent a crash or overallocation (DoS)                              |
 
