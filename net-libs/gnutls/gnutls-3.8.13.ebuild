@@ -32,7 +32,7 @@ SLOT="0/30.30"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE="brotli +cxx dane doc examples +idn nls +openssl pkcs11 +post-quantum sslv2 sslv3"
 IUSE+=" systemtap static-libs test test-full +tls-heartbeat tools zlib zstd"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_3"
 REQUIRED_USE="test-full? ( cxx dane doc examples idn nls openssl pkcs11 tls-heartbeat tools )"
 RESTRICT="!test? ( test )"
 
@@ -134,10 +134,6 @@ einfo "Information disclosure:  N"
 	fi
 
 	cflags-hardened_append
-
-	# 3 may contribute to network connection issues.
-	# Relax to increase connection uptime.
-	replace-flags "-fstrict-flex-arrays=*" "-fstrict-flex-arrays=1"
 
 	LINGUAS="${LINGUAS//en/en@boldquot en@quot}"
 

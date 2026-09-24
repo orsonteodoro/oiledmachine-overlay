@@ -31,8 +31,14 @@ HOMEPAGE="https://git.kernel.org/pub/scm/network/wireless/iwd.git/"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="
-+client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor ofono selinux standalone systemd wired
-ebuild_revision_1
++client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor networkmanager ofono selinux standalone systemd wired
+ebuild_revision_4
+"
+REQUIRED_USE="
+	^^ (
+		networkmanager
+		standalone
+	)
 "
 
 DEPEND="
@@ -129,8 +135,7 @@ src_prepare() {
 src_configure() {
 	chkl_check_many_timestamps
 
-	# Currently disabled till the issue is isolated
-	#cflags-hardened_append
+	cflags-hardened_append
 
 	append-cflags "-fsigned-char"
 	local myeconfargs=(
@@ -180,5 +185,14 @@ NameResolvingService=$(usex systemd systemd resolvconf)
 EOF
 		dodir /etc/conf.d
 		echo "rc_provide=\"net\"" > "${ED}"/etc/conf.d/iwd
+	elif use networkmanager ; then
+	# Prevent a misconfiguration bug between NetworkManager and iwd.
+	# Prevent "Secrets were required, but not provided" message.
+		local iwdconf="${ED}/etc/iwd/main.conf"
+		dodir /etc/iwd
+		cat << EOF > "${iwdconf}"
+[General]
+EnableNetworkConfiguration=false
+EOF
 	fi
 }

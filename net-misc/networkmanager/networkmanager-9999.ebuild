@@ -64,7 +64,7 @@ arping audit bluetooth clat +concheck connection-sharing debug dhcpcd doc elogin
 gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wpa_supplicant +wext +wifi
-ebuild_revision_13
+ebuild_revision_14
 "
 RESTRICT="!test? ( test )"
 
@@ -162,7 +162,7 @@ RDEPEND="${COMMON_DEPEND}
 	)
 	iwd? (
 		!net-wireless/wpa_supplicant
-		>=net-wireless/iwd-${IWD_PV}:=
+		>=net-wireless/iwd-${IWD_PV}:=[networkmanager]
 	)
 	wpa_supplicant? (
 		!net-wireless/iwd
@@ -336,8 +336,22 @@ einfo "| Throughput                | 9              | 9      | Both are identica
 einfo
 	fi
 
-	# Currently disabled till the issue is isolated.
-	#cflags-hardened_append
+	if use iwd ; then
+		if ! grep -q -e "EnableNetworkConfiguration=false" "/etc/iwd/main.conf" ; then
+# Prevent "Secrets were required, but not provided" rejection.
+eerror
+eerror "iwd misconfiguration detected.  Please change to below."
+eerror
+eerror "Contents of /etc/iwd/main.conf:"
+eerror
+eerror "[General]"
+eerror "EnableNetworkConfiguration=false"
+eerror
+			die
+		fi
+	fi
+
+	cflags-hardened_append
 
 	# Workaround for LLD on musl systems (bug #959603)
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)

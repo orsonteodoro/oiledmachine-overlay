@@ -25,7 +25,7 @@ SLOT="0"
 
 IUSE="
 pie test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
@@ -51,8 +51,7 @@ src_prepare() {
 src_configure() {
 	chkl_check_many_timestamps
 
-	# Currently disabled till the issue is isolated.
-	#cflags-hardened_append
+	cflags-hardened_append
 
 	append-cflags "-fsigned-char" #662694
 	local myeconfargs=(
