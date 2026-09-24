@@ -51,7 +51,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"sys-libs/readline-9999"
 )
 
