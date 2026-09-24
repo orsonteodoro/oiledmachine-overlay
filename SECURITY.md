@@ -805,7 +805,7 @@ these **keywords** are detected in the commit message for projects:
 | Attacker controlled            |                       | The commit has a security issue                                                                                                              |
 | Crash                          | CRSH                  | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
 | Cross-site scripting attack    | XSS                   | Possible injection, redirection to phishing/attacker site, impersonation or unauthorized actions, theft                                      |
-| Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase                                                    |
+| Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase (e.g. multiple containers or multiple companies exfiled by AI on the same rack) |
 | Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss                           |
 | CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site                            |
 | Dangling pointer               | DP                    | Precondition for UAF, pointer to a reusable temporary-invalid attacker controlled address                                                    |
