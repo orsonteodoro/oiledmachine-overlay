@@ -339,6 +339,8 @@ einfo
 	if use iwd ; then
 		if ! grep -q -e "EnableNetworkConfiguration=false" "/etc/iwd/main.conf" ; then
 # Prevent "Secrets were required, but not provided" rejection.
+# Prevent a race condition between NetworkManager and iwd trying to both
+# assign IP address, authenticate, manage/grab the same network interface.
 eerror
 eerror "iwd misconfiguration detected.  Please change to below."
 eerror

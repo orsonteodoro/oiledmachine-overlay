@@ -188,6 +188,9 @@ EOF
 	elif use networkmanager ; then
 	# Prevent a misconfiguration bug between NetworkManager and iwd.
 	# Prevent "Secrets were required, but not provided" message.
+	# Prevent a race condition between NetworkManager and iwd trying to both
+	# assign IP address, authenticate, manage/grab the same network
+	# interface.
 		local iwdconf="${ED}/etc/iwd/main.conf"
 		dodir /etc/iwd
 		cat << EOF > "${iwdconf}"
