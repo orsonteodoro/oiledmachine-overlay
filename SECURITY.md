@@ -820,7 +820,7 @@ these **keywords** are detected in the commit message for projects:
 | Improper secret sanitization   | ID                    | Reducing or accelerating the search space, weakening security, leaking partially or completely sensitive data                                |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                                 |
 | Improper validation            | IV                    | Possible business logic abuse, injection, or denial of service                                                                               |
-| Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion or code execution                                                            |
+| Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion, attacker's code being executed, data theft                                  |
 | Integer overflow               | IO                    | Possible zero click vulernability                                                                                                            |
 | Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                                           |
 | Local privilege escalation     | LPE                   | Possibility that attacker at unprivileged grants themself privileged                                                                         |
