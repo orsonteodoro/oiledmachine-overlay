@@ -4,7 +4,7 @@
 
 EAPI=8
 
-LOCKFILE_VER="3" # See https://github.com/npm/cli/blob/v12.0.2/package-lock.json#L4
+LOCKFILE_VER="3" # See https://github.com/npm/cli/blob/v11.20.0/package-lock.json#L4
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
@@ -27,9 +27,8 @@ ebuild_revision_5
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
-		>=net-libs/nodejs-22.22.2:22[corepack,ssl?]
-		>=net-libs/nodejs-24.15.0:24[corepack,ssl?]
-		>=net-libs/nodejs-26.0.0[corepack,ssl?]
+		>=net-libs/nodejs-20.17.0:20[corepack,ssl?]
+		>=net-libs/nodejs-22.9.0[corepack,ssl?]
 	)
 "
 DEPEND+="

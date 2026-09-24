@@ -1,0 +1,27 @@
+--- a/configure.py.orig	2026-09-24 00:00:16.837257737 -0700
++++ b/configure.py	2026-09-24 00:12:41.275965417 -0700
+@@ -904,6 +904,12 @@ parser.add_argument('--experimental-poin
+     default=None,
+     help='[Experimental] Use V8 pointer compression with a shared cage and enable the V8 sandbox (requires --experimental-enable-pointer-compression)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--v8-options',
+     action='store',
+     dest='v8_options',
+@@ -2290,7 +2296,10 @@ def configure_v8(o, configs):
+   # Like V8's own default, the sandbox goes with the shared pointer compression
+   # cage. Multi-cage builds give every IsolateGroup its own sandbox, which the
+   # array buffer allocator does not know about yet.
+-  o['variables']['v8_enable_sandbox'] = 1 if options.pointer_compression_shared_cage else 0
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   o['variables']['v8_enable_pointer_compression_shared_cage'] = 1 if options.pointer_compression_shared_cage else 0
+   o['variables']['v8_enable_external_code_space'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
