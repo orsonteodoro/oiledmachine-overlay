@@ -26,7 +26,7 @@ RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.90.9999"
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"x11-libs/cairo-9999"
 )
 
@@ -112,7 +112,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_8
+ebuild_revision_9
 "
 RESTRICT="
 	mirror
@@ -172,7 +172,7 @@ RDEPEND="
 	)
 	icu? (
 		system-icu? (
-			>=dev-libs/icu-79.0.9999:=[${MULTILIB_USEDEP}]
+			>=dev-libs/icu-79.1.9999:=[${MULTILIB_USEDEP}]
 		)
 	)
 	introspection? (
