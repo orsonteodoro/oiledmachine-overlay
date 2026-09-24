@@ -41,7 +41,7 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-solaris"
 IUSE="
 cacert test test-full +utils cpu_flags_ppc_altivec cpu_flags_x86_avx2 cpu_flags_x86_sse3 cpu_flags_ppc_vsx
-ebuild_revision_1
+ebuild_revision_3
 "
 
 REQUIRED_USE="test-full? ( test )"
@@ -117,6 +117,10 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+
+	# At 3 may break connecting with NetworkManager + iwd and per domain access.
+	replace-flags "-fstrict-flex-arrays=*" "-fstrict-flex-arrays=1"
+
 	# Ensure we stay multilib aware
 	sed -i -e "/@libdir@/ s:lib64:$(get_libdir):" config/Makefile || die
 }
