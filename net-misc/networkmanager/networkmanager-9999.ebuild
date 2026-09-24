@@ -162,7 +162,7 @@ RDEPEND="${COMMON_DEPEND}
 	)
 	iwd? (
 		!net-wireless/wpa_supplicant
-		>=net-wireless/iwd-${IWD_PV}:=[networkmanager]
+		>=net-wireless/iwd-${IWD_PV}:=[networkmanager,-standalone]
 	)
 	wpa_supplicant? (
 		!net-wireless/iwd
