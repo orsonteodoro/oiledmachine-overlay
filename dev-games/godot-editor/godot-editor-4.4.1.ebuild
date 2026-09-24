@@ -82,7 +82,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
 	"app-arch/zstd-9999"
 	"dev-games/recastnavigation-9999"
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/libpcre2-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/embree-9999"
@@ -275,7 +275,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 	${LLVM_COMPAT[@]/#/llvm_slot_}
-	ebuild_revision_41
+	ebuild_revision_42
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
