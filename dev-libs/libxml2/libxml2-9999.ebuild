@@ -15,7 +15,7 @@ PYTHON_COMPAT=( python3_{11..14} )
 PYTHON_REQ_USE="xml(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/libxslt-9999"
 )
 
@@ -47,7 +47,7 @@ SOVER=$(( ${PV_MAJOR} + ${MINOR_COMPAT} ))
 SLOT="${PV_MAJOR}/${SOVER}"
 IUSE+="
 doc icu python readline static-libs test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
@@ -55,7 +55,7 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 RDEPEND="
 	virtual/libiconv:*
 	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
-	icu? ( >=dev-libs/icu-79.0.9999:=[${MULTILIB_USEDEP}] )
+	icu? ( >=dev-libs/icu-79.1.9999:=[${MULTILIB_USEDEP}] )
 	python? ( ${PYTHON_DEPS} )
 	readline? ( sys-libs/readline:= )
 "
