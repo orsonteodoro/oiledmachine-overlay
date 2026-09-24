@@ -9,7 +9,7 @@ CHKL_TIMESTAMPS=(
 	"sys-apps/dbus-9999"
 )
 
-inherit chkl flag-o-matic linux-info secure-version
+inherit cflags-hardened chkl flag-o-matic linux-info secure-version
 
 DESCRIPTION="Embedded Linux Library provides core, low-level functionality for system daemons"
 HOMEPAGE="https://git.kernel.org/pub/scm/libs/ell/ell.git"
@@ -25,7 +25,7 @@ SLOT="0"
 
 IUSE="
 pie test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
