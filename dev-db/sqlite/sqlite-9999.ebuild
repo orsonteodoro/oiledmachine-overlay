@@ -19,7 +19,7 @@ UOPTS_SUPPORT_TBOLT=1
 VCS="git"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"sys-libs/readline-9999"
 )
 
@@ -66,7 +66,7 @@ RESTRICT="
 SLOT="3"
 IUSE+="
 debug doc icu +readline static-libs tcl test test-full tools
-ebuild_revision_30
+ebuild_revision_31
 "
 REQUIRED_USE="
 	pgo? (
