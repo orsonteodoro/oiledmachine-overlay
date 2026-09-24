@@ -33,7 +33,7 @@ WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vul
 
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/libuv-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
@@ -145,7 +145,7 @@ IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu inspector +npm
 mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_57
+ebuild_revision_58
 "
 
 gen_required_use_pgo() {
