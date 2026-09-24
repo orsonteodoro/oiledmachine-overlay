@@ -32,7 +32,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 +client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor networkmanager ofono selinux standalone systemd wired
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -195,4 +195,8 @@ EOF
 EnableNetworkConfiguration=false
 EOF
 	fi
+}
+
+pkg_postinst() {
+einfo "You must etc-update to finish update."
 }

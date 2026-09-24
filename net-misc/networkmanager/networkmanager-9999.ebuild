@@ -64,7 +64,7 @@ arping audit bluetooth clat +concheck connection-sharing debug dhcpcd doc elogin
 gnutls iputils +introspection iptables iwd libedit +modemmanager nbft +nss
 nftables ofono ovs policykit +ppp psl resolvconf selinux syslog systemd teamd
 test +tools vala +wpa_supplicant +wext +wifi
-ebuild_revision_14
+ebuild_revision_15
 "
 RESTRICT="!test? ( test )"
 
@@ -550,11 +550,17 @@ multilib_src_install_all() {
 	insinto /usr/lib/NetworkManager/conf.d #702476
 	doins "${S}"/examples/nm-conf.d/31-mac-addr-change.conf
 
-	if use iwd; then
-		# This goes to $nmlibdir/conf.d/ and $nmlibdir is '${prefix}'/lib/$PACKAGE, thus always lib, not get_libdir
+	if use iwd ; then
+	# This goes to $nmlibdir/conf.d/ and $nmlibdir is '${prefix}'/lib/$PACKAGE, thus always lib, not get_libdir
 		cat <<-EOF > "${ED}"/usr/lib/NetworkManager/conf.d/iwd.conf || die
 		[device]
 		wifi.backend=iwd
+		EOF
+	elif use wpa_supplicant ; then
+	# This goes to $nmlibdir/conf.d/ and $nmlibdir is '${prefix}'/lib/$PACKAGE, thus always lib, not get_libdir
+		cat <<-EOF > "${ED}"/usr/lib/NetworkManager/conf.d/wpa_supplicant.conf || die
+		[device]
+		wifi.backend=wpa_supplicant
 		EOF
 	fi
 
@@ -685,6 +691,7 @@ einfo
 		"${caps}=ep" "usr/sbin/NetworkManager"
 	)
 	fcaps_pkg_postinst
+einfo "You must etc-update to finish update."
 }
 
 pkg_postrm() {
