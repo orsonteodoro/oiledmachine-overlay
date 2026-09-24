@@ -61,7 +61,7 @@ PLUGINS=(
 
 CHKL_TIMESTAMPS=(
 	"app-arch/libarchive-9999"
-	"dev-libs/icu-79.0.9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/qcoro-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtsvg-6.9999"
@@ -114,7 +114,7 @@ SLOT="0"
 IUSE+="
 ${PLUGINS[@]/+}
 nls test wayland X
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| (
