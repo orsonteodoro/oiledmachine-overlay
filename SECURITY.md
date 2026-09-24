@@ -837,7 +837,7 @@ these **keywords** are detected in the commit message for projects:
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                                                |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                                                |
 | Resource leak                  | RL                    | Possible denial of service                                                                                                                   |
-| Security bypass                | SB                    | Removes guardrail to protect integrity                                                                                                       |
+| Security bypass                | SB                    | Attacker disablement or avoiding a guardrail used to protect integrity                                                                       |
 | Signed shift overflow          | IO                    | The compiler may inappropriately delete the security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
 | Stack overflow                 | SO                    | Possible code execution                                                                                                                      |
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation, security bypass, login bypass                                                                                 |
