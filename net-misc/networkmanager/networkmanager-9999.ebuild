@@ -323,17 +323,17 @@ multilib_src_configure() {
 einfo
 einfo "Estimated scores for your use case (10 is better)"
 einfo
-einfo "| Topic                     | wpa_supplicant | iwd    | Notes                                                                                                                              |"
-einfo "|---------------------------|----------------|--------|------------------------------------------------------------------------------------------------------------------------------------|"
-einfo "| AP robustness             | 9              | 6      | iwd is strict but wpa_supplicant has better quirky access point (AP) compatibility                                                 |"
-einfo "| Audit & CVE track record  | 6              | 8      | wpa_supplicant trades off compatibility with security                                                                              |"
-einfo "| Defensive cybersecurity   | 6.5            | 8.5    | iwd has a lower attack surface                                                                                                     |"
-einfo "| Dongle/antenna robustness | 9.5            | 6      | iwd doesn't handle legacy or WEXT dongles well                                                                                     |"
-einfo "| Latency                   | 6              | 9      | wpa_supplicant has latency issues                                                                                                  |"
-einfo "| Roaming                   | 7              | 9      | iwd is designed for it and wpa_supplicant has issues with unsticking from degraded APs/signal                                      |"
-einfo "| Security protocols        | 10             | 7.5    | wpa_supplicant has better enterprise support                                                                                       |"
-einfo "| Throughput                | 9              | 9      | Both are identical                                                                                                                 |"
-einfo "| Use cases                 | cEL            | eigpst | c=college/campus, E=enterprise, e=embedded, g=gaming, i=IOT, L=legacy hardware, l=laptop p=public wifi, s=live streaming, t=travel |"
+einfo "| Topic                     | wpa_supplicant | iwd     | Notes                                                                                                                               |"
+einfo "|---------------------------|----------------|---------|-------------------------------------------------------------------------------------------------------------------------------------|"
+einfo "| AP robustness             | 9              | 6       | iwd is strict but wpa_supplicant has better quirky access point (AP) compatibility                                                  |"
+einfo "| Audit & CVE track record  | 6              | 8       | wpa_supplicant trades off compatibility with security                                                                               |"
+einfo "| Defensive cybersecurity   | 6.5            | 8.5     | iwd has a lower attack surface                                                                                                      |"
+einfo "| Dongle/antenna robustness | 9.5            | 6       | iwd doesn't handle legacy or WEXT dongles well                                                                                      |"
+einfo "| Latency                   | 6              | 9       | wpa_supplicant has latency issues                                                                                                   |"
+einfo "| Roaming                   | 7              | 9       | iwd is designed for it and wpa_supplicant has issues with unsticking from degraded APs/signal                                       |"
+einfo "| Security protocols        | 10             | 7.5     | wpa_supplicant has better enterprise support                                                                                        |"
+einfo "| Throughput                | 9              | 9       | Both are identical                                                                                                                  |"
+einfo "| Use cases                 | cEL            | eiglpst | c=college/campus, E=enterprise, e=embedded, g=gaming, i=IOT, L=legacy hardware, l=laptop, p=public wifi, s=live streaming, t=travel |"
 einfo
 	fi
 
