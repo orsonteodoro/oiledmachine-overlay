@@ -41,7 +41,7 @@ x86 ~x64-macos ~x64-solaris
 fi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="2ebc7054cdfd593baf846c8e604bca5d1dd91bb6"
+	FALLBACK_COMMIT="e86daaca4032de0d8d8358b11efd1980d5ad6d86"
 	EGIT_BRANCH="main"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -80,7 +80,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1" "${PV}")
 IUSE+="
 debug doc examples static-libs test
-ebuild_revision_37
+ebuild_revision_38
 "
 BDEPEND+="
 	${PYTHON_DEPS}
