@@ -762,6 +762,9 @@ einfo "WBSPI = Web Browser Security Policy Inadequate/Inappropriate"
 # Created to differentiate from UM (msan)
 einfo "WBUU = Web Browser Uninitialized Use"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WPP2BWBUI"($|" "|";"|",") ]] ; then
+einfo "WPP2BWBUI = Web Page Pretends to be Web Browser UI"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WR"($|" "|";"|",") ]] ; then
 einfo "WRNG = Weak CSRNG"
 		fi
