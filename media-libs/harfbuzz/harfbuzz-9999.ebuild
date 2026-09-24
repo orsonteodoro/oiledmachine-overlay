@@ -27,6 +27,8 @@ RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.90.9999"
 	"dev-libs/icu-79.1.9999"
+	"media-libs/freetype-9999"
+	"media-libs/libpng-9999"
 	"x11-libs/cairo-9999"
 )
 
@@ -66,7 +68,7 @@ LLVM_COMPAT=(
 	{20..22} # For Rust
 )
 
-inherit cargo cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot meson-multilib python-any-r1  rustflags-hardened xdg-utils
+inherit cargo cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot meson-multilib python-any-r1 secure-version rustflags-hardened xdg-utils
 
 DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
@@ -159,27 +161,27 @@ REQUIRED_USE="
 
 RDEPEND="
 	cairo? (
-		>=x11-libs/cairo-9999:=[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	chafa? (
 		>=media-gfx/chafa-1.14.0:=
 	)
 	glib? (
-		>=dev-libs/glib-2.80.0:2=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 	graphite? (
-		>=media-gfx/graphite2-1.3.15:=[${MULTILIB_USEDEP}]
+		>=media-gfx/graphite2-${GRAPHITE2_PV}:=[${MULTILIB_USEDEP}]
 	)
 	icu? (
 		system-icu? (
-			>=dev-libs/icu-79.1.9999:=[${MULTILIB_USEDEP}]
+			>=dev-libs/icu-${ICU_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.82.0-r2:=
+		>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	)
 	png? (
-		>=media-libs/libpng-1.6.57:=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	)
 	ragel? (
 		system-ragel? (
@@ -187,10 +189,10 @@ RDEPEND="
 		)
 	)
 	truetype? (
-		>=media-libs/freetype-9999:2=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-${FREETYPE_PV}:2=[${MULTILIB_USEDEP}]
 	)
 	zlib? (
-		virtual/zlib:=[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
