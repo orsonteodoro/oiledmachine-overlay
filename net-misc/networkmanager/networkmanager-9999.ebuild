@@ -333,7 +333,7 @@ einfo "| Latency                   | 6              | 9      | wpa_supplicant ha
 einfo "| Roaming                   | 7              | 9      | iwd is designed for it and wpa_supplicant has issues with unsticking from degraded APs/signal                                      |"
 einfo "| Security protocols        | 10             | 7.5    | wpa_supplicant has better enterprise support                                                                                       |"
 einfo "| Throughput                | 9              | 9      | Both are identical                                                                                                                 |"
-einfo "| Use cases                 | cEL            | eigps  | c=college/campus, E=enterprise, e=embedded, g=gaming, i=IOT, L=legacy hardware, l=laptop p=public wifi, s=live streaming, t=travel |"
+einfo "| Use cases                 | cEL            | eigpst | c=college/campus, E=enterprise, e=embedded, g=gaming, i=IOT, L=legacy hardware, l=laptop p=public wifi, s=live streaming, t=travel |"
 einfo
 	fi
 
