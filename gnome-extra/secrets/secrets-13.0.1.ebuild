@@ -24,7 +24,7 @@ CHKL_TIMESTAMPS=(
 	"dev-lang/python-3.13.9999"
 	"dev-lang/python-3.12.9999"
 	"dev-libs/glib-2.90.9999"
-	"gui-libs/gtk-4.23.9999"
+	"gui-libs/gtk-4.24.9999"
 )
 
 inherit chkl gnome2-utils meson optfeature web-kernel-config xdg distutils-r1
@@ -67,7 +67,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream uses -safe-symbols by default.
 IUSE+="
 dev hibp +safe-symbols wayland X
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
