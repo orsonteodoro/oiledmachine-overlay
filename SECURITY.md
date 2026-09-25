@@ -846,7 +846,7 @@ these **keywords** are detected in the commit message for projects:
 | Signed shift overflow          | IO                    | The compiler may inappropriately delete the security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
 | Stack overflow                 | SO                    | Possible code execution                                                                                                                      |
 | Time-of-Check to Time-of-Use   | TOCTOU                | Possible privilege escalation, security bypass, login bypass                                                                                 |
-| Type confusion                 | TC                    | Can lead to code execution, memory corruption, crash, heap leak, OOBW/OOBR                                                                   |
+| Type confusion                 | TC                    | Can lead to attacker code execution, memory corruption, crash, OOBW/OOBR                                                                     |
 | Null pointer dereference       | NPD                   | Likely a crash                                                                                                                               |
 | Uncontrolled recursion         | IR                    | Usually a denial of service, slow computer, lag                                                                                              |
 | Uncontrolled resource use      | DoS                   | Usually a denial of service, slow computer, lag                                                                                              |
