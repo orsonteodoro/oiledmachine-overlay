@@ -149,7 +149,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"
-	"gui-libs/gtk-4.23.9999"
+	"gui-libs/gtk-4.24.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
@@ -646,7 +646,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
 +minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
 -system-malloc systemd test thunder +variation-fonts wayland +webassembly
 -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
-ebuild_revision_44
+ebuild_revision_45
 "
 
 gen_gst_plugins_duse() {
