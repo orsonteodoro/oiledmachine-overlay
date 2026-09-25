@@ -22,8 +22,8 @@ esac
 # Commit snapshot quality comparison on Aug 8, 2026
 # | Source                 | Commit ID     | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-*-pauthtest pass | llvm-clang-*-pac-ret pass | libc-*-asan passed |
 # | -----------------------|---------------|----------|------------|------------|---------------------------|-----------------------|-----------------------------|---------------------------|--------------------|
-# | chromium-toolchain     | 20e97c4b [1]  | 20260811 | 24.0.0-git | 40/46      | 0                         | 6                     | 0                           | 0                         | 2                  |
-# | distro                 | 3dcd66d [3]   | 20260919 | 24.0.0-git | 31/34      | 0                         | 6                     | 0                           | 0                         | 0                  |
+# | chromium-toolchain     | 20e97c4 [1]   | 20260811 | 24.0.0-git | 40/46      | 0                         | 6                     | 0                           | 0                         | 2                  |
+# | distro                 | 3dcd66d [3]   | 20260919 | 24.0.0-git | 31/34      | 0 [4]                     | 6                     | 0                           | 0                         | 0                  |
 # | distro                 | 02bd47d [3]   | 20260916 | 24.0.0-git | 35/39      | 0                         | 5                     | 1                           | 0                         | 0                  |
 # | distro                 | 0bf3638 [3]   | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                           | 1                         | 2                  |
 # | oiledmachine-overlay   | 0bd3306 [2]   | 20260920 | 24.0.0-git | 106/113    | 0                         | 17                    | 1                           | 1                         | 2                  |
@@ -31,6 +31,7 @@ esac
 # [1] Based on Chromium 154.0.8037.57, https://github.com/chromium/chromium/blob/154.0.8037.57/tools/clang/scripts/update.py#L42
 # [2] Based on latest with 100+ checks passed and no failed sanitizers in check results in main branch, https://github.com/llvm/llvm-project/commits/main
 # [3] Based on llvm.org.eclass, https://github.com/gentoo/gentoo/blob/master/eclass/llvm.org.eclass#L74
+# [4] The adajcent commit has 1 failed sanitizer check, https://github.com/llvm/llvm-project/commits/main/?before=3dcd66d0110335d7d1a5921fd085914b66ffbd3c+35
 
 #
 # My AI prompt:
