@@ -178,7 +178,7 @@ Fix:
  	mutex_lock(&rtwdev->mutex);
  	if (rtwdev->hw->conf.flags & IEEE80211_CONF_IDLE)
  		rtw_enter_ips(rtwdev);
-@@ -631,6 +647,49 @@ static void rtw_reset_vif_iter(void *dat
+@@ -631,6 +647,47 @@ static void rtw_reset_vif_iter(void *dat
  	rtw_release_macid(rtwdev, rtwvif->mac_id);
  }
  
@@ -187,7 +187,6 @@ Fix:
 +	struct rtw_dev *rtwdev = container_of(work, struct rtw_dev, usb_reset_work);
 +	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
 +	struct usb_device *udev;
-+	int ret;
 +
 +	if (rtwdev->disconnecting)
 +		return;
@@ -208,19 +207,18 @@ Fix:
 +		dev_name(&udev->dev));
 +
 +	rtwdev->fail = true;
-+	ieee80211_stop_queues(rtwdev->hw);
 +
 +	/* usb_reset_device keeps high-speed, unlike power cycle fallback to ohci */
 +	usb_lock_device(udev);
-+	ret = usb_reset_device(udev);
++	usb_reset_device(udev);
 +	usb_unlock_device(udev);
 +
-+	msleep(500);
-+	rtwdev->fail = false;
-+	atomic_set(&rtwdev->fail_count, 0);
-+	rtw_usb_last_cycle = jiffies;
-+	ieee80211_wake_queues(rtwdev->hw);
++	if (!rtwdev->disconnecting) {
++		rtwdev->fail = false;
++		atomic_set(&rtwdev->fail_count, 0);
++	}
 +
++	rtw_usb_last_cycle = jiffies;
 +	usb_put_dev(udev);
 +	atomic_set(&rtw_usb_cycling, 0);
 +}
