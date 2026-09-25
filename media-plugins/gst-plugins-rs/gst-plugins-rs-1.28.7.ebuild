@@ -127,7 +127,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
-	"gui-libs/gtk-4.23.9999"
+	"gui-libs/gtk-4.24.9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
 	"media-libs/freetype-9999"
@@ -1302,7 +1302,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_62
+ebuild_revision_63
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
