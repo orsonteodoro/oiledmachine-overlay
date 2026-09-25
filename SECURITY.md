@@ -803,7 +803,7 @@ these **keywords** are detected in the commit message for projects:
 | [Researcher exploit name]      |                       | A vulnerability exists that deserves a version or fallback-commit bump or a security patch                                                   |
 | Attack                         |                       | A vulnerability exists                                                                                                                       |
 | Attacker controlled            |                       | The commit has a security issue                                                                                                              |
-| Buffer overflow                | BO                    | Any stack overflow or heap overflow leading to threat actor's code execution but missed by automated mitigation, requiring a manual fix      |
+| Buffer overflow                | BO                    | Any stack overflow or heap overflow leading to threat actor's code execution but missed by automated mitigation or mitigation circumvented, requiring a manual fix      |
 | Crash                          | CRSH                  | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
 | Cross-site scripting attack    | XSS                   | Possible injection, redirection to phishing/attacker site, impersonation or unauthorized actions, theft                                      |
 | Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase (e.g. multiple containers or multiple companies exfiled by AI on the same rack) |
