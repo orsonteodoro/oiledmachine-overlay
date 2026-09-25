@@ -12,7 +12,7 @@ SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 CHKL_TIMESTAMPS=(
 	"app-shells/bash-9999"
 	"net-misc/curl-9999"
-	"gui-libs/gtk-4.23.9999"
+	"gui-libs/gtk-4.24.9999"
 	"x11-libs/gtk+-3.24.9999"
 )
 
@@ -73,7 +73,7 @@ alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	^^ (
