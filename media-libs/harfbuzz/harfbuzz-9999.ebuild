@@ -11,7 +11,7 @@ CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-EXPECTED_CARGO_HASH="75d97f12b8a3422797fb9bd968492e033129541dab64e1ef682b9e55209aece5457413c2b51ca573f56cee5388bb01e48af946d32bfac5cf9a8f96b2e18f59fe"
+EXPECTED_CARGO_HASH="3eb6b8250c0f0d1d8d081133581b37e96c3444d77c5b2d108c2b066047eb176ccb1c5994376db2bb1ff38d8103f516b732305178421b58464376f3a50a459dad"
 PYTHON_COMPAT=( python3_{10..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
@@ -42,19 +42,19 @@ harfbuzz_rust-0.0.0
 
 # From "./convert-cargo-lock.sh 9999"
 CRATES="
-bitflags-2.13.1
+bitflags-2.13.2
 bytemuck-1.25.2
-bytemuck_derive-1.12.0
-font-types-0.12.4
+bytemuck_derive-1.12.1
+font-types-0.12.5
 harfrust-0.13.3
 once_cell-1.21.4
 proc-macro2-1.0.107
 quote-1.0.47
 read-fonts-0.43.3
 skrifa-0.46.2
-smallvec-1.16.0
-syn-3.0.4
-unicode-ident-1.0.24
+smallvec-1.16.1
+syn-3.0.6
+unicode-ident-1.0.26
 "
 
 inherit libstdcxx-compat
@@ -74,7 +74,7 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="80540ed4b1dfa7059339c91758d6868f1829c09e"
+	FALLBACK_COMMIT="a8dc5479c55c7e51c0e8d576ae379b5dbb4e8f67"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -114,7 +114,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="
 	mirror
@@ -315,8 +315,8 @@ src_unpack() {
 		local expected_cargo_hash="${EXPECTED_CARGO_HASH}"
 		if [[ "${actual_cargo_hash}" != "${expected_cargo_hash}" ]] ; then
 eerror "QA:  Update cargo crates"
-eerror "QA:  Expected cargo hash:  ${expected_cargo_hash}"
 eerror "QA:  Actual cargo hash:  ${actual_cargo_hash}"
+eerror "QA:  Expected cargo hash:  ${expected_cargo_hash}"
 			die
 		fi
 	else
