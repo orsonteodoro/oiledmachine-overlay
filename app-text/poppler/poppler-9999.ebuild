@@ -43,7 +43,7 @@ inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic flag-o-mat
 inherit libcxx-slot libstdcxx-slot python-any-r1 secure-version toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="1ce3f34b44875b59b081dda639c242317a32b614"
+	FALLBACK_COMMIT="f2ef272f822f44e1fbb7fec1808aeba9edd9cb95"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/poppler/poppler"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -68,7 +68,7 @@ SLOT="0/${SOVER}"
 LICENSE="GPL-2"
 IUSE+="
 boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
-ebuild_revision_7
+ebuild_revision_8
 "
 RESTRICT="
 	mirror
@@ -115,7 +115,6 @@ fi
 DOCS=( AUTHORS NEWS README.md README-XPDF )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-26.05.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-a67d5f1-respect-cflags.patch"
 #	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
 )
