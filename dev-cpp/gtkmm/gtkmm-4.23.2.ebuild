@@ -36,7 +36,10 @@ RESTRICT="
 	mirror
 " # Speed up downloads and stop snooping
 SLOT="${API_VERSION}"
-IUSE="gtk-doc test vulkan"
+IUSE="
+gtk-doc test vulkan
+ebuild_revision_1
+"
 RDEPEND="
 	>=dev-cpp/glibmm-2.75.0:2.68=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gtk-doc?]
 	>=dev-cpp/cairomm-1.15.4:1.16=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gtk-doc?]
