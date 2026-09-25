@@ -803,6 +803,7 @@ these **keywords** are detected in the commit message for projects:
 | [Researcher exploit name]      |                       | A vulnerability exists that deserves a version or fallback-commit bump or a security patch                                                   |
 | Attack                         |                       | A vulnerability exists                                                                                                                       |
 | Attacker controlled            |                       | The commit has a security issue                                                                                                              |
+| Buffer overflow                | BO                    | Any stack overflow or heap overflow leading to threat actor's code execution but missed by automated mitigation, requiring a manual fix      |
 | Crash                          | CRSH                  | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
 | Cross-site scripting attack    | XSS                   | Possible injection, redirection to phishing/attacker site, impersonation or unauthorized actions, theft                                      |
 | Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase (e.g. multiple containers or multiple companies exfiled by AI on the same rack) |
@@ -816,6 +817,7 @@ these **keywords** are detected in the commit message for projects:
 | Heap overflow                  | HO                    | Possible code execution or memory corruption                                                                                                 |
 | Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time in a multi process environment or never processes to the next step   |
 | Infinite recursion             | IR                    | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                                      |
+| Infoleak                       | INFOLEAK, ID          | Leading to stolen sensitive data or crown jewels, ALSR bypass, reconaissance, social engineering attack                                      |
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                                    |
 | Improper secret sanitization   | ID                    | Reducing or accelerating the search space, weakening security, leaking partially or completely sensitive data                                |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                                 |
@@ -826,6 +828,7 @@ these **keywords** are detected in the commit message for projects:
 | Local privilege escalation     | LPE                   | Possibility that attacker at unprivileged grants themself privileged                                                                         |
 | Memory corruption              | MC                    | Possible data tampering or code execution                                                                                                    |
 | Memory leak                    | ML                    | Data loss, reset button, thrashing HDD, slow computer                                                                                        |
+| Miscompilation                 | "miscompilation"      | Can lead to crashes.  For C/C++:  BO, CRSH, PE, ID.  For JavaScript:  TC, OOBW, OOBR, SBE, RCE.                                              |
 | NULL check                     | IV, NPD, DoS          | Remediation that hints of an existence of a vulnerability.  NPD is explicit "null pointer dereference" but IV preferred                      |
 | Overflow                       | OF                    | Possible denial of service                                                                                                                   |
 | Out of bounds access           | OOBA                  | Any possible variation leading to data leak, data tampering, crash                                                                           |
@@ -838,6 +841,7 @@ these **keywords** are detected in the commit message for projects:
 | Reject                         | IV                    | Improper validation, possible security bypass                                                                                                |
 | ReDoS                          | REDOS                 | DoS using regular expressions                                                                                                                |
 | Resource leak                  | RL                    | Possible denial of service                                                                                                                   |
+| Sandbox escape                 | SBE                   | Implies privilege escalation that leads to credential theft, stolen cryptocurrency, or password database exfiltration                        |
 | Security bypass                | SB                    | Attacker disablement, avoiding, or circumvention of a guardrail used to protect integrity                                                    |
 | Signed shift overflow          | IO                    | The compiler may inappropriately delete the security-critical check, reducing the complexity for attacker controlled code execution or exfiltration |
 | Stack overflow                 | SO                    | Possible code execution                                                                                                                      |
