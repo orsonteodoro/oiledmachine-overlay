@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"gui-libs/gtk-4.23.9999"
+	"gui-libs/gtk-4.24.9999"
 )
 
 inherit cflags-hardened chkl gnome.org libcxx-slot libstdcxx-slot meson secure-version python-any-r1 virtualx
