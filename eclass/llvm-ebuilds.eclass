@@ -14,27 +14,23 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# The algorithm to pick the fallback-commit has changed on Aug 3, 2026.
+# The algorithm to pick the fallback-commit has changed on Sep 25, 2026.
 
 # This section is AI assisted to better explain the formula.
 
 #
 # Commit snapshot quality comparison on Aug 8, 2026
-# | Source                 | Commit ID    | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-pauth pass | llvm-clang-pac-ret pass | libc-asan passed |
-# | -----------------------|--------------|----------|------------|------------|---------------------------|-----------------------|-----------------------|-------------------------|------------------|
-# | chromium-toolchain     | 20e97c4 [7]  | 20260811 | 24.0.0-git | 40/46      | 0                         | 6                     | 0                     | 0                       | 2                |
-# | distro                 | 0bf3638 [8]  | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                     | 1                       | 2                |
-# | distro                 | bb9934d [8]  | 20260724 | 23.1.0-rc1 | 27/32      | 0 [2]                     | 0 [1]                 | 0 [1][2]              | 0 [1]                   | 0 [1]            |
-# | oiledmachine-overlay   | 338e0c9 [10] | 20260905 | 24.0.0-git | 116/134    | 0                         | 17                    | 1                     | 1                       | 2                |
-# | -                      | bd6bfba      | 20260802 | 23.0.0-git | 99/126     | 0 [4]                     | 9                     | 0 [2]                 | 0                       | 2                |
+# | Source                 | Commit ID     | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-*-pauthtest pass | llvm-clang-*-pac-ret pass | libc-*-asan passed |
+# | -----------------------|---------------|----------|------------|------------|---------------------------|-----------------------|-----------------------------|---------------------------|--------------------|
+# | chromium-toolchain     | 20e97c4b [1]  | 20260811 | 24.0.0-git | 40/46      | 0                         | 6                     | 0                           | 0                         | 2                  |
+# | distro                 | 3dcd66d [3]   | 20260919 | 24.0.0-git | 31/34      | 0                         | 6                     | 0                           | 0                         | 0                  |
+# | distro                 | 02bd47d [3]   | 20260916 | 24.0.0-git | 35/39      | 0                         | 5                     | 1                           | 0                         | 0                  |
+# | distro                 | 0bf3638 [3]   | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                           | 1                         | 2                  |
+# | oiledmachine-overlay   | 0bd3306 [2]   | 20260920 | 24.0.0-git | 106/113    | 0                         | 17                    | 1                           | 1                         | 2                  |
 #
-# [1] See bd6bfba (tagged llvmorg-23-init)
-# [2] Passes with adjacent commit 1546138, adjacent to bd6bfba (code freeze)
-# [4] Fail detected with adjacent commit 1546138, adjacent to bd6bfba (code freeze)
-# [7] Based on Chromium 153.0.8010.36, https://github.com/chromium/chromium/blob/153.0.8010.36/tools/clang/scripts/update.py#L42
-# [8] Based on llvm.org.eclass, https://github.com/gentoo/gentoo/blob/master/eclass/llvm.org.eclass#L75
-# [9] Based on commit message resolving miscompilation in release/23.x branch, https://github.com/llvm/llvm-project/commits/release/23.x
-# [10] Based on latest with 120+ checks passed and check results in main branch, https://github.com/llvm/llvm-project/commits/main
+# [1] Based on Chromium 154.0.8037.57, https://github.com/chromium/chromium/blob/154.0.8037.57/tools/clang/scripts/update.py#L42
+# [2] Based on latest with 100+ checks passed and no failed sanitizers in check results in main branch, https://github.com/llvm/llvm-project/commits/main
+# [3] Based on llvm.org.eclass, https://github.com/gentoo/gentoo/blob/master/eclass/llvm.org.eclass#L74
 
 #
 # My AI prompt:
@@ -121,11 +117,11 @@ esac
 # zero-tolerance policy or bump once a month to balance the costs/benefits.
 #
 
-LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="338e0c94943a6fb917c276bbbd9ff4b6cd6dd71e" # Sep 5, 2026 (116 / 136 green checkmarks)
+LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="0bd330675f9eb08126e467505a0800f167084473" # Sep 20, 2026 (106 / 113 green checkmarks)
 
 LLVM_EBUILDS_LLVM24_BRANCH="main"
 
-LLVM_EBUILDS_LLVM24_REVISION="llvm24_revision_3"
+LLVM_EBUILDS_LLVM24_REVISION="llvm24_revision_4"
 
 if [[ -z "${_LLVM_EBUILDS_ECLASS}" ]] ; then
 
