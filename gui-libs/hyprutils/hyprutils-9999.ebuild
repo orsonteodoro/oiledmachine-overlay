@@ -27,7 +27,7 @@ DESCRIPTION="Hyprland utilities library used across the ecosystem"
 HOMEPAGE="https://github.com/hyprwm/hyprutils"
 
 if [[ "${PV}" =~ "9999" ]]; then
-	FALLBACK_COMMIT="83da5ee98d806cef2d05a1072b8d8b832bf52891"
+	FALLBACK_COMMIT="95983ee836ff205e615bba67d1f67098e1231941"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/hyprwm/hyprutils.git"
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
@@ -44,7 +44,7 @@ fi
 LICENSE="BSD"
 SOVER="13"
 SLOT="0/${SOVER}"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 DEPEND="
 	>=x11-libs/pixman-${PIXMAN_PV}:=
 "
