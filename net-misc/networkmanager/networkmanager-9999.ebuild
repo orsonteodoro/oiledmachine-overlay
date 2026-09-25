@@ -153,6 +153,8 @@ COMMON_DEPEND="
 	)
 "
 RDEPEND="${COMMON_DEPEND}
+	!net-misc/connman
+	!net-misc/netifrc
 	acct-group/plugdev:*
 	arping? (
 		>=net-analyzer/arping-${ARPING_PV}:=

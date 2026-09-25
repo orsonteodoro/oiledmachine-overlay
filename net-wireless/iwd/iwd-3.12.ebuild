@@ -52,10 +52,19 @@ RDEPEND="
 	${DEPEND}
 	acct-group/netdev:*
 	net-wireless/wireless-regdb:=
-	selinux? ( sec-policy/selinux-networkmanager:* )
+	selinux? (
+		sec-policy/selinux-networkmanager:*
+	)
 	standalone? (
-		systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
-		!systemd? ( virtual/resolvconf:* )
+	        !net-misc/connman
+		!net-misc/netifrc
+		!net-misc/networkmanager
+		!systemd? (
+			virtual/resolvconf:*
+		)
+		systemd? (
+			>=sys-apps/systemd-${SYSTEMD_PV}:=
+		)
 	)
 "
 
