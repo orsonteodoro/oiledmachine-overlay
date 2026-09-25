@@ -10,7 +10,8 @@ EAPI=8
 # This ebuild contains AI generated synthetic data.
 
 inherit secure-version
-#cef_binary_154.0.22+g<CEF_BIN_PV_REV>+chromium-<CEF_BIN_PV_CHROMIUM>_linux64_beta.tar.bz2
+FLAVOR="" # "_beta" or ""
+#cef_binary_<PV>+g<CEF_BIN_PV_REV>+chromium-<CEF_BIN_PV_CHROMIUM>_linux64<FLAVOR>.tar.bz2
 
 #CEF_BIN_PV_CHROMIUM="154.0.8037.17"
 #CEF_BIN_PV_CHROMIUM_A="154"
@@ -78,26 +79,26 @@ S="${WORKDIR}" # Dummy
 SRC_URI="
 	amd64? (
 		!minimal? (
-https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linux64_beta.tar.bz2
+https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linux64${FLAVOR}.tar.bz2
 		)
 		minimal? (
-https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linux64_beta_minimal.tar.bz2
+https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linux64${FLAVOR}_minimal.tar.bz2
 		)
 	)
 	arm64? (
 		!minimal? (
-https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm64_beta.tar.bz2
+https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm64${FLAVOR}.tar.bz2
 		)
 		minimal? (
-https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm64_beta_minimal.tar.bz2
+https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm64${FLAVOR}_minimal.tar.bz2
 		)
 	)
 	arm? (
 		!minimal? (
-https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm_beta.tar.bz2
+https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm${FLAVOR}.tar.bz2
 		)
 		minimal? (
-https://cef-builds.spotifycdn.com/cef_binary_154.0.22%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm_beta_minimal.tar.bz2
+https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_BIN_PV_REV}%2Bchromium-${CEF_BIN_PV_CHROMIUM}_linuxarm${FLAVOR}_minimal.tar.bz2
 		)
 	)
 "
