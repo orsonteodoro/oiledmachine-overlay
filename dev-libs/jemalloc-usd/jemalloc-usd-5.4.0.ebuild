@@ -61,7 +61,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
-	SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
+	SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/jemalloc-${PV}.tar.bz2"
 	S="${WORKDIR}/${MY_PN}-${PV}"
 fi
 

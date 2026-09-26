@@ -31,7 +31,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-JEMALLOC_COMMIT="61dc1da395644ac30ea1bcead839689c9367855e" # 160/161 green checkmarks
+JEMALLOC_PV="5.4.0"
 
 BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
 DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
@@ -59,8 +59,8 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv ~x86 ~amd64-linux"
 SRC_URI="
 https://dl.winehq.org/mono/sources/mono/mono-${PV}.tar.xz
 jemalloc? (
-	https://github.com/jemalloc/jemalloc/archive/${JEMALLOC_COMMIT}.tar.gz
-		-> jemalloc-${JEMALLOC_COMMIT:0:7}.tar.gz
+	https://github.com/jemalloc/jemalloc/archive/${JEMALLOC_PV}.tar.gz
+		-> jemalloc-${JEMALLOC_PV}.tar.gz
 )
 mono_trainers_acceptance_tests_coreclr? (
 	https://github.com/mono/coreclr/archive/${MONO_CORECLR_COMMIT}.tar.gz
@@ -211,7 +211,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
@@ -327,9 +327,9 @@ ewarn
 src_unpack() {
 	unpack "${P}.tar.xz"
 	if use jemalloc ; then
-		unpack "jemalloc-${JEMALLOC_COMMIT:0:7}.tar.gz"
+		unpack "jemalloc-${JEMALLOC_PV}.tar.gz"
 		mv \
-			"${WORKDIR}/jemalloc-${JEMALLOC_COMMIT}" \
+			"${WORKDIR}/jemalloc-${JEMALLOC_PV}" \
 			"${S}/mono/utils/jemalloc/jemalloc" \
 			|| die
 	fi
