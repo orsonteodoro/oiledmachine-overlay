@@ -470,6 +470,6 @@ ewarn "EAP_MD5 is considered insecure.  Do not use"
 ewarn "TKIP is considered insecure.  Do not use."
 ewarn "TLS 1.0/1.1 is considered insecure.  Do not use."
 ewarn "WEP is considered insecure.  Do not use."
-ewarn "WPA1+TKIP is considered insecure.  Do not use."
+ewarn "WPA1 + TKIP is considered insecure.  Do not use."
 einfo "Use a 16 length password safe generated preshared key for WPA2-Personal to mitigate against dictionary or brute force attack"
 }
