@@ -43,6 +43,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/lcms-9999"
+	"media-libs/libexif-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"sys-libs/readline-9999"
 	"x11-libs/libX11-9999"

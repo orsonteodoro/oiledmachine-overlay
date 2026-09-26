@@ -63,6 +63,7 @@ CHKL_TIMESTAMPS=(
 	"media-gfx/imagemagick-9999"
 	"media-gfx/graphicsmagick-9999"
 	"media-libs/lcms-9999"
+	"media-libs/libexif-9999"
 	"media-libs/libheif-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
