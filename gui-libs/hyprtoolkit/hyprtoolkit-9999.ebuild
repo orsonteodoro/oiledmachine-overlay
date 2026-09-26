@@ -56,7 +56,7 @@ SOVER="6"
 SLOT="0/${SOVER}"
 IUSE="
 test
-ebuild_revision_4
+ebuild_revision_5
 "
 
 BDEPEND="
@@ -114,6 +114,16 @@ eerror "Expected SOVER:  ${expected_sover}"
 }
 
 src_configure() {
+	local libdir=$(get_libdir)
+	if ls "${ESYSROOT}/usr/${libdir}/libabsl"*".so"* >/dev/null 2>&1 ; then
+eerror
+eerror "Detected vendored/monoslot abseil-cpp."
+eerror
+eerror "Uninstall ceres-solver and ${PN} and the monoslot abseil-cpp if any."
+eerror "Try again after libabsl*.so* is completely removed from ${libdir}."
+eerror
+		die
+	fi
 	chkl_check_many_timestamps
 	abseil-cpp_src_configure
 	local mycmakeargs=(

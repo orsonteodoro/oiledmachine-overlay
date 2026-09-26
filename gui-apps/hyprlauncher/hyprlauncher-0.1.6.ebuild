@@ -60,7 +60,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=dev-libs/hyprlang-${HYPRLANG_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -105,7 +107,21 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	cmake_src_prepare
+}
+
 src_configure() {
+	local libdir="$(get_libdir)"
+	if ls "${ESYSROOT}/usr/${libdir}/libabsl"*".so"* >/dev/null 2>&1 ; then
+# Prevent ODR violation.
+eerror
+eerror "Reinstall ceres-solver without vendored libs or remove monoslot"
+eerror "abseil-cpp if any.  libabsl*.so* must be completely removed in"
+eerror "${libdir}."
+eerror
+		die
+	fi
 	chkl_check_many_timestamps
 	abseil-cpp_src_configure
 	cmake_src_configure

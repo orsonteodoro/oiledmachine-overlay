@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Upstream uses abseil-cpp 20250127
+ABSEIL_CPP_SLOT="20260107" # Same as hyprtoolkit
 CXX_STANDARD=17
 PYTHON_COMPAT=( python3_{10..12} )
 DOCS_BUILDER="sphinx"
@@ -19,7 +21,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_RUST[@]/llvm_slot_}"
 )
 
-inherit cmake-multilib cuda flag-o-matic libcxx-slot libstdcxx-slot python-any-r1 docs
+inherit abseil-cpp cmake-multilib cuda flag-o-matic libcxx-slot libstdcxx-slot python-any-r1 docs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="8a566fcc156322160b96f8ca5f0ff755241c2d33"
@@ -44,7 +46,7 @@ SLOT="0/1"
 KEYWORDS="amd64 ~x86"
 IUSE+="
 examples cuda gflags lapack +schur sparse test
-ebuild_revision_2
+ebuild_revision_4
 "
 
 REQUIRED_USE="test? ( gflags ) sparse? ( lapack ) abi_x86_32? ( !sparse !lapack )"
@@ -56,6 +58,7 @@ BDEPEND="${PYTHON_DEPS}
 	doc? ( <dev-libs/mathjax-3 )
 "
 RDEPEND="
+	>=dev-cpp/abseil-cpp-20260107.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	dev-cpp/glog:=[gflags?,${MULTILIB_USEDEP}]
 	cuda? ( dev-util/nvidia-cuda-toolkit:= )
 	lapack? ( virtual/lapack:* )
@@ -106,9 +109,34 @@ src_prepare() {
 	# remove Werror
 	sed -e 's/-Werror=(all|extra)//g' \
 		-i CMakeLists.txt || die
+
+	# Prevent it from installing/colliding as monoslot abseil-cpp in /usr/lib64
+	rm -rf "${S}/third_party/abseil-cpp"
 }
 
 src_configure() {
+	abseil-cpp_src_configure
+
+	local libdir=$(get_libdir)
+	if ls "${ESYSROOT}/usr/${libdir}/libabsl"*".so"* >/dev/null 2>&1 ; then
+eerror
+eerror "Detected vendored libabsl*.so* libraries in ${libdir}."
+eerror
+eerror "Uninstall ceres-solver and all libs that depend on libabsl_base.so.*"
+eerror "and all monoslot abseil-cpp ebuilds.  Use one of the following to find"
+eerror "the ebuilds that link to vendored abseil-cpp."
+eerror
+eerror "ls /usr/${libdir}/libabsl_base.so*"
+eerror "equery belongs /usr/${libdir}/libabsl_base.so.2501.0.0"
+eerror
+eerror "  or"
+eerror
+eerror "ls /usr/${libdir}/libabsl_base.so*"
+eerror "scanelf -qR -N libabsl_base.so.2501.0.0 /usr/bin /usr/sbin /usr/${libdir}"
+eerror
+		die
+	fi
+
 	# CUSTOM_BLAS=OFF EIGENSPARSE=OFF MINIGLOG=OFF
 	local mycmakeargs=(
 		-DBUILD_BENCHMARKS=OFF
@@ -127,6 +155,8 @@ src_configure() {
 		-DMINIGLOG="no"
 		-DCUSTOM_BLAS="yes"
 		-DWITH_CUDA="$(usex cuda)"
+
+		-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/$(get_libdir)/cmake/absl"
 	)
 
 	if use cuda; then
@@ -147,10 +177,12 @@ src_test() {
 }
 
 src_install() {
+	[[ -d "${S}/third_party/abseil-cpp" ]] && die "QA:  Fix vendored abseil-cpp removal"
 	cmake-multilib_src_install
 
 	if use examples; then
 		docompress -x "/usr/share/doc/${PF}/examples"
 		dodoc -r "examples" "data"
 	fi
+	[[ -e "${ED}/usr/$(get_libdir)/libabsl_base.so.2501.0.0" ]] && die "QA:  Fix abseil-cpp install"
 }
