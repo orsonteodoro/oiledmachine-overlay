@@ -65,7 +65,8 @@ exist in build files.
 | Clang 20                        | Not supported                         | G23 (20.1.8)                                       |
 | Clang 21                        | Available                             | F43 (21.1.8), G23 (21.1.8), U26 (21.1.8)           |
 | Clang 22                        | Available                             | F44 (22.1.8), G23 (22.1.8)                         |
-| Clang 23                        | Limited support                       | F45 (23.1.0)                                       |
+| Clang 23                        | Available                             | F45 (23.1.0)                                       |
+| Clang 24                        | Limited support                       |                                                    |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)                          |
 | Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)                          |
 | Cython 3.1.0                    | Fully supported                       | F43 (3.1.3), U26 (3.1.6)                           |
