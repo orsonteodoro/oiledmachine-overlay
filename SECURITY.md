@@ -809,7 +809,7 @@ these **keywords** are detected in the commit message for projects:
 | Container escape               | CB                    | A container breakout that may lead to privilege escalation or blast radius scope increase (e.g. multiple containers or multiple companies exfiled by AI on the same rack) |
 | Corruption                     | "corruption"          | Possibly data tampering, unauthorized modification of sensitive records, unauthorized access/privileges, data loss                           |
 | CR/LF                          | CRLF                  | CR/LF injection, leading to credential theft, log poisoning, code execution, redirection to attacker control site                            |
-| Dangling pointer               | DP                    | Precondition for UAF, pointer to a reusable temporary-invalid attacker controlled address                                                    |
+| Dangling pointer               | DP                    | Precondition for UAF, pointer to a reusable temporary-invalid or fixed attacker controlled address                                           |
 | Data race                      | DR                    | A type of undefined behavior with a write without synchronization that may lead to incorrect results, corruption, altering security-critical data (e.g. access control bits) or over-optimization leading to DoS/IL |
 | Deadlock                       | DL                    | Possible denial of service, hard reset, data loss                                                                                            |
 | Double free                    | DF                    | Possible denial of service, crash or at worst attacker controlled execution or attacker controlled data capture                              |
@@ -856,7 +856,7 @@ these **keywords** are detected in the commit message for projects:
 | Uninitalized variable          | UVAR                  | Possible sensitive data leak, crash, random program misbehavior                                                                              |
 | Unsigned shift overflow        | IO, DoS               | The compiler will keep the check but relies on the project developer(s) to prevent a denial of service caused by overallocation              |
 | Use-after-free                 | UAF                   | Possible code execution or privilege escalation                                                                                              |
-| Validate                       | IV                    | Improper validation, possible security bypass or missing a guardrail to prevent a crash or overallocation (DoS)                              |
+| Validate                       | IV                    | Improper validation, possible security bypass or missing a guardrail to prevent a crash or overallocation (DoS), PT, MC (BO, HO, UAF, OOBW) -> RCE, OOBR -> ID |
 
 This is just a sample of common vulnerabilities.  Bumps are also provided for
 those that are not easily classified but have a disclosed/undisclosed GHSA or
