@@ -276,6 +276,7 @@ SECURE_TIMESTAMP["media_libs_libdisplay_info_9999"]="Nov 20, 2025 3:13:41 PM PST
 SECURE_TIMESTAMP["media_libs_libdvdnav_9999"]="Tue, Sep 23, 2025 7:48:59 AM PDT"
 SECURE_TIMESTAMP["media_libs_libdvdread_9999"]="Apr 1, 2026 9:38:43 AM PDT"
 SECURE_TIMESTAMP["media_libs_libepoxy_9999"]="Tue, 12 Oct 2021 02:41:41 +0900"
+SECURE_TIMESTAMP["media_libs_libexif_9999"]="Sep 24, 2026 12:44 AM PDT"
 SECURE_TIMESTAMP["media_libs_libglvnd_9999"]="Tue, 12 Sep 2023 08:02:00 -0600"
 SECURE_TIMESTAMP["media_libs_libheif_9999"]="Sep 21, 2026 12:37 PM PDT"
 SECURE_TIMESTAMP["media_libs_libid3tag_9999"]="May 27, 2026 04:20 PM PDT"

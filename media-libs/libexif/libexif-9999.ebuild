@@ -10,17 +10,37 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO ID IO OOBR UAF UM"
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/marcusmeissner.asc
 inherit autotools cflags-hardened multilib-minimal verify-sig
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	SO_CURRENT=15
+	SO_AGE=3
+	SOVER=$(( ${SO_CURRENT} - ${SO_AGE} ))
+	FALLBACK_COMMIT="7915d4f6e7d637b5cac41d7c2332fe3e610e1392"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/libexif/libexif.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SO_CURRENT=15
+	SO_AGE=3
+	SOVER=$(( ${SO_CURRENT} - ${SO_AGE} ))
+	SRC_URI="
+https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz
+verify-sig? ( https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz.asc )
+	"
+fi
+
 DESCRIPTION="Library for parsing, editing, and saving EXIF data"
 HOMEPAGE="https://libexif.github.io/"
-SRC_URI="
-	https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz
-	verify-sig? ( https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.xz.asc )
-"
 
 LICENSE="LGPL-2+"
-SLOT="0"
+SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="doc nls"
+IUSE+="
+doc nls
+ebuild_revision_1
+"
 
 RDEPEND="nls? ( virtual/libintl )"
 DEPEND="${RDEPEND}"
@@ -38,6 +58,28 @@ PATCHES=(
 QA_CONFIG_IMPL_DECL_SKIP=(
 	localtime_s # bug #898318
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		verify-sig_src_unpack
+	fi
+	local c=$(grep -e "LIBEXIF_CURRENT=" "${S}/configure.ac" | cut -f 2 -d "=")
+	local a=$(grep -e "LIBEXIF_AGE=" "${S}/configure.ac" | cut -f 2 -d "=")
+	local actual_sover=$(( ${c} - ${a} ))
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SO_CURRENT, SO_AGE, SOVER, or PV"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
+	fi
+}
 
 src_prepare() {
 	default
