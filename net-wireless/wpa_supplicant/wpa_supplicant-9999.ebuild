@@ -4,6 +4,7 @@
 EAPI=8
 
 # See also https://git.w1.fi/cgit/hostap/log/
+# This ebuild uses AI inference to better inform about insecure protocols/configuration.
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AB CRSH DOS CE HO IA IL IO IU IV ML NPD OOBR PE"
@@ -37,7 +38,7 @@ fi
 SLOT="0"
 IUSE+="
 +ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps
-ebuild_revision_3
+ebuild_revision_4
 "
 
 # CONFIG_PRIVSEP=y does not have sufficient support for the new driver
@@ -156,7 +157,7 @@ src_configure() {
 	chkl_check_many_timestamps
 
 	# Currently disabled till the issue is isolated
-	#cflags-hardened_append
+	cflags-hardened_append
 
 	# Toolchain setup
 	tc-export CC PKG_CONFIG
@@ -448,20 +449,6 @@ pkg_postinst() {
 		ewarn "WARNING: your old configuration file ${EROOT}/etc/wpa_supplicant.conf"
 		ewarn "needs to be moved to ${EROOT}/etc/wpa_supplicant/wpa_supplicant.conf"
 	fi
-	if ! use wep; then
-		einfo "WARNING: You are building with WEP support disabled, which is recommended since"
-		einfo "this protocol is deprecated and insecure.  If you still need to connect to"
-		einfo "WEP-enabled networks, you may turn this flag back on.  With this flag off,"
-		einfo "WEP-enabled networks will not even show up as available."
-		einfo "If your network is missing you may wish to USE=wep"
-	fi
-	if ! use tkip; then
-		ewarn "WARNING: You are building with TKIP support disabled, which is recommended since"
-		ewarn "this protocol is deprecated and insecure.  If you still need to connect to"
-		ewarn "TKIP-enabled networks, you may turn this flag back on.  With this flag off,"
-		ewarn "TKIP-enabled networks, including mixed mode TKIP/AES-CCMP will not even show up"
-		ewarn "as available.  If your network is missing you may wish to USE=tkip"
-	fi
 
 	# Mea culpa, feel free to remove that after some time --mgorny.
 	local fn
@@ -477,4 +464,12 @@ pkg_postinst() {
 	done
 
 	systemd_reenable wpa_supplicant.service
+
+ewarn "EAP_LEAP is considered insecure.  Do not use"
+ewarn "EAP_MD5 is considered insecure.  Do not use"
+ewarn "TKIP is considered insecure.  Do not use."
+ewarn "TLS 1.0/1.1 is considered insecure.  Do not use."
+ewarn "WEP is considered insecure.  Do not use."
+ewarn "WPA1+TKIP is considered insecure.  Do not use."
+einfo "Use a 16 length password safe generated preshared key for WPA2-Personal to mitigate against dictionary or brute force attack"
 }
