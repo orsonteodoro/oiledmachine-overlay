@@ -815,13 +815,13 @@ these **keywords** are detected in the commit message for projects:
 | Double free                    | DF                    | Possible denial of service, crash or at worst attacker controlled execution or attacker controlled data capture                              |
 | Hang                           | H                     | Possible denial of service if attacker controlled, but still remediated to improve software quality                                          |
 | Heap overflow                  | HO                    | Possible code execution or memory corruption                                                                                                 |
-| Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time in a multi process environment or never processes to the next step   |
-| Infinite recursion             | IR                    | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                                      |
-| Infoleak                       | INFOLEAK, ID          | Leading to stolen sensitive data or crown jewels, ALSR bypass, reconaissance, social engineering attack                                      |
 | Improper cleanup               | "improper cleanup"    | Same as improper teardown                                                                                                                    |
 | Improper secret sanitization   | ID                    | Reducing or accelerating the search space, weakening security, leaking partially or completely sensitive data                                |
 | Improper teardown              | "improper teardown"   | Either translates to memory leak, full/partial sensitive data leak, or unauthorized access and impersonation                                 |
 | Improper validation            | IV                    | Possible business logic abuse, injection, or denial of service                                                                               |
+| Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time in a multi process environment or never processes to the next step   |
+| Infinite recursion             | IR                    | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                                      |
+| Infoleak                       | INFOLEAK, ID          | Leading to stolen sensitive data or crown jewels, ALSR bypass, reconaissance, social engineering attack                                      |
 | Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion, attacker's code being executed, data theft                                  |
 | Integer overflow               | IO                    | Possible zero click vulernability                                                                                                            |
 | Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                                           |
