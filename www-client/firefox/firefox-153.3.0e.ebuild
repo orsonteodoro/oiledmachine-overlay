@@ -772,12 +772,12 @@ DEPEND+="
 if [[ -n "${MOZ_ESR}" ]] ; then
 	RDEPEND+="
 		!www-client/firefox:rapid
-		~www-client/firefox-l10n-${PV}:0/esr
+		~www-client/firefox-l10n-${PV/e}:0/esr
 	"
 else
 	RDEPEND+="
 		!www-client/firefox:esr
-		~www-client/firefox-l10n-${PV}:0/rapid
+		~www-client/firefox-l10n-${PV/e}:0/rapid
 	"
 fi
 
