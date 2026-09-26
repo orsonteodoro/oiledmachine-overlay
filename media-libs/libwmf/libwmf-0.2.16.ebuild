@@ -19,7 +19,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl gnome2-utils secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="94b932de7a4aa6bceb0ff630c65b4aa9cc1dfd1e"
+	FALLBACK_COMMIT="a916f30f6232cf3e28df285fcba5753ee5b1aa0f"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/caolanm/libwmf.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -39,7 +39,10 @@ HOMEPAGE="
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE+=" debug doc expat X"
+IUSE+="
+debug doc expat X
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=app-text/ghostscript-gpl-${GHOSTSCRIPT_GPL_PV}:=
