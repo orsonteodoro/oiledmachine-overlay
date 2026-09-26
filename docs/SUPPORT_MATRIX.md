@@ -36,7 +36,7 @@ exist in build files.
 | glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G23 (2.43), U22 (2.35), U24 (2.39), U26 (2.43)         |
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), G23 (2.43), U22 (2.35), U24 (2.39), U26 (2.43)                                             |
 | glibc                | alpha    | Not supported               |                                                                                                                    |
-| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G23 (2.43), U22 (2.35), U24 (2.39), U26 (2.43)         |
+| glibc >= 3.43        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G23 (2.43), U22 (2.35), U24 (2.39), U26 (2.43)         |
 | glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), G23 (2.43), U24 (2.39)  U24 (2.39), U26 (2.43)                                             |
 | glibc                | arm64    | Available                   | D12 (2.36), D13 (2.41), G23 (2.43), U22 (2.35), U24 (2.39), U26 (2.43)                                             |
 | glibc                | hppa     | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                                     |
@@ -49,7 +49,7 @@ exist in build files.
 | glibc                | s390x    | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39), U26 (2.43)                                                         |
 | glibc                | sparc64  | Available                   | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                                     |
 | glibc                | x86      | Not supported               | D12 (2.36), D13 (2.41), G23 (2.43), U22 (2.35), U24 (2.39), U26 (2.43)                                             |
-| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), D13 (1.2.5), F43 (1.2.5), F44 (1.2.5), F45 (1.2.6), G23 (1.2.6) U22 (1.2.2), U24 (1.2.4), U26 (1.2.5) |
+| musl >= 1.2.6        | *        | Available                   | D12 (1.2.3), D13 (1.2.5), F43 (1.2.5), F44 (1.2.5), F45 (1.2.6), G23 (1.2.6) U22 (1.2.2), U24 (1.2.4), U26 (1.2.5) |
 
 * Using 32-bit may increase the chances of high-critical vulnerabilities.  Examples:
   - ASLR effectiveness on 32-bit is estimated to be 10-20% or 20-50% and can lead to increased privilege escalation, data tampering, information disclosure
@@ -88,12 +88,12 @@ exist in build files.
 | Rust 1.91.0                     | Not supported                         |                                                    |
 | Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)           |
 | Rust 1.92.0                     | Available                             | U26 (1.92.0)                                       |
-| Rust 1.93.1 [C]                 | Available                             | U26 (1.93.1)                                       |
+| Rust 1.93.1 [C]                 | Fully supported                       | U26 (1.93.1)                                       |
 | Rust 1.94.1                     | Available                             |                                                    |
 | Rust 1.95.0                     | Available                             |                                                    |
 | Rust 1.96.1                     | Available                             |                                                    |
 | Rust 1.97.1                     | Available                             | G23 (1.97.1)                                       |
-| Rust 1.98.1 [C]                 | Available                             | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
+| Rust 1.98.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
 | Rust-9999 (1.100.0-nightly) [C] | Limited support                       |                                                    |
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
