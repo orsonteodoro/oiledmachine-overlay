@@ -200,3 +200,6 @@ app-misc/jq oniguruma
 
 # Re-enable feature complete librice support on next stable (2.54.x)
 net-libs/webkit-gtk librice
+
+# Insecure protocols
+net-wireless/wpa_supplicant tkip wep
