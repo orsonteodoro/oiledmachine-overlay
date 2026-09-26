@@ -202,4 +202,4 @@ app-misc/jq oniguruma
 net-libs/webkit-gtk librice
 
 # Insecure protocols
-net-wireless/wpa_supplicant tkip wep
+net-wireless/wpa_supplicant tkip wep wps
