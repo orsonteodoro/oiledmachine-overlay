@@ -165,7 +165,6 @@ Language defaults
 * [1] This is the old oiledmachine-overlay's defaults for testing.
       Compatible with U24.
 * [2] The latest stable KEYWORDS for the G23 distro.
-      Compatible with U26, F44, F45.
 * [3] CUDA GPU acceleration is only available with GCC built packages on this
       overlay for this GCC & Clang compiler combo.  llvm_slot_14 is hypothetical
       and not supported on this overlay.
