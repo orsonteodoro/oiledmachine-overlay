@@ -78,7 +78,7 @@ exist in build files.
 | GCC 13                          | Fully supported                       | U24 (13.2), G23 (13.4.1_p20260603)                 |
 | GCC 14                          | Partially Supported                   | D13 (14.2), G23 (14.3.1_p20260604)                 |
 | GCC 15                          | Fully supported                       | F43 (15.3.1), G23 (15.3.0), U26 (15.2.0)           |
-| GCC 16			  | Not Supported                         | F44 (16.2.1), F45 (16.2.1)                         |
+| GCC 16			  | Available                             | F44 (16.2.1), F45 (16.2.1)                         |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                                       |
 | Rust 1.74.1                     | Available                             |                                                    |
 | Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)                         |
