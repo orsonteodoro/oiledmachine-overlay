@@ -29,7 +29,7 @@ unset -f _llvm_set_globals
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-inherit check-compiler-switch cmake crossdev flag-o-matic libstdcxx-slot llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake crossdev flag-o-matic flag-o-matic-om libstdcxx-slot llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
@@ -169,6 +169,8 @@ src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	fix_mb_len_max
 
 	if ! test_compiler && ! test_compiler ; then
 		local nolib_flags=( -nodefaultlibs -lc )
