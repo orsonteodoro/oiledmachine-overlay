@@ -821,7 +821,7 @@ these **keywords** are detected in the commit message for projects:
 | Improper validation            | IV                    | Possible business logic abuse, injection, or denial of service                                                                               |
 | Infinite loop                  | IL                    | Possible denial of service that takes longer than usual processing time in a multi process environment or never processes to the next step   |
 | Infinite recursion             | IR                    | Same as uncontrolled recursion that causes severe lag or disk thrashing                                                                      |
-| Infoleak                       | INFOLEAK, ID          | Leading to stolen sensitive data or crown jewels, ALSR bypass, reconaissance, social engineering attack                                      |
+| Infoleak                       | INFOLEAK, ID          | Leading to stolen sensitive data or crown jewels, ALSR bypass, reconaissance, increased social engineering attack leverage/success           |
 | Injection                      | INJECT                | Any type of injection vulnerability leading to attacker evasion, attacker's code being executed, data theft                                  |
 | Integer overflow               | IO                    | Possible zero click vulernability                                                                                                            |
 | Leak                           | LEAK                  | A miscellaneous leak that has unknown behavior typically improper cleanup/teardown                                                           |
