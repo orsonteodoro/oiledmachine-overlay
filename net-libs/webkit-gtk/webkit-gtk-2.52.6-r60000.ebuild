@@ -904,6 +904,7 @@ RDEPEND+="
 	>=net-libs/libsoup-${LIBSOUP3_PV}:=[${MULTILIB_USEDEP},introspection?]
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
+	sys-kernel/mitigate-dt:*
 	sys-kernel/mitigate-id:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	~dev-util/glib-utils-${GLIB_PV}:=

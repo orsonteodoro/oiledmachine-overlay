@@ -1842,6 +1842,7 @@ RDEPEND+="
 	${COMMON_DEPEND}
 	!www-client/chromium:0
 	>=www-client/chromium-common-2:*
+	sys-kernel/mitigate-dt:*
 	sys-kernel/mitigate-id:*
 	virtual/ttf-fonts:*
 	virtual/patent-status:*[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
@@ -3366,15 +3367,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold-ungoogled-chromium.patch"
+			"A${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold.patch"
+			"A${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold.patch"
+			"A${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold.patch"
 		)
 	fi
 

@@ -155,27 +155,19 @@ RESTRICT="strip mirror" # Speed up downloads and reduce snooping
 BDEPEND="app-arch/unzip"
 RDEPEND="${DEPEND}
 	!www-client/firefox-bin:0
-	apulse? (
-		>=media-libs/libpulse-${LIBPULSE_PV}
-	)
-	libpulse? (
-		media-sound/apulse
-	)
+	$(secure-version_gen_ffmpeg_depends '4.0-8.1' '' 'single')
 	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}
 	>=dev-libs/glib-${GLIB_PV}
 	>=media-libs/alsa-lib-${ALSA_LIB_PV}
 	>=media-libs/fontconfig-${FONTCONFIG_PV}
 	>=media-libs/freetype-${FREETYPE_PV}
-	$(secure-version_gen_ffmpeg_depends '4.0-8.1' '' 'single')
 	>=sys-apps/dbus-${DBUS_PV}
-	virtual/freedesktop-icon-theme
+	>=sys-libs/glibc-${GLIBC_PV}
 	>=x11-libs/cairo-${CAIRO_PV}[X]
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
 	>=x11-libs/gtk+-${GTK3_PV}:3[X,wayland?]
 	>=x11-libs/libX11-${LIBX11_PV}
-	x11-libs/libXcomposite
 	>=x11-libs/libXcursor-${LIBXCURSOR_PV}
-	x11-libs/libXdamage
 	>=x11-libs/libXext-${LIBXEXT_PV}
 	>=x11-libs/libXfixes-${LIBXFIXES_PV}
 	>=x11-libs/libXi-${LIBXI_PV}
@@ -183,7 +175,20 @@ RDEPEND="${DEPEND}
 	>=x11-libs/libXrender-${LIBXRENDER_PV}
 	>=x11-libs/libxcb-${LIBXCB_PV}
 	>=x11-libs/pango-${PANGO_PV}
-	selinux? ( sec-policy/selinux-mozilla:* )
+	sys-kernel/mitigate-dt:*
+	sys-kernel/mitigate-id:*
+	virtual/freedesktop-icon-theme
+	x11-libs/libXcomposite
+	x11-libs/libXdamage
+	apulse? (
+		>=media-libs/libpulse-${LIBPULSE_PV}
+	)
+	libpulse? (
+		media-sound/apulse
+	)
+	selinux? (
+		sec-policy/selinux-mozilla:*
+	)
 "
 
 # ESR and rapid dependencies.

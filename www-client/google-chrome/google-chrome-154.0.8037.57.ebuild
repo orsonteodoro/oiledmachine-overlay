@@ -183,7 +183,6 @@ RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}
 	>=dev-libs/nspr-${NSPR_PV}
 	>=dev-libs/nss-${NSS_PV}
-	media-fonts/liberation-fonts
 	>=media-libs/alsa-lib-${ALSA_LIB_PV}
 	>=media-libs/mesa-${MESA_PV}[gbm(+)]
 	>=net-misc/curl-${CURL_PV}
@@ -193,16 +192,8 @@ RDEPEND="
 	>=sys-libs/libcap-${LIBCAP_PV}
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}
-	gtk3? (
-		>=x11-libs/gtk+-${GTK3_PV}:3[X]
-	)
-	gtk4? (
-		>=gui-libs/gtk-${GTK4_PV}:4[X]
-	)
 	>=x11-libs/libdrm-${LIBDRM_PV}
 	>=x11-libs/libX11-${LIBX11_PV}
-	x11-libs/libXcomposite
-	x11-libs/libXdamage
 	>=x11-libs/libXext-${LIBXEXT_PV}
 	>=x11-libs/libXfixes-${LIBXFIXES_PV}
 	>=x11-libs/libXrandr-${LIBXRANDR_PV}
@@ -211,8 +202,23 @@ RDEPEND="
 	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}
 	>=x11-libs/pango-${PANGO_PV}
 	>=x11-misc/xdg-utils-${XDG_UTILS_PV}
-	qt6? ( >=dev-qt/qtbase-${QTBASE6_PV}:6[gui,widgets] )
-	selinux? ( sec-policy/selinux-chromium:* )
+	media-fonts/liberation-fonts
+	sys-kernel/mitigate-dt:*
+	sys-kernel/mitigate-id:*
+	x11-libs/libXcomposite
+	x11-libs/libXdamage
+	gtk3? (
+		>=x11-libs/gtk+-${GTK3_PV}:3[X]
+	)
+	gtk4? (
+		>=gui-libs/gtk-${GTK4_PV}:4[X]
+	)
+	qt6? (
+		>=dev-qt/qtbase-${QTBASE6_PV}:6[gui,widgets]
+	)
+	selinux? (
+		sec-policy/selinux-chromium:*
+	)
 "
 
 QA_PREBUILT="*"

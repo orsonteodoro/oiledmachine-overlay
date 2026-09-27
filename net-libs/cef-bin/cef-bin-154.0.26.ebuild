@@ -182,7 +182,6 @@ RDEPEND+="
 	>=sys-libs/glibc-${GLIBC_PV}
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/pango-${PANGO_PV}
-	virtual/udev
 	>=x11-libs/libX11-${LIBX11_PV}
 	>=x11-libs/libxcb-${LIBXCB_PV}
 	>=x11-libs/libXcomposite-0.4.5
@@ -191,6 +190,9 @@ RDEPEND+="
 	>=x11-libs/libXfixes-${LIBXFIXES_PV}
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}
 	>=x11-libs/libXrandr-${LIBXRANDR_PV}
+	sys-kernel/mitigate-dt:*
+	sys-kernel/mitigate-id:*
+	virtual/udev
 	cefclient? (
 		>=x11-libs/gtk+-${GTK3_PV}:3
 	)
