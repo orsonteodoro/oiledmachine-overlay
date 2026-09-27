@@ -9,15 +9,20 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"gcc_slot_14_3" # LTS
+	# Upstream uses 14-16
+	"gcc_slot_14_3" # D13
+	"gcc_slot_15_3" # F43, G23, U26
+	"gcc_slot_16_1" # F44, F45
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"llvm_slot_18" # LTS
+	# Upstream uses 19-20
+	"llvm_slot_19" # D13
+	"llvm_slot_20"
 )
 
-inherit flag-o-matic libcxx-slot libstdcxx-slot toolchain-funcs
+inherit flag-o-matic libcxx-slot libstdcxx-slot secure-version toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -136,10 +141,10 @@ RDEPEND="
 		$(gen_patched_kernel_list 6.1)
 	)
 	elibc_glibc? (
-		>=sys-libs/glibc-2.36
+		>=sys-libs/glibc-${GLIBC_PV}
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.1.20
+		>=sys-libs/musl-${MUSL_PV}
 	)
 "
 DEPEND="
