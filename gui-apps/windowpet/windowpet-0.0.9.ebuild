@@ -700,6 +700,12 @@ libappindicator libayatana-appindicator tray wayland +X
 ebuild_revision_17
 "
 REQUIRED_USE="
+	tray? (
+		|| (
+			libappindicator
+			libayatana-appindicator
+		)
+	)
 	|| (
 		wayland
 		X
