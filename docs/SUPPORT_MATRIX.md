@@ -95,7 +95,7 @@ exist in build files.
 | Rust 1.96.1                     | Available                             |                                                    |
 | Rust 1.97.1                     | Available                             | G23 (1.97.1)                                       |
 | Rust 1.98.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
-| Rust-9999 (1.100.0-nightly) [C] | Limited support                       |                                                    |
+| Rust-9999 (1.101.0-nightly) [C] | Limited support                       |                                                    |
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
