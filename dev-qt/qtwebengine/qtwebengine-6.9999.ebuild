@@ -111,9 +111,6 @@ RDEPEND="
 	>=dev-libs/libxslt-${LIBXSLT_PV}:=
 	>=dev-libs/nspr-${NSPR_PV}:=
 	>=dev-libs/nss-${NSS_PV}:=
-	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]
-	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
-	~dev-qt/qtwebchannel-${PV}:6=[qml?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=
 	>=media-libs/freetype-${FREETYPE_PV}:=
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=
@@ -126,13 +123,8 @@ RDEPEND="
 	>=media-libs/opus-${OPUS_PV}:=
 	>=media-libs/tiff-${TIFF_PV}:=
 	>=sys-apps/dbus-${DBUS_PV}:=
-	sys-apps/pciutils:=
-	virtual/libudev:=
-	virtual/minizip:=
 	>=virtual/zlib-${ZLIB_PV}:=
 	>=x11-libs/libX11-${LIBX11_PV}:=
-	x11-libs/libXcomposite:=
-	x11-libs/libXdamage:=
 	>=x11-libs/libXext-${LIBXEXT_PV}:=
 	>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
 	>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
@@ -141,8 +133,22 @@ RDEPEND="
 	>=x11-libs/libxcb-${LIBXCB_PV}:=
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
-	alsa? ( >=media-libs/alsa-lib-${ALSA_LIB_PV}:= )
-	!bindist? ( >=media-libs/openh264-${OPENH264_PV}:= )
+	sys-apps/pciutils:=
+	sys-kernel/mitigate-dt:*[mseal]
+	sys-kernel/mitigate-id:*
+	virtual/libudev:=
+	virtual/minizip:=
+	x11-libs/libXcomposite:=
+	x11-libs/libXdamage:=
+	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},accessibility=,gui,opengl=,ssl,vulkan?,widgets?]
+	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},widgets?]
+	~dev-qt/qtwebchannel-${PV}:6=[qml?]
+	!bindist? (
+		>=media-libs/openh264-${OPENH264_PV}:=
+	)
+	alsa? (
+		>=media-libs/alsa-lib-${ALSA_LIB_PV}:=
+	)
 	designer? (
 		~dev-qt/qttools-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},designer]
 	)
@@ -152,10 +158,18 @@ RDEPEND="
 	elibc_musl? (
 		>=sys-libs/musl-${MUSL_PV}:=
 	)
-	geolocation? ( ~dev-qt/qtpositioning-${PV}:6= )
-	kerberos? ( virtual/krb5:* )
-	opengl? ( >=media-libs/libglvnd-${LIBGLVND_PV}:=[X] )
-	pulseaudio? ( >=media-libs/libpulse-${LIBPULSE_PV}:=[glib] )
+	geolocation? (
+		~dev-qt/qtpositioning-${PV}:6=
+	)
+	kerberos? (
+		virtual/krb5:*
+	)
+	opengl? (
+		>=media-libs/libglvnd-${LIBGLVND_PV}:=[X]
+	)
+	pulseaudio? (
+		>=media-libs/libpulse-${LIBPULSE_PV}:=[glib]
+	)
 	screencast? (
 		>=dev-libs/glib-${GLIB_PV}:=
 		>=media-video/pipewire-${PIPEWIRE_PV}:=
@@ -163,23 +177,29 @@ RDEPEND="
 	system-icu? (
 		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
-	vaapi? ( >=media-libs/libva-${LIBVA_PV}:=[X] )
+	vaapi? (
+		>=media-libs/libva-${LIBVA_PV}:=[X]
+	)
 "
 DEPEND="
 	${RDEPEND}
 	>=media-libs/libglvnd-${LIBGLVND_PV}:=
-	x11-base/xorg-proto:=
 	>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
 	>=x11-libs/libXi-${LIBXI_PV}:=
 	>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=
+	x11-base/xorg-proto:=
 	clang? (
 		llvm-runtimes/libatomic-stub:=
 	)
-	elibc_musl? ( sys-libs/queue-standalone:= )
+	elibc_musl? (
+		sys-libs/queue-standalone:=
+	)
 	gcc? (
 		sys-devel/gcc:=
 	)
-	screencast? ( media-libs/libepoxy:=[egl(+)] )
+	screencast? (
+		media-libs/libepoxy:=[egl(+)]
+	)
 	vaapi? (
 		vulkan? ( >=dev-util/vulkan-headers-${VULKAN_PV}:= )
 	)
@@ -188,8 +208,8 @@ BDEPEND="
 	$(python_gen_any_dep '
 		dev-python/html5lib[${PYTHON_USEDEP}]
 	')
-	dev-util/gperf
 	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}[icu,ssl]
+	dev-util/gperf
 	sys-devel/bison
 	sys-devel/flex
 "
