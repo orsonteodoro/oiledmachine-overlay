@@ -28,9 +28,9 @@ PYTHON_COMPAT=( python3_{10..14} )
 # For releases, see also https://sources.debian.org/src/ca-certificates/
 # For the type of release, see also https://firefox-source-docs.mozilla.org/security/nss/releases/index.html#mozilla-projects-nss-releases
 # For certdata commits IDs, see https://github.com/mozilla/nss/commits/master/lib/ckfw/builtins/certdata.txt
-NSS_LIVE_COMMIT="a073fb61a7003fffa193491c8c8eedf5676d3de4" # Sep 18, 2026 (NSS master) # oiledmachine-overlay preference
+NSS_LIVE_COMMIT="fc168131f8a629e30c38b372e08848cabd443194" # Sep 8, 2026 (NSS master) # oiledmachine-overlay preference, associated with certdata.txt
 NSS_ESR_COMMIT="108de14257bf363cf53a42e1ef382d44fe39c599" # Apr 22, 2026 (NSS 3.125) # distro preference
-NSS_LATEST_COMMIT="23b159efa6d74923192ab6c7f6d0d5f3ad952d4d" # Jul 14, 2026 (NSS 3.129)
+NSS_LATEST_COMMIT="97045cee4390aa5c035f95e6db13f3cd7c940fc1" # Jul 14, 2026 (NSS 3.130)
 # Sep 18, 2026 (fc16813, NSS 3.129) # https://wiki.mozilla.org/CA/Included_Certificates
 
 NSS_FLAVORS=(
@@ -89,7 +89,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 ${PRECOMPILED} || IUSE+=" cacert"
 IUSE+="
 ${NSS_FLAVORS[@]}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	^^ (
