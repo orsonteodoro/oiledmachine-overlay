@@ -5,6 +5,7 @@
 EAPI=8
 
 # Security:  update every kernel version bump
+# This ebuild uses AI inference to better inform the FAFO user of the risks of bypassing mitigation.
 
 KERNEL_MIN_SLOT="5.10" # inclusive
 KERNEL_MIN_LTS_SLOT="6.1" # inclusive
