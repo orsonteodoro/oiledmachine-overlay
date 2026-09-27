@@ -109,7 +109,8 @@ eerror "Expected timestamp:  >= "$(date --date="@${non_vulernable_time}")
 eerror
 eerror "Sometimes ebuilds will transition from live to tagged versioning and"
 eerror "vice versa.  If the live ebuild is missing on ::oiledmachine-overlay,"
-eerror "it is probably a tagged release."
+eerror "it is probably a tagged release.  Emerge with \${CATEGORY}/\${PN}"
+eerror "without the version instead."
 eerror
 			die
 		fi
