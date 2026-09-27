@@ -27,7 +27,9 @@ WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
 CHKL_TIMESTAMPS+=(
 	"app-accessibility/at-spi2-core-9999"
+	#"app-accessibility/speech-dispatcher-9999"
 	"app-misc/jq-9999"
+	#"dev-db/sqlite-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.90.9999"
 	"dev-libs/wayland-9999"
@@ -37,9 +39,12 @@ CHKL_TIMESTAMPS+=(
 	"net-misc/wget-9999"
 	"net-print/cups-9999"
 	"sys-apps/dbus-9999"
-	"x11-libs/libX11-9999"
+	"x11-libs/cairo-9999"
 	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/libX11-9999"
 	"x11-libs/libxcb-9999"
+	"x11-libs/libxkbcommon-9999"
+	"x11-libs/pango-9999"
 )
 
 inherit chkl chromium-2 desktop linux-info secure-version web-kernel-config
@@ -308,14 +313,28 @@ REQUIRED_USE+="
 	)
 "
 
+ELECTRON_APP_CR_OPTIONAL_DEPEND=" "
 ELECTRON_APP_IUSE_OPTIONAL=" "
 ELECTRON_APP_OPTIONAL_DEPEND=" "
-ELECTRON_APP_CR_OPTIONAL_DEPEND=" "
-if [[ "${ELECTRON_APP_FEATURE_APPINDICATOR}" == "1" ]] ; then
-	ELECTRON_APP_IUSE_OPTIONAL+=" app-indicator"
+ELECTRON_APP_REQUIRED_USE_OPTIONAL=" "
+if [[ "${ELECTRON_APP_FEATURE_TRAY}" == "1" ]] ; then
+	ELECTRON_APP_IUSE_OPTIONAL+=" tray libappindicator libayatana-appindicator"
+	ELECTRON_APP_REQUIRED_USE_OPTIONAL+="
+		tray? (
+			|| (
+				libappindicator
+				libayatana-appindicator
+			)
+		)
+	"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
-		app-indicator? (
-			dev-libs/libappindicator:3=
+		tray? (
+			libappindicator? (
+				dev-libs/libappindicator:3=
+			)
+			libayatana-appindicator? (
+				dev-libs/libayatana-appindicator
+			)
 		)
 	"
 fi
@@ -342,7 +361,7 @@ if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" libsecret"
 	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		libsecret? (
-			app-crypt/libsecret:=
+			>=app-crypt/libsecret-${LIBSECRET_PV}:=
 		)
 	"
 fi
@@ -354,6 +373,9 @@ if [[ "${ELECTRON_APP_FEATURE_PULSEAUDIO}" == "1" ]] ; then
 			>=media-libs/libpulse-${LIBPULSE_PV}:=
 		)
 	"
+	CHKL_TIMESTAMPS+=(
+		"media-libs/libpulse-9999"
+	)
 fi
 
 if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
@@ -370,13 +392,17 @@ if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 	ELECTRON_APP_IUSE_OPTIONAL+=" vaapi"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		vaapi? (
-			media-libs/libva:=[drm(+),X?,wayland?]
+			>=media-libs/libva-${LIBVA_PV}:=[drm(+),X?,wayland?]
 			virtual/vaapi:*
 		)
 	"
+	CHKL_TIMESTAMPS+=(
+		"media-libs/libva-9999"
+	)
 fi
 
-#IUSE+=" ${ELECTRON_APP_IUSE_OPTIONAL}"
+IUSE+=" ${ELECTRON_APP_IUSE_OPTIONAL}"
+REQUIRED_USE+=" ${ELECTRON_APP_REQUIRED_USE_OPTIONAL}"
 
 # See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
 
@@ -394,7 +420,7 @@ fi
 #      to <76.0.3809.88 (electron 1.0.0 to <v3.0.0)
 # Chromium supports at least U 14.04, this is why there is no version
 # restrictions below in all *DEPENDs section.
-CHROMIUM_DEPEND="
+CHROMIUM_DEPEND_DISABLED="
 	${ELECTRON_APP_CR_OPTIONAL_DEPEND}
 	>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}:=
 	>=dev-db/sqlite-${SQLITE_PV}:=
@@ -412,25 +438,25 @@ COMMON_DEPEND="
 	>=media-libs/mesa-${MESA_PV}:=[egl(+),gbm(+)]
 	>=net-print/cups-${CUPS_PV}:=
 	>=sys-apps/dbus-${DBUS_PV}:=
-	sys-devel/gcc[cxx(+)]
 	>=sys-libs/glibc-${GLIBC_PV}:=
-	virtual/ttf-fonts:*
-	virtual/udev:*
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
 	>=x11-libs/pango-${PANGO_PV}:=
+	sys-devel/gcc[cxx(+)]
+	virtual/ttf-fonts:*
+	virtual/udev:*
 	wayland? (
 		>=dev-libs/wayland-${WAYLAND_PV}:=
 	)
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}:=
 		>=x11-libs/libxcb-${LIBXCB_PV}:=
-		x11-libs/libXcomposite:=
-		x11-libs/libXdamage:=
 		>=x11-libs/libXext-${LIBXEXT_PV}:=
 		>=x11-libs/libXfixes-${LIBXFIXES_PV}:=
 		>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
+		x11-libs/libXcomposite:=
+		x11-libs/libXdamage:=
 	)
 "
 
