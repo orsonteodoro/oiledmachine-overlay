@@ -113,6 +113,7 @@ OSL_PV="1.14.3.0"
 
 CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
+	"dev-cpp/tbb-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/fribidi-9999"
 	"dev-libs/jemalloc-9999"
