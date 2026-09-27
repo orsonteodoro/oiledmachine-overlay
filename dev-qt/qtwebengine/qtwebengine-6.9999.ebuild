@@ -16,7 +16,7 @@ CXX_STANDARD=17
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="a6ff3b16a27b33e045233338b0852cdcdd5455f0"
+FALLBACK_COMMIT="7bc989efe9c85e79a4b1e828b4ff9c93c55ab75f"
 
 # QTWEBENGINE_CHROMIUM_COMMIT:  27afa1b
 # See https://github.com/qt/qtwebengine/tree/dev/src for QTWEBENGINE_CHROMIUM_COMMIT corresponding to the 3rdparty folder
@@ -25,11 +25,11 @@ CHROMIUM_VENDORED_VER="140.0.7339.225"
 CHROMIUM_VENDORED_TIMESTAMP="Oct 22, 2025 4:20 AM PDT"
 
 # See https://github.com/qt/qtwebengine/blob/dev/CHROMIUM_VERSION
-CVE_BACKPORTS="153.0.8010.73"
+CVE_BACKPORTS="153.0.8010.52"
 
 # See https://chromiumdash.appspot.com/releases?platform=Linux
-CHROMIUM_BROWSER_VER="153.0.8010.52"
-CHROMIUM_BROWSER_TIMESTAMP="Sep 16, 2026 20:47:47 -0700"
+CHROMIUM_BROWSER_VER="154.0.8037.57"
+CHROMIUM_BROWSER_TIMESTAMP="Mon, 21 Sep 2026 17:09:16 -0700"
 
 # For current commit, see https://github.com/qt/qtwebengine/tree/dev/src
 # For version https://github.com/qt/qtwebengine-chromium/blob/<QTWEBENGINE_CHROMIUM_COMMIT>/chromium/third_party/node/README.chromium
