@@ -709,15 +709,17 @@ PNPM_AUDIT_FIX_ARGS=(
 PNPM_INSTALL_ARGS=(
 )
 
-
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/glib-2.90.9999"
+	"net-libs/libsoup-3.9999"
 	"x11-libs/cairo-9999"
+	"x11-libs/gdk-pixbuf-9999"
 	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/pango-9999"
 )
 
-inherit cargo desktop edo lcnr node-sharp pnpm python-r1 webkitgtk-stable xdg
+inherit cargo chkl desktop edo lcnr node-sharp pnpm python-r1 secure-version xdg
 
 #KEYWORDS="~amd64" # Still debugging issues
 S="${WORKDIR}/${P}"
@@ -734,26 +736,30 @@ LICENSE="
 	Risuai-Privacy-Policy
 	Risuai-Terms-of-Service
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
-ollama server tray wayland X
-ebuild_revision_25
+ollama server tray libappindicator libayatana-appindicator wayland X
+ebuild_revision_26
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
+	tray? (
+		|| (
+			libappindicator
+			libayatana-appindicator
+		)
+	)
 	|| (
 		X
 		wayland
 	)
 "
-RUST_BINDINGS_DEPEND_DISABLED="
-	>=net-libs/libsoup-2.70.0:2.4[introspection]
-"
 RUST_BINDINGS_DEPEND="
 	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[introspection]
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+	>=net-libs/libsoup-${LIBSOUP3_PV}:3.0=[introspection]
 	>=x11-libs/cairo-${CAIRO_PV}:=
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection]
 	>=x11-libs/gtk+-${GTK3_PV}:3=[introspection,wayland?,X?]
@@ -766,9 +772,11 @@ RUST_BINDINGS_DEPEND="
 		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	tray? (
-		|| (
-			>=dev-libs/libappindicator-12.10.1_p20200408:3
-			>=dev-libs/libayatana-appindicator-0.5.4
+		libappindicator? (
+			>=dev-libs/libappindicator-12.10.1_p20200408:3=
+		)
+		libayatana-appindicator? (
+			>=dev-libs/libayatana-appindicator-0.5.4:=
 		)
 	)
 "
@@ -1009,6 +1017,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	cargo_src_configure
 

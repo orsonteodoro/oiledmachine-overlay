@@ -30,8 +30,8 @@ NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="1e407ed56455558cf751022fd68eca3b9e3713a0" # Obtained from GIT_CRATES
 # Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # llvm-21.1
+RUST_MAX_VER="1.93.1"
+RUST_MIN_VER="1.93.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 
 AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
@@ -639,9 +639,21 @@ zvariant_derive-3.15.2
 zvariant_utils-1.0.1
 "
 
-inherit cargo desktop lcnr npm webkitgtk-stable xdg
+CHKL_TIMESTAMPS=(
+	"app-accessibility/at-spi2-core-9999"
+	"dev-libs/glib-2.90.9999"
+	"gnome-base/librsvg-9999"
+	"net-libs/libsoup-2.74.9999"
+	"sys-process/procps-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/gdk-pixbuf-9999"
+	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/pango-9999"
+)
 
-#KEYWORDS="~amd64" # Needs code audit or code review
+inherit cargo chkl desktop lcnr npm secure-version xdg
+
+#KEYWORDS="~amd64" # Needs code audit or code review, deps are EOL
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
@@ -684,7 +696,7 @@ LICENSE="
 "
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-tray wayland +X
+libappindicator libayatana-appindicator tray wayland +X
 ebuild_revision_17
 "
 REQUIRED_USE="
@@ -693,49 +705,29 @@ REQUIRED_USE="
 		X
 	)
 "
-gen_webkit_depend() {
-	local s
-	for s in "${WEBKITGTK_STABLE[@]}" ; do
-		echo "=net-libs/webkit-gtk-${s}*:4[javascript,introspection,wayland?,X?]"
-	done
-}
-# React depends has been relaxed
-# See https://github.com/facebook/react/blob/v18.3.1/package.json#L103
-TYPESCRIPT_DEPEND="
-	(
-                >=net-libs/nodejs-22.13
-	)
-"
-# The upper bound has been relaxed.  React requires node between 12.17 - 17.x
-REACT_DEPEND="
-	(
-                >=net-libs/nodejs-12.17
-                <net-libs/nodejs-24
-	)
-"
 RUST_BINDINGS_DEPEND="
-	>=app-accessibility/at-spi2-core-2.35.1[introspection]
-	>=dev-libs/glib-2.48:2
-	>=dev-libs/gobject-introspection-1.64.0
-	>=net-libs/libsoup-2.70.0:2.4[introspection]
-	>=x11-libs/cairo-1.14
-	>=x11-libs/gdk-pixbuf-2.32[introspection]
-	>=x11-libs/gtk+-3.18:3[introspection,wayland?,X?]
-	>=x11-libs/pango-1.38[introspection]
+	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[introspection]
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
+	>=net-libs/libsoup-${LIBSOUP2_PV}:2.4=[introspection]
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection]
+	>=x11-libs/gtk+-${GTK3_PV}:3=[introspection,wayland?,X?]
+	>=x11-libs/pango-${PANGO_PV}:=[introspection]
+	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4=[javascript,introspection,wayland?,X?]
 	elibc_glibc? (
-		>=sys-libs/glibc-2.31
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	elibc_musl? (
-		>=sys-libs/musl-1.1.24
+		>=sys-libs/musl-${MUSL_PV}:=
 	)
 	tray? (
-		|| (
-			>=dev-libs/libappindicator-12.10.1_p20200408:3
-			>=dev-libs/libayatana-appindicator-0.5.4
+		libappindicator? (
+			>=dev-libs/libappindicator-12.10.1_p20200408:3=
 		)
-	)
-	|| (
-		$(gen_webkit_depend)
+		libayatana-appindicator? (
+			>=dev-libs/libayatana-appindicator-0.5.4:=
+		)
 	)
 "
 RUST_BINDINGS_BDEPEND="
@@ -743,19 +735,21 @@ RUST_BINDINGS_BDEPEND="
 "
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
-	${REACT_DEPEND}
-	${TYPESCRIPT_DEPEND}
-	>=gnome-base/librsvg-2.52.5:2
-	>=net-libs/nodejs-20.10:20[npm]
-	>=net-libs/webkit-gtk-2.42.3:4[wayland?,X?]
-	>=x11-libs/gtk+-3.24.33:3[wayland?,X?]
-	sys-process/procps
+	>=gnome-base/librsvg-${LIBRSVG_PV}:=
+	>=net-libs/nodejs-${NODEJS_22_PV}:22=[npm]
+	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4=[javascript,introspection,wayland?,X?]
+	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
+	>=sys-process/procps-${PROCPS_PV}
 	X? (
-		x11-misc/xcompmgr
+		x11-misc/xcompmgr:=
 	)
-	|| (
-		dev-libs/libappindicator
-		dev-libs/libayatana-appindicator
+	tray? (
+		libappindicator? (
+			dev-libs/libappindicator:3=
+		)
+		libayatana-appindicator? (
+			dev-libs/libayatana-appindicator:=
+		)
 	)
 "
 DEPEND+="
@@ -767,10 +761,6 @@ BDEPEND="
 	|| (
 		dev-lang/rust:${RUST_PV}[wasm]
 		dev-lang/rust-bin:${RUST_PV}
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
 	)
 "
 
@@ -992,6 +982,7 @@ einfo "Unpacking Tauri side"
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	pushd "${WORKDIR}/${MY_PN}-${PV}/src-tauri" || die
 		S="${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
 		cargo_src_configure
