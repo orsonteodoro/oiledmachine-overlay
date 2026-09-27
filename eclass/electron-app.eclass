@@ -106,16 +106,6 @@ ELECTRON_APP_ELECTRON_PV_SUPPORTED="29.0" # Minimum version
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"production"} # debug or production
 
-# User generated content (images, audio, models, files)
-ELECTRON_APP_USES_UGC_FILES=${ELECTRON_APP_USES_UGC_FILES:-"0"}
-
-# User generated content (text, forums, javascript, email)
-ELECTRON_APP_USES_UGC_TEXT=${ELECTRON_APP_USES_UGC_TEXT:-"0"}
-
-# If application parses user generated content file with JavaScript, then check it.
-# ID = Information Disclosure
-ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK=${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK:-"0"}
-
 # Use the following example to extract the license.
 # ELECTRON_PV="41.4.0" ; unzip -p /var/cache/distfiles/electron-v${ELECTRON_PV}-linux-x64.zip LICENSES.chromium.html > electron-${ELECTRON_PV}-chromium.html
 
@@ -443,6 +433,8 @@ COMMON_DEPEND="
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
 	>=x11-libs/pango-${PANGO_PV}:=
 	sys-devel/gcc[cxx(+)]
+	sys-kernel/mitigate-dt:*[mseal]
+	sys-kernel/mitigate-id:*
 	virtual/ttf-fonts:*
 	virtual/udev:*
 	wayland? (
@@ -616,13 +608,6 @@ eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_AT_TYPES_NODE
 eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 3.5.4"
 eerror
 	fi
-fi
-
-if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK}" == "1" ]] ; then
-	RDEPEND+="
-		sys-kernel/mitigate-dt:*
-		sys-kernel/mitigate-id:*
-	"
 fi
 
 # Same packages as far back as 3.x

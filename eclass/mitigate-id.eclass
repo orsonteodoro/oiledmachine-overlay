@@ -892,7 +892,8 @@ eerror
 	fi
 
 	for slot in "${EOL_VERSIONS[@]}" ; do
-		for x in "${FLAVORS[@]}" ; do
+		for x in "${FLAVORS[@]}" "${CUSTOM_KERNEL_ATOM}" ; do
+			[[ -z "${x}" ]] && continue
 			eol_list+="
 				!=${x}-${slot}*
 			"

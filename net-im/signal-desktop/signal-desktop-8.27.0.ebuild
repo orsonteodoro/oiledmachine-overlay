@@ -54,7 +54,6 @@ MY_PN2="Signal"
 # prebuilt-install depends on node-abi
 # Use the newer Electron to increase mitigation with vendor static libs.
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
-ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT="3"
 PNPM_AUDIT_FIX=1
 PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.

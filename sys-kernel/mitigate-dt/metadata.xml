@@ -82,6 +82,10 @@
     <flag name="kvm">
       Check for data tampering mitigations for KVM.
     </flag>
+    <flag name="mseal">
+      Require a 6.10 or later kernel with mseal syscall to mitigate RCE by
+      marking virtual memory address immutable against permissions tampering.
+    </flag>
     <flag name="video_cards_nvidia">
       Mitigate against data tampering, privilege escalation, Spectre V1,
       Spectre V2 for the NVIDIA® video driver.
