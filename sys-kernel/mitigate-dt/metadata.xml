@@ -89,8 +89,8 @@
 
       Benefits:
 
-      Chromium:  Prevents RCE, code injection, CFI bypass, JIT spray
-      glibc:  Prevent dynamic linker hijack      
+      Chromium:  Mitigate RCE, code injection, CFI bypass, JIT spray
+      glibc:  Mitigate dynamic linker hijack      
 
     </flag>
     <flag name="video_cards_nvidia">
