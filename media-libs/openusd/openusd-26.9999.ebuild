@@ -52,7 +52,7 @@ inherit python-single-r1 flag-o-matic secure-version cmake
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_VERSION="0.26.11"
 	SUBSLOT="${INTERNAL_VERSION}"
-	FALLBACK_COMMIT="23b83aa8c479ec0f8b8b11dada50e764af6f3645"
+	FALLBACK_COMMIT="2a9a571d0f9957bad5c4a59ba859ebb8df518c51"
 	EGIT_BRANCH="dev"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenUSD-${PV}"
 	EGIT_REPO_URI="https://github.com/PixarAnimationStudios/OpenUSD.git"
@@ -101,7 +101,7 @@ IUSE+="
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 -ptex +python -static-libs +tutorials -test +tools +usdview
 -vulkan
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -319,7 +319,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if has_version "media-libs/openusd" ; then
 ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
-		die
 	fi
 
 	export USD_PATH="/usr/$(get_libdir)/${PN}"

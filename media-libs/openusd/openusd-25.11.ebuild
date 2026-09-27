@@ -323,7 +323,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if has_version "media-libs/openusd" ; then
 ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
-		die
 	fi
 
 	export USD_PATH="/usr/$(get_libdir)/${PN}"
