@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="fd179f8a05be3ccae366b9b96e176b51fbe54aab" # 2026-09-26 11:14:35 -0700 @ Merge tag 'ata-7.3-rc5' of
+LINUX_SOURCES_FALLBACK_COMMIT="d266640c6c760c9bc215bf5a3ece122ca488b6f5" # 2026-09-27 09:57:03 -0700 @ Merge tag 'driver-core-7.3-rc5'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_51"
+EBUILD_REV="ebuild_revision_52"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.2-r1"
 PATCH_RT_VER="7.3-rc4-rt1"
