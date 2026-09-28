@@ -134,8 +134,7 @@ RDEPEND="
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
 	sys-apps/pciutils:=
-	sys-kernel/mitigate-dt:*[mseal]
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*[mseal]
 	virtual/libudev:=
 	virtual/minizip:=
 	x11-libs/libXcomposite:=

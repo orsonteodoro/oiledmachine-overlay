@@ -433,8 +433,7 @@ COMMON_DEPEND="
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
 	>=x11-libs/pango-${PANGO_PV}:=
 	sys-devel/gcc[cxx(+)]
-	sys-kernel/mitigate-dt:*[mseal]
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*[mseal]
 	virtual/ttf-fonts:*
 	virtual/udev:*
 	wayland? (

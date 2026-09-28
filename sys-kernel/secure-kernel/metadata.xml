@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadwata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild is for kernel version bumps for security-critical ebuilds.
+
+  Build time environment variables:
+
+  CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
+  of automatic RDEPEND updates
+
+  Example:
+
+    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources sys-kernel/xanmod-kernel"
+
+  -->
+  <use>
+    <flag name="auto">
+      Auto resolves firmware and kernel version required for full mitigation.
+
+      If enabled, this will remove LTS support.
+
+      If disabled, this will allow for LTS support if the microarchitecture
+      mitigations are provided for that series or if the microarchitecture
+      is not vulnerable.
+
+      Enabled is recommended for Intel® CPUs since the USE flag coverage for
+      microarchitectures is incomplete.
+    </flag>
+    <flag name="enforce">
+      Protect against data tampering by replacing vulnerable versions.
+    </flag>
+    <flag name="firmware">
+      Use firmware as mitigation.
+      (A BIOS firmware update from the motherboard manufacturer may still be
+      required if the firmware package doesn't apply to your model.)
+    </flag>
+    <flag name="kvm">
+      Check for data tampering mitigations for KVM.
+    </flag>
+    <flag name="landlock">
+      Allow only landlock compatible kernels (5.13+) to mitigate path traversal,
+      arbitrary file read, arbitrary file write.
+    </flag>
+    <flag name="mseal">
+      Allow only kernels (6.10+) with mseal syscall support to mark virtual
+      memory address immutable against permissions tampering, code injection,
+      control-flow hijack.
+
+      Benefits:
+
+      Chromium:  Mitigate RCE, code injection, CFI bypass, JIT spray
+      glibc:  Mitigate dynamic linker hijack      
+
+    </flag>
+    <flag name="video_cards_nvidia">
+      Mitigate against data tampering, privilege escalation, Spectre V1,
+      Spectre V2 for the NVIDIA® video driver.
+    </flag>
+  </use>
+</pkgmetadata>

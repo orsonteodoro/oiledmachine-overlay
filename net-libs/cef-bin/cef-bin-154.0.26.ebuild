@@ -190,8 +190,7 @@ RDEPEND+="
 	>=x11-libs/libXfixes-${LIBXFIXES_PV}
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}
 	>=x11-libs/libXrandr-${LIBXRANDR_PV}
-	sys-kernel/mitigate-dt:*[mseal]
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*[mseal]
 	virtual/udev
 	cefclient? (
 		>=x11-libs/gtk+-${GTK3_PV}:3

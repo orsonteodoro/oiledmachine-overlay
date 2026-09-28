@@ -90,10 +90,6 @@
     <flag name="kvm">
       Check for information disclosure mitigations for KVM.
     </flag>
-    <flag name="video_cards_nvidia">
-      Mitigate against information disclosure, privilege escalation, Spectre V1,
-      Spectre V2 for the NVIDIA® video driver.
-    </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog
       indicated fixed information disclosure (ID) class of vulnerabilities.

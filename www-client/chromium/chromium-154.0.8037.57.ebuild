@@ -1842,8 +1842,7 @@ RDEPEND+="
 	${COMMON_DEPEND}
 	!www-client/chromium:0
 	>=www-client/chromium-common-2:*
-	sys-kernel/mitigate-dt:*[mseal]
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*[mseal]
 	virtual/ttf-fonts:*
 	virtual/patent-status:*[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (

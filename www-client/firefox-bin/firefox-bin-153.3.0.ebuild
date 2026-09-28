@@ -165,8 +165,7 @@ RDEPEND="${DEPEND}
 	>=x11-libs/libXrender-${LIBXRENDER_PV}
 	>=x11-libs/libxcb-${LIBXCB_PV}
 	>=x11-libs/pango-${PANGO_PV}
-	sys-kernel/mitigate-dt:*
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*
 	virtual/freedesktop-icon-theme
 	x11-libs/libXcomposite
 	x11-libs/libXdamage

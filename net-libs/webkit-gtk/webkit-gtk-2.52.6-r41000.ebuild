@@ -904,8 +904,7 @@ RDEPEND+="
 	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
-	sys-kernel/mitigate-dt:*
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	~dev-util/glib-utils-${GLIB_PV}:=
 	~dev-libs/glib-${GLIB_PV}:=[${MULTILIB_USEDEP}]

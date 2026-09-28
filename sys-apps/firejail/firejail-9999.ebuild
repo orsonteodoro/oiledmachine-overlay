@@ -346,15 +346,10 @@ REQUIRED_USE+="
 		X
 	)
 "
-# mitigate-dos - kernel update to prevent sandbox escape or overflow that leads to an out of bounds write or ACE, or memory corruption mislabeled as DoS.
-# mitigate-dt - kernel update to protect changes outside of sandbox
-# mitigate-id - kernel update to protect info leak outside of sandbox
 RDEPEND+="
 	!sys-apps/firejail-lts
 	>=sys-libs/libseccomp-${LIBSECCOMP_PV}:=
-	sys-kernel/mitigate-dos:*
-	sys-kernel/mitigate-dt:*
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*
 	apparmor? (
 		sys-libs/libapparmor:=
 		|| (
@@ -378,8 +373,7 @@ RDEPEND+="
 		>=dev-libs/hardened_malloc-${HARDENED_MALLOC_PV}:=
 	)
 	landlock? (
-		sys-kernel/mitigate-dt:*[landlock]
-		sys-kernel/mitigate-id:*[landlock]
+		sys-kernel/secure-kernel:*[landlock]
 	)
 	mimalloc? (
 		dev-libs/mimalloc:=

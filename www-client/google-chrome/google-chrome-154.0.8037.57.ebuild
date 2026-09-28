@@ -203,8 +203,7 @@ RDEPEND="
 	>=x11-libs/pango-${PANGO_PV}
 	>=x11-misc/xdg-utils-${XDG_UTILS_PV}
 	media-fonts/liberation-fonts
-	sys-kernel/mitigate-dt:*[mseal]
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*[mseal]
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
 	gtk3? (

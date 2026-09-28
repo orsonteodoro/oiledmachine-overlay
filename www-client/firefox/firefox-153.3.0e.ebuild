@@ -697,8 +697,7 @@ RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
 	!www-client/firefox:esr
-	sys-kernel/mitigate-dt:*
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	cups? (
 		>=net-print/cups-${CUPS_PV}:=[${MULTILIB_USEDEP}]
