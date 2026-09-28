@@ -854,6 +854,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xpra
 	ot-kernel-pkgflags_xtables_addons
 	ot-kernel-pkgflags_yggdrasil_go
+	ot-kernel-pkgflags_zathura
 	ot-kernel-pkgflags_zenpower3
 	ot-kernel-pkgflags_zenstates
 	ot-kernel-pkgflags_zfs
@@ -6529,7 +6530,21 @@ ot-kernel-pkgflags_lvm2() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lxc package
 ot-kernel-pkgflags_lxc() { # DONE
-	if ot-kernel_has_version_pkgflags "app-containers/lxc" ; then
+	local pkg="app-containers/lxc"
+	if \
+		   ot-kernel_has_version_pkgflags "${pkg}" \
+		&& ot-kernel_has_version "${pkg}[landlock]" \
+	; then
+		_OT_KERNEL_LSM_ADD_LANDLOCK=1
+	elif ot-kernel_has_version_pkgflags "${pkg}" ; then
+ewarn
+ewarn "You disabled landlock for ${pkg}.  The estimated CVSS score is:"
+ewarn "Without landlock:  8.8 - 10 (High - Critical)"
+ewarn "With landlock:  5.0 - 6.5 (Medium)"
+ewarn "Attack vectors possible without landlock:  container escape, path traversal"
+ewarn
+	fi
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_unset_configopt "CONFIG_NETPRIO_CGROUP"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_CPUACCT"
@@ -11573,6 +11588,26 @@ ot-kernel-pkgflags_yggdrasil_go() { # DONE
 		_ot-kernel-pkgflags_tun
 	fi
 }
+
+# @FUNCTION: ot-kernel-pkgflags_zathura
+# @DESCRIPTION:
+# Applies kernel config flags for the zathura package
+ot-kernel-pkgflags_zathura() { # DONE
+	local pkg="app-text/zathura"
+	if \
+		   ot-kernel_has_version_pkgflags "${pkg}" \
+		&& ot-kernel_has_version "${pkg}[landlock]" \
+	; then
+		_OT_KERNEL_LSM_ADD_LANDLOCK=1
+	elif ot-kernel_has_version_pkgflags "${pkg}" ; then
+ewarn
+ewarn "You disabled landlock for ${pkg}.  The estimated CVSS score is:"
+ewarn "Without landlock:  7.8 - 9.8 (High - Critical)"
+ewarn "With landlock:  4.0 - 5.5 (Medium)"
+ewarn "Attack vectors possible without landlock:  arbitrary code execution, arbitrary file read, arbitrary file write"
+ewarn
+	fi
+fi
 
 # @FUNCTION: ot-kernel-pkgflags_zenpower3
 # @DESCRIPTION:
