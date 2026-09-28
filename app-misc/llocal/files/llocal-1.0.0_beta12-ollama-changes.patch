@@ -1,5 +1,5 @@
 --- a/src/main/ollama-binaries.ts.orig	2025-09-14 06:52:34.000000000 -0700
-+++ b/src/main/ollama-binaries.ts	2026-09-28 07:39:49.987648622 -0700
++++ b/src/main/ollama-binaries.ts	2026-09-28 08:28:21.441208767 -0700
 @@ -27,7 +27,7 @@ export function checkOllama(): Promise<b
        // if check is true, that means there's an error
        const ollamaAlreadyRunning = error?.message.includes(`listen tcp`)
@@ -18,9 +18,74 @@
        if(error == null){
          resolve('linux-detected') // edge case handled on the frontend
        } else{
---- a/src/main/index.ts.orig	2026-09-28 07:31:25.862600417 -0700
-+++ b/src/main/index.ts	2026-09-28 07:39:52.515573646 -0700
-@@ -223,15 +223,15 @@ app.whenReady().then(() => {
+--- a/src/main/index.ts.orig	2026-09-28 08:21:59.632687513 -0700
++++ b/src/main/index.ts	2026-09-28 08:29:19.261246533 -0700
+@@ -149,64 +149,6 @@ app.whenReady().then(() => {
+     return await checkSize(binaryNames[platform].name, llocalSize)
+   }
+ 
+-  //  used when ollama is not downloaded
+-  async function downloadingOllama(): Promise<string> {
+-    const check = await checkOllama()
+-    if (!check) {
+-      // in the case where the platform is linux we execute this command and the rest is handled
+-      if (platform == 'linux') {
+-        const response = await installOllamaLinux()
+-        return response
+-      }
+-      // ollama is downloading
+-      const response = await downloadBinaries()
+-      if (response == 'success') {
+-        // ollama has been downloaded
+-        return 'success'
+-      } else {
+-        return 'download-failed'
+-      }
+-    }
+-    return 'already-present'
+-  }
+-
+-  async function installingOllama(): Promise<boolean> {
+-    return new Promise((resolve) => {
+-      // mac-os has an edge case that needs to be dealt with
+-      if (platform == 'linux') {
+-        const check = checkingOllama() // we just check incase
+-        resolve(check) // resolve the check
+-      }
+-      if (platform == 'darwin') {
+-        // the path to the directory where it's extracting
+-        const extractDirectory = downloadPath[1].replace('/Ollama-darwin.zip', '')
+-        // this script ensures, the zip gets extracted and has the required permisions to execute
+-        exec(
+-          `unzip ${downloadPath[1]} -d ${extractDirectory} && chmod +x ${extractDirectory}/Ollama.app && ${extractDirectory}/Ollama.app/Contents/MacOS/Ollama`,
+-          (error) => {
+-            if (error == null) {
+-              // ollama has been installed
+-              resolve(true)
+-            } else {
+-              resolve(false)
+-            }
+-          }
+-        )
+-      } else {
+-        // so much easier on windows, with linux hopefully the logic just needs to be appended with mac
+-        exec(downloadPath[1], (error) => {
+-          if (error == null) {
+-            // ollama has been installed
+-            resolve(true)
+-          } else {
+-            resolve(false)
+-          }
+-        })
+-      }
+-    })
+-  }
+-
+-
+   // the handlers are for interprocess communication
+   ipcMain.handle('checkingOllama', async () => {
+     const response = await checkingOllama()
+@@ -223,16 +165,6 @@ app.whenReady().then(() => {
      return response
    })
  
@@ -28,19 +93,12 @@
 -    const response = await downloadingOllama()
 -    return response
 -  })
-+  // ipcMain.handle('downloadingOllama', async () => {
-+  //   const response = await downloadingOllama()
-+  //   return response
-+  // })
- 
+-
 -  ipcMain.handle('installingOllama', async () => {
 -    const response = await installingOllama()
 -    return response
 -  })
-+  // ipcMain.handle('installingOllama', async () => {
-+  //   const response = await installingOllama()
-+  //   return response
-+  // })
- 
+-
    ipcMain.handle('checkVersion', async () => {
      return new Promise((resolve) => {
+       resolve(app.getVersion())
