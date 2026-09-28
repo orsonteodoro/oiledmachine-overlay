@@ -74,48 +74,19 @@ pkg_setup() {
 npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
-			sed -i -e "s|\"@babel/runtime\": \"^7.0.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.6.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.9.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.24.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
-
-
-			sed -i -e "s|\"webpack-dev-server\": \"^4.7.4\"|\"webpack-dev-server\": \"5.2.1\"|g" "package-lock.json" || die			# CVE-2025-30360; ID; Medium
-																			# CVE-2025-30359; ID; Medium
-
-			sed -i -e "s|\"http-proxy-middleware\": \"^2.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die		# CVE-2025-27789; DoS; Medium
-
-			sed -i -e "s|\"flatted\": \"^3.2.9\"|\"flatted\": \"^3.4.2\"|g" "package-lock.json" || die					# CVE-2026-33228; VS(DoS, DT, ID); High
-			sed -i -e "s|\"lodash\": \"^4.17.21\"|\"lodash\": \"^4.18.0\"|g" "package-lock.json" || die					# CVE-2026-4800; DoS, DT, ID; High
-
-			sed -i -e "s|\"minimatch\": \"^3.0.2\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.1.2\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
-			sed -i -e "s|\"minimatch\": \"^3.1.5\"|\"minimatch\": \"^10.2.2\"|g" "package-lock.json" || die					# CVE-2026-27903; ZC, DoS; High
+			sed -i -e "s|||g" "package-lock.json" || die
 		}
-		patch_lockfile
+		#patch_lockfile
 
 		local pkgs
 		pkgs=(
-			"@babel/runtime@^7.26.10"
 		)
-		enpm install "${pkgs[@]}" -P --prefer-offline
+		#enpm install "${pkgs[@]}" -P --prefer-offline
 
 		pkgs=(
-			"webpack-dev-server@5.2.1"
-			"http-proxy-middleware@^2.0.8"
-			"flatted@^3.4.2"
-			"lodash@^4.18.0"
-			"minimatch@^10.2.2"
 		)
-		enpm install "${pkgs[@]}" -D
-		patch_lockfile
+		#enpm install "${pkgs[@]}" -D
+		#patch_lockfile
 	fi
 }
 
