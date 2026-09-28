@@ -102,3 +102,17 @@
    ipcMain.handle('checkVersion', async () => {
      return new Promise((resolve) => {
        resolve(app.getVersion())
+--- a/src/main/index.ts.orig	2026-09-28 08:39:04.634575993 -0700
++++ b/src/main/index.ts	2026-09-28 08:46:59.101625974 -0700
+@@ -3,10 +3,9 @@ import { join } from 'path'
+ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+ import icon from '../../resources/icon.png?asset'
+ import { autoUpdater } from 'electron-updater'
+-import { binaryNames, binaryPath, checkOllama, checkSize, downloadBinaries, installOllamaLinux } from './ollama-binaries'
++import { binaryNames, binaryPath, checkOllama, checkSize } from './ollama-binaries'
+ import os from 'os'
+ import fs from 'fs'
+-import { exec } from 'child_process'
+ import process from 'node:process'
+ import { webSearch, webSearchType } from './websearch'
+ import { puppeteerSearch } from './puppeteer'
