@@ -39,6 +39,10 @@ NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
 
+NPM_DEDUPE_ARGS=(
+	"--legacy-peer-deps"
+)
+
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -200,7 +204,7 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 			"electron@${ELECTRON_APP_ELECTRON_PV}"
 			"typescript@5.8.3"
 		)
-		enpm install "${L[@]}" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 		npm_update_lock_install_post
 
@@ -214,7 +218,9 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 			"postcss@^${NODE_POSTCSS_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 		)
-		enpm install "${L[@]}" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
 		_npm_check_errors
 einfo "Updating lockfile done."
