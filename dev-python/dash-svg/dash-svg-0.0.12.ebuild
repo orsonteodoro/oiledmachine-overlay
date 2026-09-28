@@ -37,7 +37,7 @@ NPM_DEDUPE_ARGS=(
 	"--legacy-peer-deps"
 )
 
-inherit distutils-r1 edo npm secure-version
+inherit distutils-r1 edo npm secure-version secure-version-node
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -56,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -92,34 +92,33 @@ npm_unpack_post() {
 }
 
 npm_update_lock_audit_post() {
-	# CE = Code Execution
-	# DoS = Denial of Service
-	# DT = Data Tampering
-	# ID = Information Disclosure
-	# ZC = Zero Click Attack
-
 	enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
-	local pkgs=(
-	)
-	#enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
 	local pkgs=(
+	# Remove vendored copy
 		"npm"
-	# request EOL so remove it				# CVE-2023-28155; DT, ID; Moderate
-		"request"					# CVE-2023-28155; DT, ID; Moderate
+
+	# Remove EOL packages
+		"request"
 		"request-promise"
 	)
 	enpm uninstall "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
-	# Reapply
+	# Manual vulnerabilities fixes
+	local pkgs=(
+		"braces@^${NODE_BRACES_PV}"
+		"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
+		"flatted@^${NODE_FLATTED_PV}"
+		"http-proxy-middleware@^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}"
+		"loader-utils@^${NODE_LOADER_UTILS_PV}"
+		"nanoid@^${NODE_NANOID_3_PV}"
+		"postcss@^${NODE_POSTCSS_PV}"
+		"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
+		"tmp@^${NODE_TMP_PV}"
+	)
+	enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 	enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
-
-	# When `npm install <package>` or `npm dedupe` gets called, it may undo lockfile edits.
-	localfile_edits
-
-	# Same vulnerability count before and after
-	npm audit || npm_die
 }
 
 src_unpack() {
