@@ -1085,7 +1085,7 @@ PDEPEND+="
 ot-kernel_pkg_setup_cb() {
 ewarn
 ewarn "Upstream security update delay from live:  0"
-ewarn "Release quality:  Live release candidate (RC4 out of RC7, development quality for WIP code, production quality for mature code)"
+ewarn "Release quality:  Live release candidate (rc5 out of rc7, development quality for WIP code, production quality for mature code)"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
@@ -1118,10 +1118,10 @@ ewarn "or modders to smooth out updates before stable, or to volunteer and"
 ewarn "report sanitizer findings for bug reports."
 ewarn
 ewarn "The merge window - the period when reworks or new code are accepted."
-ewarn "The period after RC7 (no extraversion) and before RC1.  Officially"
+ewarn "The period after rc7 (no extraversion) and before rc1.  Officially"
 ewarn "announced in the Linux Kernel Mailing List (LKML) and lasting 2 weeks."
 ewarn
-ewarn "Release Candidate (RC) - the period when bug fixes, security patches,"
+ewarn "Release Candidate (rc) - the period when bug fixes, security patches,"
 ewarn "or regression fixes are accepted."
 ewarn
 ewarn
