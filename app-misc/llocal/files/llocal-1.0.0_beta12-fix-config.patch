@@ -5,7 +5,7 @@
    "version": "1.0.0-beta.12",
    "description": "Llocal is a client application to utilize locally installed LLM's.",
 -  "main": "./out/main/index.js",
-+  "main": "./out/main/index.mjs",
++  "main": "./out/main/index.js",
    "author": "Kartikeya Mishra",
    "license": "MIT",
    "homepage": "https://llocal.in",

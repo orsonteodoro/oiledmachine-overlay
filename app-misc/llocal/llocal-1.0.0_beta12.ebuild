@@ -41,6 +41,7 @@ NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
 )
 
+# Force can be used with Node 24 but not Node 22 Electron.
 NPM_AUDIT_FIX_ARGS=(
 	#"--legacy-peer-deps"
 	"--force"
@@ -127,6 +128,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_beta12-cacheDir.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-filePath.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-fix-config.patch"
+	"${FILESDIR}/${PN}-1.0.0_beta12-ollama-changes.patch"
 )
 
 _puppeteer_setup_offline_cache() {
@@ -215,6 +217,8 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+
+		sed -i -e "s|index.mjs|index.js|g" "${S}/package.json" || die
 	fi
 }
 
