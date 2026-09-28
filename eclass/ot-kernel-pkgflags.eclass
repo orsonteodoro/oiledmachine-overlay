@@ -2292,6 +2292,7 @@ _ot-kernel-pkgflags_apply_cr_kconfig() {
 	ot-kernel_y_configopt "CONFIG_SIGNALFD"
 	ot-kernel_y_configopt "CONFIG_TIMERFD"
 
+	_OT_KERNEL_LSM_ADD_LANDLOCK=1
 	_OT_KERNEL_LSM_ADD_YAMA=1
 
 	_ot-kernel_y_thp # lowers memory access times
