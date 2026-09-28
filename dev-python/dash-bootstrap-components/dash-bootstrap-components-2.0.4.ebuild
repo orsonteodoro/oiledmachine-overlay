@@ -14,6 +14,21 @@ NPM_TARBALL="${P}.tar.gz"
 NODE_SLOT="22" # Upstream uses node 22
 PYTHON_COMPAT=( "python3_"{10..13} ) # Lists up to 3.13
 
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+	"--force"
+)
+
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+	"--force"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+	"--force"
+)
+
 inherit distutils-r1 npm
 
 KEYWORDS="~amd64"
