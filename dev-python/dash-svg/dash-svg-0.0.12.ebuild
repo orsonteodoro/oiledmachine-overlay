@@ -22,6 +22,21 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 REACT_PV="16.14.0" # Supports up to node 14 used for testing.  node 14 uses npm 6.14.18 which is lockfile v1.
 #REACT_PV="18.3.1" # Supports up to node 17
 
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+	"--legacy-peer-deps"
+)
+
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+	"--legacy-peer-deps"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+	"--legacy-peer-deps"
+)
+
 inherit distutils-r1 edo npm secure-version
 
 KEYWORDS="~amd64"
@@ -41,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -83,10 +98,10 @@ npm_update_lock_audit_post() {
 	# ID = Information Disclosure
 	# ZC = Zero Click Attack
 
-	enpm audit fix --force
+	enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
 	local pkgs=(
 	)
-	#enpm install "${pkgs[@]}" -D --prefer-offline
+	#enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
 	local pkgs=(
 		"npm"
@@ -94,11 +109,11 @@ npm_update_lock_audit_post() {
 		"request"					# CVE-2023-28155; DT, ID; Moderate
 		"request-promise"
 	)
-	enpm uninstall "${pkgs[@]}" -D --prefer-offline
+	enpm uninstall "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 	# Reapply
 
-	enpm dedupe
+	enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
 	# When `npm install <package>` or `npm dedupe` gets called, it may undo lockfile edits.
 	localfile_edits
