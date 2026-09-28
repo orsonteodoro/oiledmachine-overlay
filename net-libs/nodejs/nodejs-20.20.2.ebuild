@@ -188,7 +188,7 @@ RDEPEND+="
 	>=net-dns/c-ares-${C_ARES_PV}:=
 	>=net-libs/nghttp2-${NGHTTP2_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
-	sys-kernel/mitigate-id:*
+	sys-kernel/secure-kernel:*
 	system-icu? (
 		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)

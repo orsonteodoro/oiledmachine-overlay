@@ -177,7 +177,7 @@ REQUIRED_USE+="
 RDEPEND="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
 	>=net-libs/nodejs-${NODE_SLOT}[npm]
-	sys-kernel/mitigate-id
+	sys-kernel/secure-kernel:*
 	clipboard? (
 		x11-misc/xclip
 	)
