@@ -111,6 +111,7 @@ IUSE+="
 	${CPU_TARGET_X86[@]}
 	auto
 	custom-kernel
+	dss
 	+enforce
 	intel-microcode
 	landlock
@@ -366,6 +367,38 @@ gen_patched_kernel_driver_list() {
 	done
 }
 
+DSS_FLAVORS=(
+	"sys-kernel/gentoo-kernel" # 7.1.3, 7.1.2_p1
+	"sys-kernel/gentoo-kernel-bin" # 7.1.3, 7.1.2_p1, 6.18.38
+	"sys-kernel/gentoo-sources" # 7.1.3, 7.1.2-r1
+	"sys-kernel/git-sources" # 7.2_rc2
+	"sys-kernel/linux-next" # 9999
+	"sys-kernel/ot-sources" # 7.1.3
+	"sys-kernel/vanilla-kernel" # 7.1.3, 6.18.9999
+	"sys-kernel/vanilla-sources" # 7.1.3
+)
+
+DSS_FLAVORS_REJ=(
+	"sys-kernel/asahi-kernel" # 7.0.12_p1
+	"sys-kernel/asahi-sources" # 7.0.9_p2
+	"sys-kernel/cachyos-kernel" # 7.0.12-r1, 7.0.12, 7.0.12_p1, 7.2_rc1_p1, 7.2_rc2
+	"sys-kernel/cachyos-kernel-bin" # 7.1.2-r2, 7.0.12
+	"sys-kernel/cachyos-sources" # 7.1.3, 7.1.2-r2
+	"sys-kernel/hardened-sources" # 7.1.2, 4.3.3-r5
+	"sys-kernel/liquorix-sources" # 7.0.14_p2, 6.6.8
+	"sys-kernel/mips-sources" # 5.4.294
+	"sys-kernel/pf-sources" # 7.0_p4
+	"sys-kernel/raspberrypi-image" # 9999, 6.18.32_p20260521
+	"sys-kernel/raspberrypi-sources" # 6.18.32_p20260521
+	"sys-kernel/rt-sources" # 7.0.1_p2
+	"sys-kernel/surface-sources" # 7.0.5
+	"sys-kernel/xanmod-kernel" # 7.1.3, 7.1.2_p1
+	"sys-kernel/xanmod-rt" # 6.12.31
+	"sys-kernel/xanmod-sources" # 7.1.3, 7.1.2-r1
+	"sys-kernel/xanmod-sources-rt" # 6.1.13
+	"sys-kernel/zen-sources" # 7.1.2, 7.1.3_p1
+)
+
 FLAVORS=(
 	"sys-kernel/asahi-kernel" # 7.0.12_p1
 	"sys-kernel/asahi-sources" # 7.0.9_p2
@@ -451,6 +484,8 @@ FLAVORS_LIVE_SLOT_9999=(
 	"sys-kernel/vanilla-kernel"
 )
 
+
+
 # @FUNCTION: _seq
 # @DESCRIPTION:
 # Generates a sequence
@@ -466,168 +501,23 @@ _seq()
 	done
 }
 
-gen_render_kernels_list_v2_iuse() {
-	local iuse_list=""
-	local eol_list=""
-	local o
-	local av
-	local pv
-	local slot
+is_dss_flavor() {
+	local flavor="${1}"
 	local x
-	local y
-
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && -z "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" ]] ; then
-eerror
-eerror "CUSTOM_KERNEL_ATOM_VERSIONING_STYLES must be defined when using CUSTOM_KERNEL_ATOM."
-eerror
-eerror "Valid values:"
-eerror
-eerror "point-release - ex. 7.1.1"
-eerror "post-3c - ex. 7.1.1_p2"
-eerror "post-2c - ex. 7.1_p2"
-eerror "rc - ex. 7.1_rc1"
-eerror "live-9999 - ex. 9999"
-eerror "live-slot-9999 - ex. 7.1.9999"
-eerror
-eerror "Example:"
-eerror
-eerror "CUSTOM_KERNEL_ATOM=\"sys-kernel/xanmod-kernel\""
-eerror "CUSTOM_KERNEL_ATOM_VERSIONING_STYLES=\"point-release|post-3c\""
-eerror
-		die
-	fi
-
-	# CUSTOM_KERNEL_ATOM_VERSIONING_STYLES valid values
-	# Example:  CUSTOM_KERNEL_ATOM_VERSIONING_STYLES="point-release|post-3c|post-2c|rc|live-9999|live-slot-9999"
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "point-release" ]] ; then
-		FLAVORS_POINT_RELEASE+=(
-			${CUSTOM_KERNEL_ATOM}
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "post-3c" ]] ; then
-		FLAVORS_POST_3C_RELEASE+=(
-			${CUSTOM_KERNEL_ATOM}
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "post-2c" ]] ; then
-		FLAVORS_POST_2C_RELEASE+=(
-			${CUSTOM_KERNEL_ATOM}
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "rc" ]] ; then
-		FLAVORS_RC+=(
-			${CUSTOM_KERNEL_ATOM}
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "live-9999" ]] ; then
-		FLAVORS_LIVE_9999+=(
-			${CUSTOM_KERNEL_ATOM}
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "live-slot-9999" ]] ; then
-		FLAVORS_LIVE_SLOT_9999+=(
-			${CUSTOM_KERNEL_ATOM}
-		)
-	fi
-
-	# 7.2.3
-	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}
-			"
-		done
+	for x in "${DSS_FLAVORS[@]}" ; do
+		[[ "${x}" == "${flavor}" ]] && return 0
 	done
-
-	# 7.2.3_p1
-	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}
-			"
-		done
-	done
-
-	# 7.2_p1
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}
-			"
-		done
-	done
-
-	# 7.3_rc1
-	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] || continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_RC[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_rc
-			"
-		done
-	done
-
-	# 6.18.9999
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
-		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_LIVE_9999[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}_live
-			"
-		done
-	done
-
-	# 7.3.9999
-	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		local pn="${x#*/}"
-		iuse_list+="
-			kernel_targets_${pn}_live
-		"
-	done
-
-	# IUSE list
-	o="
-		${iuse_list}
-	"
-	echo "${o}"
-#einfo "IUSE list:"
-#einfo "${o}"
+	return 1
 }
-IUSE_KERNELS=( $(gen_render_kernels_list_v2_iuse) )
 
+DSS_MIN_SLOT="6.12"
 LANDLOCK_MIN_SLOT="5.13"
 MSEAL_MIN_SLOT="6.10"
 gen_render_x_list_v2_iuse() {
-	local x_min_ver=${1}
-	local x_cond_operator=${2}
-	local x_not_operator=${3}
+	local x_min_ver="${1}"
+	local x_cond_operator="${2}"
+	local x_not_operator="${3}"
+	local x_filter_rule="${4}"
 	local iuse_list=""
 	local eol_list=""
 	local o
@@ -700,9 +590,27 @@ eerror
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
-			iuse_list+="
-				${x_not_operator}kernel_targets_${pn}_${slot}
-			"
+			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					iuse_list+="
+						kernel_targets_${pn}_${slot}
+					"
+				else
+					:
+				fi
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					:
+				else
+					iuse_list+="
+						!kernel_targets_${pn}_${slot}
+					"
+				fi
+			else
+				iuse_list+="
+					${x_not_operator}kernel_targets_${pn}_${slot}
+				"
+			fi
 		done
 	done
 
@@ -715,9 +623,27 @@ eerror
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
-			iuse_list+="
-				${x_not_operator}kernel_targets_${pn}_${slot}
-			"
+			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					iuse_list+="
+						kernel_targets_${pn}_${slot}
+					"
+				else
+					:
+				fi
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					:
+				else
+					iuse_list+="
+						!kernel_targets_${pn}_${slot}
+					"
+				fi
+			else
+				iuse_list+="
+					${x_not_operator}kernel_targets_${pn}_${slot}
+				"
+			fi
 		done
 	done
 
@@ -730,9 +656,27 @@ eerror
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
-			iuse_list+="
-				${x_not_operator}kernel_targets_${pn}_${slot}
-			"
+			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					iuse_list+="
+						kernel_targets_${pn}_${slot}
+					"
+				else
+					:
+				fi
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					:
+				else
+					iuse_list+="
+						!kernel_targets_${pn}_${slot}
+					"
+				fi
+			else
+				iuse_list+="
+					${x_not_operator}kernel_targets_${pn}_${slot}
+				"
+			fi
 		done
 	done
 
@@ -745,9 +689,27 @@ eerror
 		slot="${slot/./_}"
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
-			iuse_list+="
-				${x_not_operator}kernel_targets_${pn}_rc
-			"
+			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					iuse_list+="
+						kernel_targets_${pn}_rc
+					"
+				else
+					:
+				fi
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					:
+				else
+					iuse_list+="
+						!kernel_targets_${pn}_rc
+					"
+				fi
+			else
+				iuse_list+="
+					${x_not_operator}kernel_targets_${pn}_rc
+				"
+			fi
 		done
 	done
 
@@ -761,9 +723,27 @@ eerror
 		slot="${slot/./_}"
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
-			iuse_list+="
-				${x_not_operator}kernel_targets_${pn}_${slot}_live
-			"
+			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					iuse_list+="
+						kernel_targets_${pn}_${slot}_live
+					"
+				else
+					:
+				fi
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+				if is_dss_flavor "${x}" ; then
+					:
+				else
+					iuse_list+="
+						!kernel_targets_${pn}_${slot}_live
+					"
+				fi
+			else
+				iuse_list+="
+					${x_not_operator}kernel_targets_${pn}_${slot}_live
+				"
+			fi
 		done
 	done
 
@@ -774,9 +754,27 @@ eerror
 		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		local pn="${x#*/}"
-		iuse_list+="
-			${x_not_operator}kernel_targets_${pn}_live
-		"
+		if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+			if is_dss_flavor "${x}" ; then
+				iuse_list+="
+					kernel_targets_${pn}_live
+				"
+			else
+				:
+			fi
+		elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+			if is_dss_flavor "${x}" ; then
+				:
+			else
+				iuse_list+="
+					!kernel_targets_${pn}_live
+				"
+			fi
+		else
+			iuse_list+="
+				${x_not_operator}kernel_targets_${pn}_live
+			"
+		fi
 	done
 
 	# IUSE list
@@ -787,6 +785,9 @@ eerror
 #einfo "IUSE list:"
 #einfo "${o}"
 }
+IUSE_KERNELS=( $(gen_render_x_list_v2_iuse "${KERNEL_MIN_SLOT}" '-lt' '') )
+IUSE_DSS=( $(gen_render_x_list_v2_iuse "${DSS_MIN_SLOT}" '-lt' '' 'dss-accept') )
+IUSE_DSS_REJ=( $(gen_render_x_list_v2_iuse "${DSS_MIN_SLOT}" '-ge' '!' 'dss-reject') )
 IUSE_LANDLOCK=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-lt' '') )
 IUSE_LANDLOCK_REJ=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-ge' '!') )
 IUSE_MSEAL=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-lt' '') )
@@ -797,19 +798,28 @@ IUSE+="
 "
 REQUIRED_USE+="
 	enforce? (
+		!dss? (
+			|| (
+				${IUSE_KERNELS[@]}
+			)
+		)
+		dss? (
+			|| (
+				${IUSE_DSS[@]}
+			)
+			${IUSE_DSS_REJ[@]}
+		)
 		landlock? (
 			|| (
 				${IUSE_LANDLOCK[@]}
 			)
-			${IUSE_LANDLOCK[@]}
+			${IUSE_LANDLOCK_REJ[@]}
 		)
 		mseal? (
 			|| (
 				${IUSE_MSEAL[@]}
 			)
-		)
-		|| (
-			${IUSE_KERNELS[@]}
+			${IUSE_MSEAL_REJ[@]}
 		)
 	)
 "

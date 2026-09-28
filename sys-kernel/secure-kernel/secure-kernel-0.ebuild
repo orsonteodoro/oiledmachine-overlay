@@ -12,6 +12,7 @@ EAPI=8
 KERNEL_MIN_SLOT="5.10" # inclusive
 KERNEL_MIN_LTS_SLOT="6.1" # inclusive
 KERNEL_MAX_LTS_SLOT="6.18" # inclusive
+
 LTS_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18")
 ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "7.2" "7.3")
 STABLE_OR_MAINLINE_VERSIONS=("7.2" "7.3")
@@ -143,6 +144,9 @@ PDEPEND="
 	sys-kernel/mitigate-dos:*
 	sys-kernel/mitigate-dt:*
 	sys-kernel/mitigate-id:*
+	dss? (
+		sys-kernel/dss:*
+	)
 "
 
 pkg_setup() {
