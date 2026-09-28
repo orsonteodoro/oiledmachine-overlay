@@ -82,9 +82,13 @@
     <flag name="kvm">
       Check for data tampering mitigations for KVM.
     </flag>
+    <flag name="landlock">
+      Allow only landlock compatible kernels (5.13+) to mitigate path traversal,
+      arbitrary file read, arbitrary file write.
+    </flag>
     <flag name="mseal">
-      Require a 6.10 or later kernel with mseal syscall to mark virtual memory
-      address immutable against permissions tampering, code injection,
+      Allow only kernels (6.10+) with mseal syscall support to mark virtual
+      memory address immutable against permissions tampering, code injection,
       control-flow hijack.
 
       Benefits:

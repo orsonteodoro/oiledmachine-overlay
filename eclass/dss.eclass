@@ -232,7 +232,10 @@ eerror
 IUSE_KERNELS=( $(gen_render_kernels_list_v2_iuse) )
 
 MSEAL_MIN_SLOT="6.10"
-gen_render_kernels_list_v2_mseal() {
+gen_render_x_list_v2_iuse() {
+	local x_min_ver=${1}
+	local x_cond_operator=${2}
+	local x_not_operator=${3}
 	local iuse_list=""
 	local eol_list=""
 	local o
@@ -301,12 +304,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] && continue
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}
+				${x_not_operator}kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -316,12 +319,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] && continue
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}
+				${x_not_operator}kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -331,12 +334,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] && continue
 		local slot=$(ver_cut "1-2" "${av}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}
+				${x_not_operator}kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -346,12 +349,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] || continue
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_rc
+				${x_not_operator}kernel_targets_${pn}_rc
 			"
 		done
 	done
@@ -360,14 +363,14 @@ eerror
 	for av in "${ACTIVE_VERSIONS[@]}" ; do
 		local slot=$(ver_cut "1-2" "${av}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
 		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_live_lts_${slot}
+				${x_not_operator}kernel_targets_${pn}_live_lts_${slot}
 			"
 		done
 	done
@@ -376,11 +379,11 @@ eerror
 	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		local pn="${x#*/}"
 		iuse_list+="
-			kernel_targets_${pn}_live
+			${x_not_operator}kernel_targets_${pn}_live
 		"
 	done
 
@@ -392,7 +395,8 @@ eerror
 #einfo "IUSE list:"
 #einfo "${o}"
 }
-IUSE_MSEAL=( $(gen_render_kernels_list_v2_mseal) )
+IUSE_MSEAL=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-lt' '') )
+IUSE_MSEAL_REJ=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-ge' '!') )
 
 IUSE+="
 	${IUSE_KERNELS[@]}
@@ -402,6 +406,8 @@ REQUIRED_USE+="
 		|| (
 			${IUSE_MSEAL[@]}
 		)
+		${IUSE_MSEAL_REJ}
+
 		|| (
 			${IUSE_KERNELS[@]}
 		)
@@ -623,7 +629,7 @@ eerror
 	for x in "${FLAVORS[@]}" "${CUSTOM_KERNEL_ATOM}" ; do
 		[[ -z "${z}" ]] && continue
 		mseal_list+="
-			!<${x}-6.10
+			!<${x}-${MSEAL_MIN_SLOT}
 		"
 	done
 

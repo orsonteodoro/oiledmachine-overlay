@@ -113,6 +113,7 @@ IUSE+="
 	custom-kernel
 	+enforce
 	intel-microcode
+	landlock
 	linux-firmware
 	kvm
 	mseal
@@ -621,8 +622,12 @@ eerror
 }
 IUSE_KERNELS=( $(gen_render_kernels_list_v2_iuse) )
 
+LANDLOCK_MIN_SLOT="5.13"
 MSEAL_MIN_SLOT="6.10"
-gen_render_kernels_list_v2_mseal() {
+gen_render_x_list_v2_iuse() {
+	local x_min_ver=${1}
+	local x_cond_operator=${2}
+	local x_not_operator=${3}
 	local iuse_list=""
 	local eol_list=""
 	local o
@@ -691,12 +696,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] && continue
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}
+				${x_not_operator}kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -706,12 +711,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] && continue
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}
+				${x_not_operator}kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -721,12 +726,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] && continue
 		local slot=$(ver_cut "1-2" "${av}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}
+				${x_not_operator}kernel_targets_${pn}_${slot}
 			"
 		done
 	done
@@ -736,12 +741,12 @@ eerror
 		[[ "${pv}" =~ "rc" ]] || continue
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_rc
+				${x_not_operator}kernel_targets_${pn}_rc
 			"
 		done
 	done
@@ -750,14 +755,14 @@ eerror
 	for av in "${ACTIVE_VERSIONS[@]}" ; do
 		local slot=$(ver_cut "1-2" "${av}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
 		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}_live
+				${x_not_operator}kernel_targets_${pn}_${slot}_live
 			"
 		done
 	done
@@ -766,11 +771,11 @@ eerror
 	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
 		local slot=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${MSEAL_MIN_SLOT}" && continue
+		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
 		slot="${slot/./_}"
 		local pn="${x#*/}"
 		iuse_list+="
-			kernel_targets_${pn}_live
+			${x_not_operator}kernel_targets_${pn}_live
 		"
 	done
 
@@ -782,181 +787,26 @@ eerror
 #einfo "IUSE list:"
 #einfo "${o}"
 }
-IUSE_MSEAL=( $(gen_render_kernels_list_v2_mseal) )
-
-gen_render_kernels_list_v2_mseal_rej() {
-	local iuse_list=""
-	local eol_list=""
-	local o
-	local av
-	local pv
-	local slot
-	local x
-	local y
-
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && -z "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" ]] ; then
-eerror
-eerror "CUSTOM_KERNEL_ATOM_VERSIONING_STYLES must be defined when using CUSTOM_KERNEL_ATOM."
-eerror
-eerror "Valid values:"
-eerror
-eerror "point-release - ex. 7.1.1"
-eerror "post-3c - ex. 7.1.1_p2"
-eerror "post-2c - ex. 7.1_p2"
-eerror "rc - ex. 7.1_rc1"
-eerror "live-9999 - ex. 9999"
-eerror "live-slot-9999 - ex. 7.1.9999"
-eerror
-eerror "Example:"
-eerror
-eerror "CUSTOM_KERNEL_ATOM=\"sys-kernel/xanmod-kernel\""
-eerror "CUSTOM_KERNEL_ATOM_VERSIONING_STYLES=\"point-release|post-3c\""
-eerror
-		die
-	fi
-
-	# CUSTOM_KERNEL_ATOM_VERSIONING_STYLES valid values
-	# Example:  CUSTOM_KERNEL_ATOM_VERSIONING_STYLES="point-release|post-3c|post-2c|rc|live-9999|live-slot-9999"
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "point-release" ]] ; then
-		FLAVORS_POINT_RELEASE+=(
-			"${CUSTOM_KERNEL_ATOM}"
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "post-3c" ]] ; then
-		FLAVORS_POST_3C_RELEASE+=(
-			"${CUSTOM_KERNEL_ATOM}"
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "post-2c" ]] ; then
-		FLAVORS_POST_2C_RELEASE+=(
-			"${CUSTOM_KERNEL_ATOM}"
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "rc" ]] ; then
-		FLAVORS_RC+=(
-			"${CUSTOM_KERNEL_ATOM}"
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "live-9999" ]] ; then
-		FLAVORS_LIVE_9999+=(
-			"${CUSTOM_KERNEL_ATOM}"
-		)
-	fi
-	if [[ -n "${CUSTOM_KERNEL_ATOM}" && "${CUSTOM_KERNEL_ATOM_VERSIONING_STYLES}" =~ "live-slot-9999" ]] ; then
-		FLAVORS_LIVE_SLOT_9999+=(
-			"${CUSTOM_KERNEL_ATOM}"
-		)
-	fi
-
-	# 7.2.3
-	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-ge" "${MSEAL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}
-			"
-		done
-	done
-
-	# 7.2.3_p1
-	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-ge" "${MSEAL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}
-			"
-		done
-	done
-
-	# 7.2_p1
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-ge" "${MSEAL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}
-			"
-		done
-	done
-
-	# 7.3_rc1
-	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
-		[[ "${pv}" =~ "rc" ]] || continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-ge" "${MSEAL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_RC[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_rc
-			"
-		done
-	done
-
-	# 6.18.9999
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-ge" "${MSEAL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
-		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_LIVE_9999[@]}" ; do
-			local pn="${x#*/}"
-			iuse_list+="
-				kernel_targets_${pn}_${slot}_live
-			"
-		done
-	done
-
-	# 7.3.9999
-	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-ge" "${MSEAL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
-		local pn="${x#*/}"
-		iuse_list+="
-			kernel_targets_${pn}_live
-		"
-	done
-
-	# IUSE list
-	o="
-		${iuse_list}
-	"
-	echo "${o}"
-#einfo "IUSE list:"
-#einfo "${o}"
-}
-IUSE_MSEAL_REJECTED=( $(gen_render_kernels_list_v2_mseal_rej) )
-
+IUSE_LANDLOCK=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-lt' '') )
+IUSE_LANDLOCK_REJ=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-ge' '!') )
+IUSE_MSEAL=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-lt' '') )
+IUSE_MSEAL_REJ=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-ge' '!') )
 
 IUSE+="
 	${IUSE_KERNELS[@]}
 "
 REQUIRED_USE+="
 	enforce? (
+		landlock? (
+			|| (
+				${IUSE_LANDLOCK[@]}
+			)
+			${IUSE_LANDLOCK[@]}
+		)
 		mseal? (
 			|| (
 				${IUSE_MSEAL[@]}
 			)
-			${IUSE_MSEAL_REJECTED[@]}
 		)
 		|| (
 			${IUSE_KERNELS[@]}
@@ -967,6 +817,8 @@ REQUIRED_USE+="
 gen_render_kernels_list_v2() {
 	local acceptable_list=""
 	local eol_list=""
+	local landlock_list=""
+	local mseal_list=""
 	local o
 	local av
 	local pv
@@ -1174,14 +1026,29 @@ eerror
 		"
 	done
 
+	# landlock is for PT mitigation
+	for x in "${FLAVORS[@]}" "${CUSTOM_KERNEL_ATOM}" ; do
+		[[ -z "${x}" ]] && continue
+		landlock_list+="
+			!<${x}-${LANDLOCK_MIN_SLOT}
+		"
+	done
+
 	# mseal is for RCE mitigation
-	local mseal_list=""
 	for x in "${FLAVORS[@]}" "${CUSTOM_KERNEL_ATOM}" ; do
 		[[ -z "${x}" ]] && continue
 		mseal_list+="
-			!<${x}-6.10
+			!<${x}-${MSEAL_MIN_SLOT}
 		"
 	done
+
+	# landlock list
+	o="
+		landlock? (
+			${landlock_list}
+		)
+	"
+	echo "${o}"
 
 	# mseal list
 	o="
