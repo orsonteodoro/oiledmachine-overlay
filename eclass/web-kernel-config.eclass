@@ -19,6 +19,7 @@ esac
 
 inherit linux-info toolchain-funcs
 
+WEB_KERNEL_CONFIG_CHECK_LANDLOCK="${WEB_KERNEL_CONFIG_CHECK_LANDLOCK:-0}"
 WEB_KERNEL_CONFIG_CHECK_YAMA="${WEB_KERNEL_CONFIG_CHECK_YAMA:-0}"
 
 # @FUNCTION: web-kernel-config_setup
@@ -74,6 +75,15 @@ ewarn "Missing kernel .config file."
 			~STACKPROTECTOR_STRONG
 			~STRICT_KERNEL_RWX
 		"
+
+		if [[ "${WEB_KERNEL_CONFIG_CHECK_LANDLOCK}" == "1" ]] ; then
+			CONFIG_CHECK+="
+				~SECURITY
+				~SECURITY_LANDLOCK
+			"
+			WARNING_SECURITY="CONFIG_SECURITY is required for YAMA for mitigation against credential theft or sandbox escape."
+			WARNING_SECURITY_LANDLOCK="CONFIG_SECURITY_LANDLOCK could be added for path traversal mitigation against credential, cryptocurrency, password database, crown jewels, or keys to crown jewels theft."
+		fi
 
 		if [[ "${WEB_KERNEL_CONFIG_CHECK_YAMA}" == "1" ]] ; then
 			CONFIG_CHECK+="

@@ -252,6 +252,7 @@ RUST_REQ_USE="rustfmt" # Upstream run rustfmt on bindgen output, so we need it t
 RUST_SLOT_VENDORED="1.98.0" # Check every major version bump
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=-system-clang
 SHADOW_CALL_STACK=0 # Global variable
+WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
 # Default:  Allow expensive hardening and optimization between 19-29 of each month after billing time.
@@ -1842,7 +1843,7 @@ RDEPEND+="
 	${COMMON_DEPEND}
 	!www-client/chromium:0
 	>=www-client/chromium-common-2:*
-	sys-kernel/secure-kernel:*[mseal]
+	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/ttf-fonts:*
 	virtual/patent-status:*[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (

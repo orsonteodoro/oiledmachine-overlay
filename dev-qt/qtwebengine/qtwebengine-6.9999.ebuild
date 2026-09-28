@@ -13,6 +13,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
 CXX_STANDARD=17
+WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
@@ -134,7 +135,7 @@ RDEPEND="
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}:=
 	>=x11-libs/libxkbfile-${LIBXKBFILE_PV}:=
 	sys-apps/pciutils:=
-	sys-kernel/secure-kernel:*[mseal]
+	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/libudev:=
 	virtual/minizip:=
 	x11-libs/libXcomposite:=

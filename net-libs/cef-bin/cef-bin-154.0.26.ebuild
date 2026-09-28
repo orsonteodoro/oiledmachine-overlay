@@ -42,6 +42,7 @@ FLAVOR="" # "_beta" or ""
 CXX_STANDARD=20
 GCC_PV="10.2.1" # Minimum
 VIRTUALX_REQUIRED="manual"
+WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
 inherit libstdcxx-compat
@@ -190,7 +191,7 @@ RDEPEND+="
 	>=x11-libs/libXfixes-${LIBXFIXES_PV}
 	>=x11-libs/libxkbcommon-${LIBXKBCOMMON_PV}
 	>=x11-libs/libXrandr-${LIBXRANDR_PV}
-	sys-kernel/secure-kernel:*[mseal]
+	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/udev
 	cefclient? (
 		>=x11-libs/gtk+-${GTK3_PV}:3

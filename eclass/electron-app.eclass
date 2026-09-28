@@ -23,6 +23,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
 CHKL_TIMESTAMPS+=(
@@ -433,7 +434,7 @@ COMMON_DEPEND="
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
 	>=x11-libs/pango-${PANGO_PV}:=
 	sys-devel/gcc[cxx(+)]
-	sys-kernel/secure-kernel:*[mseal]
+	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/ttf-fonts:*
 	virtual/udev:*
 	wayland? (

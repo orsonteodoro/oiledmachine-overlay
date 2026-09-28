@@ -3,6 +3,7 @@
 
 EAPI=8
 
+WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 
 CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
@@ -203,7 +204,7 @@ RDEPEND="
 	>=x11-libs/pango-${PANGO_PV}
 	>=x11-misc/xdg-utils-${XDG_UTILS_PV}
 	media-fonts/liberation-fonts
-	sys-kernel/secure-kernel:*[mseal]
+	sys-kernel/secure-kernel:*[landlock,mseal]
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
 	gtk3? (
