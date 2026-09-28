@@ -367,12 +367,13 @@ gen_patched_kernel_driver_list() {
 	done
 }
 
+# One reason why source based packages are only allowed because the unused
+# ciphers need to be disabled.
 DSS_FLAVORS=(
 	"sys-kernel/gentoo-sources" # 7.1.3, 7.1.2-r1
 	"sys-kernel/git-sources" # 7.2_rc2
 	"sys-kernel/linux-next" # 9999
 	"sys-kernel/ot-sources" # 7.1.3
-	"sys-kernel/vanilla-kernel" # 7.1.3, 6.18.9999
 	"sys-kernel/vanilla-sources" # 7.1.3
 )
 
@@ -392,6 +393,7 @@ DSS_FLAVORS_REJ=(
 	"sys-kernel/raspberrypi-sources" # 6.18.32_p20260521
 	"sys-kernel/rt-sources" # 7.0.1_p2
 	"sys-kernel/surface-sources" # 7.0.5
+	"sys-kernel/vanilla-kernel" # 7.1.3, 6.18.9999
 	"sys-kernel/xanmod-kernel" # 7.1.3, 7.1.2_p1
 	"sys-kernel/xanmod-rt" # 6.12.31
 	"sys-kernel/xanmod-sources" # 7.1.3, 7.1.2-r1
