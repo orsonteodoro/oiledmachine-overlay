@@ -76,7 +76,7 @@ _seq()
 }
 
 gen_render_kernels_list_v2_iuse() {
-	local acceptable_list=""
+	local iuse_list=""
 	local eol_list=""
 	local o
 	local av
@@ -367,7 +367,7 @@ eerror
 		for x in "${FLAVORS_LIVE_9999[@]}" ; do
 			local pn="${x#*/}"
 			iuse_list+="
-				kernel_targets_${pn}_${slot}_live
+				kernel_targets_${pn}_live_lts_${slot}
 			"
 		done
 	done
@@ -411,6 +411,7 @@ REQUIRED_USE+="
 gen_render_kernels_list_v2() {
 	local acceptable_list=""
 	local eol_list=""
+	local mseal_list=""
 	local o
 	local av
 	local pv
@@ -619,7 +620,6 @@ eerror
 	done
 
 	# mseal is for RCE mitigation
-	local mseal_list
 	for x in "${FLAVORS[@]}" "${CUSTOM_KERNEL_ATOM}" ; do
 		[[ -z "${z}" ]] && continue
 		mseal_list+="
