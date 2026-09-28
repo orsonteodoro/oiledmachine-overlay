@@ -65,6 +65,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/qcoro-9999"
 	"dev-qt/qtbase-6.9999"
 	"dev-qt/qtsvg-6.9999"
+	"media-libs/libprojectm-9999"
 	"media-libs/libsdl2-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libsndfile-9999"
@@ -147,7 +148,7 @@ RDEPEND+="
 		>=app-arch/libarchive-${LIBARCHIVE_PV}:=
 	)
 	projectm? (
-		>=media-libs/libprojectm-4:=
+		>=media-libs/libprojectm-${LIBPROJECTM_PV}:4=
 	)
 	nls? (
 		>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},linguist]
