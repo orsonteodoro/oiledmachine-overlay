@@ -56,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -94,6 +94,8 @@ npm_unpack_post() {
 npm_update_lock_audit_post() {
 	enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
 
+	# Pinned decode-uri-component required.
+
 	local pkgs=(
 	# Remove vendored copy
 		"npm"
@@ -104,16 +106,36 @@ npm_update_lock_audit_post() {
 	)
 	enpm uninstall "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
-ewarn "QA:  Remove node_modules/styled-jsx/node_modules/loader-utils in package-lock.json"
-ewarn "QA:  Remove node_modules/webpack-cli/node_modules/loader-utils in package-lock.json"
-ewarn "QA:  Change \"loader-utils\": \"1.2.3\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
-ewarn "QA:  Change \"loader-utils\": \"^1.2.3\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
-ewarn "QA:  Change \"loader-utils\": \"^1.1.0\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
+#ewarn "QA:  Remove node_modules/source-map-resolve/node_modules/decode-uri-component in package-lock.json"
+
+	patch_lockfile() {
+
+		sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
+#		sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^0.5.0\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^${NODE_FLATTED_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"http-proxy-middleware\": \"^0.19.0\"|\"http-proxy-middleware\": \"^2.0.10\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"nanoid\": \"^2.0.0\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^7.0.5\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.5.23\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^${NODE_TMP_PV}\"|g" "${S}/package-lock.json" || die
+	}
+
+	patch_lockfile
 
 	# Manual vulnerabilities fixes
 	local pkgs=(
 		"braces@^${NODE_BRACES_PV}"
-		"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
+#		"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
 		"flatted@^${NODE_FLATTED_PV}"
 		"http-proxy-middleware@^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}"
 		"loader-utils@^${NODE_LOADER_UTILS_1_PV}"
@@ -123,6 +145,8 @@ ewarn "QA:  Change \"loader-utils\": \"^1.1.0\" to \"loader-utils\": \"^1.4.2\" 
 		"tmp@^${NODE_TMP_PV}"
 	)
 	enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+	patch_lockfile
 
 	enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 }
