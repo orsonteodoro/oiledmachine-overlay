@@ -56,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -104,13 +104,19 @@ npm_update_lock_audit_post() {
 	)
 	enpm uninstall "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
+ewarn "QA:  Remove node_modules/styled-jsx/node_modules/loader-utils in package-lock.json"
+ewarn "QA:  Remove node_modules/webpack-cli/node_modules/loader-utils in package-lock.json"
+ewarn "QA:  Change \"loader-utils\": \"1.2.3\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
+ewarn "QA:  Change \"loader-utils\": \"^1.2.3\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
+ewarn "QA:  Change \"loader-utils\": \"^1.1.0\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
+
 	# Manual vulnerabilities fixes
 	local pkgs=(
 		"braces@^${NODE_BRACES_PV}"
 		"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
 		"flatted@^${NODE_FLATTED_PV}"
 		"http-proxy-middleware@^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}"
-		"loader-utils@^${NODE_LOADER_UTILS_PV}"
+		"loader-utils@^${NODE_LOADER_UTILS_1_PV}"
 		"nanoid@^${NODE_NANOID_3_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
 		"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
