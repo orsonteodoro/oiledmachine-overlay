@@ -213,6 +213,7 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 	# Fix vulnerabilities
 		local L
 		L=(
+			"decode-uri-component@^0.5.0"
 			"json5@^${NODE_JSON5_PV}"
 			"loader-utils@^${NODE_LOADER_UTILS_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
