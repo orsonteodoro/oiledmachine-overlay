@@ -1,13 +1,13 @@
 {
   "$schema": "./package.schema.json",
-  "packageManager": "pnpm@11.5.2",
+  "packageManager": "pnpm@11.24.0",
   "private": true,
   "name": "signal-desktop",
   "productName": "Signal",
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "8.27.0",
+  "version": "8.28.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -58,14 +58,14 @@
     "lint-deps": "tsx ts/util/lint/linter.node.ts",
     "lint-deps:sort": "tsx ts/util/lint/sort_exceptions.node.ts",
     "lint-license-comments": "tsx ts/util/lint/license_comments.node.ts",
-    "lint-prettier": "prettier --check --cache --cache-strategy metadata '**/*.{ts,tsx,d.ts,js,json,html,scss,md,yml,yaml}' '!node_modules/**'",
+    "lint-prettier": "prettier --check --cache --cache-strategy content '**/*.{ts,tsx,d.ts,js,json,html,scss,md,yml,yaml}' '!node_modules/**'",
     "lint-intl": "tsx ./build/intl-linter/linter.node.ts",
     "lint-css": "stylelint '**/*.scss' --cache",
     "lint-knip": "pnpm run lint-knip:all && pnpm run lint-knip:prod",
     "lint-knip:all": "knip --cache",
     "lint-knip:prod": "knip --production --cache",
-    "danger:local": "cd danger && npm run danger:local",
-    "format": "prettier --write --cache --cache-strategy metadata '**/*.{ts,tsx,d.ts,js,json,html,scss,md,yml,yaml}' '!node_modules/**'",
+    "danger:local": "cd danger && pnpm run danger:local",
+    "format": "prettier --write --cache --cache-strategy content '**/*.{ts,tsx,d.ts,js,json,html,scss,md,yml,yaml}' '!node_modules/**'",
     "svgo": "svgo --multipass images/**/*.svg images/*.svg",
     "transpile": "run-p check:types build:rolldown",
     "check:types": "tsc --noEmit",
@@ -80,7 +80,6 @@
     "dev:icu-types": "chokidar ./_locales/en/messages.json --initial --command \"pnpm run build:icu-types\"",
     "dev:protobuf": "chokidar ./protos/**/*.proto --command \"pnpm run build:protobuf\"",
     "build:storybook": "pnpm run build:protobuf && pnpm run build:emoji-data && cross-env SIGNAL_ENV=storybook storybook build",
-    "test:storybook": "pnpm run build:storybook && run-p --race test:storybook:*",
     "test:storybook:serve": "http-server storybook-static --port 6006 --silent",
     "test:storybook:test": "wait-on http://127.0.0.1:6006/ --timeout 5000 && test-storybook --testTimeout 60000",
     "build": "run-s --print-label generate build:rolldown:prod build:release",
@@ -243,7 +242,7 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "44.4.3",
+    "electron": "44.4.5",
     "electron-builder": "26.15.7",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
@@ -266,7 +265,7 @@
     "https-proxy-agent": "7.0.6",
     "humanize-duration": "3.33.2",
     "is-glob": "4.0.3",
-    "js-yaml": "4.3.1",
+    "js-yaml": "4.3.2",
     "json-to-ast": "2.1.0",
     "knip": "6.14.0",
     "linkify-it": "5.0.2",
@@ -348,7 +347,17 @@
     "zod": "4.3.6"
   },
   "engines": {
-    "node": "24.17.0"
+    "node": "24.19.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.19.0"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.24.0"
+    }
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -371,7 +380,7 @@
       "sign": "scripts/sign-macos.mjs",
       "releaseInfo": {
         "vendor": {
-          "minOSVersion": "21.0.1"
+          "minOSVersion": "22.1.0"
         }
       },
       "singleArchFiles": "node_modules/{@signalapp,@indutny}/{libsignal-client/prebuilds/**,ringrtc/build/**,sqlcipher/prebuilds/**,mac-screen-share/prebuilds/**}",
@@ -569,6 +578,7 @@
       "about.html",
       "screenShare.html",
       "settings.html",
+      "pdf.html",
       "permissions_popup.html",
       "debug_log.html",
       "loading.html",
@@ -632,6 +642,6 @@
     ]
   },
   "volta": {
-    "node": "24.17.0"
+    "node": "24.19.0"
   }
 }

@@ -1,5 +1,6 @@
---- a/pnpm-workspace.yaml.orig	2026-09-10 05:04:23.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-09-19 17:51:17.195222615 -0700
+diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-Desktop-8.28.0/pnpm-workspace.yaml
+--- Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml	2026-09-23 14:15:39.000000000 -0700
++++ Signal-Desktop-8.28.0/pnpm-workspace.yaml	2026-09-28 10:03:31.094133199 -0700
 @@ -1,5 +1,5 @@
  saveExact: true
 -blockExoticSubdeps: true
@@ -7,7 +8,7 @@
  lockfileIncludeTarballUrl: true
  verifyDepsBeforeRun: prompt
  verifyStoreIntegrity: true
-@@ -8,15 +8,49 @@ packages:
+@@ -8,16 +8,52 @@ packages:
    - 'packages/*'
    - 'sticker-creator'
  
@@ -23,13 +24,18 @@
 +#minimumReleaseAgeIgnoreMissingTime: false
 +#minimumReleaseAgeStrict: true
  minimumReleaseAgeExclude:
+-  - '@signalapp/*'
++  # Upstream rules
+   - 'electron'
+-  - node-abi@4.34.0
++  - 'node-abi@4.34.0'
++  # oiledmachine-overlay rules
 +  - '@babel/core@@NODE_BABEL_CORE_7_PV@'
 +  - '@babel/runtime@@NODE_BABEL_RUNTIME_7_PV@'
 +  - '@indutny/protopiler@4.0.2'
 +  - '@remix-run/router@@NODE_AT_REMIX_RUN_ROUTER_PV@'
 +  - '@signalapp/libsignal-client'
-   - '@signalapp/*'
-   - 'electron'
++  - '@signalapp/*'
 +  - 'dmg-builder@@NODE_DMG_BUILDER_PV@'
 +  - '@storybook/core@@NODE_STORYBOOK_8_PV@'
 +  - '@storybook/theming@@NODE_STORYBOOK_8_PV@'
@@ -62,7 +68,7 @@
  
  trustPolicy: no-downgrade
  trustPolicyExclude:
-@@ -30,43 +64,100 @@ trustPolicyExclude:
+@@ -31,21 +67,83 @@ trustPolicyExclude:
    - 'undici-types@6.21.0'
    - 'vite@4.5.14'
  
@@ -71,51 +77,27 @@
 -    - GHSA-3xgq-45jj-v275 # react-devtools > cross-spawn
 -    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
 -    - GHSA-5c6j-r48x-rmvq # @storybook/addon-webpack5-compiler-swc > serialize-javascript
--    - GHSA-532v-xpq5-8h95 # react-devtools > electron
--    - GHSA-8337-3p73-46f4 # react-devtools > electron
--    - GHSA-jjp3-mq3x-295m # react-devtools > electron
--    - GHSA-9wfr-w7mm-pc7f # react-devtools > electron
--    - GHSA-c27g-q93r-2cwf # sticker-creator > vite
 -    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
--    - GHSA-23hp-3jrh-7fpw # node-tar, only used at dev-time
--    - GHSA-3jxr-9vmj-r5cp # brace-expansion, only used at dev-time
--    - GHSA-52cp-r559-cp3m # js-yaml, only used at dev-time
--    - GHSA-8x88-c5mf-7j5w # tar, only used at dev-time
 -    - GHSA-395f-4hp3-45gv # shell-quote, only used at dev-time
 -    - GHSA-gcfj-64vw-6mp9 # axios, only used at dev-time
 -    - GHSA-v56q-mh7h-f735 # used by sass, only used at dev-time
 -    - GHSA-xvcm-6775-5m9r # used by sass, only used at dev-time
--    - GHSA-2p49-hgcm-8545 # svgo, only used at dev-time
--    - GHSA-v2hh-gcrm-f6hx # fast-uri, only used at dev-time
--    - GHSA-4c8g-83qw-93j6 # fast-uri, only used at dev-time
 -    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
 -    - GHSA-jmr9-qjv8-65gv # react-devtools > electron > extract-zip
--    - GHSA-r292-9mhp-454m # tar, only used at dev-time
+-    - GHSA-7pqw-9j4j-h8q3 # react-devtools > electron > extract-zip
 +#auditConfig:
 +#  ignoreGhsas:
 +#    - GHSA-3xgq-45jj-v275 # react-devtools > cross-spawn
 +#    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
 +#    - GHSA-5c6j-r48x-rmvq # @storybook/addon-webpack5-compiler-swc > serialize-javascript
-+#    - GHSA-532v-xpq5-8h95 # react-devtools > electron
-+#    - GHSA-8337-3p73-46f4 # react-devtools > electron
-+#    - GHSA-jjp3-mq3x-295m # react-devtools > electron
-+#    - GHSA-9wfr-w7mm-pc7f # react-devtools > electron
-+#    - GHSA-c27g-q93r-2cwf # sticker-creator > vite
 +#    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
-+#    - GHSA-23hp-3jrh-7fpw # node-tar, only used at dev-time
-+#    - GHSA-3jxr-9vmj-r5cp # brace-expansion, only used at dev-time
-+#    - GHSA-52cp-r559-cp3m # js-yaml, only used at dev-time
-+#    - GHSA-8x88-c5mf-7j5w # tar, only used at dev-time
 +#    - GHSA-395f-4hp3-45gv # shell-quote, only used at dev-time
 +#    - GHSA-gcfj-64vw-6mp9 # axios, only used at dev-time
 +#    - GHSA-v56q-mh7h-f735 # used by sass, only used at dev-time
 +#    - GHSA-xvcm-6775-5m9r # used by sass, only used at dev-time
-+#    - GHSA-2p49-hgcm-8545 # svgo, only used at dev-time
-+#    - GHSA-v2hh-gcrm-f6hx # fast-uri, only used at dev-time
-+#    - GHSA-4c8g-83qw-93j6 # fast-uri, only used at dev-time
 +#    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
 +#    - GHSA-jmr9-qjv8-65gv # react-devtools > electron > extract-zip
-+#    - GHSA-r292-9mhp-454m # tar, only used at dev-time
++#    - GHSA-7pqw-9j4j-h8q3 # react-devtools > electron > extract-zip
  
 +# Bans or rollbacks
  overrides:
@@ -181,20 +163,23 @@
 +  'jsdom': '-' # References canvas package
 +  # Upstream pins
    '@electron/rebuild>node-gyp': '12.4.0'
-   'brace-expansion@5': '^5.0.9'
+   '@electron/rebuild>node-abi': '4.34.0'
+   '@xmldom/xmldom@0.8': '^0.8.15'
+@@ -53,12 +151,7 @@ overrides:
    'brace-expansion@2': '^2.1.4'
    'brace-expansion@1': '^1.1.18'
    'builder-util-runtime': '9.7.0'
 -  'canvas': '-'
 -  'danger@13.0.10>undici': '6.27.0'
+   'js-yaml@3': '^3.15.2'
 -  'jsdom': '-'
 -  'react-popper@2.3.0>react-dom': '19.2.4'
 -  'react-popper@2.3.0>react': '19.2.4'
    'thenify-all>thenify': '3.3.1'
    electron@<39.8.10: ^39.8.10
    electron@<39.8.9: ^39.8.9
-@@ -77,19 +160,19 @@ allowUnusedPatches: false
- ignorePatchFailures: false
+@@ -68,20 +161,20 @@ overrides:
+ allowUnusedPatches: false
  patchedDependencies:
    # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
 -  '@electron/universal': 'patches/@electron__universal.patch'
@@ -209,6 +194,7 @@
 -  'dmg-builder': 'patches/dmg-builder.patch'
 +  #'dmg-builder': 'patches/dmg-builder.patch'
    'fabric@4.6.0': 'patches/fabric+4.6.0.patch'
+   'fs-extra@11.3.4': 'patches/fs-extra+11.3.4.patch'
    'fs-xattr': 'patches/fs-xattr.patch'
    'growing-file@0.1.3': 'patches/growing-file+0.1.3.patch'
    'node-fetch@3.3.2': 'patches/node-fetch@3.3.2.patch'
@@ -217,7 +203,7 @@
    'qrcode-generator': 'patches/qrcode-generator.patch'
    'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
    'zod@4.3.6': 'patches/zod@4.3.6.patch'
-@@ -100,22 +183,23 @@ allowBuilds:
+@@ -92,22 +185,23 @@ allowBuilds:
    #   ex: 'package@0.0.0': true
    '@indutny/mac-screen-share@1.0.13': true
    '@indutny/simple-windows-notifications@2.0.16': true
@@ -245,7 +231,7 @@
    'core-js': false
    'electron-winstaller': false
    'es5-ext': false
-@@ -125,7 +209,7 @@ allowBuilds:
+@@ -117,7 +211,7 @@ allowBuilds:
  
  dedupePeers: true
  dedupePeerDependents: true
@@ -254,7 +240,7 @@
  peerDependencyRules:
    allowedVersions:
      '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
-@@ -137,24 +221,37 @@ peerDependencyRules:
+@@ -129,23 +223,36 @@ peerDependencyRules:
      'react-intl@10.1.0>typescript': '6.0.2'
      '@storybook/react@8.4.4>@storybook/test': '8.6.15'
      'stylelint-use-logical-spec@5.0.1>stylelint': '17.11.1'
@@ -266,7 +252,6 @@
  allowedDeprecatedVersions:
    '@humanwhocodes/config-array': '0.11.14'
    '@humanwhocodes/object-schema': '2.0.3'
--  '@xmldom/xmldom': '0.8.13 || 0.9.10'
 +  '@npmcli/move-file': '2.0.1'
 +  'abab': '2.0.6'
 +  'are-we-there-yet': '2.0.0'
@@ -299,5 +284,6 @@
 +  'uuid': '3.4.0 || 8.3.2 || 9.0.1'
 +  'w3c-hr-time': '1.0.2'
 +  'whatwg-encoding': '1.0.5 || 2.0.0'
-+#  '@xmldom/xmldom': '0.8.10'
 +#  'yaeti': '0.0.6'
+Only in Signal-Desktop-8.28.0: pnpm-workspace.yaml.orig
+Only in Signal-Desktop-8.28.0: pnpm-workspace.yaml.rej

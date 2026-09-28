@@ -1,5 +1,4 @@
 {
-  "packageManager": "pnpm@11.5.2",
   "name": "signal-art-creator",
   "private": true,
   "version": "0.0.0",
@@ -57,14 +56,5 @@
     "sass": "1.101.0",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "vite": "8.0.16"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "protobufjs"
-    ],
-    "ignoredBuiltDependencies": [
-      "es5-ext"
-    ]
   }
 }

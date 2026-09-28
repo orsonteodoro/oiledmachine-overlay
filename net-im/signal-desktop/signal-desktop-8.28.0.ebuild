@@ -35,7 +35,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.27.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.28.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -43,7 +43,7 @@ EAPI=8
 
 # Do the following in ${S} if you get:
 # [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
-#PATH="/usr/lib/node/24/bin:/var/tmp/portage/net-im/signal-desktop-8.27.0/homedir/.cache/node/corepack/v1/pnpm/11.10.0/bin:${PATH}" pnpm peers check
+#PATH="/usr/lib/node/24/bin:/var/tmp/portage/net-im/signal-desktop-8.28.0/homedir/.cache/node/corepack/v1/pnpm/11.10.0/bin:${PATH}" pnpm peers check
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -140,7 +140,7 @@ else
 	"
 fi
 SLOT="0"
-#KEYWORDS="-* amd64" # Unfinished update
+KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
@@ -254,9 +254,10 @@ einfo "DEBUG:  Deleting newer app-builder-lib version suggested by pnpm audit --
 
 _apply_patches() {
 	[[ "${ALREADY_PATCHED}" == "1" ]] && return
-einfo "DEBUG:  Called pnpm_unpack_post()"
+
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		eapply "${FILESDIR}/${PN}-8.27.0-project-files-changes.patch"
+einfo "QA:  Manually change 24.19.0 to @NODE_PV@ in package.json"
+		eapply "${FILESDIR}/${PN}-8.28.0-project-files-changes.patch"
 
 	# Must be pinned
 		sed -i -e "s|@ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" "${S}/pnpm-workspace.yaml" || die
@@ -307,6 +308,7 @@ einfo "Increasing verbosity to debug"
 }
 
 pnpm_unpack_post() {
+einfo "DEBUG:  Called pnpm_unpack_post()"
 	_apply_patches
 }
 
@@ -481,10 +483,6 @@ eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
 src_compile() {
 	pnpm_hydrate
 
-	# Required to avoid:
-	# ERROR: spawn npm ENOENT
-	npm_hydrate
-
 	export ELECTRON_USE_REMOTE_CHECKSUMS=0
 	# The zip gets wiped for some reason in src_unpack.
 	electron-app_cp_electron
@@ -592,6 +590,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.28.0, 20260920, Electron 44.4.5)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.27.0, 20260920, Electron 44.4.3)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.20.0, 20260729, Electron 43.2.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.19.0, 20260718, Electron 43.1.1 with Firejail and GPU acceleration off hardening)
