@@ -371,6 +371,10 @@ RDEPEND+="
 	hardened_malloc? (
 		>=dev-libs/hardened_malloc-${HARDENED_MALLOC_PV}:=
 	)
+	landlock? (
+		sys-kernel/mitigate-dt:*[landlock]
+		sys-kernel/mitigate-id:*[landlock]
+	)
 	mimalloc? (
 		dev-libs/mimalloc:=
 		|| (
