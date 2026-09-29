@@ -49,7 +49,7 @@ RESTRICT="mirror test" # Did not test
 SLOT="0"
 IUSE="
 dev pandas
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	pandas? (
@@ -89,9 +89,9 @@ pkg_setup() {
 npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
-			sed -i -e "s|||g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 		}
-		#patch_lockfile
+		patch_lockfile
 
 		local pkgs
 		pkgs=(
@@ -117,9 +117,19 @@ npm_dedupe_post() {
 			"webpack-dev-server@^5.2.6"
 			"websocket-driver@0.7.5"
 			"ws@^${NODE_WS_8_PV}"
+
+	# Missing dep
+			"ajv@^${NODE_AJV_PV}"
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
-		#patch_lockfile
+
+	# Reapplies
+		patch_lockfile
+		pkgs=(
+			"uuid@^${NODE_UUID_11_PV}"
+		)
+		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+		patch_lockfile
 
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 	fi
