@@ -1,0 +1,21 @@
+--- /dev/null	2026-09-27 23:51:40.459168349 -0700
++++ b/pnpm-workspace.yaml	2026-09-29 16:42:15.314956777 -0700
+@@ -0,0 +1,18 @@
++#minimumReleaseAge: 4320 # in minutes
++#minimumReleaseAgeIgnoreMissingTime: false
++#minimumReleaseAgeStrict: true
++minimumReleaseAgeExclude:
++  - 'dompurify@@NODE_DOMPURIFY_PV@'
++  - 'ip-address@@NODE_IP_ADDRESS_PV@'
++  - 'lodash@@NODE_LODASH_PV@'
++  - 'qs@@NODE_QS_PV@'
++
++overrides:
++  'dompurify': '@NODE_DOMPURIFY_PV@'
++  'express@4.22.1>qs': '@NODE_QS_PV@'
++  'express-rate-limit@8.2.2>qs': '@NODE_QS_PV@'
++  'express-rate-limit@8.2.2>ip-address': '@NODE_IP_ADDRESS_PV@'
++  'ip-address': '@NODE_IP_ADDRESS_PV@'
++  'lodash': '@NODE_LODASH_PV@'
++  'monaco-editor@0.55.1>dompurify': '@NODE_DOMPURIFY_PV@'
++  'qs': '@NODE_QS_PV@'

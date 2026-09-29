@@ -847,6 +847,16 @@ pkg_setup() {
 }
 
 pnpm_unpack_post() {
+	eapply "${FILESDIR}/${PN}-2026.8.250-add-pnpm-workspace.patch"
+
+	sed -i \
+		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
+		-e "s|@NODE_IP_ADDRESS_PV@|${NODE_IP_ADDRESS_PV}|g" \
+		-e "s|@NODE_LODASH_PV@|${NODE_LODASH_PV}|g" \
+		-e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" \
+		"pnpm-workspace.yaml" \
+		|| die
+
 	sed -i \
 		-e "\|@rollup/rollup-win32-arm64-msvc|d" \
 		-e "\|@tauri-apps/cli-win32-arm64-msvc|d" \
@@ -882,6 +892,8 @@ pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		node-sharp_pnpm_lockfile_add_sharp
 
+		epnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
+
 		patch_lockfile() {
 			sed -i -e "s|baseline-browser-mapping: 2.9.11|baseline-browser-mapping: ${NODE_BASELINE_BROWSER_MAPPING_PV}|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|body-parser: 1.20.4|body-parser: ${NODE_BODY_PARSER_1_PV}|g" "pnpm-lock.yaml" || die
@@ -913,17 +925,13 @@ pnpm_audit_post() {
 			"colord@${NODE_COLORD_PV}"
 			"devalue@${NODE_DEVALUE_PV}"
 			"diff@${NODE_DIFF_8_PV}" # # Possible version bump causes breaking change
-			"dompurify@${NODE_DOMPURIFY_PV}"
 			"fflate@${NODE_FFLATE_PV}"
-			"ip-address@${NODE_IP_ADDRESS_PV}"
 			"linkify-it@${NODE_LINKIFY_IT_5_PV}"
 			"lodash@${NODE_LODASH_PV}"
 			"markdown-it@${NODE_MARKDOWN_IT_14_PV}"
 			"path-to-regexp@${NODE_PATH_TO_REGEXP_0_PV}"
 			"postcss-selector-parser@${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
-			"qs@${NODE_QS_PV}"
 			"svelte@${NODE_SVELTE_PV}"
-			"uuid@${NODE_UUID_11_PV}"
 			"ws@${NODE_WS_8_PV}"
 			"yaml@${NODE_YAML_2_PV}"
 		)
@@ -949,7 +957,20 @@ pnpm_audit_post() {
 
 		patch_lockfile
 
-		epnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
+		# Reinstalls because of the possibility of clobbered install or more dependencies of dependencies
+		L=(
+			"dompurify@${NODE_DOMPURIFY_PV}"
+			"ip-address@${NODE_IP_ADDRESS_PV}"
+			"qs@${NODE_QS_PV}"
+		)
+		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
+		L=(
+			"uuid@${NODE_UUID_11_PV}"
+		)
+		epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
 		patch_lockfile
 	fi
