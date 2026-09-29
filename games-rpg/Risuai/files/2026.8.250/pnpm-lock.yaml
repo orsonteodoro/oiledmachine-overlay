@@ -90,7 +90,7 @@ importers:
         specifier: ^1.9.0
         version: 1.9.0
       body-parser:
-        specifier: ^1.20.8
+        specifier: 1.20.8
         version: 1.20.8
       buffer:
         specifier: ^6.0.3
@@ -99,7 +99,7 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
       colord:
-        specifier: ^2.10.0
+        specifier: 2.10.0
         version: 2.10.0
       compression-streams-polyfill:
         specifier: ^0.1.7
@@ -111,7 +111,7 @@ importers:
         specifier: ^4.3.2
         version: 4.3.2(buffer@6.0.3)
       devalue:
-        specifier: ^6.0.2
+        specifier: 6.0.2
         version: 6.0.2
       diff:
         specifier: ^8.0.4
@@ -135,7 +135,7 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       ip-address:
-        specifier: ^10.7.2
+        specifier: 10.7.2
         version: 10.7.2
       js-tiktoken:
         specifier: 1.0.21
@@ -144,14 +144,14 @@ importers:
         specifier: ^0.16.27
         version: 0.16.27
       linkify-it:
-        specifier: ^5.0.2
+        specifier: 5.0.2
         version: 5.0.2
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
       lodash:
-        specifier: ^4.18.1
-        version: 4.18.1
+        specifier: ^4.17.23
+        version: 4.17.23
       markdown-it:
         specifier: ^14.3.2
         version: 14.3.2
@@ -177,7 +177,7 @@ importers:
         specifier: ^6.8.1
         version: 6.8.1
       path-to-regexp:
-        specifier: ^0.1.13
+        specifier: 0.1.13
         version: 0.1.13
       pdfjs-dist:
         specifier: ^4.10.38
@@ -192,14 +192,14 @@ importers:
         specifier: ^7.1.6
         version: 7.1.6
       protobufjs:
-        specifier: ^7.6.6
+        specifier: 7.6.6
         version: 7.6.6
       pyodide:
         specifier: ^0.27.7
         version: 0.27.7
       qs:
-        specifier: ^6.16.0
-        version: 6.16.0
+        specifier: 6.14.1
+        version: 6.14.1
       rfdc:
         specifier: ^1.4.1
         version: 1.4.1
@@ -246,7 +246,7 @@ importers:
         specifier: ^8.22.0
         version: 8.22.0
       yaml:
-        specifier: ^2.9.1
+        specifier: 2.9.1
         version: 2.9.1
     devDependencies:
       '@rollup/plugin-strip':
@@ -304,11 +304,11 @@ importers:
         specifier: ^10.4.23
         version: 10.4.23(postcss@8.5.28)
       baseline-browser-mapping:
-        specifier: ^2.11.26
+        specifier: 2.11.26
         version: 2.11.26
       browserslist:
-        specifier: ^4.29.3
-        version: 4.29.3
+        specifier: 4.29.2
+        version: 4.29.2
       fast-check:
         specifier: ^4.5.3
         version: 4.5.3
@@ -319,10 +319,10 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       node-addon-api:
-        specifier: ^8.9.2
-        version: 8.9.2
+        specifier: 8.9.0
+        version: 8.9.0
       node-gyp:
-        specifier: ^12.4.0
+        specifier: 12.4.0
         version: 12.4.0
       postcss:
         specifier: ^8.5.6
@@ -1799,8 +1799,8 @@ packages:
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
-  browserslist@4.29.3:
-    resolution: {integrity: sha512-1R4kiYKXGViqEN0CnoDrXc1StD9niAwu+j2dukWzrD4bJgsD4lDmEp0CRbc6E/vYJIfTHwPmwyaKtVSudICdPA==}
+  browserslist@4.29.2:
+    resolution: {integrity: sha512-/u9r8k8ue4ZhHCw9ovDtltpWdXeXzjhdxCGj6vm1RGLPXb8lu33EMdoCHF5Sx8oYBS+Q/FYYNmAqlHncxR3RmA==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
@@ -2424,8 +2424,8 @@ packages:
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
 
-  lodash@4.18.1:
-    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   loglevel@1.9.2:
     resolution: {integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==}
@@ -2537,8 +2537,8 @@ packages:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
 
-  node-addon-api@8.9.2:
-    resolution: {integrity: sha512-VijLXbi3UACN69I0JVXJsX4tjACjNoQDgv2gTF6sx2wWEi8tkSg2eX8p5gSIFi8z2+DL3oHmY6OyKce38SDolg==}
+  node-addon-api@8.9.0:
+    resolution: {integrity: sha512-ekZMeaaIzSQTSpr7X2X3iJM7lTzgnx8ahAG9pJfT/7+14mlEM8ZYQ9cgCDvSSRbReFK0oHli3WrZdCiRsgAT9Q==}
     engines: {node: ^18 || ^20 || >= 21}
 
   node-gyp-build-optional-packages@5.2.2:
@@ -2710,8 +2710,8 @@ packages:
     resolution: {integrity: sha512-RUSVJlhQdfWfgO9hVHCiXoG+nVZQRS5D9FzgpLJ/VcgGBLSAKoPL8kTiOikxbHQm1kRISeWUBdulEgO26qpSRA==}
     engines: {node: '>=18.0.0'}
 
-  qs@6.14.0:
-    resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
+  qs@6.14.1:
+    resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
 
   qs@6.16.0:
@@ -4183,7 +4183,7 @@ snapshots:
 
   autoprefixer@10.4.23(postcss@8.5.28):
     dependencies:
-      browserslist: 4.29.3
+      browserslist: 4.29.2
       caniuse-lite: 1.0.30001813
       fraction.js: 5.3.4
       picocolors: 1.1.1
@@ -4215,13 +4215,13 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  browserslist@4.29.3:
+  browserslist@4.29.2:
     dependencies:
       baseline-browser-mapping: 2.11.26
       caniuse-lite: 1.0.30001813
       electron-to-chromium: 1.5.440
       node-releases: 2.0.57
-      update-browserslist-db: 1.3.3(browserslist@4.29.3)
+      update-browserslist-db: 1.3.3(browserslist@4.29.2)
 
   buffer-image-size@0.6.4:
     dependencies:
@@ -4505,7 +4505,7 @@ snapshots:
       parseurl: 1.3.3
       path-to-regexp: 0.1.13
       proxy-addr: 2.0.7
-      qs: 6.14.0
+      qs: 6.14.1
       range-parser: 1.2.1
       safe-buffer: 5.2.1
       send: 0.19.2
@@ -4801,7 +4801,7 @@ snapshots:
 
   locate-character@3.0.0: {}
 
-  lodash@4.18.1: {}
+  lodash@4.17.23: {}
 
   loglevel@1.9.2: {}
 
@@ -4899,7 +4899,7 @@ snapshots:
 
   negotiator@0.6.3: {}
 
-  node-addon-api@8.9.2: {}
+  node-addon-api@8.9.0: {}
 
   node-gyp-build-optional-packages@5.2.2:
     dependencies:
@@ -5077,7 +5077,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  qs@6.14.0:
+  qs@6.14.1:
     dependencies:
       side-channel: 1.1.1
 
@@ -5399,9 +5399,9 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  update-browserslist-db@1.3.3(browserslist@4.29.3):
+  update-browserslist-db@1.3.3(browserslist@4.29.2):
     dependencies:
-      browserslist: 4.29.3
+      browserslist: 4.29.2
       escalade: 3.2.0
       picocolors: 1.1.1
 

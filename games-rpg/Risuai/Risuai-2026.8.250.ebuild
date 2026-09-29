@@ -743,7 +743,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_28
+ebuild_revision_29
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -854,8 +854,8 @@ pnpm_unpack_post() {
 		|| die
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		local L=(
-			"node-addon-api@^8.9.0"		# For node sharp
-			"node-gyp@^12.4.0"		# For node sharp
+			"node-addon-api@8.9.0"		# For node sharp
+			"node-gyp@12.4.0"		# For node sharp
 		)
 		epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
@@ -905,24 +905,24 @@ pnpm_audit_post() {
 		patch_lockfile
 
 		L=(
-			"@huggingface/transformers@^${NODE_AT_HUGGINGFACE_TRANSFORMERS_PV}"
-			"body-parser@^${NODE_BODY_PARSER_1_PV}"
-			"colord@^${NODE_COLORD_PV}"
-			"devalue@^${NODE_DEVALUE_PV}"
-			"diff@^${NODE_DIFF_8_PV}" # # Possible version bump causes breaking change
-			"dompurify@^${NODE_DOMPURIFY_PV}"
-			"fflate@^${NODE_FFLATE_PV}"
-			"ip-address@^${NODE_IP_ADDRESS_PV}"
-			"linkify-it@^${NODE_LINKIFY_IT_5_PV}"
-			"lodash@^${NODE_LODASH_PV}"
-			"markdown-it@^${NODE_MARKDOWN_IT_14_PV}"
-			"path-to-regexp@^${NODE_PATH_TO_REGEXP_0_PV}"
-			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
-			"qs@^${NODE_QS_PV}"
-			"svelte@^${NODE_SVELTE_PV}"
-			"uuid@^${NODE_UUID_11_PV}"
-			"ws@^${NODE_WS_8_PV}"
-			"yaml@^${NODE_YAML_2_PV}"
+			"@huggingface/transformers@${NODE_AT_HUGGINGFACE_TRANSFORMERS_PV}"
+			"body-parser@${NODE_BODY_PARSER_1_PV}"
+			"colord@${NODE_COLORD_PV}"
+			"devalue@${NODE_DEVALUE_PV}"
+			"diff@${NODE_DIFF_8_PV}" # # Possible version bump causes breaking change
+			"dompurify@${NODE_DOMPURIFY_PV}"
+			"fflate@${NODE_FFLATE_PV}"
+			"ip-address@${NODE_IP_ADDRESS_PV}"
+			"linkify-it@${NODE_LINKIFY_IT_5_PV}"
+			"lodash@${NODE_LODASH_PV}"
+			"markdown-it@${NODE_MARKDOWN_IT_14_PV}"
+			"path-to-regexp@${NODE_PATH_TO_REGEXP_0_PV}"
+			"postcss-selector-parser@${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
+			"qs@${NODE_QS_PV}"
+			"svelte@${NODE_SVELTE_PV}"
+			"uuid@${NODE_UUID_11_PV}"
+			"ws@${NODE_WS_8_PV}"
+			"yaml@${NODE_YAML_2_PV}"
 		)
 		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
@@ -930,17 +930,17 @@ pnpm_audit_post() {
 
 		# Dependency of dependency
 		L=(
-			"protobufjs@^${NODE_PROTOBUFJS_7_PV}"
+			"protobufjs@${NODE_PROTOBUFJS_7_PV}"
 		)
 		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
 		patch_lockfile
 
 		L=(
-			"baseline-browser-mapping@^${NODE_BASELINE_BROWSER_MAPPING_PV}"
-			"browserslist@^${NODE_BROWSERSLISTS_PV}"
-			"happy-dom@^${NODE_HAPPY_DOM_PV}"
-			"vitest@^${NODE_VITEST_4_PV}"
+			"baseline-browser-mapping@${NODE_BASELINE_BROWSER_MAPPING_PV}"
+			"browserslist@${NODE_BROWSERSLISTS_PV}"
+			"happy-dom@${NODE_HAPPY_DOM_PV}"
+			"vitest@${NODE_VITEST_4_PV}"
 		)
 		epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
