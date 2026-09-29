@@ -4,12 +4,25 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CXX_STANDARD=14
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
 	"media-libs/libglvnd-9999"
 )
 
-inherit cflags-hardened chkl secure-version cmake-multilib
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot secure-version cmake-multilib
 
 DESCRIPTION="A graphical music visualization plugin similar to milkdrop"
 HOMEPAGE="https://github.com/projectM-visualizer/projectm"
@@ -32,7 +45,10 @@ fi
 LICENSE="LGPL-2"
 SOVER="4"
 SLOT="${SOVER}"
-IUSE+=" gles2-only static-libs test"
+IUSE+="
+gles2-only static-libs test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -41,6 +57,11 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}"
+
+pkg_setup() {
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ ${PV} == *9999 ]] ; then

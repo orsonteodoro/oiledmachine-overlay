@@ -148,7 +148,7 @@ RDEPEND+="
 		>=app-arch/libarchive-${LIBARCHIVE_PV}:=
 	)
 	projectm? (
-		>=media-libs/libprojectm-${LIBPROJECTM_PV}:4=
+		>=media-libs/libprojectm-${LIBPROJECTM_PV}:4=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	nls? (
 		>=dev-qt/qtbase-${QTBASE6_PV}:6=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},linguist]
