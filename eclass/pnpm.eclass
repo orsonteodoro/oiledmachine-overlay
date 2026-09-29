@@ -371,7 +371,6 @@ pnpm_src_unpack() {
 		fi
 		if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
 			local pnpm_pv=$(pnpm --version)
-			pnpm audit --help
 			if ver_test "${pnpm_pv}" "-ge" "11" ; then
 				if [[ -n "${PNPM_AUDIT_FIX_ARG}" ]] ; then
 					edo pnpm audit --fix=${PNPM_AUDIT_FIX_ARG} ${PNPM_AUDIT_FIX_ARGS[@]}

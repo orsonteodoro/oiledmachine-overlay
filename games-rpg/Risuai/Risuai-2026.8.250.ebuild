@@ -743,7 +743,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_26
+ebuild_revision_27
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -879,9 +879,22 @@ pnpm_install_post() {
 
 pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		patch_lockfile() {
+			sed -i -e "s|protobufjs: 7.5.4|protobufjs: ${NODE_PROTOBUFJS_7_PV}|g" "pnpm-lock.yaml"
+		}
+		patch_lockfile
+
 		L=(
 			"@huggingface/transformers@^${NODE_AT_HUGGINGFACE_TRANSFORMERS_PV}"
 			"lodash@^${NODE_LODASH_PV}"
+		)
+		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
+		# Dependency of dependency
+		L=(
+			"protobufjs@^${NODE_PROTOBUFJS_7_PV}"
 		)
 		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
@@ -889,7 +902,11 @@ pnpm_audit_post() {
 		)
 		#epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
+		patch_lockfile
+
 		epnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
+
+		patch_lockfile
 
 		node-sharp_pnpm_lockfile_add_sharp
 		fix_lockfile
