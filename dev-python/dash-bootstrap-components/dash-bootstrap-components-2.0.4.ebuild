@@ -16,20 +16,20 @@ PYTHON_COMPAT=( "python3_"{10..13} ) # Lists up to 3.13
 
 NPM_INSTALL_ARGS=(
 	"--prefer-offline"
-	"--force"
+	"--legacy-peer-deps"
 )
 
 NPM_AUDIT_FIX_ARGS=(
 	"--prefer-offline"
-	"--force"
+	"--legacy-peer-deps"
 )
 
 NPM_DEDUPE_ARGS=(
 	"--prefer-offline"
-	"--force"
+	"--legacy-peer-deps"
 )
 
-inherit distutils-r1 npm
+inherit distutils-r1 secure-version-node npm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -96,12 +96,32 @@ npm_dedupe_post() {
 		local pkgs
 		pkgs=(
 		)
-		#enpm install "${pkgs[@]}" -P --prefer-offline
+		#enpm install "${pkgs[@]}" -P --prefer-offline "${NPM_INSTALL_ARGS[@]}"
 
 		pkgs=(
+			"@babel/core@^7.29.6"
+			"@babel/plugin-transform-modules-systemjs@^7.29.4"
+			"baseline-browser-mapping@^2.11.0"
+			"brace-expansion@^${NODE_BRACE_EXPANSION_1_PV}"
+			"browserslist@^${NODE_BROWSERSLISTS_PV}"
+			"fast-uri@^${NODE_FAST_URI_3_PV}"
+			"http-proxy-middleware@^2.0.10"
+			"js-yaml@${NODE_JS_YAML_3_PV}"
+			"nanoid@^${NODE_NANOID_3_PV}"
+			"launch-editor@^${NODE_LAUNCH_EDITOR_PV}"
+			"postcss@^${NODE_POSTCSS_PV}"
+			"postcss-selector-parser@^7.1.3"
+			"qs@^${NODE_QS_PV}"
+			"shell-quote@^${NODE_SHELL_QUOTE_PV}"
+			"uuid@^${NODE_UUID_11_PV}"
+			"webpack-dev-server@^5.2.6"
+			"websocket-driver@0.7.5"
+			"ws@^${NODE_WS_8_PV}"
 		)
-		#enpm install "${pkgs[@]}" -D
+		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 		#patch_lockfile
+
+		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 	fi
 }
 
