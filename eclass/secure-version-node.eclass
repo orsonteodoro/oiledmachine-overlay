@@ -17,8 +17,8 @@ esac
 if [[ -z "${_SECURE_VERSION_NODE_ECLASS}" ]] ; then
 _SECURE_VERSION_NODE_ECLASS=1
 
-# Packages with vulnerabilities that are found in multiple ebuilds should have an entry here.
-# Packages with vulnerabilities that are found in a single package do not require an entry here.
+# Node package(s) with vulnerabilities that are found in multiple ebuilds should have an entry here.
+# Node package(s) with vulnerabilities that are found in a single ebuild do not require an entry here.
 
 # Entries below must have a NODE_ or NODE_<SLOT>_ prefix to prevent clobbering.
 # Use NODE_<SLOT>_ for multislot version sensitive (See engines.node)
