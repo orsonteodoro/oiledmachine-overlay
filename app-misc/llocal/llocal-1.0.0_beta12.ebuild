@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_28"
+IUSE+=" ebuild_revision_30"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -132,6 +132,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_beta12-fix-config.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-ollama-changes.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-langchain-updates.patch"
+	"${FILESDIR}/${PN}-1.0.0_beta12-puppeteer-update.patch"
 )
 
 _puppeteer_setup_offline_cache() {
@@ -202,6 +203,10 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			"ollama"
 			"officeparser"
 			"langsmith"
+
+			"puppeteer"
+			"puppeteer-core"
+			"puppeteer-in-electron"
 		)
 		enpm uninstall "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
@@ -216,6 +221,9 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			"ollama@0.6.3"
 			"pdf-parse@2.4.5" # Dep of PDFLoader
 			"mammoth@1.13.0" # Dep of DocxLoader
+
+			"puppeteer@^25.12.0"
+			"puppeteer-core@^25.12.0"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
@@ -224,9 +232,9 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			"@types/node@^20.19.43"				# For import.meta.dirname
 			"kokoro-js@1.2.1"				# For package.json
 			"react-icons@5.2.1"
-			"puppeteer@24.4.0"
-			"puppeteer-core@24.4.0"
-			"puppeteer-in-electron@3.0.5"
+# works			"puppeteer@24.4.0"
+# works			"puppeteer-core@24.4.0"
+# works			"puppeteer-in-electron@3.0.5"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
@@ -311,7 +319,7 @@ src_install() {
 	insinto "${NPM_INSTALL_PATH}"
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
-	#lcnr_install_files
+	lcnr_install_files
 	local path
 	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${path}"
