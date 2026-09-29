@@ -880,6 +880,8 @@ pnpm_install_post() {
 
 pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		node-sharp_pnpm_lockfile_add_sharp
+
 		patch_lockfile() {
 			sed -i -e "s|baseline-browser-mapping: 2.9.11|baseline-browser-mapping: ${NODE_BASELINE_BROWSER_MAPPING_PV}|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|body-parser: 1.20.4|body-parser: ${NODE_BODY_PARSER_1_PV}|g" "pnpm-lock.yaml" || die
@@ -902,6 +904,7 @@ pnpm_audit_post() {
 			sed -i -e "s|yaml: 2.8.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|yaml: ^2.4.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml" || die
 		}
+
 		patch_lockfile
 
 		L=(
@@ -949,9 +952,6 @@ pnpm_audit_post() {
 		epnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
 
 		patch_lockfile
-
-		node-sharp_pnpm_lockfile_add_sharp
-		fix_lockfile
 	fi
 }
 
@@ -1260,11 +1260,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-	lcnr_install_files
+	#lcnr_install_files
 
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_pnpm"
-	lcnr_install_files
+	#lcnr_install_files
 
 	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
 	insinto "/opt/${PN}"
