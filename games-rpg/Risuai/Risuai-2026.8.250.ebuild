@@ -36,7 +36,7 @@ RUST_MIN_VER="1.93.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
 
-VITE_PV="8.0.16"
+VITE_PV="8.0.16" # Works
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
@@ -743,7 +743,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_27
+ebuild_revision_28
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -865,7 +865,8 @@ pnpm_install_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		local L
 		L=(
-			"vite@${VITE_PV}"
+			"vite@${NODE_VITE_8_PV}"
+
 			"vite-plugin-top-level-await@1.6.0" # For tiktoken
 			"rollup@4.60.2" # For vite-plugin-top-level-await
 		)
@@ -880,13 +881,48 @@ pnpm_install_post() {
 pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
+			sed -i -e "s|baseline-browser-mapping: 2.9.11|baseline-browser-mapping: ${NODE_BASELINE_BROWSER_MAPPING_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|body-parser: 1.20.4|body-parser: ${NODE_BODY_PARSER_1_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|browserslist: 4.28.1|browserslist: ${NODE_BROWSERSLISTS_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|colord: 2.9.3|colord: ${NODE_COLORD_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|devalue: 5.6.4|devalue: ${NODE_DEVALUE_PV}|g" "pnpm-lock.yaml" # Possible version bump causes breaking change
+			sed -i -e "s|dompurify: 3.2.7|dompurify: ${NODE_DOMPURIFY_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|fflate: 0.6.10|fflate: ${NODE_FFLATE_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|fflate: 0.8.2|fflate: ${NODE_FFLATE_PV}|g" "pnpm-lock.yaml"
 			sed -i -e "s|protobufjs: 7.5.4|protobufjs: ${NODE_PROTOBUFJS_7_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|qs: 6.14.0|qs: ${NODE_QS_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|happy-dom: 20.1.0|happy-dom: ${NODE_HAPPY_DOM_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|ip-address: 10.1.0|ip-address: ${NODE_IP_ADDRESS_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|linkify-it: 5.0.0|linkify-it: ${NODE_LINKIFY_IT_5_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|path-to-regexp: 0.1.12|path-to-regexp: ${NODE_PATH_TO_REGEXP_0_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|postcss-selector-parser: 6.0.10|postcss-selector-parser: ${NODE_POSTCSS_SELECTOR_PARSER_6_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|svelte: 5.55.1|svelte: ${NODE_SVELTE_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|uuid: 10.0.0|uuid: ${NODE_UUID_11_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|ws: 8.18.3|ws: ${NODE_WS_8_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|yaml: 2.8.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|yaml: ^2.4.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml"
 		}
 		patch_lockfile
 
 		L=(
 			"@huggingface/transformers@^${NODE_AT_HUGGINGFACE_TRANSFORMERS_PV}"
+			"body-parser@^${NODE_BODY_PARSER_1_PV}"
+			"colord@^${NODE_COLORD_PV}"
+			"devalue@^${NODE_DEVALUE_PV}"
+			"diff@^${NODE_DIFF_8_PV}" # # Possible version bump causes breaking change
+			"dompurify@^${NODE_DOMPURIFY_PV}"
+			"fflate@^${NODE_FFLATE_PV}"
+			"ip-address@^${NODE_IP_ADDRESS_PV}"
+			"linkify-it@^${NODE_LINKIFY_IT_5_PV}"
 			"lodash@^${NODE_LODASH_PV}"
+			"markdown-it@^${NODE_MARKDOWN_IT_14_PV}"
+			"path-to-regexp@^${NODE_PATH_TO_REGEXP_0_PV}"
+			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
+			"qs@^${NODE_QS_PV}"
+			"svelte@^${NODE_SVELTE_PV}"
+			"uuid@^${NODE_UUID_11_PV}"
+			"ws@^${NODE_WS_8_PV}"
+			"yaml@^${NODE_YAML_2_PV}"
 		)
 		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
@@ -898,9 +934,15 @@ pnpm_audit_post() {
 		)
 		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
+		patch_lockfile
+
 		L=(
+			"baseline-browser-mapping@^${NODE_BASELINE_BROWSER_MAPPING_PV}"
+			"browserslist@^${NODE_BROWSERSLISTS_PV}"
+			"happy-dom@^${NODE_HAPPY_DOM_PV}"
+			"vitest@^${NODE_VITEST_4_PV}"
 		)
-		#epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
+		epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
 		patch_lockfile
 
