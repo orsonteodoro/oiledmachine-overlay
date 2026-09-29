@@ -114,7 +114,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_22"
+IUSE+=" ebuild_revision_24"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -176,6 +176,18 @@ npm_update_lock_audit_post() {
 ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 from package-lock.json"
 		node-sharp_npm_lockfile_add_sharp
 
+		patch_lockfile() {
+			sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"^${NODE_FILE_TYPE_22_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"ip-address\": \"^10.1.1\"|\"ip-address\": \"^${NODE_IP_ADDRESS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"minimatch\": \"^9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"pdfjs-dist\": \"^5.3.31\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^10.0.0\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
+		}
+		patch_lockfile
+
 		# Required pinned dependencies
 		L=(
 			"@types/node@^20.19.43"				# For import.meta.dirname
@@ -206,8 +218,11 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 		L=(
 			"brace-expansion@^${NODE_BRACE_EXPANSION_2_PV}"
 			"file-type@^${NODE_FILE_TYPE_22_PV}"
+			"ip-address@^${NODE_IP_ADDRESS_PV}"
+			"pdfjs-dist@^${NODE_PDFJS_DIST_PV}"
+			"sharp@^${NODE_SHARP_PV}"
 			"tar@^${NODE_TAR_PV}"
-			"undici@^${NODE_UNDICI_7_PV}"
+			"undici@^${NODE_UNDICI_6_PV}"
 			"uuid@^${NODE_UUID_11_PV}"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
@@ -215,6 +230,7 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.1
 			"minimatch@^${NODE_MINIMATCH_9_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+		patch_lockfile
 
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
