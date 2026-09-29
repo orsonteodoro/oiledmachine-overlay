@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild uses AI generated fixes.
+
 # TODO:  Replace prebuilt node sharp with source based build of node sharp
 
 # FIXME:
@@ -74,8 +76,8 @@ NPM_EXE_LIST=(
 	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libgfortran.so.5"
 	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libgomp.so.1"
 	"/opt/llocal/resources/app.asar.unpacked/node_modules/faiss-node/build/Release/libquadmath.so.0"
-	"/opt/llocal/resources/app.asar.unpacked/node_modules/@img/sharp-libvips-linuxmusl-x64/lib/libvips-cpp.so.8.17.3"
-	"/opt/llocal/resources/app.asar.unpacked/node_modules/@img/sharp-libvips-linux-x64/lib/libvips-cpp.so.8.17.3"
+#	"/opt/llocal/resources/app.asar.unpacked/node_modules/@img/sharp-libvips-linuxmusl-x64/lib/libvips-cpp.so.8.17.3"
+#	"/opt/llocal/resources/app.asar.unpacked/node_modules/@img/sharp-libvips-linux-x64/lib/libvips-cpp.so.8.17.3"
 	"/opt/llocal/libvulkan.so.1"
 	"/opt/llocal/chrome-sandbox"
 	"/opt/llocal/llocal"
@@ -114,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_25"
+IUSE+=" ebuild_revision_28"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -129,6 +131,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_beta12-filePath.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-fix-config.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-ollama-changes.patch"
+	"${FILESDIR}/${PN}-1.0.0_beta12-langchain-updates.patch"
 )
 
 _puppeteer_setup_offline_cache() {
@@ -190,20 +193,37 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		}
 		patch_lockfile
 
+		# Clean out first
+		L=(
+			"@langchain/core"
+			"@langchain/textsplitters"
+			"@langchain/community"
+			"langchain"
+			"ollama"
+			"officeparser"
+			"langsmith"
+		)
+		enpm uninstall "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+
+		# Install secure active maintained replacements
+		L=(
+			"@langchain/classic@1.0.50"
+			"@langchain/ollama@1.3.0"
+			"@langchain/core@1.2.13"
+			"@langchain/textsplitters@1.0.2"
+			"langchain@1.5.14"
+			"langsmith@0.7.3"
+			"ollama@0.6.3"
+			"pdf-parse@2.4.5" # Dep of PDFLoader
+			"mammoth@1.13.0" # Dep of DocxLoader
+		)
+		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+
 		# Required pinned dependencies
 		L=(
 			"@types/node@^20.19.43"				# For import.meta.dirname
-			"langchain@0.3.33"
-			"@langchain/core@0.3.75"			# For langchain/vectorstores/memory
-			"@langchain/textsplitters@0.1.0"
-			"@langchain/community@0.3.55"			# For langchain/document_loaders/fs/text
 			"kokoro-js@1.2.1"				# For package.json
 			"react-icons@5.2.1"
-			#"officeparser@4.1.1"				# For parseOfficeAsync used in node_modules/@langchain/community/dist/document_loaders/fs/pptx.js
-			"officeparser@5.2.2"
-
-			"langsmith@0.3.67"
-			"ollama@0.5.17"
 			"puppeteer@24.4.0"
 			"puppeteer-core@24.4.0"
 			"puppeteer-in-electron@3.0.5"
@@ -291,7 +311,7 @@ src_install() {
 	insinto "${NPM_INSTALL_PATH}"
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
-	lcnr_install_files
+	#lcnr_install_files
 	local path
 	for path in "${NPM_EXE_LIST[@]}" ; do
 		fperms 0755 "${path}"
