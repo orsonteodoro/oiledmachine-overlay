@@ -69,7 +69,6 @@
     "node-addon-api": "^8.9.2",
     "node-fetch": "^3.3.2",
     "node-gyp": "^13.0.2",
-    "npm": "^12.1.0",
     "officeparser": "^5.2.2",
     "ollama": "^0.5.17",
     "open": "^10.1.0",

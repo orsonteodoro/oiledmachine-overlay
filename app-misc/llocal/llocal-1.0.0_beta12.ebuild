@@ -236,6 +236,9 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
+		# Remove vulnerable dependencies
+		enpm uninstall "npm" "${NPM_INSTALL_ARGS[@]}"
+
 		sed -i -e "s|index.mjs|index.js|g" "${S}/package.json" || die
 	fi
 }
