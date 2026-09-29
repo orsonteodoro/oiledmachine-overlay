@@ -881,26 +881,26 @@ pnpm_install_post() {
 pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
-			sed -i -e "s|baseline-browser-mapping: 2.9.11|baseline-browser-mapping: ${NODE_BASELINE_BROWSER_MAPPING_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|body-parser: 1.20.4|body-parser: ${NODE_BODY_PARSER_1_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|browserslist: 4.28.1|browserslist: ${NODE_BROWSERSLISTS_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|colord: 2.9.3|colord: ${NODE_COLORD_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|devalue: 5.6.4|devalue: ${NODE_DEVALUE_PV}|g" "pnpm-lock.yaml" # Possible version bump causes breaking change
-			sed -i -e "s|dompurify: 3.2.7|dompurify: ${NODE_DOMPURIFY_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|fflate: 0.6.10|fflate: ${NODE_FFLATE_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|fflate: 0.8.2|fflate: ${NODE_FFLATE_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|protobufjs: 7.5.4|protobufjs: ${NODE_PROTOBUFJS_7_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|qs: 6.14.0|qs: ${NODE_QS_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|happy-dom: 20.1.0|happy-dom: ${NODE_HAPPY_DOM_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|ip-address: 10.1.0|ip-address: ${NODE_IP_ADDRESS_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|linkify-it: 5.0.0|linkify-it: ${NODE_LINKIFY_IT_5_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|path-to-regexp: 0.1.12|path-to-regexp: ${NODE_PATH_TO_REGEXP_0_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|postcss-selector-parser: 6.0.10|postcss-selector-parser: ${NODE_POSTCSS_SELECTOR_PARSER_6_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|svelte: 5.55.1|svelte: ${NODE_SVELTE_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|uuid: 10.0.0|uuid: ${NODE_UUID_11_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|ws: 8.18.3|ws: ${NODE_WS_8_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|yaml: 2.8.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml"
-			sed -i -e "s|yaml: ^2.4.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml"
+			sed -i -e "s|baseline-browser-mapping: 2.9.11|baseline-browser-mapping: ${NODE_BASELINE_BROWSER_MAPPING_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|body-parser: 1.20.4|body-parser: ${NODE_BODY_PARSER_1_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|browserslist: 4.28.1|browserslist: ${NODE_BROWSERSLISTS_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|colord: 2.9.3|colord: ${NODE_COLORD_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|devalue: 5.6.4|devalue: ${NODE_DEVALUE_PV}|g" "pnpm-lock.yaml" || die # Possible version bump causes breaking change
+			sed -i -e "s|dompurify: 3.2.7|dompurify: ${NODE_DOMPURIFY_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fflate: 0.6.10|fflate: ${NODE_FFLATE_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|fflate: 0.8.2|fflate: ${NODE_FFLATE_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|protobufjs: 7.5.4|protobufjs: ${NODE_PROTOBUFJS_7_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|qs: 6.14.0|qs: ${NODE_QS_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|happy-dom: 20.1.0|happy-dom: ${NODE_HAPPY_DOM_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|ip-address: 10.1.0|ip-address: ${NODE_IP_ADDRESS_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|linkify-it: 5.0.0|linkify-it: ${NODE_LINKIFY_IT_5_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|path-to-regexp: 0.1.12|path-to-regexp: ${NODE_PATH_TO_REGEXP_0_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|postcss-selector-parser: 6.0.10|postcss-selector-parser: ${NODE_POSTCSS_SELECTOR_PARSER_6_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|svelte: 5.55.1|svelte: ${NODE_SVELTE_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|uuid: 10.0.0|uuid: ${NODE_UUID_11_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|ws: 8.18.3|ws: ${NODE_WS_8_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|yaml: 2.8.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|yaml: ^2.4.2|yaml: ${NODE_YAML_2_PV}|g" "pnpm-lock.yaml" || die
 		}
 		patch_lockfile
 
