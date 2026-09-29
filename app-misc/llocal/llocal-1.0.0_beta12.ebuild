@@ -114,7 +114,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_24"
+IUSE+=" ebuild_revision_25"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -173,12 +173,14 @@ npm_update_lock_install_post() {
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 from package-lock.json"
+ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.12 in package-lock.json"
+ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json"
 		node-sharp_npm_lockfile_add_sharp
 
 		patch_lockfile() {
 			sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"^${NODE_FILE_TYPE_22_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"ip-address\": \"^10.1.1\"|\"ip-address\": \"^${NODE_IP_ADDRESS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"^9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pdfjs-dist\": \"^5.3.31\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
