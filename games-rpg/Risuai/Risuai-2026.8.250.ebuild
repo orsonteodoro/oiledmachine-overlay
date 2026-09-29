@@ -706,6 +706,9 @@ NODE_SHARP_PATCHES=(
 PNPM_AUDIT_FIX_ARGS=(
 )
 
+PNPM_DEDUPE_ARGS=(
+)
+
 PNPM_INSTALL_ARGS=(
 )
 
@@ -719,7 +722,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo chkl desktop edo lcnr node-sharp pnpm python-r1 secure-version xdg
+inherit cargo chkl desktop edo lcnr node-sharp pnpm python-r1 secure-version secure-version-node xdg
 
 #KEYWORDS="~amd64" # Still debugging issues
 S="${WORKDIR}/${P}"
@@ -854,7 +857,7 @@ pnpm_unpack_post() {
 			"node-addon-api@^8.9.0"		# For node sharp
 			"node-gyp@^12.4.0"		# For node sharp
 		)
-		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]}
+		epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
 }
 
@@ -866,23 +869,27 @@ pnpm_install_post() {
 			"vite-plugin-top-level-await@1.6.0" # For tiktoken
 			"rollup@4.60.2" # For vite-plugin-top-level-await
 		)
-		epnpm add -D "${L[@]}" ${PNPM_INSTALL_ARGS[@]}
+		epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
 	# Use a more robust implementation to avoid WASM error
-		pnpm remove "@dqbd/tiktoken"
-		pnpm add "js-tiktoken@1.0.21"
+		pnpm remove "@dqbd/tiktoken" "${PNPM_INSTALL_ARGS[@]}"
+		pnpm add "js-tiktoken@1.0.21" "${PNPM_INSTALL_ARGS[@]}"
 	fi
 }
 
 pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		L=(
+			"@huggingface/transformers@^${NODE_AT_HUGGINGFACE_TRANSFORMERS_PV}"
+			"lodash@^${NODE_LODASH_PV}"
 		)
-		#epnpm add -P "${L[@]}"
+		epnpm add -P "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
 
 		L=(
 		)
-		#epnpm add -D "${L[@]}"
+		#epnpm add -D "${L[@]}" "${PNPM_INSTALL_ARGS[@]}"
+
+		epnpm dedupe "${PNPM_DEDUPE_ARGS[@]}"
 
 		node-sharp_pnpm_lockfile_add_sharp
 		fix_lockfile
