@@ -662,7 +662,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_43
+ebuild_revision_44
 "
 REQUIRED_USE="
 	voice-recognition
@@ -884,6 +884,9 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 
 			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"^${NODE_DOMPURIFY_PV}\"|g" "package-lock.json" || die
 
+			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+
 			sed -i -e "s|\"fast-uri\": \"^3.0.1\"|\"fast-uri\": \"^${NODE_FAST_URI_3_PV}\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"glob\": \"^7.1.3\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
@@ -927,7 +930,7 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 			"nanoid@^${NODE_NANOID_3_PV}"
 			"next@${NODE_NEXT_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
-			"protobufjs@^${NODE_PROTOBUFJS_7_PV}"
+			"protobufjs@^${NODE_PROTOBUFJS_7_PV}" # Possibly breaking change from 6 -> 7
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
@@ -935,6 +938,7 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 		patch_lockfile
 
 		pkgs=(
+			"esbuild@^${NODE_ESBUILD_PV}"
 			"glob@^${NODE_GLOB_PV}"
 			"js-yaml@^${NODE_JS_YAML_4_PV}"
 			"undici@^${NODE_UNDICI_7_PV}"
