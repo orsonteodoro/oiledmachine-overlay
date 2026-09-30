@@ -45,7 +45,15 @@ else
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
 fi
 
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+)
+
 NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+)
+
+NPM_DEDUPE_ARGS=(
 	"--legacy-peer-deps"
 )
 
@@ -141,7 +149,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_32
+	ebuild_revision_33
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
@@ -175,6 +183,21 @@ npm_unpack_post() {
 }
 
 npm_update_lock_audit_post() {
+	patch_lockfile() {
+		sed -i -e "s|\"electron\": \"^39.8.10\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"glob\": \"^7.1.6\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
+	}
+	patch_lockfile
 
 	# --prefer-offline is broken
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
@@ -190,18 +213,30 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
+	patch_lockfile
+
 	# Vulnerability fixes
 	# The stuff that audit fix --force missed.
 	pkgs=(
-		"undici@^${NODE_UNDICI_7_PV}"
+		"glob@^${NODE_GLOB_PV}"
+		"undici@^${NODE_UNDICI_6_PV}"
 	)
 	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+
+	patch_lockfile
+
 	pkgs=(
-		"glob@^${NODE_GLOB_PV}"
+		"electron@^${ELECTRON_APP_ELECTRON_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
 		"tar@^${NODE_TAR_PV}"
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+
+	patch_lockfile
+
+	enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+
+	patch_lockfile
 }
 
 src_compile() {
@@ -246,7 +281,7 @@ src_install() {
 	for f in "${L[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
-	lcnr_install_files
+	#lcnr_install_files
 
 	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }
