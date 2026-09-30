@@ -662,7 +662,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_41
+ebuild_revision_43
 "
 REQUIRED_USE="
 	voice-recognition
@@ -907,6 +907,8 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 			sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 
+			sed -i -e "s|\"protobufjs\": \"^6.8.8\"|\"protobufjs\": \"^${NODE_PROTOBUFJS_7_PV}\"|g" "package-lock.json" || die
+
 			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^7.0.7\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
@@ -924,8 +926,8 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"nanoid@^${NODE_NANOID_3_PV}"
 			"next@${NODE_NEXT_PV}"
-			"protobufjs@^${NODE_PROTOBUFJS_7_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
+			"protobufjs@^${NODE_PROTOBUFJS_7_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 		)
 		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
