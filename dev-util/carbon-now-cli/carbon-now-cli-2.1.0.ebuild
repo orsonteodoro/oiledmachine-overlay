@@ -19,14 +19,17 @@ PLAYWRIGHT_PV="1.63.0"
 NODE_SLOT="22"
 
 NPM_INSTALL_ARGS=(
+	"--force"
 	"--prefer-offline"
 )
 
 NPM_AUDIT_FIX_ARGS=(
+	"--force"
 	"--prefer-offline"
 )
 
 NPM_DEDUPE_ARGS=(
+	"--force"
 	"--prefer-offline"
 )
 
@@ -58,7 +61,7 @@ EPLAYRIGHT_ALLOW_BROWSERS=(
 	"webkit"
 )
 
-inherit desktop edo npm playwright
+inherit desktop edo playwright secure-version-node npm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -167,7 +170,7 @@ RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
 IUSE+="
 +chromium clipboard
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE+="
 	|| (
@@ -205,44 +208,41 @@ einfo "Applying mitigation"
 	patch_edits() {
 		sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 		sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
-		sed -i -e "s|\"esbuild\": \"~0.23.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"esbuild\": \"~0.23.0\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^0.0.33\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vitest\": \"2.1.9\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vitest\": \"^3.2.7\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vitest\": \"^4.1.11\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^${NODE_TMP_PV}\"|g" "package-lock.json" || die
 	}
 	patch_edits
 
-	# ID = Information Disclosure
-	# DoS = Denial of Service
-	local pkgs
 	pkgs=(
-		"phin@^3.7.1"							# GHSA-x565-32qp-m3vf; ID; Moderate
-		"@babel/runtime@^7.26.10"					# CVE-2025-27789; DoS; Moderate
-
-		"playwright@${PLAYWRIGHT_PV}"					# Pinned required for offline downloads
-		"@playwright/test@${PLAYWRIGHT_PV}"
-
-		"tmp@^0.2.4"							# CVE-2025-54798; DT; Low
-	)
-	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
-
-	pkgs=(
-		"esbuild@^0.25.0"						# GHSA-67mh-4wv8-2f99; ID; Moderate
-
-		"vite@^6.4.2"							# CVE-2025-46565; VS(ID); Moderate
-										# CVE-2025-32395; VS(ID); Moderate
-										# CVE-2025-31486; ID; Moderate
-										# CVE-2025-31125; ID; Moderate
-										# CVE-2025-30208; ID; Moderate
-										# CVE-2026-39365; ZC, VS(ID); Moderate
+		"esbuild@^${NODE_ESBUILD_PV}"
+		"vite@^${NODE_VITE_6_PV}"
+		"vitest@^${NODE_VITEST_4_PV}"
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	patch_edits
 
-	enpm dedupe
+	local pkgs
+	pkgs=(
+		"phin@^3.7.1" # EOL
+		"@babel/runtime@^7.26.10"
+		"playwright@${PLAYWRIGHT_PV}"
+		"@playwright/test@${PLAYWRIGHT_PV}"
+		"tmp@^${NODE_TMP_PV}"
+	)
+	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+
+	patch_edits
+
+	enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
 	patch_edits
 }
