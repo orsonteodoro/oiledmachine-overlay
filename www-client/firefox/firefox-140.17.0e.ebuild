@@ -2532,6 +2532,9 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_enable "webrtc"
 	mozconfig_use_enable "webspeech"
 
+	# Same as distro's +jumbo-build
+	mozconfig_add_options_ac "forcing +unified-build" '--enable-unified-build'
+
 	use eme-free && mozconfig_add_options_ac "+eme-free" "--disable-eme"
 
 	# The upstream default is hardening on even if unset.

@@ -2397,6 +2397,9 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_enable "webrtc"
 	mozconfig_use_enable "webspeech"
 
+	# Same as distro's +jumbo-build
+	mozconfig_add_options_ac "forcing +unified-build" '--enable-unified-build'
+
 	use eme-free && mozconfig_add_options_ac "+eme-free" "--disable-eme"
 
 	# The upstream default is hardening on even if unset.
@@ -2447,8 +2450,6 @@ eerror "Building with Clang is not supported."
 			"+x11" \
 			"--enable-default-toolkit=cairo-gtk3"
 	fi
-
-	! use jumbo-build && mozconfig_add_options_ac '--disable-unified-build' --disable-unified-build
 
 	# wasm-sandbox
 	# Since graphite2 is one of the sandboxed libraries, system-graphite2 obviously can't work with +wasm-sandbox.

@@ -2405,11 +2405,13 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable "dbus"
 	mozconfig_use_enable "libproxy"
-	mozconfig_use_enable "jumbo-build" "unified-build"
 	mozconfig_use_enable "cups" "printing"
 	multilib_is_native_abi && mozconfig_use_enable "speech" "synth-speechd"
 	mozconfig_use_enable "webrtc"
 	mozconfig_use_enable "webspeech"
+
+	# Same as distro's +jumbo-build
+	mozconfig_add_options_ac "forcing +unified-build" '--enable-unified-build'
 
 	use eme-free && mozconfig_add_options_ac "+eme-free" "--disable-eme"
 
