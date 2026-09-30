@@ -281,7 +281,7 @@ src_install() {
 	for f in "${L[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
-	#lcnr_install_files
+	lcnr_install_files
 
 	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }
