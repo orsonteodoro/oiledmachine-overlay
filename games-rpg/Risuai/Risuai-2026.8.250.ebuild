@@ -1282,11 +1282,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-	#lcnr_install_files
+	lcnr_install_files
 
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_pnpm"
-	#lcnr_install_files
+	lcnr_install_files
 
 	# For the server but it needs path changes modificaiton and a key.txt (32 digit hex)
 	insinto "/opt/${PN}"
