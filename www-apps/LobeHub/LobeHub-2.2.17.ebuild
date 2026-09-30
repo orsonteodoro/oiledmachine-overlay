@@ -82,6 +82,7 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 RUST_PV="${RUST_MIN_VER}"
 
 ELECTRON_BUILDER_PV="26.15.7"
+NEXT_PV="${NODE_NEXT_16_PV}"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -1029,7 +1030,7 @@ ewarn "Removing ${S}/.next"
 	# Force rebuild to prevent illegal instruction
 	#edo npm rebuild "sharp"
 
-	if ver_test "${NODE_NEXT_PV%%.*}" "-lt" "15" ; then
+	if ver_test "${NEXT_PV%%.*}" "-lt" "15" ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.
 einfo "Building next.config.js"
 		tsc \

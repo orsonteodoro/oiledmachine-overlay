@@ -663,7 +663,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE="
 	voice-recognition
@@ -930,7 +930,7 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 			"dompurify@^${NODE_DOMPURIFY_PV}"
 			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"nanoid@^${NODE_NANOID_3_PV}"
-			"next@${NODE_NEXT_PV}"
+			"next@${NODE_NEXT_16_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
 			"protobufjs@^${NODE_PROTOBUFJS_7_PV}" # Possibly breaking change from 6 -> 7
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
@@ -1102,11 +1102,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-#	lcnr_install_files
+	lcnr_install_files
 
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
-#	lcnr_install_files
+	lcnr_install_files
 
 	USE_COQUI=$(usex coqui "1" "0")
 
@@ -1130,6 +1130,7 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  Working but buggy, wait several iterations for the tauri v2 patch to mature (0.2.1_p20250723, 20260930 with webkit-gtk-2.52.5:4.1/0, ollama 0.32.4, TTS on but deps not updated)
 # OILEDMACHINE-OVERLAY-TEST:  Working but buggy, wait several iterations for the tauri v2 patch to mature (0.2.1_p20250723, 20260809 with webkit-gtk-2.52.5:4.1/0, ollama 0.32.4, TTS on but deps not updated)
 # OILEDMACHINE-OVERLAY-TEST:  Working but buggy, wait several iterations for the tauri v2 patch to mature (0.2.1_p20250723, 20260731)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250723, 20260917 with webkit-gtk-2.52.5:4.1/0, ollama untested, TTS untested)

@@ -525,7 +525,6 @@ gen_render_x_list_v2_iuse() {
 	local o
 	local av
 	local pv
-	local slot
 	local x
 	local y
 
@@ -586,193 +585,178 @@ eerror
 	# 7.2.3
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+			for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
+				local pn="${x#*/}"
 				if is_dss_flavor "${x}" ; then
+					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
-						kernel_targets_${pn}_${slot}
+						${x_not_operator}kernel_targets_${pn}_${slot}
 					"
-				else
-					:
-				fi
-			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
-				if is_dss_flavor "${x}" ; then
-					:
-				else
+				elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
 					iuse_list+="
 						!kernel_targets_${pn}_${slot}
 					"
 				fi
-			else
+			done
+		else
+			for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+				local pn="${x#*/}"
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_${slot}
 				"
-			fi
-		done
+			done
+		fi
 	done
 
 	# 7.2.3_p1
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+			for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
+				local pn="${x#*/}"
 				if is_dss_flavor "${x}" ; then
+					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
-						kernel_targets_${pn}_${slot}
+						${x_not_operator}kernel_targets_${pn}_${slot}
 					"
-				else
-					:
-				fi
-			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
-				if is_dss_flavor "${x}" ; then
-					:
-				else
+				elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
 					iuse_list+="
 						!kernel_targets_${pn}_${slot}
 					"
 				fi
-			else
+			done
+		else
+			for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+				local pn="${x#*/}"
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_${slot}
 				"
-			fi
-		done
+			done
+		fi
 	done
 
 	# 7.2_p1
 	for av in "${ACTIVE_VERSIONS[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
-			local pn="${x#*/}"
-			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+		local slot_pv=$(ver_cut "1-2" "${av}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+			for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
+				local pn="${x#*/}"
 				if is_dss_flavor "${x}" ; then
+					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
-						kernel_targets_${pn}_${slot}
+						${x_not_operator}kernel_targets_${pn}_${slot}
 					"
-				else
-					:
-				fi
-			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
-				if is_dss_flavor "${x}" ; then
-					:
-				else
+				elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
 					iuse_list+="
 						!kernel_targets_${pn}_${slot}
 					"
 				fi
-			else
+			done
+		else
+			for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+				local pn="${x#*/}"
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_${slot}
 				"
-			fi
-		done
+			done
+		fi
 	done
 
 	# 7.3_rc1
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] || continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_RC[@]}" ; do
-			local pn="${x#*/}"
-			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+			for x in "${FLAVORS_RC[@]}" ; do
+				local pn="${x#*/}"
 				if is_dss_flavor "${x}" ; then
+					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
-						kernel_targets_${pn}_rc
+						${x_not_operator}kernel_targets_${pn}_rc
 					"
-				else
-					:
-				fi
-			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
-				if is_dss_flavor "${x}" ; then
-					:
-				else
+				elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
 					iuse_list+="
 						!kernel_targets_${pn}_rc
 					"
 				fi
-			else
+			done
+		else
+			for x in "${FLAVORS_RC[@]}" ; do
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+				local pn="${x#*/}"
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_rc
 				"
-			fi
-		done
+			done
+		fi
 	done
 
 	# 6.18.9999
 	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
-		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
-		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_LIVE_9999[@]}" ; do
-			local pn="${x#*/}"
-			if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+		local slot_pv=$(ver_cut "1-2" "${av}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
+		ver_test "${slot_pv}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+			for x in "${FLAVORS_LIVE_9999[@]}" ; do
+				local pn="${x#*/}"
 				if is_dss_flavor "${x}" ; then
+					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
-						kernel_targets_${pn}_${slot}_live
+						${x_not_operator}kernel_targets_${pn}_${slot}_live
 					"
-				else
-					:
-				fi
-			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
-				if is_dss_flavor "${x}" ; then
-					:
-				else
+				elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
 					iuse_list+="
 						!kernel_targets_${pn}_${slot}_live
 					"
 				fi
-			else
+			done
+		else
+			for x in "${FLAVORS_LIVE_9999[@]}" ; do
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+				local pn="${x#*/}"
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_${slot}_live
 				"
-			fi
-		done
+			done
+		fi
 	done
 
 	# 7.3.9999
 	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "${x_cond_operator}" "${x_min_ver}" && continue
-		slot="${slot/./_}"
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
 		local pn="${x#*/}"
-		if [[ "${x_filter_rule}" == "dss-accept" ]] ; then
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
 			if is_dss_flavor "${x}" ; then
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 				iuse_list+="
-					kernel_targets_${pn}_live
+					${x_not_operator}kernel_targets_${pn}_live
 				"
-			else
-				:
-			fi
-		elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
-			if is_dss_flavor "${x}" ; then
-				:
-			else
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
 				iuse_list+="
 					!kernel_targets_${pn}_live
 				"
 			fi
 		else
+			ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 			iuse_list+="
 				${x_not_operator}kernel_targets_${pn}_live
 			"
@@ -788,6 +772,8 @@ eerror
 #einfo "${o}"
 }
 IUSE_KERNELS=( $(gen_render_x_list_v2_iuse "${KERNEL_MIN_SLOT}" '-lt' '') )
+
+# For the rejection, it has to be >= KERNEL_MIN_SLOT and sometimes KERNEL_MIN_LTS_SLOT <= x <= KERNEL_MAX_LTS_SLOT.
 IUSE_DSS=( $(gen_render_x_list_v2_iuse "${DSS_MIN_SLOT}" '-lt' '' 'dss-accept') )
 IUSE_DSS_REJ=( $(gen_render_x_list_v2_iuse "${DSS_MIN_SLOT}" '-ge' '!' 'dss-reject') )
 IUSE_LANDLOCK=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-lt' '') )
