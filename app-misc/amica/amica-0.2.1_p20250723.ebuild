@@ -519,7 +519,6 @@ CHKL_TIMESTAMPS=(
 )
 
 inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node xdg
-#NODE_NEXT_PV="15.5.21" # May require override required to avoid build issue
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="

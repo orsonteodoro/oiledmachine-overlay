@@ -262,7 +262,7 @@ _npm_check_errors() {
 	grep -q -e "error during build:" "${T}/build.log" && die "Detected error"
 	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 	grep -q -e "Unknown command:" "${T}/build.log" && die "Detected error"
-	grep -q -e "ETARGET" "${T}/build.log" && die "Detected error.  Remove --prefer-offline or remove --offline."
+	grep -q -e "ETARGET" "${T}/build.log" && die "Detected error.  Delete ${NPM_CACHE_FOLDER} folder and try again."
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
 }
 
@@ -305,7 +305,6 @@ _npm_setup_offline_cache() {
 	fi
 einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
 einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
-ewarn "You may need to delete the \`${NPM_CACHE_FOLDER}\` folder if ETARGET or \"No matching version found\" appears."
 	rm -rf "${HOME}/.npm/_cacache"
 	mkdir -p "${HOME}/.npm/" || die
 	ln -sf "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache"
@@ -463,6 +462,14 @@ npm_die() {
 	fi
 }
 
+# @FUNCTION: npm_die_fatal
+# @DESCRIPTION:
+# Make errors meaningful
+npm_die_fatal() {
+	grep -q -e "ETARGET" "${T}/build.log" && eerror "The npm --offline or npm --prefer-offline is bugged.  Delete ${NPM_CACHE_FOLDER} to continue."
+	die
+}
+
 # @FUNCTION: enpm
 # @DESCRIPTION:
 # Wrapper for the npm command.
@@ -490,7 +497,7 @@ einfo "Running:\t\tnpm ${cmd[@]}"
 		if [[ "${cmd[@]}" =~ "audit fix" ]] ; then
 			npm "${cmd[@]}" || npm_die
 		else
-			npm "${cmd[@]}" || die
+			npm "${cmd[@]}" || npm_die_fatal
 		fi
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
