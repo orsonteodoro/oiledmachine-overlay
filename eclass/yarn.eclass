@@ -596,7 +596,7 @@ _npm_check_errors() {
 	grep -q -e "error during build:" "${T}/build.log" && die "Detected error"
 	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 	grep -q -e "Unknown command:" "${T}/build.log" && die "Detected error"
-	grep -q -e "ETARGET" "${T}/build.log" && die "Detected error.  Remove --prefer-offline or remove --offline."
+	grep -q -e "ETARGET" "${T}/build.log" && die "Detected error.  Delete ${NPM_CACHE_FOLDER} folder and try again."
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
 }
 

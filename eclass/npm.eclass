@@ -305,6 +305,7 @@ _npm_setup_offline_cache() {
 	fi
 einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
 einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
+ewarn "You may need to delete the \`${NPM_CACHE_FOLDER}\` folder if ETARGET or \"No matching version found\" appears."
 	rm -rf "${HOME}/.npm/_cacache"
 	mkdir -p "${HOME}/.npm/" || die
 	ln -sf "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache"

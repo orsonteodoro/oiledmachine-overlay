@@ -41,6 +41,24 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
+# --legacy-peer-deps is used for better pinning removing caret, but using
+# --force introduces the ^ (caret) operator which breaks onnxruntime-web version
+# pinning.
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+
+NPM_DEDUPE_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+
 DISABLED_CRATES="
 app-0.1.0
 "
@@ -493,28 +511,6 @@ NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.35.3-remove-sover-suffix.patch"
 )
 
-# --legacy-peer-deps is used for better pinning removing caret, but using
-# --force introduces the ^ (caret) operator which breaks onnxruntime-web version
-# pinning.
-NPM_AUDIT_FIX_ARGS=(
-	"--legacy-peer-deps"
-	"--prefer-offline"
-)
-
-NPM_DEDUPE_ARGS=(
-	"--legacy-peer-deps"
-)
-
-NPM_INSTALL_ARGS=(
-	"--legacy-peer-deps"
-	"--prefer-offline"
-)
-
-NPM_UNINSTALL_ARGS=(
-	"--legacy-peer-deps"
-	"--prefer-offline"
-)
-
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/glib-2.90.9999"
@@ -880,11 +876,72 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 	#####################
 	# Fix vulnerabilities
 	#####################
+		patch_lockfile() {
+			sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_1_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_2_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"brace-expansion\": \"^2.0.2\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_2_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"brace-expansion\": \"^5.0.8\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_5_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"^${NODE_DOMPURIFY_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"fast-uri\": \"^3.0.1\"|\"fast-uri\": \"^${NODE_FAST_URI_3_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"glob\": \"^7.1.3\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^7.1.4\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^7.1.6\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^10.3.7\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"glob\": \"^13.0.6\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"js-yaml\": \"^3.13.1\"|\"js-yaml\": \"^${NODE_JS_YAML_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"js-yaml\": \"^4.1.0\"|\"js-yaml\": \"^${NODE_JS_YAML_4_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"nanoid\": \"^3.3.6\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"nanoid\": \"^3.3.16\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"nanoid\": \"^13.0.6\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.1\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^7.0.7\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"sharp\": \"^0.32.0\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s#\"sharp\": \"^0.34.3 || ^0.35.4\"#\"sharp\": \"^${NODE_SHARP_PV}\"#g" "package-lock.json" || die
+
+			sed -i -e "s|\"undici\": \"^7.19.0\"|\"undici\": \"^${NODE_UNDICI_7_PV}\"|g" "package-lock.json" || die
+		}
+		patch_lockfile
+
 		pkgs=(
+			"brace-expansion@^${NODE_BRACE_EXPANSION_1_PV}"
+			"dompurify@^${NODE_DOMPURIFY_PV}"
+			"fast-uri@^${NODE_FAST_URI_3_PV}"
+			"nanoid@^${NODE_NANOID_3_PV}"
 			"next@${NODE_NEXT_PV}"
-			"protobufjs@${NODE_PROTOBUFJS_7_PV}"
+			"protobufjs@^${NODE_PROTOBUFJS_7_PV}"
+			"postcss@^${NODE_POSTCSS_PV}"
+			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 		)
-		enpm install "${pkgs[@]}" -P --legacy-peer-deps
+		enpm install "${pkgs[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
+		pkgs=(
+			"glob@^${NODE_GLOB_PV}"
+			"js-yaml@^${NODE_JS_YAML_4_PV}"
+			"undici@^${NODE_UNDICI_7_PV}"
+		)
+		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
+		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
 	fi
 }
