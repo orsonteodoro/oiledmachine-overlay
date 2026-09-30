@@ -743,7 +743,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_29
+ebuild_revision_30
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -854,6 +854,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_IP_ADDRESS_PV@|${NODE_IP_ADDRESS_PV}|g" \
 		-e "s|@NODE_LODASH_PV@|${NODE_LODASH_PV}|g" \
 		-e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" \
+		-e "s|@NODE_UUID_11_PV@|${NODE_UUID_11_PV}|g" \
 		"pnpm-workspace.yaml" \
 		|| die
 
