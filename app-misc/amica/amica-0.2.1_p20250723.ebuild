@@ -519,6 +519,7 @@ CHKL_TIMESTAMPS=(
 )
 
 inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node xdg
+#NODE_NEXT_PV="15.5.21" # May require override required to avoid build issue
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -827,7 +828,7 @@ einfo "Adding Cargo.lock"
 	_cargo_src_unpack
 }
 
-npm_update_lock_install_post() {
+npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #ewarn "QA:  Manually \`cargo add serde@1.0.219\` in src-tauri"
 #ewarn "QA:  Manually remove node_modules/eslint-config-next/node_modules/eslint-plugin-react-hooks in package-lock.json"
@@ -903,6 +904,7 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 			sed -i -e "s|\"nanoid\": \"^3.3.16\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"nanoid\": \"^13.0.6\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "package-lock.json" || die
 
+
 			sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
@@ -941,14 +943,13 @@ ewarn "QA:  Manually change \"protobufjs\": \"^6.8.8\" to \"protobufjs\": \"^7.6
 			"esbuild@^${NODE_ESBUILD_PV}"
 			"glob@^${NODE_GLOB_PV}"
 			"js-yaml@^${NODE_JS_YAML_4_PV}"
-			"undici@^${NODE_UNDICI_7_PV}"
+			"undici@^${NODE_UNDICI_6_PV}"
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
 		patch_lockfile
 
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
-
 	fi
 }
 
@@ -997,20 +998,20 @@ einfo "Unpacking cargo packages"
 				"node_modules/sharp/build/${configuration}/${fn}" \
 				|| die "Failed to copy ${fn} (1)"
 
-			cp \
-				"node_modules/sharp/src/build/${configuration}/${fn}" \
-				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/obj.target/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy ${fn} (2)"
+#			cp \
+#				"node_modules/sharp/src/build/${configuration}/${fn}" \
+#				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/obj.target/sharp-${sharp_platform}.node" \
+#				|| die "Failed to copy ${fn} (2)"
 
-			cp \
-				"node_modules/sharp/src/build/${configuration}/${fn}" \
-				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy ${fn} (3)"
+#			cp \
+#				"node_modules/sharp/src/build/${configuration}/${fn}" \
+#				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
+#				|| die "Failed to copy ${fn} (3)"
 
-			cp \
-				"node_modules/sharp/src/build/${configuration}/${fn}" \
-				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
-				|| die "Failed to copy ${fn} (3)"
+#			cp \
+#				"node_modules/sharp/src/build/${configuration}/${fn}" \
+#				"node_modules/@xenova/transformers/node_modules/sharp/build/Release/sharp-${sharp_platform}.node" \
+#				|| die "Failed to copy ${fn} (3)"
 
 			rm -vrf "node_modules/sharp/node_modules/@img/sharp-${sharp_platform}" || true
 	        popd >/dev/null 2>&1 || die
@@ -1030,6 +1031,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-import-fix.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-next-public-root.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-tauri-v2.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250723-update-processResponse.spec.patch"
 
 # Prevent ⨯ ESLint: a.getScope is not a function Occurred while linting ${S}/src/components/addToHomescreen.tsx:9 Rule: "react-hooks/rules-of-hooks"
 cat <<EOF > "${S}/eslint.config.mjs"

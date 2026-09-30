@@ -1,0 +1,38 @@
+--- a/__tests__/processResponse.spec.ts.orig	2025-07-23 13:57:17.000000000 -0700
++++ b/__tests__/processResponse.spec.ts	2026-09-30 10:41:16.650121215 -0700
+@@ -4,10 +4,12 @@ import { processResponse } from "../src/
+ 
+ describe("Process Response Tests", () => {
+   test("should return same thing", () => {
+-    const sentences: string[] = []
++    const sentences: string[] = [];
+     const aiTextLog = "";
+     const receivedMessage = "";
+     const tag = "";
++    const isThinking = false;
++    const rolePlay = "";
+ 
+     let cbTriggered = false;
+ 
+@@ -16,16 +18,21 @@ describe("Process Response Tests", () =>
+       aiTextLog,
+       receivedMessage,
+       tag,
++      isThinking,
++      rolePlay,
+       callback: (aiTalks: Screenplay[]) => {
+         cbTriggered = true;
+         expect(aiTalks).toEqual([]);
+         return false;
+       },
+     });
++
+     expect(proc.sentences).toStrictEqual([]);
+     expect(proc.aiTextLog).toBe("");
+     expect(proc.receivedMessage).toBe("");
+     expect(proc.tag).toBe("");
++    expect(proc.isThinking).toBe(false);
++    expect(proc.rolePlay).toBe("");
+     expect(proc.shouldBreak).toBe(false);
+     expect(cbTriggered).toBe(false);
+   });
