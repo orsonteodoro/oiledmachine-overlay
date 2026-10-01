@@ -111,7 +111,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_0
+ebuild_revision_1
 "
 
 RDEPEND="
@@ -129,13 +129,21 @@ RDEPEND="
 		)
 		video_cards_nvidia? (
 			x11-drivers/nvidia-drivers:=
-			!x11-drivers/nvidia-drivers:0/390
-			!x11-drivers/nvidia-drivers:0/470
 			|| (
-				>=x11-drivers/nvidia-drivers-610.43.03:0/610
-				>=x11-drivers/nvidia-drivers-595.84:0/595
-				>=x11-drivers/nvidia-drivers-580.173.02:0/580
-				>=x11-drivers/nvidia-drivers-535.309.01:0/535
+				>=x11-drivers/nvidia-drivers-615.71.01:0/615
+				>=x11-drivers/nvidia-drivers-610.57.04:0/610
+				>=x11-drivers/nvidia-drivers-595.91.07:0/595
+				>=x11-drivers/nvidia-drivers-580.178.04:0/580
+
+				>=x11-drivers/nvidia-drivers-615.71.09:0/615
+				>=x11-drivers/nvidia-drivers-610.57.04:0/610
+				>=x11-drivers/nvidia-drivers-595.91.07:0/595
+				>=x11-drivers/nvidia-drivers-580.178.04:0/580
+
+				>=x11-drivers/nvidia-drivers-615.71.09:0/615
+				>=x11-drivers/nvidia-drivers-610.57.04:0/610
+				>=x11-drivers/nvidia-drivers-595.91.07:0/595
+				>=x11-drivers/nvidia-drivers-580.178.04:0/580
 			)
 		)
 	)
