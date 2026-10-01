@@ -304,6 +304,67 @@ is_eol() {
 	return 0
 }
 
+# These are usually disabled because they are not well maintained on time compared to upstream.
+# Many of these are flood the zone ebuilds with vulnerabilies.
+DISABLED_FLAVORS=(
+	#
+	# During this time (Oct 1, 2026), the behind x releases are based on the following version snapshot:
+	#
+	# live: ce1e0223d8ad4211275c82a17ed6d43ab81e13d9 (2026-10-01 12:47:16 -0700)
+	# 7.3-rc5
+	# 7.2.8
+	# 7.1.13 [EOL]
+	# 6.18.54
+	# 6.12.111
+	# 6.6.157
+	# 6.1.188
+	# 5.15.221
+	# 5.10.270
+	# next-20261001
+	#
+
+	"sys-kernel/amneziawg-sources" # Out of date, behind a year
+	"sys-kernel/barrensea-kernel" # Out of date, 6.12 behind 84 releases, 6.15 behind 219 release
+	"sys-kernel/calculate-sources" # Behind 1 point release
+	"sys-kernel/clear-sources" # EOL 6.10
+	"sys-kernel/dappersec-sources" # EOL 4.9
+	"sys-kernel/fake-sources" # Stub
+	"sys-kernel/femkvm-kernel" # 6.18 behind 19 releases
+	"sys-kernel/femxen-kernel" # 6.18 behind 19 releases
+	"sys-kernel/gentoo-cjk-kernel" # Not reviewed yet
+	"sys-kernel/gentoo-cjk-kernel-bin" # Not reviewed yet
+	"sys-kernel/gentoo-cjk-sources" # Not reviewed yet
+	"sys-kernel/gentoo-kernel-ps3" # 6.12 behind 95 releases, 66 behind 90 releases
+	"sys-kernel/gentoo-sources-image" # EOL 4.19
+	"sys-kernel/gnumach" # Not supported on oiledmachine-overlay, experimental quality
+	"sys-kernel/neptune-kernel" # 7.2 behind 4 releases, 6.18 behind 4 releases, EOL 6.16
+	"sys-kernel/neptune-sources" # 7.2 behind 4 releases, 6.18 behind 4 releases, EOL 6.16
+	"sys-kernel/odroidc4-sources" # EOL 5.11
+	"sys-kernel/pentoo-sources" # Behind 1 point release
+	"sys-kernel/pf-sources-extended" # EOL 6.19 or earlier
+	"sys-kernel/reiser4-sources" # EOL 5.16 and earlier
+	"sys-kernel/rockchip-kernel-bin" # 6.1 behind 145 releases for that revision
+	"sys-kernel/rockchip-sources"
+	"sys-kernel/rpi-kernel" # Duplicate
+	"sys-kernel/torvalds-sources" # Duplicate
+	"sys-kernel/uek-sources" # 5.15 not updated since Jul 2024
+	"sys-kernel/void-sources-bin" # EOL 5.3 and earlier
+	"sys-kernel/void-sources-headers-bin"
+	"sys-kernel/vserver-sources" # EOL 4.9 and earlier
+	"sys-kernel/wsl2-kernel" # Behind 43 point releases
+	"sys-kernel/xanmod-apparmor-sources" # EOL 6.0
+
+)
+
+# Not included yet in RDEPEND.
+DISABLED_DRIVERS=(
+	# Drivers
+	"sys-kernel/jupiter-dkms" # Driver not updated since Sep 2024
+	"sys-kernel/zenpower" # Not updated since 2020
+	"sys-kernel/zenpower3" # Repo not accessible
+	"sys-kernel/zenpower5" # Not updated since Jan 2026
+)
+
 # One reason why source based packages are only allowed because the unused
 # ciphers need to be disabled.
 DSS_FLAVORS=(
@@ -734,6 +795,7 @@ eerror
 #einfo "IUSE list:"
 #einfo "${o}"
 }
+
 IUSE_KERNELS=( $(gen_render_x_list_v2_iuse "${KERNEL_MIN_SLOT}" '-lt' '') )
 
 # For the rejection, it has to be >= KERNEL_MIN_SLOT and sometimes KERNEL_MIN_LTS_SLOT <= x <= KERNEL_MAX_LTS_SLOT.
@@ -774,6 +836,19 @@ REQUIRED_USE+="
 		)
 	)
 "
+
+gen_render_disabled_flavors() {
+	local x
+	local kernels=""
+	for x in "${DISABLED_FLAVORS[@]}" ; do
+		kernels+="
+			!${x}
+		"
+	done
+	echo "
+		${kernels}
+	"
+}
 
 gen_render_kernels_list_v2() {
 	local acceptable_list=""

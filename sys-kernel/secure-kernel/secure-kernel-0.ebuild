@@ -117,6 +117,7 @@ ebuild_revision_1
 
 RDEPEND="
 	enforce? (
+		$(gen_render_disabled_flavors)
 		!sys-kernel/rock-dkms
 		!sys-kernel/rocm-sources
 		!custom-kernel? (

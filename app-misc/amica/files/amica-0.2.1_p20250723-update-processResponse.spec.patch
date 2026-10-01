@@ -1,3 +1,4 @@
+# This is an AI generated fix.
 --- a/__tests__/processResponse.spec.ts.orig	2025-07-23 13:57:17.000000000 -0700
 +++ b/__tests__/processResponse.spec.ts	2026-09-30 10:41:16.650121215 -0700
 @@ -4,10 +4,12 @@ import { processResponse } from "../src/
