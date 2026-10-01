@@ -8,7 +8,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
  lockfileIncludeTarballUrl: true
  verifyDepsBeforeRun: prompt
  verifyStoreIntegrity: true
-@@ -8,16 +8,52 @@ packages:
+@@ -8,16 +8,54 @@ packages:
    - 'packages/*'
    - 'sticker-creator'
  
@@ -41,6 +41,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
 +  - '@storybook/theming@@NODE_STORYBOOK_8_PV@'
 +  - '@xmldom/xmldom@@NODE_AT_XMLDOM_XMLDOM_PV@'
 +  - 'ajv@@NODE_AJV_PV@'
++  - 'csv-parse@@NODE_CSV_PARSE_PV@'
 +  - 'tar@@NODE_TAR_PV@'
 +  - 'electron@@NODE_24_ELECTRON_PV@'
 +  - 'electron-builder@@ELECTRON_BUILDER_PV@'
@@ -50,6 +51,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
 +  - 'js-yaml@@NODE_JS_YAML_4_PV@'
 +  - 'jws@@NODE_JWS_3_PV@'
 +  - 'linkify-it@@NODE_LINKIFY_IT_5_PV@'
++  - 'moment@@NODE_MOMENT_PV@'
 +  - 'picomatch@@NODE_PICOMATCH_2_PV@'
 +  - 'postcss@@NODE_POSTCSS_PV@'
 +  - 'react@@NODE_REACT_19_PV@'
@@ -68,7 +70,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
  
  trustPolicy: no-downgrade
  trustPolicyExclude:
-@@ -31,21 +67,83 @@ trustPolicyExclude:
+@@ -31,21 +67,85 @@ trustPolicyExclude:
    - 'undici-types@6.21.0'
    - 'vite@4.5.14'
  
@@ -119,6 +121,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
 +  '@vitejs/plugin-react@3.1.0>vite': '@NODE_VITE_6_PV@'
 +  'app-builder-lib': '@NODE_APP_BUILDER_LIB_PV@'
 +  'app-builder-lib@26.11.1>electron-builder-squirrel-windows': '@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@'
++  'csv-parse': '@NODE_CSV_PARSE_PV@'
 +  'danger@13.0.10>js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'danger@13.0.10>jws': '@NODE_JWS_3_PV@'
 +  'danger@13.0.10>qs': '@NODE_QS_PV@'
@@ -135,6 +138,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
 +  'eslint-plugin-react@7.32.2>js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'js-yaml': '@NODE_JS_YAML_4_PV@'
 +  'linkify-it': '@NODE_LINKIFY_IT_5_PV@'
++  'moment': '@NODE_MOMENT_PV@'
 +  'npm-run-all2@8.0.4>shell-quote': '@NODE_SHELL_QUOTE_PV@'
 +  'react': '@NODE_REACT_19_PV@'
 +  'react-dom': '@NODE_REACT_DOM_19_PV@'
@@ -203,7 +207,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
    'qrcode-generator': 'patches/qrcode-generator.patch'
    'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
    'zod@4.3.6': 'patches/zod@4.3.6.patch'
-@@ -92,22 +185,23 @@ allowBuilds:
+@@ -92,22 +185,24 @@ allowBuilds:
    #   ex: 'package@0.0.0': true
    '@indutny/mac-screen-share@1.0.13': true
    '@indutny/simple-windows-notifications@2.0.16': true
@@ -215,12 +219,13 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
    '@signalapp/sqlcipher@4.1.0': true
    '@signalapp/windows-ucv@1.0.1': true
 -  '@swc/core@1.10.16': true
-+  '@swc/core@1.16.2': true
++  '@swc/core@1.16.12': true
    '@tailwindcss/oxide@4.3.0': true
    'electron@23.3.13': false # duplicate package
 -  'electron@39.8.10': true # duplicate package through react-devtools
 -  'electron@43.0.0': true
 +  'electron@39.8.10': false # duplicate package through react-devtools
++  'electron@41.10.7': false
 +  'electron@@NODE_24_ELECTRON_PV@': true
    'fs-xattr@0.4.0': true
  

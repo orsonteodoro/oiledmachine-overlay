@@ -230,6 +230,8 @@ pnpm_audit_post() {
 # Required to prevent:
 # [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for electron@^23.3.14 while fetching it
 	if [[ "${PNPM_AUDIT_FIX}" == "1" ]] ; then
+	# The `pnpm audit --fix` gets it wrong sometimes.
+
 einfo "DEBUG:  Fixing audit changes"
 einfo "DEBUG:  Deleting old electron changes suggested by pnpm audit --fix"
 		sed -i -e "\|23.3.14|d" "${S}/pnpm-workspace.yaml" || die
@@ -249,6 +251,10 @@ einfo "DEBUG:  Deleting non-existing extract-zip version suggested by pnpm audit
 
 einfo "DEBUG:  Deleting newer app-builder-lib version suggested by pnpm audit --fix"
 		sed -i -e "\|26.15.0|d" "${S}/pnpm-workspace.yaml" || die
+
+	# Only webpack-dev-middleware 6.x is allowed for @storybook/builder-webpack5
+einfo "DEBUG:  Deleting newer webpack-dev-middleware version suggested by pnpm audit --fix"
+		sed -i -e "\|webpack-dev-middleware|d" "${S}/pnpm-workspace.yaml" || die
 	fi
 }
 
@@ -268,12 +274,14 @@ einfo "QA:  Manually change 24.19.0 to @NODE_PV@ in package.json"
 		sed -i -e "s|@NODE_AT_XMLDOM_XMLDOM_PV@|${NODE_AT_XMLDOM_XMLDOM_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_BABEL_CORE_7_PV@|${NODE_BABEL_CORE_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_BABEL_RUNTIME_7_PV@|${NODE_BABEL_RUNTIME_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_CSV_PARSE_PV@|${NODE_CSV_PARSE_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_ESBUILD_PV@|${NODE_ESBUILD_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_FLATTED_PV@|${NODE_FLATTED_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_IMMUTABLE_4_PV@|${NODE_IMMUTABLE_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_JS_YAML_4_PV@|${NODE_JS_YAML_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_JWS_3_PV@|${NODE_JWS_3_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_LINKIFY_IT_5_PV@|${NODE_LINKIFY_IT_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_MOMENT_PV@|${NODE_MOMENT_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_PICOMATCH_2_PV@|${NODE_PICOMATCH_2_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_POSTCSS_PV@|${NODE_POSTCSS_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_ROUTER_8_PV@|${NODE_REACT_ROUTER_8_PV}|g" "${S}/pnpm-workspace.yaml" || die
