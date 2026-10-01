@@ -12,10 +12,12 @@ EAPI=8
 KERNEL_MIN_SLOT="5.10" # inclusive
 KERNEL_MIN_LTS_SLOT="6.1" # inclusive
 KERNEL_MAX_LTS_SLOT="6.18" # inclusive
+KERNEL_LIVE_SLOT="7.3"
 
 LTS_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18")
 ACTIVE_VERSIONS=("5.10" "5.15" "6.1" "6.6" "6.12" "6.18" "7.2" "7.3")
 STABLE_OR_MAINLINE_VERSIONS=("7.2" "7.3")
+
 ALL_VERSIONS=(
 	"0"
 	"1"
@@ -26,6 +28,7 @@ ALL_VERSIONS=(
 	"6.0" "6.1" "6.2" "6.3" "6.4" "6.5" "6.6" "6.7" "6.8" "6.9" "6.11" "6.12" "6.13" "6.14" "6.15" "6.16" "6.17" "6.18" "6.19" "7.0" "7.1"
 	"7.2" "7.3"
 )
+
 EOL_VERSIONS=(
 	"0"
 	"1"

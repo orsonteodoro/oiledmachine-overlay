@@ -304,69 +304,6 @@ is_eol() {
 	return 0
 }
 
-# @FUNCTION: gen_patched_kernel_list
-# @INTERNAL
-# @DESCRIPTION:
-# Generate the patched kernel list
-gen_patched_kernel_list() {
-	local kv="${1}"
-	local active_version
-
-	for active_version in ${ACTIVE_VERSIONS[@]} ; do
-		local s1=$(ver_cut 1-2 ${kv})
-		local s2=$(ver_cut 1-2 ${active_version})
-		if ver_test ${s2} -ge ${s1} ; then
-			:
-		else
-			_ALL_VERSIONS["_${s2/./_}"]="${s2}.V"
-		fi
-	done
-}
-
-# @FUNCTION: gen_zero_tolerance_kernel_list
-# @INTERNAL
-# @DESCRIPTION:
-# Generate the latest point release kernel list
-gen_zero_tolerance_kernel_list() {
-	local PATCHED_VERSIONS=( ${@} )
-
-	local latest_version
-
-	for latest_version in ${PATCHED_VERSIONS[@]} ; do
-		local s=$(ver_cut 1-2 ${latest_version})
-		if [[ "${_ALL_VERSIONS[_${s/./_}]}" == "EOL" ]] ; then
-			:
-		elif [[ "${_ALL_VERSIONS[_${s/./_}]}" =~ "V" ]] ; then
-			:
-		else
-			_ALL_VERSIONS["_${s/./_}"]="${latest_version}"
-		fi
-	done
-}
-
-# @FUNCTION: gen_patched_kernel_driver_list
-# @INTERNAL
-# @DESCRIPTION:
-# Generate the patched kernel list
-gen_patched_kernel_driver_list() {
-	local PATCHED_VERSIONS=( ${@} )
-
-	local patched_version
-	patched_version=${PATCHED_VERSIONS[-1]}
-
-	# Check LTS versions
-
-	for patched_version in ${PATCHED_VERSIONS[@]} ; do
-		if is_lts "${patched_version}" ; then
-			if [[ "${patched_version}" =~ "V" ]] ; then
-	# Unpatched / vulnerable
-				local slot=$(ver_cut 1-2 ${patched_version})
-				_ALL_VERSIONS["_${slot/./_}"]="${slot}.V"
-			fi
-		fi
-	done
-}
-
 # One reason why source based packages are only allowed because the unused
 # ciphers need to be disabled.
 DSS_FLAVORS=(
@@ -476,17 +413,21 @@ FLAVORS_RC=(
 	"sys-kernel/git-sources"
 )
 
+# 9999 only
 FLAVORS_LIVE_9999=(
 	"sys-kernel/linux-next"
 	"sys-kernel/raspberrypi-image"
 )
 
-FLAVORS_LIVE_SLOT_9999=(
-	"sys-kernel/ot-sources"
+# Stable live only, 6.18.9999
+FLAVORS_STABLE_LIVE=(
 	"sys-kernel/vanilla-kernel"
 )
 
-
+# 7.3.9999 only
+FLAVORS_LIVE_SLOT_9999=(
+	"sys-kernel/ot-sources"
+)
 
 # @FUNCTION: _seq
 # @DESCRIPTION:
@@ -523,7 +464,6 @@ gen_render_x_list_v2_iuse() {
 	local iuse_list=""
 	local eol_list=""
 	local o
-	local av
 	local pv
 	local x
 	local y
@@ -645,9 +585,9 @@ eerror
 	done
 
 	# 7.2_p1
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
+	for pv in "${ACTIVE_VERSIONS[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot_pv=$(ver_cut "1-2" "${av}")
+		local slot_pv=$(ver_cut "1-2" "${pv}")
 		local slot="${slot_pv/./_}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
@@ -679,7 +619,6 @@ eerror
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] || continue
 		local slot_pv=$(ver_cut "1-2" "${pv}")
-		local slot="${slot_pv/./_}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
 			for x in "${FLAVORS_RC[@]}" ; do
@@ -706,15 +645,15 @@ eerror
 		fi
 	done
 
-	# 6.18.9999
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		local slot_pv=$(ver_cut "1-2" "${av}")
+	# 6.18.9999, stable live
+	for pv in "${ACTIVE_VERSIONS[@]}" ; do
+		local slot_pv=$(ver_cut "1-2" "${pv}")
 		local slot="${slot_pv/./_}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
 		ver_test "${slot_pv}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
 		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
-			for x in "${FLAVORS_LIVE_9999[@]}" ; do
+			for x in "${FLAVORS_STABLE_LIVE[@]}" ; do
 				local pn="${x#*/}"
 				if is_dss_flavor "${x}" ; then
 					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
@@ -728,7 +667,7 @@ eerror
 				fi
 			done
 		else
-			for x in "${FLAVORS_LIVE_9999[@]}" ; do
+			for x in "${FLAVORS_STABLE_LIVE[@]}" ; do
 				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 				local pn="${x#*/}"
 				iuse_list+="
@@ -740,9 +679,33 @@ eerror
 
 	# 7.3.9999
 	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
-		local slot_pv=$(ver_cut "1-2" "${pv}")
-		local slot="${slot_pv/./_}"
 		local pn="${x#*/}"
+		local slot_pv="${KERNEL_LIVE_SLOT}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+			if is_dss_flavor "${x}" ; then
+				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+				iuse_list+="
+					${x_not_operator}kernel_targets_${pn}_live
+				"
+			elif [[ "${x_filter_rule}" == "dss-reject" ]] ; then
+				iuse_list+="
+					!kernel_targets_${pn}_live
+				"
+			fi
+		else
+			ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
+			iuse_list+="
+				${x_not_operator}kernel_targets_${pn}_live
+			"
+		fi
+	done
+
+	# 9999 only
+	for x in "${FLAVORS_LIVE_9999[@]}" ; do
+		local pn="${x#*/}"
+		local pv="9999"
+		local slot_pv="${KERNEL_LIVE_SLOT}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
 			if is_dss_flavor "${x}" ; then
@@ -818,9 +781,7 @@ gen_render_kernels_list_v2() {
 	local landlock_list=""
 	local mseal_list=""
 	local o
-	local av
 	local pv
-	local slot
 	local x
 	local y
 
@@ -933,9 +894,9 @@ eerror
 	# 7.2.3
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
@@ -949,9 +910,9 @@ eerror
 	# 7.2.3_p1
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
@@ -963,16 +924,16 @@ eerror
 	done
 
 	# 7.2_p1
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
+	for pv in "${ACTIVE_VERSIONS[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] && continue
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
 				kernel_targets_${pn}_${slot}? (
-					=${x}-${av}_p*
+					=${x}-${slot_pv}_p*
 				)
 			"
 		done
@@ -981,9 +942,8 @@ eerror
 	# 7.3_rc1
 	for pv in "${MULTISLOT_LATEST_KERNEL_RELEASE[@]}" ; do
 		[[ "${pv}" =~ "rc" ]] || continue
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		for x in "${FLAVORS_RC[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
@@ -995,17 +955,17 @@ eerror
 	done
 
 	# 6.18.9999
-	for av in "${ACTIVE_VERSIONS[@]}" ; do
-		local slot=$(ver_cut "1-2" "${av}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
-		ver_test "${slot}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
-		slot="${slot/./_}"
-		for x in "${FLAVORS_LIVE_9999[@]}" ; do
+	for pv in "${ACTIVE_VERSIONS[@]}" ; do
+		local slot_pv=$(ver_cut "1-2" "${pv}")
+		local slot="${slot_pv/./_}"
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
+		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
+		ver_test "${slot_pv}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
+		for x in "${FLAVORS_STABLE_LIVE[@]}" ; do
 			local pn="${x#*/}"
 			acceptable_list+="
 				kernel_targets_${pn}_${slot}_live? (
-					=${x}-${av}.9999
+					=${x}-${slot_pv}.9999
 				)
 			"
 		done
@@ -1013,9 +973,16 @@ eerror
 
 	# 7.3.9999
 	for x in "${FLAVORS_LIVE_SLOT_9999[@]}" ; do
-		local slot=$(ver_cut "1-2" "${pv}")
-		ver_test "${slot}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		slot="${slot/./_}"
+		local pn="${x#*/}"
+		acceptable_list+="
+			kernel_targets_${pn}_live? (
+				=${x}-${KERNEL_LIVE_SLOT}.9999
+			)
+		"
+	done
+
+	# 9999 only
+	for x in "${FLAVORS_LIVE_9999[@]}" ; do
 		local pn="${x#*/}"
 		acceptable_list+="
 			kernel_targets_${pn}_live? (
