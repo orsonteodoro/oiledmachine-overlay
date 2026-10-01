@@ -7,6 +7,7 @@ EAPI=8
 # This ebuild is to preform kernel security updates.
 
 # Security:  update every kernel version bump
+
 # This ebuild uses AI inference to better inform the FAFO user of the risks of bypassing mitigation.
 
 KERNEL_MIN_SLOT="5.10" # inclusive
@@ -148,11 +149,8 @@ RDEPEND="
 
 			!=x11-drivers/nvidia-drivers-390*
 			!=x11-drivers/nvidia-drivers-470*
-			!=x11-drivers/nvidia-drivers-595.44*
-
-			!=x11-drivers/nvidia-drivers-595.104*
-			!=x11-drivers/nvidia-drivers-595.99*
 			!=x11-drivers/nvidia-drivers-535*
+			!=x11-drivers/nvidia-drivers-595.44*
 		)
 	)
 "
