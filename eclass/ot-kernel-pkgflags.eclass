@@ -11607,7 +11607,7 @@ ewarn "With landlock:  4.0 - 5.5 (Medium)"
 ewarn "Attack vectors possible without landlock:  arbitrary code execution, arbitrary file read, arbitrary file write"
 ewarn
 	fi
-fi
+}
 
 # @FUNCTION: ot-kernel-pkgflags_zenpower3
 # @DESCRIPTION:
