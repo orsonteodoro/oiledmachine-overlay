@@ -145,6 +145,14 @@ RDEPEND="
 				>=x11-drivers/nvidia-drivers-595.91.07:0/595
 				>=x11-drivers/nvidia-drivers-580.178.04:0/580
 			)
+
+			!=x11-drivers/nvidia-drivers-390*
+			!=x11-drivers/nvidia-drivers-470*
+			!=x11-drivers/nvidia-drivers-595.44*
+
+			!=x11-drivers/nvidia-drivers-595.104*
+			!=x11-drivers/nvidia-drivers-595.99*
+			!=x11-drivers/nvidia-drivers-535*
 		)
 	)
 "
