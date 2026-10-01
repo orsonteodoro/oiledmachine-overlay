@@ -126,7 +126,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${PV%%.*}"
 IUSE+="
 cefclient cefsimple debug minimal test wayland X
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	cefclient? (
