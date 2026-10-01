@@ -500,6 +500,32 @@ eerror
 	fi
 fi
 
+if [[ -n "${ELECTRON_APP_NEXT_JS_PV}" ]] ; then
+	if ver_test $(ver_cut 1-2 "${ELECTRON_APP_NEXT_JS_PV}") "-ge" "16" ; then
+	# Node >= 20 required
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:=
+		"
+	elif ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") "-ge" "15" ; then
+	# Node >= 18 required
+		COMMON_DEPEND+="
+			>=net-libs/nodejs-${NODEJS_22_PV}:=
+		"
+	else
+	# While the active may support active Node.js, these Next.js major
+	# versions are not supported on this overlay for security reasons.
+		local pkg="Next.js"
+eerror
+eerror "Your ${pkg} based app is not supported."
+eerror "The ${pkg} version (ELECTRON_APP_NEXT_JS_PV) requirements are as follows:"
+eerror
+eerror "${CATEGORY}/${PN} requires ${pkg} version:  ${ELECTRON_APP_ANGULAR_PV}"
+eerror "The supported ${pkg} version supported by LTS/Rolling Node.js:  >= 15"
+eerror
+		die
+	fi
+fi
+
 # See https://github.com/facebook/react/blob/master/package.json
 if [[ "${ELECTRON_APP_REACT_PV}" == "ignore" ]] ; then # Deprecated value
 	:
