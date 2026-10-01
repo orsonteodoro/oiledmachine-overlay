@@ -592,7 +592,7 @@ src_install() {
 		"${MY_PN2}.png" \
 		"Network;InstantMessaging;Chat"
 
-#	lcnr_install_files
+	lcnr_install_files
 }
 
 pkg_postinst() {
@@ -600,6 +600,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.28.0, 20260930, Electron 44.5.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.28.0, 20260920, Electron 44.4.5)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.27.0, 20260920, Electron 44.4.3)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.20.0, 20260729, Electron 43.2.0)
