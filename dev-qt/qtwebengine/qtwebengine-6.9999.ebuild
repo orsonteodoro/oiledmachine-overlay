@@ -3,7 +3,14 @@
 
 EAPI=8
 
-# This ebuild contains AI synthetic data.
+# This ebuild contains AI synthetic data on info about update cycles.
+
+#
+# Security note:
+#
+# qtwebengine uses the aggressive backport technique for Chromium updates and
+# does whole syncs on new Qt versions.
+#
 
 # See also /var/tmp/portage/dev-qt/qtwebengine-<VER>/work/qtwebengine-everywhere-src-<VER>/src/3rdparty/chromium/chrome/VERSION
 

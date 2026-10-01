@@ -27,6 +27,13 @@ _SECURE_VERSION_NODE_ECLASS=1
 # This timestamp was generated from `date +%s`.
 SECURE_VERSION_NODE_ECLASS_UPDATE=1790807109
 
+#
+# Security note:
+#
+# Electron uses the frequent backport technique for Chromium with whole sync on
+# every new major release.  Do not rely solely on Chromium major version bumps.
+#
+
 # Version sensitive to Node slot
 NODE_24_ELECTRON_PV=${NODE_24_ELECTRON_PV:-"44.5.1"} # Node 24.21.0, Chromium 152.0.7977.130
 NODE_22_ELECTRON_PV=${NODE_22_ELECTRON_PV:-"39.8.10"} # Node 22.22.1, Chromium 142.0.7444.265

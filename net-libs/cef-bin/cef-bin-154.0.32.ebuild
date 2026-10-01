@@ -7,7 +7,14 @@ EAPI=8
 # D12, U22, U24
 
 # This ebuild contains AI suggested fixes.
-# This ebuild contains AI generated synthetic data.
+# This ebuild contains AI generated synthetic data and update cycle clarification.
+
+#
+# Security note:
+#
+# CEF uses the frequent backport technique for Chromium updates and does whole
+# syncs on every major release.  Do not rely solely on major version bumps.
+#
 
 inherit secure-version
 FLAVOR="" # "_beta" or ""

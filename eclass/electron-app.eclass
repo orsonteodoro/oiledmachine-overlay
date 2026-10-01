@@ -16,7 +16,14 @@
 # D11, U20, U22, U24
 
 # This ebuild contains AI generated code.
-# Contains data derived from AI generated synthetic data.
+# Contains data derived from AI generated synthetic data and for update cycle.
+
+#
+# Security note:
+#
+# Electron uses the frequent backport technique for Chromium with whole sync on
+# every new major release.  Do not rely solely on Chromium major version bumps.
+#
 
 case ${EAPI:-0} in
 	[78]) ;;

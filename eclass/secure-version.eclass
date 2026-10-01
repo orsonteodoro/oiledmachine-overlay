@@ -141,10 +141,18 @@ C_ARES_PV=${C_ARES_PV:-"9999"}
 CA_CERTIFICATES_PV=${CA_CERTIFICATES_PV:-"20260601"}
 CAIRO_PV=${CAIRO_PV:-"1.18.6"}
 CDPARANOIA_PV=${CDPARANOIA_PV:-"9999"}
+
+#
+# Security note:
+#
+# CEF uses the frequent backport technique for Chromium updates and does whole
+# syncs on every major release.  Do not rely solely on major version bumps.
+#
 CEF_PV=${CEF_PV:-"154.0.32"}
 CEF_BIN_PV=${CEF_BIN_PV:-"154.0.32"}
 CEF_BIN_PV_CHROMIUM=${CEF_BIN_PV_CHROMIUM:-"154.0.8037.58"} # keep in sync
 CEF_BIN_PV_REV=${CEF_BIN_PV_REV:-"682c378"} # keep in sync
+
 CHROMAPRINT_PV=${CHROMAPRINT_PV:-"9999"}
 CHROMIUM_PV=${CHROMIUM_PV:-"154.0.8037.57"} # Stable
 CIVETWEB_PV=${CIVETWEB_PV:-"9999"}
