@@ -355,38 +355,123 @@ DISABLED_FLAVORS=(
 	"sys-kernel/wireless-testing" # Not updated since Jul 2025
 	"sys-kernel/wsl2-kernel" # Behind 43 point releases
 	"sys-kernel/xanmod-apparmor-sources" # EOL 6.0
-
 )
 
 # If not needed, the kernel modules are disabled or removed when in a dss state.
 # We allow hardware based display, network, storage drivers but reject the others.
 DISABLED_DRIVERS=(
 # See also ot-kernel-pkgflags_has_external_module in eclass/ot-kernel-pkgflags.eclass for some kernel modules package names.
-# TODO finish list
+# TODO add missing out-of-tree drivers
+	"app-admin/ryzen_smu"
+	"app-antivirus/lkrg"
+	"app-antivirus/tyton"
+	"app-crypt/tpm-emulator"
+	"app-emulation/vendor-reset"
+	"app-emulation/virtualbox-guest-additions"
+	"app-emulation/virtualbox-modules"
+	"app-emulation/vmware-modules"
+	"app-forensics/kjackal"
+	"app-forensics/prochunter"
 	"app-laptop/system76-module"
+	"app-laptop/tp_smapi"
+	"app-laptop/tuxedo-keyboard"
+	"bluetooth-drivers/rtbth"
+	"dev-debug/scap-driver"
+	"dev-libs/gdrcopy"
+	"dev-libs/libgpiod"
+	"dev-libs/xdna-driver"
+	"dev-util/lttng-modules"
+	"dev-util/sysdig-kmod"
+	"games-util/hid-nintendo"
+	"games-util/xone"
+	"games-util/xpadneo"
+	"media-libs/svgalib"
+	"media-sound/netcat-cpi"
+	"media-tv/v4l-dvb-saa716x"
+	"media-video/droidcam"
+	"media-video/v4l2loopback"
+	"net-analyzer/pkt-netflow"
+	"net-dialup/accel-ppp"
+	"net-firewall/ipset"
+	"net-firewall/ipt_netflow"
+	"net-firewall/ipt-ratelimit"
 	"net-firewall/pkt_netflow"
+	"net-firewall/rtsp-conntrack"
+	"net-firewall/xtables-addons"
+	"net-firewall/xt_dns"
+	"net-firewall/xt_nat"
+	"net-misc/AQtion"
+	"net-misc/dahdi"
+	"net-misc/ena-driver"
+	"net-misc/openvswitch"
+	"net-vpn/wireguard-modules"
+	"sci-libs/linux-gpib-modules"
+	"sci-ni/ni_p2p_dkms"
+	"sys-apps/openrazer"
+	"sys-apps/smc-sum"
+	"sys-cluster/knem"
+	"sys-cluster/lustre"
+	"sys-cluster/xpmem"
 	"sys-firmware/lenovolegionlinux"
+	"sys-fs/exfat-nofuse"
+	"sys-fs/linux-ntfs-kmod" # Dedupe, the in-kernel NTFS driver is more preferred for audit.
+	"sys-fs/loop-aes" # Less audited compared to dm-crypt/LUKS with AES; not FIPS certified
+	"sys-fs/vhba"
 	"sys-kernel/amdgpu-dkms" # rocm-7.2.4 not updated since Apr 2026.  therock-10.0 not updated since Aug 2026.
 	"sys-kernel/acpi-stuff"
 	"sys-kernel/cm-psu"
+	"sys-kernel/compat-drivers"
+	"sys-kernel/cryptodev"
+	"sys-kernel/fragattacks-drivers58"
+	"sys-kernel/ft60x_driver"
 	"sys-kernel/gasket-driver"
 	"sys-kernel/gostcrypt-linux-crypto"
 	"sys-kernel/it87"
 	"sys-kernel/jupiter-dkms" # Driver not updated since Sep 2024
+	#"sys-kernel/kpatch"
 	"sys-kernel/legion-wmi"
 	"sys-kernel/msi-ec"
 	"sys-kernel/nct6687d"
 	"sys-kernel/pcc"
+	"sys-kernel/pf_ring-kmod"
 	"sys-kernel/rock-dkms" # rocm-6.3.3 not updated since Feb 2025.
+	"sys-kernel/rte_kni-kmod"
 	"sys-kernel/scx"
 	"sys-kernel/scx-loader"
+	"sys-kernel/tirdad"
+	"sys-kernel/ummunotify"
 	"sys-kernel/zenergy" # Driver not updated since Aug 2025
 	"sys-kernel/zenpower" # Not updated since 2020
 	"sys-kernel/zenpower3" # Repo not accessible
 	"sys-kernel/zenpower5" # Not updated since Jan 2026
 	"sys-kernel/zenstats"
-	"sys-fs/vhba"
+	"sys-power/acpi_call"
+	"sys-power/bbswitch"
+	"sys-power/phc-intel"
+	"sys-power/tuxedo-cc-wmi"
+	"sys-process/atop"
+	"sys-process/falco-bin"
 	"x11-drivers/evdi"
+	"x11-misc/openrazer"
+
+	# Allowed
+	#"sys-fs/zfs" # Userland utils
+	#"sys-fs/zfs-kmod"
+	#"net-fs/openafs"
+	#"net-misc/r8125"
+	#"net-misc/r8168"
+	#"net-misc/realtek-r8152"
+	#"net-wireless/broadcom-sta"
+	#"net-wireless/broadcom-wl"
+	#"net-wireless/mt7610u_ulli-kroll"
+	#"net-wireless/rt3070"
+	#"net-wireless/rtl8192eu"
+	#"net-wireless/rtl8812au"
+	#"net-wireless/rtl8812au_aircrack-ng"
+	#"net-wireless/rtl8821ce"
+	#"net-wireless/rtl8821cu"
+	#"net-wireless/rtl8822bu"
+	#"x11-drivers/nvidia-drivers"
 )
 
 # One reason why source based packages are only allowed because the unused
