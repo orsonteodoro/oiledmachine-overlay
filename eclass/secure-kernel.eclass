@@ -351,18 +351,39 @@ DISABLED_FLAVORS=(
 	"sys-kernel/void-sources-bin" # EOL 5.3 and earlier
 	"sys-kernel/void-sources-headers-bin"
 	"sys-kernel/vserver-sources" # EOL 4.9 and earlier
+	"sys-kernel/wireless-testing" # Not updated since Jul 2025
 	"sys-kernel/wsl2-kernel" # Behind 43 point releases
 	"sys-kernel/xanmod-apparmor-sources" # EOL 6.0
 
 )
 
-# Not included yet in RDEPEND.
+# If not needed, the kernel modules are disabled or removed when in a dss state.
+# We allow hardware based display, network, storage drivers but reject the others.
 DISABLED_DRIVERS=(
-	# Drivers
+# See also ot-kernel-pkgflags_has_external_module in eclass/ot-kernel-pkgflags.eclass for some kernel modules package names.
+# TODO finish list
+	"app-laptop/system76-module"
+	"net-firewall/pkt_netflow"
+	"sys-firmware/lenovolegionlinux"
+	"sys-kernel/acpi-stuff"
+	"sys-kernel/cm-psu"
+	"sys-kernel/gasket-driver"
+	"sys-kernel/gostcrypt-linux-crypto"
+	"sys-kernel/it87"
 	"sys-kernel/jupiter-dkms" # Driver not updated since Sep 2024
+	"sys-kernel/legion-wmi"
+	"sys-kernel/msi-ec"
+	"sys-kernel/nct6687d"
+	"sys-kernel/pcc"
+	"sys-kernel/scx"
+	"sys-kernel/scx-loader"
+	"sys-kernel/zenergy" # Driver not updated since Aug 2025
 	"sys-kernel/zenpower" # Not updated since 2020
 	"sys-kernel/zenpower3" # Repo not accessible
 	"sys-kernel/zenpower5" # Not updated since Jan 2026
+	"sys-kernel/zenstats"
+	"sys-fs/vhba"
+	"x11-drivers/evdi"
 )
 
 # One reason why source based packages are only allowed because the unused
@@ -847,6 +868,19 @@ gen_render_disabled_flavors() {
 	done
 	echo "
 		${kernels}
+	"
+}
+
+gen_render_disabled_drivers() {
+	local x
+	local packages=""
+	for x in "${DISABLED_DRIVERS[@]}" ; do
+		packagess+="
+			!${x}
+		"
+	done
+	echo "
+		${packagess}
 	"
 }
 
