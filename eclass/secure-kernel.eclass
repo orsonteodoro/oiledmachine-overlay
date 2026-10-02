@@ -424,11 +424,13 @@ DISABLED_DRIVERS=(
 	"sys-cluster/lustre"
 	"sys-cluster/xpmem"
 	"sys-firmware/lenovolegionlinux"
+	"sys-fs/bcachefs-kmod"
 	"sys-fs/bcachefs-tools"
 	"sys-fs/exfat-nofuse"
 	"sys-fs/linux-apfs-rw"
 	"sys-fs/linux-ntfs-kmod" # Dedupe, the in-kernel NTFS driver is more preferred for audit.
 	"sys-fs/loop-aes" # Less audited compared to dm-crypt/LUKS with AES; not FIPS certified
+	"sys-fs/scoutfs"
 	"sys-fs/vhba"
 	"sys-kernel/amdgpu-dkms" # rocm-7.2.4 not updated since Apr 2026.  therock-10.0 not updated since Aug 2026.
 	"sys-kernel/acpi-stuff"
