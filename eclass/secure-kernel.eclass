@@ -457,6 +457,9 @@ DISABLED_DRIVERS=(
 	"sys-kernel/zenpower3" # Repo not accessible
 	"sys-kernel/zenpower5" # Not updated since Jan 2026
 	"sys-kernel/zenstats"
+	"net-vpn/amneziawg"
+	"net-vpn/amneziawg-module"
+	"net-vpn/amneziawg-modules"
 	"sys-power/acpi_call"
 	"sys-power/bbswitch"
 	"sys-power/nct6687d"
