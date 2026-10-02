@@ -525,10 +525,17 @@ DISABLED_DRIVERS=(
 # One reason why source based packages are only allowed because the unused
 # ciphers need to be disabled.
 DSS_FLAVORS=(
+	#
+	# Rank for kernel sources acceptability according to AI (corporate slop):
+	#
+	# 1. OS / distro - acceptable
+	# 2. Direct / upstream - conditional
+	# 3. Independent - reject
+	#
+
 	"sys-kernel/gentoo-sources" # 7.1.3, 7.1.2-r1
 	"sys-kernel/git-sources" # 7.2_rc2
 	"sys-kernel/linux-next" # 9999
-	"sys-kernel/ot-sources" # 7.1.3
 	"sys-kernel/vanilla-sources" # 7.1.3
 )
 
@@ -544,6 +551,7 @@ DSS_FLAVORS_REJ=(
 	"sys-kernel/liquorix-sources" # 7.0.14_p2, 6.6.8
 	"sys-kernel/mips-sources" # 5.4.294
 	"sys-kernel/pf-sources" # 7.0_p4
+	"sys-kernel/ot-sources" # 7.1.3
 	"sys-kernel/raspberrypi-image" # 9999, 6.18.32_p20260521
 	"sys-kernel/raspberrypi-sources" # 6.18.32_p20260521
 	"sys-kernel/rt-sources" # 7.0.1_p2
