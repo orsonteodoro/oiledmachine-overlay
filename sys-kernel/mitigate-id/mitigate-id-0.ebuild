@@ -80,7 +80,6 @@ BANNED_RDEPEND="
 "
 
 BDEPEND="
-	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 "
 
 pkg_setup() {

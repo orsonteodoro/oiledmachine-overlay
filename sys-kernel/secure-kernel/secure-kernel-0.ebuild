@@ -41,7 +41,6 @@ EOL_VERSIONS=(
 )
 
 CHKL_TIMESTAMPS=(
-	"sys-apps/util-linux-9999"
 	"sys-kernel/linux-next-9999"
 	"sys-kernel/ot-sources-7.3.9999"
 	"sys-kernel/raspberrypi-image-9999"
@@ -160,7 +159,6 @@ RDEPEND="
 	)
 "
 BDEPEND="
-	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 "
 PDEPEND="
 	sys-kernel/mitigate-dos:*

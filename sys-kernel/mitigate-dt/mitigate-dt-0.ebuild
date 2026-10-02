@@ -65,7 +65,6 @@ ebuild_revision_63
 #
 
 BDEPEND="
-	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 "
 
 _check_y() {
