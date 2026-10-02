@@ -357,6 +357,8 @@ DISABLED_FLAVORS=(
 	"sys-kernel/xanmod-apparmor-sources" # EOL 6.0
 )
 
+# TODO:  Consider the red-team USE flag to allow access to restricted pentest driver.
+
 # If not needed, the kernel modules are disabled or removed when in a dss state.
 # We allow hardware based display, network, storage drivers but reject the others.
 DISABLED_DRIVERS=(
@@ -414,7 +416,13 @@ DISABLED_DRIVERS=(
 	"net-vpn/ovpn-dco"
 	"net-vpn/wireguard-modules"
 	"net-wireless/mt7610u_ulli-kroll" # Old driver
+	"net-wireless/rt3070" # No longer listed on overlay list
+	"net-wireless/rtl8812au" # For pentesting, not for production
 	"net-wireless/rtl8812au_aircrack-ng" # For pentesting, not for production
+	"net-wireless/rtl8821ce" # EOL
+	"net-wireless/rtl8821cu" # For pentesting, not for production
+	"net-wireless/rtl8822bu" # EOL
+	"net-wireless/rtl88x2bu_morrownr" # Can be used for pentesting but with limitations
 	"sci-libs/linux-gpib"
 	"sci-libs/linux-gpib-modules"
 	"sci-ni/ni_p2p_dkms"
@@ -451,6 +459,7 @@ DISABLED_DRIVERS=(
 	"sys-kernel/pf_ring-kmod"
 	"sys-kernel/rock-dkms" # rocm-6.3.3 not updated since Feb 2025.
 	"sys-kernel/rte_kni-kmod"
+	"sys-kernel/rtl88x2bu-driver" # For pentesting only, not for production
 	"sys-kernel/scx"
 	"sys-kernel/scx-loader"
 	"sys-kernel/tirdad"
@@ -478,18 +487,21 @@ DISABLED_DRIVERS=(
 	#"sys-fs/zfs-kmod"
 	#"net-fs/openafs"
 	#"net-misc/r8125"
+	#"net-misc/r8126"
 	#"net-misc/r8152"
 	#"net-misc/r8168"
 	#"net-misc/realtek-r8152"
+	#"net-misc/realtek-rtl88x2bu"
 	#"net-wireless/aic8800"
 	#"net-wireless/broadcom-sta"
 	#"net-wireless/broadcom-wl"
-	#"net-wireless/rt3070"
+	#"net-wireless/mt7927-dkms"
 	#"net-wireless/rtl8192eu"
-	#"net-wireless/rtl8812au"
-	#"net-wireless/rtl8821ce"
-	#"net-wireless/rtl8821cu"
-	#"net-wireless/rtl8822bu"
+	#"net-wireless/rtl8723bu"
+	#"net-wireless/rtl8814au"
+	#"net-wireless/rtl8821au"
+	#"net-wireless/rtw88"
+	#"sys-kernel/rtl8822ce-driver"
 	#"x11-drivers/nvidia-drivers"
 )
 
