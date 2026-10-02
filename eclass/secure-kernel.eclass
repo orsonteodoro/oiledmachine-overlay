@@ -362,6 +362,8 @@ DISABLED_FLAVORS=(
 DISABLED_DRIVERS=(
 # See also ot-kernel-pkgflags_has_external_module in eclass/ot-kernel-pkgflags.eclass for some kernel modules package names.
 # TODO add missing out-of-tree drivers
+# AI prompt used to filter:  for <pkg> is this kernel driver essential or non essential for data security (dss) or enterprise audit? is the driver allowed or disallowed?
+	# Disabled packages
 	"app-admin/ryzen_smu"
 	"app-antivirus/lkrg"
 	"app-antivirus/tyton"
@@ -405,6 +407,8 @@ DISABLED_DRIVERS=(
 	"net-misc/ena-driver"
 	"net-misc/openvswitch"
 	"net-vpn/wireguard-modules"
+	"net-wireless/mt7610u_ulli-kroll" # Old driver
+	"net-wireless/rtl8812au_aircrack-ng" # For pentesting, not for production
 	"sci-libs/linux-gpib-modules"
 	"sci-ni/ni_p2p_dkms"
 	"sys-apps/openrazer"
@@ -454,7 +458,7 @@ DISABLED_DRIVERS=(
 	"x11-drivers/evdi"
 	"x11-misc/openrazer"
 
-	# Allowed
+	# Allowed packages
 	#"sys-fs/zfs" # Userland utils
 	#"sys-fs/zfs-kmod"
 	#"net-fs/openafs"
@@ -463,11 +467,9 @@ DISABLED_DRIVERS=(
 	#"net-misc/realtek-r8152"
 	#"net-wireless/broadcom-sta"
 	#"net-wireless/broadcom-wl"
-	#"net-wireless/mt7610u_ulli-kroll"
 	#"net-wireless/rt3070"
 	#"net-wireless/rtl8192eu"
 	#"net-wireless/rtl8812au"
-	#"net-wireless/rtl8812au_aircrack-ng"
 	#"net-wireless/rtl8821ce"
 	#"net-wireless/rtl8821cu"
 	#"net-wireless/rtl8822bu"
