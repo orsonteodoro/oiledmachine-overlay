@@ -386,7 +386,6 @@ DISABLED_DRIVERS=(
 	"bluetooth-drivers/rtbth"
 	"dev-debug/scap-driver"
 	"dev-libs/gdrcopy"
-	"dev-libs/libgpiod"
 	"dev-libs/xdna-driver"
 	"dev-util/lttng-modules"
 	"dev-util/sysdig-kmod"
