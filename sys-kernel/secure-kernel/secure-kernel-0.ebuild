@@ -123,6 +123,9 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_render_kernels_list_v2)
 		)
+		dss? (
+			$(gen_render_disabled_drivers)
+		)
 		intel-microcode? (
 			>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 		)

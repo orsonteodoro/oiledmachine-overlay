@@ -345,7 +345,7 @@ DISABLED_FLAVORS=(
 	"sys-kernel/reiser4-sources" # EOL 5.16 and earlier
 	"sys-kernel/rockchip-kernel-bin" # 6.1 behind 145 releases for that revision
 	"sys-kernel/rockchip-sources"
-	"sys-kernel/rocm-sources" # EOL 5.11 and and earlier
+	"sys-kernel/rocm-sources"
 	"sys-kernel/rpi-kernel" # Duplicate
 	"sys-kernel/torvalds-sources" # Duplicate
 	"sys-kernel/uek-sources" # 5.15 not updated since Jul 2024
@@ -366,7 +366,6 @@ DISABLED_DRIVERS=(
 	"app-laptop/system76-module"
 	"net-firewall/pkt_netflow"
 	"sys-firmware/lenovolegionlinux"
-	"sys-kernel/amdgpu-dkms" # rocm-7.2.4 not updated since Apr 2026.  therock-10.0 not updated since Aug 2026.
 	"sys-kernel/acpi-stuff"
 	"sys-kernel/cm-psu"
 	"sys-kernel/gasket-driver"
@@ -377,7 +376,6 @@ DISABLED_DRIVERS=(
 	"sys-kernel/msi-ec"
 	"sys-kernel/nct6687d"
 	"sys-kernel/pcc"
-	"sys-kernel/rock-dkms" # rocm-6.3.3 not updated since Feb 2025.
 	"sys-kernel/scx"
 	"sys-kernel/scx-loader"
 	"sys-kernel/zenergy" # Driver not updated since Aug 2025
@@ -387,6 +385,8 @@ DISABLED_DRIVERS=(
 	"sys-kernel/zenstats"
 	"sys-fs/vhba"
 	"x11-drivers/evdi"
+
+	sys-kernel/rock-dkms
 )
 
 # One reason why source based packages are only allowed because the unused
