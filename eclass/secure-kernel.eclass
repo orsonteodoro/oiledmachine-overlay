@@ -373,9 +373,9 @@ DISABLED_DRIVERS=(
 	# Rank for what Wi-Fi driver is acceptable or rejected:
 	#
 	# 1. In kernel - Acceptable
-	# 2. Distro/os - Acceptable
+	# 2. From distro or OS repo - Acceptable
 	# 3. Direct from manufactuer - Restricted
-	# 4. Independent (e.g. GitHub repos) - Rejected unless signed and code reviwed
+	# 4. Independent (e.g. GitHub repos) - Rejected unless signed and code reviewed
 	#
 
 	# Referencing independent repo (e.g. GitHub) for Wi-Fi driver will be
