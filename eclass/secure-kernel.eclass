@@ -413,6 +413,9 @@ DISABLED_DRIVERS=(
 	"net-misc/dahdi"
 	"net-misc/ena-driver"
 	"net-misc/openvswitch"
+	"net-vpn/amneziawg"
+	"net-vpn/amneziawg-module"
+	"net-vpn/amneziawg-modules"
 	"net-vpn/ovpn-dco"
 	"net-vpn/wireguard-modules"
 	"net-wireless/mt7610u_ulli-kroll" # Old driver
@@ -469,9 +472,6 @@ DISABLED_DRIVERS=(
 	"sys-kernel/zenpower3" # Repo not accessible
 	"sys-kernel/zenpower5" # Not updated since Jan 2026
 	"sys-kernel/zenstats"
-	"net-vpn/amneziawg"
-	"net-vpn/amneziawg-module"
-	"net-vpn/amneziawg-modules"
 	"sys-power/acpi_call"
 	"sys-power/bbswitch"
 	"sys-power/nct6687d"
@@ -483,8 +483,6 @@ DISABLED_DRIVERS=(
 	"x11-misc/openrazer"
 
 	# Allowed packages
-	#"sys-fs/zfs" # Userland utils
-	#"sys-fs/zfs-kmod"
 	#"net-fs/openafs"
 	#"net-misc/r8125"
 	#"net-misc/r8126"
@@ -501,6 +499,8 @@ DISABLED_DRIVERS=(
 	#"net-wireless/rtl8814au"
 	#"net-wireless/rtl8821au"
 	#"net-wireless/rtw88"
+	#"sys-fs/zfs" # Userland utils
+	#"sys-fs/zfs-kmod"
 	#"sys-kernel/rtl8822ce-driver"
 	#"x11-drivers/nvidia-drivers"
 )
