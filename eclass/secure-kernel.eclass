@@ -530,7 +530,7 @@ DSS_FLAVORS=(
 	#
 	# 1. OS / distro - acceptable
 	# 2. Direct / upstream - conditional
-	# 3. Independent - reject
+	# 3. Independent - rejected
 	#
 
 	"sys-kernel/gentoo-sources" # 7.1.3, 7.1.2-r1
