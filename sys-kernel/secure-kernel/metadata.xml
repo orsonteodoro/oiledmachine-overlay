@@ -34,6 +34,13 @@
       Enabled is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="dss">
+      Reject kernel package sources or prebuilt kernels that are behind in
+      security updates or unable to disable unused ciphers.
+
+      Reject non-essential kernel modules required for data security or
+      enterprise auditing.
+    </flag>
     <flag name="enforce">
       Protect against data tampering by replacing vulnerable versions.
     </flag>
