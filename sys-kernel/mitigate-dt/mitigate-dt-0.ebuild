@@ -111,40 +111,10 @@ einfo "Verifying CONFIG_KSM=n settings for ${pv_major}.${pv_minor}.${pv_patch}${
 	KERNEL_DIR="${prev_kernel_dir}"
 }
 
-check_zero_tolerance() {
-	use custom-kernel || return
-	local prev_kernel_dir="${KERNEL_DIR}"
-	local L=(
-		$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
-	)
-	local x
-	for x in ${L[@]} ; do
-		unset KV_FULL
-		local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-		local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-		local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-		local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
-
-		local latest_version
-		for latest_version in ${MULTISLOT_LATEST_KERNEL_RELEASE[@]} ; do
-			local s1=$(ver_cut 1-2 "${latest_version}")
-			local s2="${pv_major}.${pv_minor}"
-			if is_eol "${pv_major}.${pv_minor}" ; then
-eerror "${pv_major}.${pv_minor}.${pv_patch}${extra_version} is EOL should be unemerged."
-			elif ver_test "${s1}" -eq "${s2}" && ver_test "${pv_major}.${pv_minor}.${pv_patch}" -lt "${latest_version}" ; then
-eerror "${pv_major}.${pv_minor}.${pv_patch}${extra_version} failed zero-tolerance and should be unemerged."
-			fi
-		done
-
-	done
-	KERNEL_DIR="${prev_kernel_dir}"
-}
-
 pkg_setup() {
 	use enforce || return
 	mitigate-dt_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP)."
-	check_zero_tolerance
 	verify_disable_ksm
 }
 
