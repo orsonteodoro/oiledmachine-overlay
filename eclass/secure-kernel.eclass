@@ -11,6 +11,9 @@
 # See also https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability
 #
 
+# This eclass uses AI inference to clarify and be consistent with industry
+# practice with respect to accepting and rejecting Wi-Fi driver packages.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -365,6 +368,20 @@ DISABLED_DRIVERS=(
 # See also ot-kernel-pkgflags_has_external_module in eclass/ot-kernel-pkgflags.eclass for some kernel modules package names.
 # TODO add missing out-of-tree drivers
 # AI prompt used to filter:  for <pkg> is this kernel driver essential or non essential for data security (dss) or enterprise audit? is the driver allowed or disallowed?
+
+	#
+	# Rank for what Wi-Fi driver is acceptable or rejected:
+	#
+	# 1. in kernel - acceptable
+	# 2. distro/os - acceptable
+	# 3. direct from manufactuer - restricted
+	# 4. independent (e.g. github repos) - rejected unless signed and code reviwed
+	#
+
+	# Referencing independent repo (e.g. GitHub) for Wi-Fi driver will be
+	# rejected by auditor, but if directly from the manufacturer it is
+	# accepted.
+
 	# Disabled packages
 	"app-admin/ryzen_smu"
 	"app-antivirus/lkrg"
@@ -413,15 +430,28 @@ DISABLED_DRIVERS=(
 	"net-misc/dahdi"
 	"net-misc/ena-driver"
 	"net-misc/openvswitch"
+	"net-misc/realtek-r8152" # Not listed in zugaina
+	"net-misc/realtek-rtl88x2bu" # Independent repo, see notes above
+	"net-misc/r8125" # References independent repo, not directly from manufacturer, see notes above
+	"net-misc/r8126" # Independent repo, not directly from manufacturer
+	"net-misc/r8152" # References independent repo, not directly from manufacturer, see notes above
+	"net-misc/r8168" # References independent repo, not directly from manufacturer, see notes above
 	"net-vpn/amneziawg"
 	"net-vpn/amneziawg-module"
 	"net-vpn/amneziawg-modules"
 	"net-vpn/ovpn-dco"
 	"net-vpn/wireguard-modules"
+	"net-wireless/broadcom-wl" # References independent repo, not directly from manufacturer, see notes above
 	"net-wireless/mt7610u_ulli-kroll" # Old driver
-	"net-wireless/rt3070" # No longer listed on overlay list
+	"net-wireless/mt7927-dkms" # Independent repo, see notes above
+	"net-wireless/rtw88" # Independent repo, see notes above
+	"net-wireless/rt3070" # Not listed on zugaina
+	"net-wireless/rtl8192eu" # Independent repo, see notes above
+	"net-wireless/rtl8723bu" # Independent repo, see notes above
 	"net-wireless/rtl8812au" # For pentesting, not for production
 	"net-wireless/rtl8812au_aircrack-ng" # For pentesting, not for production
+	"net-wireless/rtl8814au" # Independent repo, see notes above
+	"net-wireless/rtl8821au" # Independent repo, see notes above
 	"net-wireless/rtl8821ce" # EOL
 	"net-wireless/rtl8821cu" # For pentesting, not for production
 	"net-wireless/rtl8822bu" # EOL
@@ -462,6 +492,7 @@ DISABLED_DRIVERS=(
 	"sys-kernel/pf_ring-kmod"
 	"sys-kernel/rock-dkms" # rocm-6.3.3 not updated since Feb 2025.
 	"sys-kernel/rte_kni-kmod"
+	"sys-kernel/rtl8822ce-driver" # Independent repo, see notes above
 	"sys-kernel/rtl88x2bu-driver" # For pentesting only, not for production
 	"sys-kernel/scx"
 	"sys-kernel/scx-loader"
@@ -484,24 +515,10 @@ DISABLED_DRIVERS=(
 
 	# Allowed packages
 	#"net-fs/openafs"
-	#"net-misc/r8125"
-	#"net-misc/r8126"
-	#"net-misc/r8152"
-	#"net-misc/r8168"
-	#"net-misc/realtek-r8152"
-	#"net-misc/realtek-rtl88x2bu"
 	#"net-wireless/aic8800"
 	#"net-wireless/broadcom-sta"
-	#"net-wireless/broadcom-wl"
-	#"net-wireless/mt7927-dkms"
-	#"net-wireless/rtl8192eu"
-	#"net-wireless/rtl8723bu"
-	#"net-wireless/rtl8814au"
-	#"net-wireless/rtl8821au"
-	#"net-wireless/rtw88"
 	#"sys-fs/zfs" # Userland utils
 	#"sys-fs/zfs-kmod"
-	#"sys-kernel/rtl8822ce-driver"
 	#"x11-drivers/nvidia-drivers"
 )
 
