@@ -430,12 +430,12 @@ DISABLED_DRIVERS=(
 	"net-misc/dahdi"
 	"net-misc/ena-driver"
 	"net-misc/openvswitch"
-	"net-misc/realtek-r8152" # Not listed in zugaina
-	"net-misc/realtek-rtl88x2bu" # Independent repo, see notes above
 	"net-misc/r8125" # References independent repo, not directly from manufacturer, see notes above
 	"net-misc/r8126" # Independent repo, not directly from manufacturer
 	"net-misc/r8152" # References independent repo, not directly from manufacturer, see notes above
 	"net-misc/r8168" # References independent repo, not directly from manufacturer, see notes above
+	"net-misc/realtek-r8152" # Not listed in zugaina
+	"net-misc/realtek-rtl88x2bu" # Independent repo, see notes above
 	"net-vpn/amneziawg"
 	"net-vpn/amneziawg-module"
 	"net-vpn/amneziawg-modules"
