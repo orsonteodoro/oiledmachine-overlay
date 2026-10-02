@@ -441,7 +441,7 @@ DISABLED_DRIVERS=(
 	"sys-kernel/gostcrypt-linux-crypto"
 	"sys-kernel/it87"
 	"sys-kernel/jupiter-dkms" # Driver not updated since Sep 2024
-	#"sys-kernel/kpatch"
+	"sys-kernel/kpatch" # Currently not supported on the oiledmachine-overlay because of no provider for security update service.  Reboot remediation has a bigger benefit compared to live remediation.
 	"sys-kernel/legion-wmi"
 	"sys-kernel/msi-ec"
 	"sys-kernel/nct6687d"
