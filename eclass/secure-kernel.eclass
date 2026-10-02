@@ -377,6 +377,8 @@ DISABLED_DRIVERS=(
 	"app-forensics/kjackal"
 	"app-forensics/prochunter"
 	"app-laptop/framework-laptop-kmod"
+	"app-laptop/system76-acpi-module"
+	"app-laptop/system76-io-module"
 	"app-laptop/system76-module"
 	"app-laptop/tp_smapi"
 	"app-laptop/tuxedo-drivers"
