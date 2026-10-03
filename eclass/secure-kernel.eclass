@@ -553,12 +553,44 @@ DSS_FLAVORS_REJ=(
 	"sys-kernel/liquorix-sources" # 7.0.14_p2, 6.6.8
 	"sys-kernel/mips-sources" # 5.4.294
 	"sys-kernel/pf-sources" # 7.0_p4
-	"sys-kernel/ot-sources" # 7.1.3
+	"sys-kernel/ot-sources" # 7.1.3, 7.3.9999
 	"sys-kernel/raspberrypi-image" # 9999, 6.18.32_p20260521
 	"sys-kernel/raspberrypi-sources" # 6.18.32_p20260521
 	"sys-kernel/rt-sources" # 7.0.1_p2
 	"sys-kernel/surface-sources" # 7.0.5
 	"sys-kernel/vanilla-kernel" # 7.1.3, 6.18.9999
+	"sys-kernel/xanmod-kernel" # 7.1.3, 7.1.2_p1
+	"sys-kernel/xanmod-rt" # 6.12.31
+	"sys-kernel/xanmod-sources" # 7.1.3, 7.1.2-r1
+	"sys-kernel/xanmod-sources-rt" # 6.1.13
+	"sys-kernel/zen-sources" # 7.1.2, 7.1.3_p1
+)
+
+SPOW_FLAVORS=(
+	"sys-kernel/git-sources" # 7.2_rc2
+	"sys-kernel/hardened-sources" # 7.1.2, 4.3.3-r5
+	"sys-kernel/linux-next" # 9999
+	"sys-kernel/ot-sources" # 7.1.3, 7.3.9999
+)
+
+SPOW_FLAVORS_REJ=(
+	"sys-kernel/asahi-kernel" # 7.0.12_p1
+	"sys-kernel/asahi-sources" # 7.0.9_p2
+	"sys-kernel/cachyos-kernel" # 7.0.12-r1, 7.0.12, 7.0.12_p1, 7.2_rc1_p1, 7.2_rc2
+	"sys-kernel/cachyos-kernel-bin" # 7.1.2-r2, 7.0.12
+	"sys-kernel/cachyos-sources" # 7.1.3, 7.1.2-r2
+	"sys-kernel/gentoo-kernel" # 7.1.3, 7.1.2_p1
+	"sys-kernel/gentoo-kernel-bin" # 7.1.3, 7.1.2_p1, 6.18.38
+	"sys-kernel/gentoo-sources" # 7.1.3, 7.1.2-r1
+	"sys-kernel/liquorix-sources" # 7.0.14_p2, 6.6.8
+	"sys-kernel/mips-sources" # 5.4.294
+	"sys-kernel/pf-sources" # 7.0_p4
+	"sys-kernel/raspberrypi-image" # 9999, 6.18.32_p20260521
+	"sys-kernel/raspberrypi-sources" # 6.18.32_p20260521
+	"sys-kernel/rt-sources" # 7.0.1_p2
+	"sys-kernel/surface-sources" # 7.0.5
+	"sys-kernel/vanilla-kernel" # 7.1.3, 6.18.9999
+	"sys-kernel/vanilla-sources" # 7.1.3
 	"sys-kernel/xanmod-kernel" # 7.1.3, 7.1.2_p1
 	"sys-kernel/xanmod-rt" # 6.12.31
 	"sys-kernel/xanmod-sources" # 7.1.3, 7.1.2-r1
