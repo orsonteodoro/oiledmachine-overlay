@@ -533,6 +533,7 @@ SPOW_DISABLED_DRIVERS=(
 	#
 	# Security fixes in commit history within 4 years:  acceptable
 	# No security fixes in commit history within 4 years:  rejected
+	# For the out-of-tree driver, the in-tree driver is triaged but the out-of-tree not triaged:  rejected
 	#
 
 	# Disabled packages
