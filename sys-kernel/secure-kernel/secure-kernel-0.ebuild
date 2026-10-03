@@ -124,13 +124,16 @@ RDEPEND="
 			$(gen_render_kernels_list_v2)
 		)
 		dss? (
-			$(gen_render_disabled_drivers)
+			$(gen_render_disabled_drivers 'dss')
 		)
 		intel-microcode? (
 			>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 		)
 		linux-firmware? (
 			>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+		)
+		spow? (
+			$(gen_render_disabled_drivers 'spow')
 		)
 		video_cards_nvidia? (
 			x11-drivers/nvidia-drivers:=

@@ -121,6 +121,7 @@ IUSE+="
 	linux-firmware
 	kvm
 	mseal
+	spow
 "
 REQUIRED_USE="
 	cpu_target_x86_arrandale? (
@@ -364,7 +365,7 @@ DISABLED_FLAVORS=(
 
 # If not needed, the kernel modules are disabled or removed when in a dss state.
 # We allow hardware based display, network, storage drivers but reject the others.
-DISABLED_DRIVERS=(
+DSS_DISABLED_DRIVERS=(
 # See also ot-kernel-pkgflags_has_external_module in eclass/ot-kernel-pkgflags.eclass for some kernel modules package names.
 # TODO add missing out-of-tree drivers
 # AI prompt used to filter:  for <pkg> is this kernel driver essential or non essential for data security (dss) or enterprise audit? is the driver allowed or disallowed?
@@ -522,6 +523,158 @@ DISABLED_DRIVERS=(
 	#"sys-fs/zfs" # Userland utils
 	#"sys-fs/zfs-kmod"
 	#"x11-drivers/nvidia-drivers"
+)
+
+SPOW_DISABLED_DRIVERS=(
+	# TODO:  audit each package
+
+	#
+	# Policy
+	#
+	# Security fixes in commit history within 4 years:  acceptable
+	# No security fixes in commit history within 4 years:  rejected
+	#
+
+	# Disabled packages
+	"app-admin/ryzen_smu"
+	"app-antivirus/lkrg"
+	"app-antivirus/tyton"
+	"app-backup/tsm"
+	"app-crypt/tpm-emulator"
+	"app-emulation/la-ow-syscall"
+	"app-emulation/vendor-reset"
+	"app-emulation/virtualbox"
+	"app-emulation/virtualbox-guest-additions"
+	"app-emulation/virtualbox-modules"
+	"app-emulation/vmware-modules"
+	"app-forensics/kjackal"
+	"app-forensics/prochunter"
+	"app-laptop/framework-laptop-kmod"
+	"app-laptop/system76-acpi-module"
+	"app-laptop/system76-io-module"
+	"app-laptop/system76-module"
+	"app-laptop/tp_smapi"
+	"app-laptop/tuxedo-drivers"
+	"app-laptop/tuxedo-keyboard"
+	"bluetooth-drivers/rtbth"
+	"dev-debug/scap-driver"
+	"dev-libs/gdrcopy"
+	"dev-libs/xdna-driver"
+	"dev-util/lttng-modules"
+	"dev-util/sysdig-kmod"
+	"games-util/hid-nintendo"
+	"games-util/xone"
+	"games-util/xpadneo"
+	"media-libs/svgalib"
+	"media-sound/netcat-cpi"
+	"media-tv/v4l-dvb-saa716x"
+	"media-video/droidcam"
+	"media-video/v4l2loopback"
+	"net-analyzer/pkt-netflow"
+	"net-dialup/accel-ppp"
+	"net-firewall/ipset"
+	"net-firewall/ipt_netflow"
+	"net-firewall/ipt-ratelimit"
+	"net-firewall/pkt_netflow"
+	"net-firewall/rtsp-conntrack"
+	"net-firewall/xtables-addons"
+	"net-firewall/xt_dns"
+	"net-firewall/xt_nat"
+	"net-fs/openafs"
+	"net-misc/AQtion"
+	"net-misc/dahdi"
+	"net-misc/ena-driver"
+	"net-misc/openvswitch"
+	"net-misc/r8125" # References independent repo, not directly from manufacturer, see notes above
+	"net-misc/r8126" # Independent repo, not directly from manufacturer
+	"net-misc/r8152" # References independent repo, not directly from manufacturer, see notes above
+	"net-misc/r8168" # References independent repo, not directly from manufacturer, see notes above
+	"net-misc/realtek-r8152" # Not listed in zugaina
+	"net-misc/realtek-rtl88x2bu" # Independent repo, see notes above
+	"net-vpn/amneziawg"
+	"net-vpn/amneziawg-module"
+	"net-vpn/amneziawg-modules"
+	"net-vpn/ovpn-dco"
+	"net-vpn/wireguard-modules"
+	"net-wireless/aic8800"
+	"net-wireless/broadcom-sta"
+	"net-wireless/broadcom-wl" # References independent repo, not directly from manufacturer, see notes above
+	"net-wireless/mt7610u_ulli-kroll" # Old driver
+	"net-wireless/mt7927-dkms" # Independent repo, see notes above
+	"net-wireless/rtw88" # Independent repo, see notes above
+	"net-wireless/rt3070" # Not listed on zugaina
+	"net-wireless/rtl8192eu" # Independent repo, see notes above
+	"net-wireless/rtl8723bu" # Independent repo, see notes above
+	"net-wireless/rtl8812au" # For pentesting, not for production
+	"net-wireless/rtl8812au_aircrack-ng" # For pentesting, not for production
+	"net-wireless/rtl8814au" # Independent repo, see notes above
+	"net-wireless/rtl8821au" # Independent repo, see notes above
+	"net-wireless/rtl8821ce" # EOL
+	"net-wireless/rtl8821cu" # For pentesting, not for production
+	"net-wireless/rtl8822bu" # EOL
+	"net-wireless/rtl88x2bu_morrownr" # Can be used for pentesting but with limitations
+	"sci-libs/linux-gpib"
+	"sci-libs/linux-gpib-modules"
+	"sci-ni/ni_p2p_dkms"
+	"sys-apps/openrazer"
+	"sys-apps/smc-sum"
+	"sys-cluster/knem"
+	"sys-cluster/lustre"
+	"sys-cluster/xpmem"
+	"sys-firmware/lenovolegionlinux"
+	"sys-fs/bcachefs-kmod"
+	"sys-fs/bcachefs-tools"
+	"sys-fs/exfat-nofuse"
+	"sys-fs/linux-apfs-rw"
+	"sys-fs/linux-ntfs-kmod" # Dedupe, the in-kernel NTFS driver is more preferred for audit.
+	"sys-fs/loop-aes" # Less audited compared to dm-crypt/LUKS with AES; not FIPS certified
+	"sys-fs/scoutfs"
+	"sys-fs/vhba"
+	"sys-kernel/amdgpu-dkms" # rocm-7.2.4 not updated since Apr 2026.  therock-10.0 not updated since Aug 2026.
+	"sys-kernel/acpi-stuff"
+	"sys-kernel/cm-psu"
+	"sys-kernel/compat-drivers"
+	"sys-kernel/cryptodev"
+	"sys-kernel/fragattacks-drivers58"
+	"sys-kernel/ft60x_driver"
+	"sys-kernel/gasket-driver"
+	"sys-kernel/gostcrypt-linux-crypto"
+	"sys-kernel/it87"
+	"sys-kernel/jupiter-dkms" # Driver not updated since Sep 2024
+	"sys-kernel/kpatch" # Currently not supported on the oiledmachine-overlay because of no provider for security update service.  Reboot remediation has a bigger benefit compared to live remediation.
+	"sys-kernel/legion-wmi"
+	"sys-kernel/msi-ec"
+	"sys-kernel/nct6687d"
+	"sys-kernel/pcc"
+	"sys-kernel/pf_ring-kmod"
+	"sys-kernel/rock-dkms" # rocm-6.3.3 not updated since Feb 2025.
+	"sys-kernel/rte_kni-kmod"
+	"sys-kernel/rtl8822ce-driver" # Independent repo, see notes above
+	"sys-kernel/rtl88x2bu-driver" # For pentesting only, not for production
+	"sys-kernel/scx"
+	"sys-kernel/scx-loader"
+	"sys-kernel/tirdad"
+	"sys-kernel/ummunotify"
+	"sys-kernel/zenergy" # Driver not updated since Aug 2025
+	"sys-kernel/zenpower" # Not updated since 2020
+	"sys-kernel/zenpower3" # Repo not accessible
+	"sys-kernel/zenpower5" # Not updated since Jan 2026
+	"sys-kernel/zenstats"
+	"sys-power/acer-wmi-battery"
+	"sys-power/acpi_call"
+	"sys-power/bbswitch"
+	"sys-power/nct6687d"
+	"sys-power/phc-intel"
+	"sys-power/tuxedo-cc-wmi"
+	"sys-process/atop"
+	"sys-process/falco-bin"
+	"x11-drivers/evdi"
+	"x11-misc/openrazer"
+
+	# Allowed packages
+	"sys-fs/zfs" # Userland utils
+	"sys-fs/zfs-kmod"
+	"x11-drivers/nvidia-drivers"
 )
 
 # One reason why source based packages are only allowed because the unused
@@ -704,10 +857,19 @@ _seq()
 	done
 }
 
-is_dss_flavor() {
-	local flavor="${1}"
+is_flavor() {
+	local filter="${1}"
+	local flavor="${2}"
+
+	local L=()
+	if [[ "${filter}" =~ "dss" ]] ; then
+		L=( "${DSS_FLAVORS[@]}" )
+	elif [[ "${filter}" =~ "spow" ]] ; then
+		L=( "${SPOW_FLAVORS[@]}" )
+	fi
+
 	local x
-	for x in "${DSS_FLAVORS[@]}" ; do
+	for x in "${L[@]}" ; do
 		[[ "${x}" == "${flavor}" ]] && return 0
 	done
 	return 1
@@ -716,6 +878,7 @@ is_dss_flavor() {
 DSS_MIN_SLOT="6.12"
 LANDLOCK_MIN_SLOT="5.13"
 MSEAL_MIN_SLOT="6.10"
+SPOW_MIN_SLOT="6.12"
 gen_render_x_list_v2_iuse() {
 	local x_min_ver="${1}"
 	local x_cond_operator="${2}"
@@ -788,10 +951,13 @@ eerror
 		local slot_pv=$(ver_cut "1-2" "${pv}")
 		local slot="${slot_pv/./_}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
 			for x in "${FLAVORS_POINT_RELEASE[@]}" ; do
 				local pn="${x#*/}"
-				if is_dss_flavor "${x}" ; then
+				if is_flavor "${filter}" "${x}" ; then
 					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
 						${x_not_operator}kernel_targets_${pn}_${slot}
@@ -819,10 +985,13 @@ eerror
 		local slot_pv=$(ver_cut "1-2" "${pv}")
 		local slot="${slot_pv/./_}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
 			for x in "${FLAVORS_POST_3C_RELEASE[@]}" ; do
 				local pn="${x#*/}"
-				if is_dss_flavor "${x}" ; then
+				if is_flavor "${filter}" "${x}" ; then
 					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
 						${x_not_operator}kernel_targets_${pn}_${slot}
@@ -850,10 +1019,13 @@ eerror
 		local slot_pv=$(ver_cut "1-2" "${pv}")
 		local slot="${slot_pv/./_}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
 			for x in "${FLAVORS_POST_2C_RELEASE[@]}" ; do
 				local pn="${x#*/}"
-				if is_dss_flavor "${x}" ; then
+				if is_flavor "${filter}" "${x}" ; then
 					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
 						${x_not_operator}kernel_targets_${pn}_${slot}
@@ -880,10 +1052,13 @@ eerror
 		[[ "${pv}" =~ "rc" ]] || continue
 		local slot_pv=$(ver_cut "1-2" "${pv}")
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
 			for x in "${FLAVORS_RC[@]}" ; do
 				local pn="${x#*/}"
-				if is_dss_flavor "${x}" ; then
+				if is_flavor "${filter}" "${x}" ; then
 					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
 						${x_not_operator}kernel_targets_${pn}_rc
@@ -912,10 +1087,13 @@ eerror
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_LTS_SLOT}" && continue
 		ver_test "${slot_pv}" "-gt" "${KERNEL_MAX_LTS_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
 			for x in "${FLAVORS_STABLE_LIVE[@]}" ; do
 				local pn="${x#*/}"
-				if is_dss_flavor "${x}" ; then
+				if is_flavor "${filter}" "${x}" ; then
 					ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 					iuse_list+="
 						${x_not_operator}kernel_targets_${pn}_${slot}_live
@@ -942,8 +1120,11 @@ eerror
 		local pn="${x#*/}"
 		local slot_pv="${KERNEL_LIVE_SLOT}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
-			if is_dss_flavor "${x}" ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
+			if is_flavor "${filter}" "${x}" ; then
 				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_live
@@ -967,8 +1148,11 @@ eerror
 		local pv="9999"
 		local slot_pv="${KERNEL_LIVE_SLOT}"
 		ver_test "${slot_pv}" "-lt" "${KERNEL_MIN_SLOT}" && continue
-		if [[ "${x_filter_rule}" =~ "dss" ]] ; then
-			if is_dss_flavor "${x}" ; then
+		if [[ "${x_filter_rule}" =~ ("dss"|"spow") ]] ; then
+			local filter=""
+			[[ "${x_filter_rule}" =~ "dss" ]] && filter="dss"
+			[[ "${x_filter_rule}" =~ "spow" ]] && filter="spow"
+			if is_flavor "${filter}" "${x}" ; then
 				ver_test "${slot_pv}" "${x_cond_operator}" "${x_min_ver}" && continue
 				iuse_list+="
 					${x_not_operator}kernel_targets_${pn}_live
@@ -1004,15 +1188,23 @@ IUSE_LANDLOCK=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-lt' '') )
 IUSE_LANDLOCK_REJ=( $(gen_render_x_list_v2_iuse "${LANDLOCK_MIN_SLOT}" '-ge' '!') )
 IUSE_MSEAL=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-lt' '') )
 IUSE_MSEAL_REJ=( $(gen_render_x_list_v2_iuse "${MSEAL_MIN_SLOT}" '-ge' '!') )
+IUSE_SPOW=( $(gen_render_x_list_v2_iuse "${SPOW_MIN_SLOT}" '-lt' '' 'spow-accept') )
+IUSE_SPOW_REJ=( $(gen_render_x_list_v2_iuse "${SPOW_MIN_SLOT}" '-ge' '!' 'spow-reject') )
 
 IUSE+="
 	${IUSE_KERNELS[@]}
 "
 REQUIRED_USE+="
+	?? (
+		dss
+		spow
+	)
 	enforce? (
 		!dss? (
-			|| (
-				${IUSE_KERNELS[@]}
+			!spow? (
+				|| (
+					${IUSE_KERNELS[@]}
+				)
 			)
 		)
 		dss? (
@@ -1033,6 +1225,12 @@ REQUIRED_USE+="
 			)
 			${IUSE_MSEAL_REJ[@]}
 		)
+		spow? (
+			|| (
+				${IUSE_SPOW[@]}
+			)
+			${IUSE_SPOW_REJ[@]}
+		)
 	)
 "
 
@@ -1051,8 +1249,21 @@ gen_render_disabled_flavors() {
 
 gen_render_disabled_drivers() {
 	local x
+	local context="${1}"
 	local packages=""
-	for x in "${DISABLED_DRIVERS[@]}" ; do
+
+	local L=()
+	if [[ "${context}" == "dss" ]] ; then
+		L=( "${DSS_DISABLED_DRIVERS[@]}" )
+	elif [[ "${context}" == "spow" ]] ; then
+		L=( "${SPOW_DISABLED_DRIVERS[@]}" )
+	else
+eerror "Unsupported context for gen_render_disabled_drivers"
+eerror "context: ${context}"
+		die
+	fi
+
+	for x in "${L[@]}" ; do
 		packagess+="
 			!${x}
 		"
