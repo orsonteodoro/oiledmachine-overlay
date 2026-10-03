@@ -672,9 +672,9 @@ SPOW_DISABLED_DRIVERS=(
 	"x11-misc/openrazer"
 
 	# Allowed packages
-	"sys-fs/zfs" # Userland utils
-	"sys-fs/zfs-kmod"
-	"x11-drivers/nvidia-drivers"
+	#"sys-fs/zfs" # Userland utils
+	#"sys-fs/zfs-kmod"
+	#"x11-drivers/nvidia-drivers"
 )
 
 # One reason why source based packages are only allowed because the unused
