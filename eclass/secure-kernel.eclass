@@ -388,6 +388,7 @@ DISABLED_DRIVERS=(
 	"app-antivirus/tyton"
 	"app-backup/tsm"
 	"app-crypt/tpm-emulator"
+	"app-emulation/la-ow-syscall"
 	"app-emulation/vendor-reset"
 	"app-emulation/virtualbox"
 	"app-emulation/virtualbox-guest-additions"
@@ -503,6 +504,7 @@ DISABLED_DRIVERS=(
 	"sys-kernel/zenpower3" # Repo not accessible
 	"sys-kernel/zenpower5" # Not updated since Jan 2026
 	"sys-kernel/zenstats"
+	"sys-power/acer-wmi-battery"
 	"sys-power/acpi_call"
 	"sys-power/bbswitch"
 	"sys-power/nct6687d"
