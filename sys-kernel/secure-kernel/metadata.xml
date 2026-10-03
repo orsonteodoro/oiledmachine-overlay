@@ -56,6 +56,18 @@
       Allow only landlock compatible kernels (5.13+) to mitigate path traversal,
       arbitrary file read, arbitrary file write.
     </flag>
+    <flag name="spow">
+      Use the secure proof of work filter for drivers, kernel sources, and
+      kernel patch sets allowing for independent repos and open source repos.
+      The data security (dss) narrative is more bias against smaller open source
+      projects and bias/ingratiated towards corporate or enterprise linux
+      lock-in.
+
+      The filter is effort based security fixes and security disclosure in the
+      commit history.
+
+      The spow filter rejects and is mutually exclusive with the dss filter.
+    </flag>
     <flag name="mseal">
       Allow only kernels (6.10+) with mseal syscall support to mark virtual
       memory address immutable against permissions tampering, code injection,
