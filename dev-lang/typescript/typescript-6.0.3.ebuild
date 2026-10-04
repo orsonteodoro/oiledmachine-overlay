@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_12
+test ebuild_revision_13
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -99,6 +99,8 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 
 			sed -i -e "s|\"fast-xml-builder\": \"^0.27.3\"|\"fast-xml-builder\": \"^${NODE_FAST_XML_BUILDER_PV}\"|g" "package-lock.json" || die
 
+			sed -i -e "s|\"fast-xml-parser\": \"^5.4.1\"|\"fast-xml-parser\": \"^${NODE_FAST_XML_PARSER_5_PV}\"|g" "package-lock.json" || die
+
 			sed -i -e "s|\"js-yaml\": \"^4.1.0\"|\"js-yaml\": \"^${NODE_JS_YAML_4_PV}\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"qs\": \"^6.10.3\"|\"qs\": \"^${NODE_QS_PV}\"|g" "package-lock.json" || die
@@ -113,6 +115,7 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 			"brace-expansion@^${NODE_BRACE_EXPANSION_5_PV}"
 			"esbuild@^${NODE_ESBUILD_PV}"
 			"fast-xml-builder@^${NODE_FAST_XML_BUILDER_PV}"
+			"fast-xml-parser@^${NODE_FAST_XML_PARSER_5_PV}"
 			"js-yaml@^${NODE_JS_YAML_4_PV}"
 			"qs@^${NODE_QS_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"

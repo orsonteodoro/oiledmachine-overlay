@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_12
+test ebuild_revision_13
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -95,7 +95,8 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 			sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_2_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"brace-expansion\": \"^5.0.5\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_5_PV}\"|g" "package-lock.json" || die
 
-			sed -i -e "s|\"fast-xml-parser\": \"^4.5.6\"|\"fast-xml-parser\": \"^${NODE_FAST_XML_PARSER_4_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"fast-xml-parser\": \"^4.5.6\"|\"fast-xml-parser\": \"^${NODE_FAST_XML_PARSER_5_PV}\"|g" "package-lock.json" || die # A forced bump from 4 -> 5 may cause breakage
+			sed -i -e "s|\"fast-xml-parser\": \"^4.5.7\"|\"fast-xml-parser\": \"^${NODE_FAST_XML_PARSER_5_PV}\"|g" "package-lock.json" || die # A forced bump from 4 -> 5 may cause breakage
 
 			sed -i -e "s|\"js-yaml\": \"^4.1.0\"|\"js-yaml\": \"^${NODE_JS_YAML_4_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"js-yaml\": \"^4.1.1\"|\"js-yaml\": \"^${NODE_JS_YAML_4_PV}\"|g" "package-lock.json" || die
@@ -109,8 +110,8 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 		patch_lockfiles
 
 		local L=(
-			"fast-xml-parser@^${NODE_FAST_XML_PARSER_4_PV}"
 			"brace-expansion@^${NODE_BRACE_EXPANSION_5_PV}"
+			"fast-xml-parser@^${NODE_FAST_XML_PARSER_5_PV}"
 			"js-yaml@^${NODE_JS_YAML_4_PV}"
 			"qs@^${NODE_QS_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"

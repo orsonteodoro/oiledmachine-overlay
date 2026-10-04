@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_13
+test ebuild_revision_14
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
