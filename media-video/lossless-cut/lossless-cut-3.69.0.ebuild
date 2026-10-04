@@ -197,7 +197,7 @@ einfo "Called patch_lockfile"
 
 			sed -i -e "s|electron-builder: \"npm:26.16.1\"|electron-builder: \"npm:^${ELECTRON_BUILDER_PV}\"|g" "yarn.lock" || die
 
-			sed -i -e "s|\"icon-gen/sharp\": \"^0.34.5\"|\"icon-gen/sharp\": \"^${NODE_SHARP_PV}\"|g" "package.json" || die
+			sed -i -e "s|\"icon-gen/sharp\": \"^0.34.5\"|\"icon-gen/sharp\": \"${NODE_SHARP_PV}\"|g" "package.json" || die
 
 			sed -i -e "s|sharp: \"npm:^0.33.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
 			sed -i -e "s|sharp: \"npm:0.35.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
