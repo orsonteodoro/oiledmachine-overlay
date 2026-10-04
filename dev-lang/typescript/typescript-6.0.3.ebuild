@@ -90,11 +90,14 @@ npm_update_lock_install_pre() {
 npm_update_lock_install_post() {
 einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S}/package-lock.json"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		patch_lockfiles() {
+			:
+		}
+
 		local L=(
-			"serialize-javascript@^7.0.5"		# CVE-2026-34043; ZC, DoS; Moderate
-								# GHSA-5c6j-r48x-rmvq; ZC, CE, DoS, DT, ID; High
+			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 		)
-		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
+#		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
 	fi
 }
 
