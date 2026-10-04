@@ -24,20 +24,20 @@ WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="7bc989efe9c85e79a4b1e828b4ff9c93c55ab75f"
+FALLBACK_COMMIT="a7a7106bc839974d9172c19707da15c21a8a7126"
 
 # QTWEBENGINE_CHROMIUM_COMMIT:  27afa1b
 # See https://github.com/qt/qtwebengine/tree/dev/src for QTWEBENGINE_CHROMIUM_COMMIT corresponding to the 3rdparty folder
 # See https://github.com/qt/qtwebengine-chromium/blob/<QTWEBENGINE_CHROMIUM_COMMIT>/chromium/chrome/VERSION
-CHROMIUM_VENDORED_VER="140.0.7339.225"
-CHROMIUM_VENDORED_TIMESTAMP="Oct 22, 2025 4:20 AM PDT"
+CHROMIUM_VENDORED_VER="140.0.7339.264"
+CHROMIUM_VENDORED_TIMESTAMP="Oct 27, 2025 5:43 PM PDT"
 
 # See https://github.com/qt/qtwebengine/blob/dev/CHROMIUM_VERSION
-CVE_BACKPORTS="153.0.8010.52"
+CVE_BACKPORTS="154.0.8037.93"
 
 # See https://chromiumdash.appspot.com/releases?platform=Linux
-CHROMIUM_BROWSER_VER="154.0.8037.57"
-CHROMIUM_BROWSER_TIMESTAMP="Mon, 21 Sep 2026 17:09:16 -0700"
+CHROMIUM_BROWSER_VER="154.0.8037.97"
+CHROMIUM_BROWSER_TIMESTAMP="Sep 30, 2026 2:20 PM PDT"
 
 # For current commit, see https://github.com/qt/qtwebengine/tree/dev/src
 # For version https://github.com/qt/qtwebengine-chromium/blob/<QTWEBENGINE_CHROMIUM_COMMIT>/chromium/third_party/node/README.chromium
@@ -100,7 +100,7 @@ IUSE+="
 	accessibility +alsa clang bindist custom-cflags designer gcc geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_12
+	ebuild_revision_13
 "
 REQUIRED_USE="
 	^^ (
