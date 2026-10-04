@@ -32,7 +32,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 +client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor networkmanager ofono selinux standalone systemd wired
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
@@ -134,6 +134,11 @@ src_unpack() {
 
 src_prepare() {
 	default
+
+	# Already set in cflags-hardened_append
+	sed -i -e "s|-O2||g" "configure.ac" "configure" || die
+	sed -i -e "s|-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2||g" "configure.ac" "configure" || die
+
 	if [[ ${PV} == *9999* ]] ; then
 		eautoreconf
 	fi
