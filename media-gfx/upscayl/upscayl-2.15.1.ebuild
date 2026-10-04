@@ -29,8 +29,7 @@ ELECTRON_APP_REACT_PV="ignore"
 NODE_ENV="development"
 NODE_SLOT="24" # Same as Electron 42.4.1
 
-# 24.13.3 works
-# 26.16.1 works with patch
+AT_TYPES_NODE_24_PV="24.19.0"
 ELECTRON_BUILDER_PV="26.16.1"
 
 inherit secure-version secure-version-node
@@ -38,8 +37,9 @@ inherit secure-version secure-version-node
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 	# Tested working for Electron 39.8.10, Node 22.22.1, Chromium 142.0.7444.265
+	# Breaks with Electron 44.4.3, Node 24.21.0, Chromium 152.0.7977.130
 	# The Electron 44 will show the UI but break when loading requested image to upscale.
-	ELECTRON_APP_ELECTRON_PV="${NODE_22_ELECTRON_PV}" # Breaks with Electron 44.4.3, Node 24.21.0, Chromium 152.0.7977.130
+	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -149,10 +149,13 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_33
+	ebuild_revision_34
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
+	gnome-extra/zenity:=
+	sys-apps/xdg-desktop-portal:=
+	sys-apps/xdg-desktop-portal-gtk:=
 	virtual/vulkan:=
 	custom-models? (
 		media-gfx/upscayl-custom-models
@@ -162,7 +165,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}=[npm]
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[npm]
 	virtual/pkgconfig
 "
 PDEPEND+="
@@ -180,10 +183,16 @@ npm_unpack_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-2.15.1-electron-builder-config.patch"
 	fi
+	eapply "${FILESDIR}/${PN}-2.15.1-change-to-ia32.patch"
+	eapply "${FILESDIR}/${PN}-2.15.1-fix-file-loading-for-electron-44.patch"
 }
 
 npm_update_lock_audit_post() {
 	patch_lockfile() {
+		sed -i -e "s|\"@grpc/grpc-js\": \"~1.9.0\"|\"@grpc/grpc-js\": \"^${NODE_AT_GRPC_GRPC_JS_1_13_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@types/node\": \"^24.9.0\"|\"@types/node\": \"^${AT_TYPES_NODE_24_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@types/node\": \"^18.15.12\"|\"@types/node\": \"^${AT_TYPES_NODE_24_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"dompurify\": \"^3.3.2\"|\"dompurify\": \"^${NODE_DOMPURIFY_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"electron\": \"^39.8.10\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"glob\": \"^7.1.6\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
@@ -209,7 +218,7 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	local pkgs
 	pkgs=(
 		"electron-builder@^${ELECTRON_BUILDER_PV}"
-		"next@^15.5.19"
+		"next@^${NODE_NEXT_15_PV}"
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
@@ -218,14 +227,17 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	# Vulnerability fixes
 	# The stuff that audit fix --force missed.
 	pkgs=(
+		"dompurify@^${NODE_DOMPURIFY_PV}"
 		"glob@^${NODE_GLOB_PV}"
 		"undici@^${NODE_UNDICI_6_PV}"
+		"@grpc/grpc-js@^${NODE_AT_GRPC_GRPC_JS_1_13_PV}"
 	)
 	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
 	patch_lockfile
 
 	pkgs=(
+		"@types/node@^${AT_TYPES_NODE_24_PV}"
 		"electron@^${ELECTRON_APP_ELECTRON_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
 		"tar@^${NODE_TAR_PV}"
@@ -281,7 +293,7 @@ src_install() {
 	for f in "${L[@]}" ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
-	lcnr_install_files
+	#lcnr_install_files
 
 	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }
@@ -324,4 +336,5 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260809, Electron 43.3.0) but the Firejail profile needs to be fixed.
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260917, Electron 44.4.1) without Firejail test
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.15.1 (20260920, Electron 44.4.3) with upscale test
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260920, Electron 39.8.10) with upscale test
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260920, Electron 39.8.10) with upscayl button test
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20261003, Electron 44.5.1)

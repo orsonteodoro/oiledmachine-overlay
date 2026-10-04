@@ -15,6 +15,9 @@
 
 # D11, U20, U22, U24
 
+# To get javascript console in Electron, do:
+# Ctrl + Shift + I (or F12)
+
 # This ebuild contains AI generated code.
 # Contains data derived from AI generated synthetic data and for update cycle.
 

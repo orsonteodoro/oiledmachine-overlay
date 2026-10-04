@@ -1,0 +1,11 @@
+--- a/electron/utils/get-device-specs.ts.orig	2024-12-25 08:05:21.000000000 -0800
++++ b/electron/utils/get-device-specs.ts	2026-10-01 09:44:14.009375050 -0700
+@@ -23,7 +23,7 @@ export const getArch = () => {
+   switch (os.arch()) {
+     case "x64":
+       return "x64";
+-    case "x32":
++    case "ia32":
+       return "x86";
+     case "arm":
+       return "arm";
