@@ -35,7 +35,7 @@ NPM_INSTALL_ARGS=(
 	"--prefer-offline"
 )
 
-inherit npm
+inherit secure-version secure-version-node npm
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_10
+test ebuild_revision_12
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -91,13 +91,40 @@ npm_update_lock_install_post() {
 einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S}/package-lock.json"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfiles() {
-			:
+			sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_2_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"brace-expansion\": \"^2.0.2\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_2_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"brace-expansion\": \"^5.0.5\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_5_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"esbuild\": \"^0.27.3\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"fast-xml-builder\": \"^0.27.3\"|\"fast-xml-builder\": \"^${NODE_FAST_XML_BUILDER_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"js-yaml\": \"^4.1.0\"|\"js-yaml\": \"^${NODE_JS_YAML_4_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"qs\": \"^6.10.3\"|\"qs\": \"^${NODE_QS_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"smol-toml\": \"^1.5.2\"|\"smol-toml\": \"^${NODE_SMOL_TOML_PV}\"|g" "package-lock.json" || die
 		}
+		patch_lockfiles
 
 		local L=(
+			"brace-expansion@^${NODE_BRACE_EXPANSION_5_PV}"
+			"esbuild@^${NODE_ESBUILD_PV}"
+			"fast-xml-builder@^${NODE_FAST_XML_BUILDER_PV}"
+			"js-yaml@^${NODE_JS_YAML_4_PV}"
+			"qs@^${NODE_QS_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
+			"smol-toml@^${NODE_SMOL_TOML_PV}"
 		)
-#		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
+		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
+
+		patch_lockfiles
+
+		enpm dedupe
+
+		patch_lockfiles
 	fi
 }
 
