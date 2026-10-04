@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_12
+test ebuild_revision_13
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -93,6 +93,8 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 		patch_lockfiles() {
 			sed -i -e "s|\"esbuild\": \"^0.27.4\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
 
+			sed -i -e "s|\"fast-xml-parser\": \"^5.5.9\"|\"fast-xml-parser\": \"^${NODE_FAST_XML_PARSER_5_PV}\"|g" "package-lock.json" || die
+
 			sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 		}
 
@@ -100,6 +102,7 @@ einfo "QA:  Remove node_modules/mocha/node_modules/serialize-javascript from ${S
 
 		local L=(
 			"esbuild@^${NODE_ESBUILD_PV}"
+			"fast-xml-parser@^${NODE_FAST_XML_PARSER_5_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_AUDIT_FIX_ARGS[@]}"
