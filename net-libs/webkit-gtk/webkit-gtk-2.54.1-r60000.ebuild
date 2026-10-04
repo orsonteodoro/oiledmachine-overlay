@@ -14,11 +14,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (6.0)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -32,17 +32,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.6/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.54.1/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -73,11 +73,11 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.1"
+API_VERSION="6.0"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -86,7 +86,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
 LLVM_MAX_SLOT="21"
 OCDM_WV="virtual/libc:*" # Placeholder
@@ -96,10 +96,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-SO_CURRENT="21"
-#SO_REVISION="5"
-SO_AGE="21"
+# WEBKITGTK_API_VERSION is 6.0
+SO_CURRENT="23"
+#SO_REVISION="4"
+SO_AGE="19"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -123,13 +123,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
 )
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 FFMPEG_COMPAT=(
 	"0/60.62.62" # 8.x
@@ -149,6 +149,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/openssl-3.0.9999"
 	"dev-libs/wayland-9999"
+	"gui-libs/gtk-4.24.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
@@ -159,8 +160,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libjxl-9999"
 	"media-libs/libpng-9999"
-	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/libvpx-9999"
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
@@ -168,80 +169,252 @@ CHKL_TIMESTAMPS=(
 	"sys-apps/bubblewrap-9999"
 	"sys-auth/elogind-257.9999"
 	"sys-libs/libseccomp-9999"
-	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
-	"x11-libs/gtk+-3.24.9999"
 )
 
 LANGS=(
-	"ar"
-	"as"
-	"bg"
-	"ca"
-	"cs"
-	"da"
-	"de"
-	"el"
-	"en_CA"
-	"en_GB"
-	"eo"
-	"es"
-	"et"
-	"eu"
-	"fi"
-	"fr"
-	"gl"
-	"gu"
-	"he"
-	"hi"
-	"hr"
-	"hu"
-	"id"
-	"it"
-	"ja"
-	"ka"
-	"kk"
-	"kn"
-	"ko"
-	"lt"
-	"lv"
-	"ml"
-	"mr"
-	"nb"
-	"nl"
-	"or"
-	"pa"
-	"pl"
-	"pt"
-	"pt_BR"
-	"ro"
-	"ru"
-	"sl"
-	"sr"
-	"sr@latin"
-	"sv"
-	"ta"
-	"te"
-	"tr"
-	"uk"
-	"vi"
-	"zh_CN"
+ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it 
+ja ka kk kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta 
+te tr uk vi zh_CN
 )
 
-MITIGATION_DATE="Aug 20, 2026"
-MITIGATION_LAST_UPDATE=1787101140 # From `date +%s -d "Aug 18, 2026 5:59 PM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0005.html"
+MITIGATION_DATE="Sep 29, 2026"
+MITIGATION_LAST_UPDATE=1790938500 # From `date +%s -d "Oct 2, 2026 3:55 AM PDT"` from tag in GH for this version
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0006.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-28984;CRSH, DoS;"
-	"CVE-2026-43804;;"
-	"CVE-2026-64713;;"
-	"CVE-2026-64719;OOBA, CRSH, DoS, IBC;"
-	"CVE-2026-64728;IV;"
-	"CVE-2026-64730;UI;"
-	"CVE-2026-64757;CRSH, DoS, MC;"
-	"CVE-2026-64783;UAF, CRSH, DoS;"
-	"CVE-2026-64787;UAF;"
+	"CVE-2024-1283;HO, HC;"
+	"CVE-2024-43091;OOBW, IO;"
+	"CVE-2024-43097;OOBW, IO;"
+	"CVE-2024-43767;IO, HO, IV;"
+	"CVE-2024-43768;OOBW, IO;"
+	"CVE-2024-7966;OOBA;"
+	"CVE-2024-8193;HO, HC;"
+	"CVE-2024-8198;HO, HC;"
+	"CVE-2024-8636;HO, HC;"
+	"CVE-2024-9123;OOBW, IO;"
+	"CVE-2025-0436;IO, HC;"
+	"CVE-2025-0444;UAF, HC;"
+	"CVE-2025-10502;HO, HC;"
+	"CVE-2025-26416;OOBW, HO;"
+	"CVE-2025-32318;OOBW, HO;"
+	"CVE-2025-48622;OOBR, BO, ID;"
+	"CVE-2025-54627;OOBW;"
+	"CVE-2025-8901;OOBA;"
+	"CVE-2025-9478;UAF, HC;"
+	"CVE-2026-0908;UAF, HC;"
+	"CVE-2026-10009;IO;"
+	"CVE-2026-10011;LEAK, II;"
+	"CVE-2026-10012;UAF, SBE;"
+	"CVE-2026-10018;IO;"
+	"CVE-2026-10019;IO, LEAK;"
+	"CVE-2026-10881;OOBR, SBE;"
+	"CVE-2026-10883;TC, HC;"
+	"CVE-2026-10889;OOBR, SBE;"
+	"CVE-2026-10907;OOBW, HC;"
+	"CVE-2026-10919;UAF, SBE;"
+	"CVE-2026-10941;OOBA;"
+	"CVE-2026-10974;IV, SBE;"
+	"CVE-2026-10977;LEAK, WBUU;"
+	"CVE-2026-10979;OOBR;"
+	"CVE-2026-10985;OOBR, LEAK;"
+	"CVE-2026-10993;HO;"
+	"CVE-2026-10994;WBUU;"
+	"CVE-2026-11004;OOBR;"
+	"CVE-2026-11024;SO;"
+	"CVE-2026-11039;LEAK, WBUU;"
+	"CVE-2026-11040;UAF, SBE;"
+	"CVE-2026-11051;OOBR;"
+	"CVE-2026-11057;WBUU;"
+	"CVE-2026-11061;TC, SBE;"
+	"CVE-2026-11065;UAF, SBE;"
+	"CVE-2026-11066;IV, SBE;"
+	"CVE-2026-11087;LEAK, WBUU;"
+	"CVE-2026-11088;IO, SBE;"
+	"CVE-2026-11090;LEAK, WBUU;"
+	"CVE-2026-11104;WBUU;"
+	"CVE-2026-11109;LEAK, WBUU;"
+	"CVE-2026-11110;LEAK, WBUU;"
+	"CVE-2026-11111;OOBR;"
+	"CVE-2026-11113;IV, SBE;"
+	"CVE-2026-11121;LEAK, IV;"
+	"CVE-2026-11123;WBUU;"
+	"CVE-2026-11124;IO, HC;"
+	"CVE-2026-11137;WBUU;"
+	"CVE-2026-11138;LEAK, WBUU;"
+	"CVE-2026-11159;LEAK, WBUU;"
+	"CVE-2026-11191;OOBA;"
+	"CVE-2026-11663;UAF, SBE;"
+	"CVE-2026-11675;OOBR, LEAK;"
+	"CVE-2026-13780;IV, SBE;"
+	"CVE-2026-13781;IV, SBE;"
+	"CVE-2026-13834;IV, SBE;"
+	"CVE-2026-13841;IO, SBE;"
+	"CVE-2026-13859;II, SBE;"
+	"CVE-2026-13877;IV;"
+	"CVE-2026-13883;TC, SBE;"
+	"CVE-2026-13971;WBUU;"
+	"CVE-2026-14044;UAF, SBE;"
+	"CVE-2026-14125;WBUU;"
+	"CVE-2026-14152;OOBR, SBE;"
+	"CVE-2026-14382;IV, SBE;"
+	"CVE-2026-14386;OOBR;"
+	"CVE-2026-14387;IO, SBE;"
+	"CVE-2026-14388;OOBR;"
+	"CVE-2026-14389;IO, SBE;"
+	"CVE-2026-14390;UAF, SBE;"
+	"CVE-2026-14396;OOBR, LEAK;"
+	"CVE-2026-14398;UAF, SBE;"
+	"CVE-2026-14400;OOBW, SBE;"
+	"CVE-2026-14410;II, UI;"
+	"CVE-2026-14411;IV, SBE;"
+	"CVE-2026-14412;IV, SBE;"
+	"CVE-2026-14413;SBE, WBUU;"
+	"CVE-2026-14414;IV;"
+	"CVE-2026-14418;LEAK, WBUU;"
+	"CVE-2026-14419;UAF, SBE;"
+	"CVE-2026-14425;UAF, SBE;"
+	"CVE-2026-14427;HO, SBE;"
+	"CVE-2026-14429;IV, SBE;"
+	"CVE-2026-15109;WBUU;"
+	"CVE-2026-15766;WBUU;"
+	"CVE-2026-15774;UAF, SBE;"
+	"CVE-2026-16413;OOBW, SBE;"
+	"CVE-2026-16417;LEAK, WBUU;"
+	"CVE-2026-17653;UAF, SBE;"
+	"CVE-2026-17655;IV, SBE;"
+	"CVE-2026-17667;LEAK, WBUU;"
+	"CVE-2026-17668;LEAK, WBUU;"
+	"CVE-2026-17671;IV, SBE;"
+	"CVE-2026-17675;OOBW, SBE;"
+	"CVE-2026-17678;OOBR, SBE;"
+	"CVE-2026-17682;IO, SBE;"
+	"CVE-2026-17683;II;"
+	"CVE-2026-17687;TC, SBE;"
+	"CVE-2026-17689;LEAK, WBUU;"
+	"CVE-2026-17697;TC, SBE;"
+	"CVE-2026-17702;LEAK, II;"
+	"CVE-2026-17704;UAF, SBE;"
+	"CVE-2026-17714;WBUU;"
+	"CVE-2026-17717;IO, SBE;"
+	"CVE-2026-17718;UAF, SBE;"
+	"CVE-2026-17721;OOBW, SBE;"
+	"CVE-2026-17740;LEAK, WBUU;"
+	"CVE-2026-17745;OOBR, SBE;"
+	"CVE-2026-17750;UAF, SBE;"
+	"CVE-2026-17757;LEAK, WBUU;"
+	"CVE-2026-17771;LEAK, WBUU;"
+	"CVE-2026-17785;LEAK, WBUU;"
+	"CVE-2026-17801;OOBR, SBE;"
+	"CVE-2026-17832;UAF, SBE;"
+	"CVE-2026-17847;IV, SBE;"
+	"CVE-2026-17914;INFOLEAK, ID, SC;"
+	"CVE-2026-19160;LEAK, WBUU;"
+	"CVE-2026-19161;LEAK, WBUU;"
+	"CVE-2026-19173;OOBW, SBE;"
+	"CVE-2026-19176;UAF;"
+	"CVE-2026-3536;OOBA, IO;"
+	"CVE-2026-3538;OOBA, IO;"
+	"CVE-2026-3909;OOBA;"
+	"CVE-2026-3931;OOBA, HO;"
+	"CVE-2026-43670;WBSPB;"
+	"CVE-2026-4448;HO, HC;"
+	"CVE-2026-4460;OOBR;"
+	"CVE-2026-4464;IO, HC;"
+	"CVE-2026-5283;LEAK, II;"
+	"CVE-2026-5870;IO;"
+	"CVE-2026-6296;HO, SBE;"
+	"CVE-2026-6298;HO;"
+	"CVE-2026-6364;OOBR;"
+	"CVE-2026-64715;UAF, UM, CRSH, DoS, ID;"
+	"CVE-2026-64753;;"
+	"CVE-2026-64778;INFOLEAK;"
+	"CVE-2026-64779;CRSH, DoS, MC;"
+	"CVE-2026-64780;CRSH, DoS;"
+	"CVE-2026-64781;CRSH, DoS, IV;"
+	"CVE-2026-64782;CRSH, DoS, MC;"
+	"CVE-2026-64784;OOBA, CRSH, DoS, IBC;"
+	"CVE-2026-65331;CRSH, DoS;"
+	"CVE-2026-65332;CRSH, DoS;"
+	"CVE-2026-65333;CRSH, DoS;"
+	"CVE-2026-65334;CRSH, DoS, MC;"
+	"CVE-2026-65336;CRSH, DoS;"
+	"CVE-2026-65337;CRSH, DoS;"
+	"CVE-2026-65338;CRSH, DoS;"
+	"CVE-2026-65340;CRSH, DoS;"
+	"CVE-2026-65341;MC;"
+	"CVE-2026-65351;CRSH, DoS;"
+	"CVE-2026-7353;HO, SBE;"
+	"CVE-2026-7354;OOBR, SBE;"
+	"CVE-2026-7359;UAF, SBE;"
+	"CVE-2026-76041;INFOLEAK, ID;"
+	"CVE-2026-78904;TC;"
+	"CVE-2026-78905;TC;"
+	"CVE-2026-78906;RC;"
+	"CVE-2026-78914;;"
+	"CVE-2026-78958;;"
+	"CVE-2026-78965;;"
+	"CVE-2026-7900;HO, SBE;"
+	"CVE-2026-79020;OOBR;"
+	"CVE-2026-79043;OOBW;"
+	"CVE-2026-79112;OOBR;"
+	"CVE-2026-79118;;"
+	"CVE-2026-79120;;"
+	"CVE-2026-79127;OOBW;"
+	"CVE-2026-79130;BO;"
+	"CVE-2026-79131;OOBW;"
+	"CVE-2026-79144;INFOLEAK, ID;"
+	"CVE-2026-79147;INFOLEAK, ID;"
+	"CVE-2026-79149;UAF;"
+	"CVE-2026-79188;OOBW;"
+	"CVE-2026-79189;OOBW;"
+	"CVE-2026-7920;UAF, SBE;"
+	"CVE-2026-79229;;"
+	"CVE-2026-7923;OOBW, SBE;"
+	"CVE-2026-79269;;"
+	"CVE-2026-79270;;"
+	"CVE-2026-79275;UAF;"
+	"CVE-2026-7942;IO, LEAK;"
+	"CVE-2026-7943;IV;"
+	"CVE-2026-7949;OOBR, LEAK;"
+	"CVE-2026-84635;;"
+	"CVE-2026-8579;OOBW, IV;"
+	"CVE-2026-86898;;"
+	"CVE-2026-9877;UAF, SBE;"
+	"CVE-2026-9878;UAF;"
+	"CVE-2026-9879;OOBW;"
+	"CVE-2026-9882;IO, LEAK;"
+	"CVE-2026-9893;UAF, SBE;"
+	"CVE-2026-9899;UAF, SBE;"
+	"CVE-2026-9900;OOBW, SBE;"
+	"CVE-2026-9901;UAF;"
+	"CVE-2026-9904;UAF, SBE;"
+	"CVE-2026-9908;OOBR;"
+	"CVE-2026-9909;IO;"
+	"CVE-2026-9910;OOBA;"
+	"CVE-2026-9911;OOBR, IO;"
+	"CVE-2026-9913;OOBA, II;"
+	"CVE-2026-9914;IV, SBE;"
+	"CVE-2026-9915;HO, SBE;"
+	"CVE-2026-9916;OOBW, SBE;"
+	"CVE-2026-9923;UAF, HC;"
+	"CVE-2026-9925;UAF, SBE;"
+	"CVE-2026-9926;HO, SBE;"
+	"CVE-2026-9927;UAF;"
+	"CVE-2026-9935;LEAK, WBUU;"
+	"CVE-2026-9940;HO, HC;"
+	"CVE-2026-9941;UAF;"
+	"CVE-2026-9942;WBUU;"
+	"CVE-2026-9944;LEAK, WBUU;"
+	"CVE-2026-9946;UAF, SBE;"
+	"CVE-2026-9953;OOBR;"
+	"CVE-2026-9965;OOBW, HC;"
+	"CVE-2026-9969;IV;"
+	"CVE-2026-9975;OOBR, SBE;"
+	"CVE-2026-9981;II;"
+	"CVE-2026-9982;IV, SBE;"
+	"CVE-2026-9983;TC;"
+	"CVE-2026-9998;IO, SBE;"
 )
 
 PATENT_STATUS=(
@@ -282,11 +455,11 @@ MSE_VCODECS=(
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.52.6/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS=(
 	"+a52"
 	"-aac"
@@ -336,7 +509,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -613,7 +786,7 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION}/${SO_VERSION}"
+SLOT="${API_VERSION%.*}/${SO_VERSION}"
 # SLOT=4.1/0  GTK3 SOUP3 (r41000)
 # SLOT=6/4    GTK4 SOUP3 (r60000)
 
@@ -641,10 +814,10 @@ ${PATENT_STATUS[@]}
 
 aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
 +flite -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-+introspection +javascript +jit +journald +jpegxl +libpas -librice +lcms
++introspection +javascript +jit +journald +jpegxl +libpas +librice +lcms
 -libbacktrace +libhyphen -libwebrtc -mediarecorder -mediastream +microphone
 +minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
--system-malloc systemd test thunder +variation-fonts wayland +webassembly
+-system-malloc systemd test thunder +variation-fonts vulkan wayland +webassembly
 -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
 ebuild_revision_45
 "
@@ -882,7 +1055,6 @@ gen_depend_llvm() {
 	done
 }
 
-# librice bumped to 4.0.0 for patches
 RDEPEND+="
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-${SQLITE_PV}:=[${MULTILIB_USEDEP}]
@@ -892,6 +1064,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-${LIBXSLT_PV}:=[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-${GTK4_PV}:4=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+),system-icu]
@@ -901,9 +1074,7 @@ RDEPEND+="
 	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-${LIBSOUP3_PV}:=[${MULTILIB_USEDEP},introspection?]
-	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
-	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	sys-kernel/secure-kernel:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	~dev-util/glib-utils-${GLIB_PV}:=
@@ -998,7 +1169,7 @@ RDEPEND+="
 		>=dev-libs/hyphen-${HYPHEN_PV}:=[${MULTILIB_USEDEP}]
 	)
 	librice? (
-		>=net-libs/librice-0.4.0:=[${MULTILIB_USEDEP}]
+		>=net-libs/librice-0.4.2:=[${MULTILIB_USEDEP}]
 	)
 	libwebrtc? (
 		>=dev-libs/libevent-${LIBEVENT_PV}:=[${MULTILIB_USEDEP}]
@@ -1006,6 +1177,12 @@ RDEPEND+="
 		>=media-libs/libvpx-${LIBVPX_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/openh264-${OPENH264_PV}:=[${MULTILIB_USEDEP}]
+	)
+	minibrowser? (
+		|| (
+			x11-themes/adwaita-icon-theme
+			x11-themes/hicolor-icon-theme
+		)
 	)
 	opengl? (
 		>=media-libs/mesa-${MESA_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${MULTILIB_USEDEP},egl(+)]
@@ -1032,7 +1209,6 @@ RDEPEND+="
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
-		>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
 		>=dev-libs/wayland-${WAYLAND_PV}:=[${MULTILIB_USEDEP}]
@@ -1780,6 +1956,7 @@ ewarn "Chosen page size:  ${page_size}"
 ewarn
 	fi
 
+
 	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
 		# Use the exact page size
 		page_size=$(_get_actual_page_size)
@@ -2071,6 +2248,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
+	"unconditional:gui-libs/gtk:sensitive-data"
 	"unconditional:media-libs/libpng:sensitive-data,untrusted-data"					# PII
 	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"				# PII
 	"unconditional:media-libs/fontconfig:untrusted-data"
@@ -2078,7 +2256,6 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
 	"unconditional:virtual/zlib:untrusted-data"
-	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:sensitive-data,untrusted-data"				# PII
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
@@ -2114,7 +2291,6 @@ verify_compiler_flags_hardening() {
 	"variation-fonts:media-libs/harfbuzz:attack-surface-risk,untrusted-data"
 	"variation-fonts:media-libs/fontconfig:untrusted-data"
 	"variation-fonts:media-libs/freetype:untrusted-data"
-	"variation-fonts:x11-libs/cairo:sensitive-data"
 	"wayland:dev-util/spirv-tools:untrusted-data"							# RDEPEND of mesa
 	"wayland:media-libs/libglvnd:untrusted-data"							# RDEPEND of mesa
 	"wayland:media-libs/mesa:sensitive-data,untrusted-data"
@@ -2228,6 +2404,10 @@ pkg_setup() {
 	else
 		export OSHIT=0
 	fi
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2536,7 +2716,7 @@ ewarn
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
@@ -2547,6 +2727,7 @@ ewarn
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SPIEL=OFF
 		-DUSE_SYSTEM_MALLOC=$(usex system-malloc)
+		-DUSE_VULKAN=$(usex vulkan)
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
@@ -3141,6 +3322,13 @@ eerror
 	if [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
+
+	# Anything less than -O2 may break rendering.
+	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# Clang -Os:  slower than expected rendering.
+	# Forced >= -O3 to be about same relative performance to other browser engines.
+	# -O2 feels like C- grade relative other browser engines.
+
 
 	filter-flags '-ffast-math'
 
