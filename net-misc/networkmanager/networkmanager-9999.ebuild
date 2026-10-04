@@ -700,8 +700,7 @@ einfo "You must etc-update to finish update."
 	if use iwd ; then
 ewarn
 ewarn "If \"Secrets were required, but not provided\" message is encountered in"
-ewarn "nmtui, you may need to stop both iwd and networkmanager init services"
-ewarn "at the same time and start both up again to unstuck from this error."
+ewarn "nmtui, you may need reset the system."
 ewarn
 	fi
 }
