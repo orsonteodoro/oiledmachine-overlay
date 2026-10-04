@@ -1,0 +1,169 @@
+# This is a collection of AI generated fixes.
+diff '--color=auto' -urp lossless-cut-3.69.0.orig/src/renderer/src/ffmpeg.ts lossless-cut-3.69.0/src/renderer/src/ffmpeg.ts
+--- lossless-cut-3.69.0.orig/src/renderer/src/ffmpeg.ts	2026-10-04 14:00:58.813361774 -0700
++++ lossless-cut-3.69.0/src/renderer/src/ffmpeg.ts	2026-10-04 14:05:24.624552527 -0700
+@@ -31,6 +31,30 @@ export class RefuseOverwriteError extend
+   }
+ }
+ 
++// 🚀 1. ADD THIS GLOBAL HELPER AT THE TOP OF YOUR FFMPEG.TS FILE
++// This guarantees a clean, standard, un-resizable Uint8Array for TextDecoder
++function ensureStableBuffer(input: any): Uint8Array {
++  if (typeof input === 'string') {
++    if (input.includes(',') && !input.trim().startsWith('{')) {
++      const numericArray = input.split(',').map(numStr => parseInt(numStr.trim(), 10)).filter(num => !isNaN(num));
++      return new Uint8Array(numericArray);
++    }
++    // If it's already a regular string, encode it into bytes so TextDecoder can safely map it
++    return new TextEncoder().encode(input);
++  }
++  
++  if (input && typeof input === 'object') {
++    if (input instanceof Uint8Array) {
++      // 🎯 Direct fixed-size slice replication strips out Chromium's modern resizable memory flags!
++      return new Uint8Array(input.slice(0, input.length));
++    }
++    // Force extract numeric array keys if it passed over the IPC bridge as a plain serialized object
++    return new Uint8Array(Object.values(input) as number[]);
++  }
++  
++  return new Uint8Array(input || 0);
++}
++
+ export function safeCreateBlob(array: Uint8Array, options?: BlobPropertyBag) {
+   // if we don't do this when creating a Blob, we get:
+   // "Failed to construct 'Blob': The provided ArrayBufferView value must not be resizable."
+@@ -40,14 +64,22 @@ export function safeCreateBlob(array: Ui
+   return new Blob([cloned], options);
+ }
+ 
+-export function logStdoutStderr({ stdout, stderr }: { stdout: Uint8Array, stderr: Uint8Array }) {
+-  if (stdout.length > 0) {
++export function logStdoutStderr({ stdout, stderr }: { stdout: any, stderr: any }) {
++  if (stdout && stdout.length > 0) {
+     console.log('%cSTDOUT:', 'color: green; font-weight: bold');
+-    console.log(new TextDecoder().decode(stdout));
++    try {
++      console.log(new TextDecoder('utf-8').decode(ensureStableBuffer(stdout)));
++    } catch (e) {
++      console.log(typeof stdout === 'string' ? stdout : String(stdout));
++    }
+   }
+-  if (stderr.length > 0) {
++  if (stderr && stderr.length > 0) {
+     console.log('%cSTDERR:', 'color: blue; font-weight: bold');
+-    console.log(new TextDecoder().decode(stderr));
++    try {
++      console.log(new TextDecoder('utf-8').decode(ensureStableBuffer(stderr)));
++    } catch (e) {
++      console.log(typeof stderr === 'string' ? stderr : String(stderr));
++    }
+   }
+ }
+ 
+@@ -82,7 +114,16 @@ export async function readFrames({ fileP
+   const intervalsArgs = from != null && to != null ? ['-read_intervals', `${from}%${to}`] : [];
+   const { stdout } = await runFfprobe(['-v', 'error', ...intervalsArgs, '-show_packets', '-select_streams', String(streamIndex), '-show_entries', 'packet=pts_time,flags', '-of', 'json', filePath], { logCli: false });
+   const createdAt = new Date();
+-  const packetsFiltered: Frame[] = (JSON.parse(new TextDecoder().decode(stdout)).packets as { flags: string, pts_time: string }[])
++
++  // 🚀 FIXED: Wrapped stdout inside ensureStableBuffer to strip out resizable memory flags!
++  let decodedJsonText = "";
++  try {
++    decodedJsonText = new TextDecoder('utf-8').decode(ensureStableBuffer(stdout));
++  } catch (e) {
++    decodedJsonText = typeof stdout === 'string' ? stdout : String(stdout);
++  }
++
++  const packetsFiltered: Frame[] = (JSON.parse(decodedJsonText).packets as { flags: string, pts_time: string }[])
+     .map((p) => ({
+       keyframe: p.flags[0] === 'K',
+       time: parseFloat(p.pts_time),
+@@ -335,13 +376,37 @@ export async function readFileFfprobeMet
+     let parsedJson: FFprobeProbeResult;
+     let decoded: string | undefined;
+     try {
+-      // https://github.com/mifi/lossless-cut/issues/1342
+-      decoded = new TextDecoder().decode(stdout);
++      let stableBuffer: Uint8Array;
++
++      // 1. Detect and parse comma-separated string streams passed across the bridge
++      if (typeof stdout === 'string' && stdout.includes(',') && !stdout.trim().startsWith('{')) {
++        console.log("🎯 [ELECTRON 44 BRIDGE] Detected comma-separated string stream. Parsing byte fragments...");
++        const numericArray = stdout.split(',').map(numStr => parseInt(numStr.trim(), 10)).filter(num => !isNaN(num));
++        stableBuffer = new Uint8Array(numericArray);
++      }
++      // 2. Handle plain objects that lost their array identity
++      else if (stdout && typeof stdout === 'object' && !(stdout instanceof Uint8Array)) {
++        stableBuffer = new Uint8Array(Object.values(stdout) as number[]);
++      }
++      // 3. Handle valid native arrays
++      else {
++        stableBuffer = new Uint8Array(stdout);
++      }
++
++      // Convert the parsed buffer bytes into a clean text string layout
++      decoded = new TextDecoder('utf-8').decode(stableBuffer);
+       parsedJson = JSON.parse(decoded);
+-    } catch {
+-      console.log('ffprobe stdout:', decoded ?? stdout);
+-      throw new Error('ffprobe returned malformed data');
++    } catch (firstError) {
++      // Final emergency backup: if the string was already raw JSON text, parse it directly
++      try {
++        decoded = typeof stdout === 'string' ? stdout : String(stdout);
++        parsedJson = JSON.parse(decoded);
++      } catch {
++        console.log('ffprobe stdout:', decoded ?? stdout);
++        throw new Error('ffprobe returned malformed data');
++      }
+     }
++
+     const { format, chapters = [] } = parsedJson;
+     invariant(format != null);
+ 
+@@ -391,7 +456,15 @@ export async function extractSubtitleTra
+   ];
+ 
+   const { stdout } = await runFfmpeg(args);
+-  return new TextDecoder().decode(stdout);
++  
++  try {
++    // Coerce the output stream safely to ensure it is un-resizable and fully typed
++    const stableBytes = ensureStableBuffer(stdout);
++    return new TextDecoder('utf-8').decode(stableBytes);
++  } catch (err) {
++    console.error("🔒 Subtitle buffer recovery engaged...", err);
++    return typeof stdout === 'string' ? stdout : String(stdout);
++  }
+ }
+ 
+ export async function extractSubtitleTrackToSegments(filePath: string, streamId: number) {
+@@ -554,9 +627,25 @@ const ffprobeVersionSchema = z.object({
+ export async function runFfmpegStartupCheck() {
+   // will throw if exit code != 0
+   const { stderr: ffmpegStderr } = await runFfmpeg(['-f', 'lavfi', '-i', 'nullsrc=s=256x256:d=1', '-f', 'null', '-']);
+-  console.log('FFmpeg startup check output:', new TextDecoder().decode(ffmpegStderr));
++  
++  let decodedStderr = "";
++  try {
++    decodedStderr = new TextDecoder('utf-8').decode(ensureStableBuffer(ffmpegStderr));
++    console.log('FFmpeg startup check output:', decodedStderr);
++  } catch (e) {
++    decodedStderr = typeof ffmpegStderr === 'string' ? ffmpegStderr : String(ffmpegStderr);
++  }
++
+   const { stdout: ffprobeStout } = await runFfprobe(['-v', '0', '-of', 'json', '-show_program_version']);
+-  return ffprobeVersionSchema.parse(JSON.parse(new TextDecoder().decode(ffprobeStout)));
++  
++  let decodedStdout = "";
++  try {
++    decodedStdout = new TextDecoder('utf-8').decode(ensureStableBuffer(ffprobeStout));
++    return ffprobeVersionSchema.parse(JSON.parse(decodedStdout));
++  } catch (e) {
++    decodedStdout = typeof ffprobeStout === 'string' ? ffprobeStout : String(ffprobeStout);
++    return ffprobeVersionSchema.parse(JSON.parse(decodedStdout));
++  }
+ }
+ 
+ // https://superuser.com/questions/543589/information-about-ffmpeg-command-line-options

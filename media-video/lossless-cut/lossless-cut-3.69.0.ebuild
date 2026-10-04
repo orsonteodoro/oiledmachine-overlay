@@ -17,9 +17,7 @@ EAPI=8
 
 MY_PN="${PN/-/}"
 
-_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure.  Working with reproducible but not secure.
-# TODO:  Fix newer sharp with ICON_TYPE="png"
-ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure.  Working with reproducible but not secure.
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
@@ -28,16 +26,14 @@ YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
-ELECTRON_BUILDER_PV="26.16.1" # 26.15.7 works
+ELECTRON_BUILDER_PV="26.17.0" # 26.15.7 works, 26.16.1 works
 
 inherit secure-version secure-version-node
 
 NODE_GYP_PV="12.3.0"
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# Bugged, it will show the UI and then popup with problem report and be unable to load file so no video appears in UI
-	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}" # Cr 150.0.7871.129, node 24.18.0
+	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0
@@ -94,9 +90,9 @@ LICENSE="
 	GPL-2
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The license fingerprint of 42.2.0 is the same as 43.x
+	# The license fingerprint of Electron 44.4.1 is the same as Electron 44.5.1
 	LICENSE+="
-		electron-42.2.0-chromium.html
+		electron-44.4.1-chromium.html
 	"
 else
 	LICENSE+="
@@ -108,7 +104,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -129,6 +125,9 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
+	gnome-extra/zenity:=
+	sys-apps/xdg-desktop-portal:=
+	sys-apps/xdg-desktop-portal-gtk:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -157,6 +156,7 @@ einfo "Temporarily disabling package.json patches"
 	fi
 	eapply "${FILESDIR}/${PN}-3.64.0-sharp-type.patch"
 	eapply "${FILESDIR}/${PN}-3.69.0-quiet-processing-leak.patch"
+	eapply "${FILESDIR}/${PN}-3.69.0-electron-44-compat.patch"
 	sed -i -e "/npmMinimalAgeGate:/d" "${S}/.yarnrc.yml" || die
 }
 
@@ -171,7 +171,10 @@ einfo "DEBUG:  Removing node-gyp (1)"
 		enpm uninstall "node-gyp"
 	fi
 
-	eyarn add "node-gyp@^${NODE_GYP_PV}"
+	local L=(
+		"node-gyp@^${NODE_GYP_PV}"
+	)
+	eyarn add "${L[@]}" -D
 }
 
 yarn_update_lock_install_post() {
@@ -183,7 +186,28 @@ yarn_update_lock_install_post() {
 yarn_update_lock_yarn_import_post() {
 einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D							# Enable for offline cache speed up
+		patch_lockfile() {
+einfo "Called patch_lockfile"
+			sed -i -e "s|csv-parse: \"npm:^6.2.1\"|csv-parse: \"npm:^${NODE_CSV_PARSE_PV}\"|g" "yarn.lock" || die
+
+			sed -i -e "s#esbuild: ^0.27.0 || ^0.28.0#esbuild: ^${NODE_ESBUILD_PV}#g" "yarn.lock" || die
+			sed -i -e "s|esbuild: \"npm:^0.25.11\"|esbuild: \"npm:^${NODE_ESBUILD_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|esbuild: \"npm:0.28.1\"|esbuild: \"npm:^${NODE_ESBUILD_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|esbuild: \"npm:^0.27.0\"|esbuild: \"npm:^${NODE_ESBUILD_PV}\"|g" "yarn.lock" || die
+
+			sed -i -e "s|electron-builder: \"npm:26.16.1\"|electron-builder: \"npm:^${ELECTRON_BUILDER_PV}\"|g" "yarn.lock" || die
+
+			sed -i -e "s|sharp: \"npm:^0.33.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|sharp: \"npm:0.35.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|sharp: \"npm:^0.34.5\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
+
+			sed -i -e "s#vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0\"#vite: ^${NODE_VITE_7_PV}#g" "yarn.lock" || die
+			sed -i -e "s#vite: ^5.0.0 || ^6.0.0 || ^7.0.0\"#vite: ^${NODE_VITE_7_PV}#g" "yarn.lock" || die
+			sed -i -e "s#vite: ^6.0.0 || ^7.0.0 || ^8.0.0\"#vite: ^${NODE_VITE_7_PV}#g" "yarn.lock" || die
+			sed -i -e "s#vite: \"npm:^6.0.0 || ^7.0.0 || ^8.0.0\"#vite: \"npm:^${NODE_VITE_7_PV}\"#g" "yarn.lock" || die
+			sed -i -e "s|vite: \"npm:7.3.5\"|vite: \"npm:^${NODE_VITE_7_PV}\"|g" "yarn.lock" || die
+		}
+		patch_lockfile
 
 einfo "Fixing vulnerabilities"
 
@@ -193,27 +217,54 @@ einfo "QA:  Remove esbuild@npm:^0.27.0 and @esbuild/<os>-<arch>@npm:0.27.7 micro
 einfo "QA:  Change esbuild: \"npm:^0.27.0\" references to esbuild: \"npm:0.28.1\" in yarn.lock"
 
 		local L
+
 		L=(
-			"vite@7.3.5"
-			"esbuild@0.28.1"
-			"electron-builder@${ELECTRON_BUILDER_PV}"
+			"sharp"
+		)
+		eyarn remove "${L[@]}"
+
+		L=(
+			"csv-parse@^${NODE_CSV_PARSE_PV}"
+			"electron-builder@^${ELECTRON_BUILDER_PV}"
+			"electron@^${ELECTRON_APP_ELECTRON_PV}"
+			"sharp@${NODE_SHARP_PV}"
+			"vite@^${NODE_VITE_7_PV}"
 		)
 		eyarn add "${L[@]}" -D
+
+		patch_lockfile
+
+		L=(
+		)
+		eyarn add "${L[@]}" -P
+
+		patch_lockfile
+
+	# Dependency of dependency
+		L=(
+			"esbuild@^${NODE_ESBUILD_PV}"
+		)
+		eyarn add "${L[@]}" -D
+
+		patch_lockfile
 
 einfo "Fixing vulnerabilities done"
 
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		node-sharp_yarn_lockfile_add_sharp
 
-		if [[ "${ICON_TYPE}" == "png" ]] ; then
-			eyarn add "icon-gen@5.0.0" -D # Must go before node-sharp_yarn_rebuild_sharp
-		else
-			eyarn remove "icon-gen"
-			eyarn remove "sharp"
-		fi
+		L=(
+			"icon-gen@5.0.0" # Must go before node-sharp_yarn_rebuild_sharp
+		)
+		eyarn add "${L[@]}" -D
+
+		patch_lockfile
 
 einfo "Adding package.json patches"
+	# To update the lockfile, the patch need to be disabled temporarily then
+	# restored after lockfile update.
 		sed -i -e "s|\"mitt\": \"3.0.1\"|\"mitt\": \"patch:mitt@npm%3A3.0.1#~/.yarn/patches/mitt-npm-3.0.1-ce290ffa77.patch\"|g" "package.json" || die
+
 	fi
 }
 
@@ -251,88 +302,93 @@ src_unpack() {
 	fi
 einfo "NODE_ENV:  ${NODE_ENV}"
 
-	if [[ "${ICON_TYPE}" == "png" ]] ; then
-	        # Clear yarn and npm caches first
-	        yarn cache clean || die "Failed to clear yarn cache"
-	        npm cache clean --force || die "Failed to clear npm cache"
+        # Clear yarn and npm caches first
+        yarn cache clean || die "Failed to clear yarn cache"
+        npm cache clean --force || die "Failed to clear npm cache"
 
-		if ver_test "${NODE_SHARP_PV%.*}" "-le" "0.32" ; then
-			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
-		fi
-		eyarn add "sharp@${NODE_SHARP_PV}" -D
-		eyarn add "@types/icon-gen"
-
-		jq ".dependencies.sharp = \"^${NODE_SHARP_PV}\"" \
-			"node_modules/icon-gen/package.json" \
-				> \
-			"temp.json" \
-				&& \
-			mv "temp.json" "node_modules/icon-gen/package.json" \
-			|| die "Failed to update icon-gen package.json"
-
-		eyarn add "icon-gen@5.0.0" --no-optional # Must go before node-sharp_yarn_rebuild_sharp
-
-		# Remove nested sharp and prebuilt sharp
-		rm -rf "node_modules/icon-gen/node_modules/sharp" || die "Failed to remove nested sharp"
-		rm -rf "node_modules/@img" || die "Failed to remove nested sharp"
-
-		SHARP_INSTALL_ARGS=( "-D" )
-
-		# Remove nested sharp to avoid conflicts
-		rm -rf "node_modules/icon-gen/node_modules/sharp" || true
-
-		local configuration="Debug"
-		local nconfiguration="Release"
-		if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
-			configuration="Release"
-			nconfiguration="Debug"
-		fi
-		local sharp_platform=$(node-sharp_get_platform)
-
-		# Rebuild sharp
-		local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
-		einfo "Rebuilding sharp in ${S}"
-		pushd "${S}" >/dev/null 2>&1 || die
-			node-sharp_yarn_rebuild_sharp
-		# Copy sharp binary to expected location
-			mkdir -p "node_modules/sharp/build/${configuration}" \
-				|| die "Failed to create node_modules/sharp/build/${configuration}"
-			[[ -e "node_modules/sharp/src/build/${configuration}/${fn}" ]] || die "Missing"
-			cp \
-				"node_modules/sharp/src/build/${configuration}/${fn}" \
-				"node_modules/sharp/build/${configuration}/${fn}" \
-				|| die "Failed to copy ${fn}"
-			ls -l "node_modules/sharp/build/${configuration}/${fn}" || die "${fn} not found"
-		popd >/dev/null 2>&1 || die
-
-		# Copy sharp binary to icon-gen if needed
-		if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
-			einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
-			mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" \
-				|| die "Failed to create icon-gen sharp build directory"
-			[[ -e "node_modules/sharp/build/${configuration}/${fn}" ]] || die "Missing"
-			cp "node_modules/sharp/build/${configuration}/${fn}" \
-				"node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
-				|| die "Failed to copy ${fn} to icon-gen"
-			ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
-				|| die "Copied ${fn} not found"
-		fi
-
-		ewarn "Removing nested sharp or @img/sharp-linux-x64"
-		rm -rfv "node_modules/@img/"*"sharp"*
-		rm -rfv "node_modules/@types/icon-gen/node_modules/sharp"
-		rm -rfv "node_modules/icon-gen/node_modules/sharp"
-		rm -rfv "node_modules/sharp/node_modules/@img"
-		rm -rfv "node_modules/icon-gen/node_modules/@img"
-
-		node-sharp_verify_dedupe
+	local L=()
+	if ver_test "${NODE_SHARP_PV%.*}" "-le" "0.32" ; then
+		L+=(
+			"@types/sharp" # Must go before node-sharp_yarn_rebuild_sharp
+		)
 	fi
+	L+=(
+		"sharp@${NODE_SHARP_PV}"
+		"@types/icon-gen"
+	)
+	eyarn add "${L[@]}" -D
+
+	jq ".dependencies.sharp = \"^${NODE_SHARP_PV}\"" \
+		"node_modules/icon-gen/package.json" \
+			> \
+		"temp.json" \
+			&& \
+		mv "temp.json" "node_modules/icon-gen/package.json" \
+		|| die "Failed to update icon-gen package.json"
+
+	L+=(
+		"icon-gen@5.0.0" # Must go before node-sharp_yarn_rebuild_sharp
+	)
+	eyarn add "${L[@]}" -D --no-optional
+
+	# Remove nested sharp and prebuilt sharp
+	rm -rf "node_modules/icon-gen/node_modules/sharp" || die "Failed to remove nested sharp"
+	rm -rf "node_modules/@img" || die "Failed to remove nested sharp"
+
+	SHARP_INSTALL_ARGS=( "-D" )
+
+	# Remove nested sharp to avoid conflicts
+	rm -rf "node_modules/icon-gen/node_modules/sharp" || true
+
+	local configuration="Debug"
+	local nconfiguration="Release"
+	if [[ "${NODE_SHARP_DEBUG}" != "1" ]] ; then
+		configuration="Release"
+		nconfiguration="Debug"
+	fi
+	local sharp_platform=$(node-sharp_get_platform)
+
+	# Rebuild sharp
+	local fn="sharp-${sharp_platform}-${NODE_SHARP_PV}.node"
+	einfo "Rebuilding sharp in ${S}"
+	pushd "${S}" >/dev/null 2>&1 || die
+		node-sharp_yarn_rebuild_sharp
+	# Copy sharp binary to expected location
+		mkdir -p "node_modules/sharp/build/${configuration}" \
+			|| die "Failed to create node_modules/sharp/build/${configuration}"
+		[[ -e "node_modules/sharp/src/build/${configuration}/${fn}" ]] || die "Missing"
+		cp \
+			"node_modules/sharp/src/build/${configuration}/${fn}" \
+			"node_modules/sharp/build/${configuration}/${fn}" \
+			|| die "Failed to copy ${fn}"
+		ls -l "node_modules/sharp/build/${configuration}/${fn}" || die "${fn} not found"
+	popd >/dev/null 2>&1 || die
+
+	# Copy sharp binary to icon-gen if needed
+	if [[ -d "node_modules/icon-gen/node_modules/sharp" ]]; then
+		einfo "Copying sharp binary to node_modules/icon-gen/node_modules/sharp"
+		mkdir -p "node_modules/icon-gen/node_modules/sharp/build/${configuration}" \
+			|| die "Failed to create icon-gen sharp build directory"
+		[[ -e "node_modules/sharp/build/${configuration}/${fn}" ]] || die "Missing"
+		cp "node_modules/sharp/build/${configuration}/${fn}" \
+			"node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
+			|| die "Failed to copy ${fn} to icon-gen"
+		ls -l "node_modules/icon-gen/node_modules/sharp/build/${configuration}/${fn}" \
+			|| die "Copied ${fn} not found"
+	fi
+
+	ewarn "Removing nested sharp or @img/sharp-linux-x64"
+	rm -rfv "node_modules/@img/"*"sharp"*
+	rm -rfv "node_modules/@types/icon-gen/node_modules/sharp"
+	rm -rfv "node_modules/icon-gen/node_modules/sharp"
+	rm -rfv "node_modules/sharp/node_modules/@img"
+	rm -rfv "node_modules/icon-gen/node_modules/@img"
+
+	node-sharp_verify_dedupe
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
 		edo mkdirp "icon-build" "build-resources/appx"
-		if [[ "${ICON_TYPE}" == "png" ]] ; then
-			gen_icon
-		fi
+		gen_icon
 	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
@@ -368,11 +424,7 @@ src_install() {
 	electron-app_gen_wrapper \
 		"${MY_PN}" \
 		"${YARN_INSTALL_PATH}/${MY_PN}"
-	if [[ "${ICON_TYPE}" == "svg" ]] ; then
-		newicon "src/renderer/src/icon.svg" "no.mifi.losslesscut.svg"
-	else
-		newicon "icon-build/app-512.png" "no.mifi.losslesscut.png"
-	fi
+	newicon "icon-build/app-512.png" "no.mifi.losslesscut.png"
 	insinto "/usr/share/applications"
 	doins "no.mifi.losslesscut.desktop"
 	insinto "${YARN_INSTALL_PATH}"
@@ -431,6 +483,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.68.1, 20260422 with Electron 41.3.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260725 with Electron 42.3.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260921 with Electron 42.3.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260921 with Electron 44.5.1)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
