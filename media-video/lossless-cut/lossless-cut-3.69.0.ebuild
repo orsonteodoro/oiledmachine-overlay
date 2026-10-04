@@ -104,7 +104,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -197,6 +197,8 @@ einfo "Called patch_lockfile"
 
 			sed -i -e "s|electron-builder: \"npm:26.16.1\"|electron-builder: \"npm:^${ELECTRON_BUILDER_PV}\"|g" "yarn.lock" || die
 
+			sed -i -e "s|\"icon-gen/sharp\": \"^0.34.5\"|\"icon-gen/sharp\": \"^${NODE_SHARP_PV}\"|g" "package.json" || die
+
 			sed -i -e "s|sharp: \"npm:^0.33.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
 			sed -i -e "s|sharp: \"npm:0.35.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
 			sed -i -e "s|sharp: \"npm:^0.34.5\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
@@ -210,11 +212,6 @@ einfo "Called patch_lockfile"
 		patch_lockfile
 
 einfo "Fixing vulnerabilities"
-
-einfo "QA:  Remove sharp@npm:^0.34.5 and both @img/sharp-libvips-<arch>-arm64@npm:1.2.4 and @img/sharp-<os>-<arch>@npm:0.34.5 microarches in yarn.lock"
-einfo "QA:  Change sharp: \"npm:^0.33.4\" to sharp: \"npm:0.35.3\" in yarn.lock"
-einfo "QA:  Remove esbuild@npm:^0.27.0 and @esbuild/<os>-<arch>@npm:0.27.7 microarches in yarn.lock"
-einfo "QA:  Change esbuild: \"npm:^0.27.0\" references to esbuild: \"npm:0.28.1\" in yarn.lock"
 
 		local L
 
@@ -231,12 +228,6 @@ einfo "QA:  Change esbuild: \"npm:^0.27.0\" references to esbuild: \"npm:0.28.1\
 			"vite@^${NODE_VITE_7_PV}"
 		)
 		eyarn add "${L[@]}" -D
-
-		patch_lockfile
-
-		L=(
-		)
-		eyarn add "${L[@]}" -P
 
 		patch_lockfile
 

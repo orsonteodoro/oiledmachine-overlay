@@ -493,7 +493,7 @@
     }
   },
   "resolutions": {
-    "icon-gen/sharp": "^0.34.5"
+    "icon-gen/sharp": "^0.35.4"
   },
   "packageManager": "yarn@4.6.0"
 }
