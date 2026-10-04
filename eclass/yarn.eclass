@@ -647,9 +647,18 @@ einfo "Running:\t\tnpm ${cmd[@]}"
 # @DESCRIPTION:
 # Check for errors
 _yarn_check_errors() {
+	grep -q -e "No candidates found" "${T}/build.log" && die "Detected error.  Delete ${YARN_CACHE_FOLDER} and emerge again"
 	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 	grep -q -e "ETIMEDOUT" "${T}/build.log" && die "Detected error"
 	grep -q -e "^Error: Couldn't find package" "${T}/build.log" && die "Detected error"
+}
+
+# @FUNCTION: _yarn_check_errors_fatal
+# @DESCRIPTION:
+# Check for errors with meaningful response
+_yarn_check_errors_fatal() {
+	_yarn_check_errors
+	die
 }
 
 # @FUNCTION: eyarn
@@ -666,7 +675,7 @@ einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
 		yarn_env_push
-		yarn "${cmd[@]}" 2>&1 || die
+		yarn "${cmd[@]}" 2>&1 || _yarn_check_errors_fatal
 		yarn_env_pop
 		if ! grep -q -E -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
 			break
