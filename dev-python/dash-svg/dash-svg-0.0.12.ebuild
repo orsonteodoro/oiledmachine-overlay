@@ -56,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -110,6 +110,7 @@ npm_update_lock_audit_post() {
 
 	NODE_CHEERIO_PV="1.2.0" # Force bump to try to remove vulnerable lodash.pick
 	NODE_WEBPACK_SERVE_PV="4.0.0" # Force bump to try to remove vulnerable hoek
+	NODE_HTTP_PROXY_MIDDLEWARE_PV="NODE_HTTP_PROXY_MIDDLEWARE_PV"
 	patch_lockfile() {
 		sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
@@ -117,7 +118,7 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"^${NODE_CHEERIO_PV}\"|g" "${S}/package-lock.json" || die # 0 -> 1 may be a breaking change
 #		sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^${NODE_FLATTED_PV}\"|g" "${S}/package-lock.json" || die
-		sed -i -e "s|\"http-proxy-middleware\": \"^0.19.0\"|\"http-proxy-middleware\": \"^2.0.10\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"http-proxy-middleware\": \"^0.19.0\"|\"http-proxy-middleware\": \"^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
