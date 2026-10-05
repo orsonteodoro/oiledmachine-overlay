@@ -651,7 +651,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo chkl desktop lcnr npm secure-version xdg
+inherit cargo chkl desktop lcnr npm secure-version secure-version-node xdg
 
 #KEYWORDS="~amd64" # Needs code audit or code review, deps are EOL
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -865,64 +865,62 @@ ewarn "Missing security updated Cargo.lock"
 	fi
 }
 
-npm_update_lock_install_post() {
+npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #ewarn "QA:  Manually remove node_modules/esbuild (<0.25.0) and deps in ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in ${S}/package-lock.json"
 ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/package-lock.json"
 		patch_lockfile() {
-			sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.6.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.20.13\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.23.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.23.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"^0.25.12\"|g" "package-lock.json" || die
-
-			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^4.0.4\"|g" "package-lock.json" || die
-			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^6.4.2\"|g" "package-lock.json" || die
-
-			sed -i -e "s|\"picomatch\": \"^2.0.4\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
-			sed -i -e "s|\"picomatch\": \"^2.2.1\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
-			sed -i -e "s|\"picomatch\": \"^2.3.1\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
-			sed -i -e "s#\"picomatch\": \"^3 || ^4\"#\"picomatch\": \"^4.0.2\"#g" "package-lock.json" || die
-			sed -i -e "s|\"picomatch\": \"^4.0.2\"|\"picomatch\": \"^4.0.2\"|g" "package-lock.json" || die
-			sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^1.1.13\"|g" "package-lock.json" || die
-			sed -i -e "s|\"minimatch\": \"^3.1.1\"|\"minimatch\": \"^3.1.3\"|g" "package-lock.json" || die
-			sed -i -e "s|\"minimatch\": \"^3.0.4\"|\"minimatch\": \"^3.1.3\"|g" "package-lock.json" || die
-			sed -i -e "s|\"rollup\": \"^4.34.9\"|\"rollup\": \"^4.59.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"rollup\": \"^4.20.0\"|\"rollup\": \"^4.59.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@remix-run/router\": \"1.23.0\"|\"@remix-run/router\": \"^1.23.2\"|g" "package-lock.json" || die
-			sed -i -e "s|\"react-router\": \"6.30.1\"|\"react-router\": \"^6.30.2\"|g" "package-lock.json" || die
-			sed -i -e "s|\"mdast-util-to-hast\": \"^13.0.0\"|\"mdast-util-to-hast\": \"^13.2.1\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/core\": \"^7.0.0\"|\"@babel/core\": \"^${NODE_BABEL_CORE_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/core\": \"^7.0.0-0\"|\"@babel/core\": \"^${NODE_BABEL_CORE_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/core\": \"^7.27.4\"|\"@babel/core\": \"^${NODE_BABEL_CORE_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@remix-run/router\": \"1.23.0\"|\"@remix-run/router\": \"^${NODE_AT_REMIX_RUN_ROUTER_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"^${NODE_BRACE_EXPANSION_1_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"browserslist\": \"^4.24.0\"|\"browserslist\": \"^${NODE_BROWSERSLIST_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"form-data\": \"^4.0.0\"|\"form-data\": \"^${NODE_FORM_DATA_4_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"nanoid\": \"^3.3.11\"|\"nanoid\": \"^${NODE_NANOID_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.2.1\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.3.3\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.21\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.38\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.43\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^7.0.0\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"react-router\": \"6.30.1\"|\"react-router\": \"^${NODE_REACT_ROUTER_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"vitest\": \"^1.6.0\"|\"vitest\": \"^${NODE_VITEST_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"ws\": \"^8.18.0\"|\"ws\": \"^${NODE_VITE_8_PV}\"|g" "package-lock.json" || die
 		}
 
-#		patch_lockfile
+		patch_lockfile
+
 		local L
 		L=(
-			"@babel/runtime@^7.26.10"
-			"form-data@^4.0.4"
-			"minimatch@^3.1.3"
-			"@remix-run/router@^1.23.2"
-			"react-router@^6.30.2"
-			"mdast-util-to-hast@^13.2.1"
-			"brace-expansion@^1.1.13"
+			"@remix-run/router@^${NODE_AT_REMIX_RUN_ROUTER_PV}"
+			"brace-expansion@^${NODE_BRACE_EXPANSION_1_PV}"
+			"form-data@^${NODE_FORM_DATA_4_PV}"
+			"nanoid@^${NODE_NANOID_3_PV}"
+			"postcss@^${NODE_POSTCSS_PV}"
+			"react-router@${NODE_REACT_ROUTER_6_PV}"
+			"ws@^${NODE_WS_8_PV}"
 		)
-#		enpm install "${L[@]}" -P
+		enpm install "${L[@]}" -P
 
+		patch_lockfile
 
 		L=(
-			"esbuild@^0.25.12"
-			"vite@^6.4.2"
-			"picomatch@^4.0.2"
-			"rollup@^4.59.0"
+			"@babel/core@^${NODE_BABEL_CORE_7_PV}"
+			"browserslist@^${NODE_BROWSERSLIST_PV}"
+			"esbuild@^${NODE_ESBUILD_PV}"
+			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
+			"vite@^${NODE_VITE_6_PV}"
+			"vitest@${NODE_VITEST_3_PV}"
 		)
-#		enpm install "${L[@]}" -D
-#		patch_lockfile
+		enpm install "${L[@]}" -D
+
+		patch_lockfile
 	fi
 }
 

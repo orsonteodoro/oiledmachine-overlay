@@ -103,7 +103,7 @@ npm_dedupe_post() {
 			"@babel/plugin-transform-modules-systemjs@^7.29.4"
 			"baseline-browser-mapping@^2.11.0"
 			"brace-expansion@^${NODE_BRACE_EXPANSION_1_PV}"
-			"browserslist@^${NODE_BROWSERSLISTS_PV}"
+			"browserslist@^${NODE_BROWSERSLIST_PV}"
 			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"http-proxy-middleware@^2.0.10"
 			"js-yaml@${NODE_JS_YAML_3_PV}"

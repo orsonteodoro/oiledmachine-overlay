@@ -898,7 +898,7 @@ pnpm_audit_post() {
 		patch_lockfile() {
 			sed -i -e "s|baseline-browser-mapping: 2.9.11|baseline-browser-mapping: ${NODE_BASELINE_BROWSER_MAPPING_PV}|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|body-parser: 1.20.4|body-parser: ${NODE_BODY_PARSER_1_PV}|g" "pnpm-lock.yaml" || die
-			sed -i -e "s|browserslist: 4.28.1|browserslist: ${NODE_BROWSERSLISTS_PV}|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|browserslist: 4.28.1|browserslist: ${NODE_BROWSERSLIST_PV}|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|colord: 2.9.3|colord: ${NODE_COLORD_PV}|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|devalue: 5.6.4|devalue: ${NODE_DEVALUE_PV}|g" "pnpm-lock.yaml" || die # Possible version bump causes breaking change
 			sed -i -e "s|dompurify: 3.2.7|dompurify: ${NODE_DOMPURIFY_PV}|g" "pnpm-lock.yaml" || die
@@ -950,7 +950,7 @@ pnpm_audit_post() {
 
 		L=(
 			"baseline-browser-mapping@${NODE_BASELINE_BROWSER_MAPPING_PV}"
-			"browserslist@${NODE_BROWSERSLISTS_PV}"
+			"browserslist@${NODE_BROWSERSLIST_PV}"
 			"happy-dom@${NODE_HAPPY_DOM_PV}"
 			"vitest@${NODE_VITEST_4_PV}"
 		)
