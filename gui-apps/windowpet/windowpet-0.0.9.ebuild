@@ -887,8 +887,8 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 			sed -i -e "s|\"postcss\": \"^8.4.38\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^8.4.43\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss-selector-parser\": \"^7.0.0\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
-			sed -i -e "s|\"react-router\": \"6.30.1\"|\"react-router\": \"^${NODE_REACT_ROUTER_6_PV}\"|g" "package-lock.json" || die
-			sed -i -e "s|\"vitest\": \"^1.6.0\"|\"vitest\": \"^${NODE_VITEST_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"react-router\": \"6.30.1\"|\"react-router\": \"^${NODE_REACT_ROUTER_7_PV}\"|g" "package-lock.json" || die # 6-> 7 could be a breaking change
+			sed -i -e "s|\"vitest\": \"^1.6.0\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die # 1 -> 4 could be a breaking change
 			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"ws\": \"^8.18.0\"|\"ws\": \"^${NODE_VITE_8_PV}\"|g" "package-lock.json" || die
@@ -903,7 +903,7 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 			"form-data@^${NODE_FORM_DATA_4_PV}"
 			"nanoid@^${NODE_NANOID_3_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
-			"react-router@${NODE_REACT_ROUTER_6_PV}"
+			"react-router@${NODE_REACT_ROUTER_7_PV}"
 			"ws@^${NODE_WS_8_PV}"
 		)
 		enpm install "${L[@]}" -P
@@ -916,7 +916,7 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 			"esbuild@^${NODE_ESBUILD_PV}"
 			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
 			"vite@^${NODE_VITE_6_PV}"
-			"vitest@${NODE_VITEST_3_PV}"
+			"vitest@${NODE_VITEST_4_PV}"
 		)
 		enpm install "${L[@]}" -D
 
