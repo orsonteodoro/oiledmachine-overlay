@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "@lobehub/market-sdk": "^0.31.8",
-    "adm-zip": "^0.5.16",
+    "adm-zip": "^0.6.1",
     "commander": "^13.1.0"
   },
   "engines": {
