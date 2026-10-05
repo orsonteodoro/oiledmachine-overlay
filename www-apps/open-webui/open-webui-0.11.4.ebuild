@@ -6,21 +6,24 @@ EAPI=8
 
 # A3.20, U24
 
-# 0.9.6 -> 0.11.0
+# TODO package:
+# google-re2
 
-# For requirements, see https://github.com/open-webui/open-webui/blob/v0.11.0/backend/requirements.txt
+# 0.9.6 -> 0.11.4
+
+# For requirements, see https://github.com/open-webui/open-webui/blob/v0.11.4/backend/requirements.txt
 # For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
 # To update lockfile:
 # PATH="$(realpath ../../scripts):${PATH}"
-# NPM_UPDATER_VERSIONS="0.11.0" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="0.11.4" npm_updater_update_locks.sh
 
 MY_PN="Open WebUI"
 
 AT_TYPES_NODE_PV="25.5.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.11.0/Dockerfile#L27
+NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.11.4/Dockerfile#L27
 NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
@@ -94,16 +97,6 @@ REQUIRED_USE="
 	)
 "
 
-# For missing dev-python/moto[s3] rdepends
-MOTO_RDEPEND="
-	all? (
-		$(python_gen_cond_dep '
-			>=dev-python/moto-5.0.26[${PYTHON_USEDEP},s3(+)]
-			>=dev-python/py-partiql-parser-0.6.1[${PYTHON_USEDEP}]
-			>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
-		')
-	)
-"
 # For missing dev-python/uvicorn[standard] rdepends
 UVICORN_RDEPEND="
 	$(python_gen_cond_dep '
@@ -145,38 +138,20 @@ gen_torch_rdepend() {
 		"
 	done
 }
-DOCKER_REPEND="
-	sci-ml/pytorch:=
-	sci-ml/torchaudio:=
-	sci-ml/torchvision:=
-	|| (
-		$(gen_torch_rdepend)
-	)
-	rag-ocr? (
-		app-arch/zstd
-		media-video/ffmpeg
-		x11-libs/libSM
-		x11-libs/libXext
-	)
-"
 
 RDEPEND+="
-	${DOCKER_REPEND}
-	${MOTO_RDEPEND}
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
 		>=app-arch/brotli-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
-		>=dev-python/aiodns-4.0.4[${PYTHON_USEDEP}]
+		<dev-python/aiodns-4[${PYTHON_USEDEP}]
 		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/aiohttp-3.13.5[${PYTHON_USEDEP}]
 		>=dev-python/aiosqlite-0.22.1[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.18.4[${PYTHON_USEDEP}]
 		>=dev-python/anthropic-0.86.0[${PYTHON_USEDEP}]
-		>=dev-python/apscheduler-3.11.2[${PYTHON_USEDEP}]
 		>=dev-python/argon2-cffi-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/asgiref-3.11.1[${PYTHON_USEDEP}]
-		>=dev-python/async-timeout-5.0.1[${PYTHON_USEDEP}]
 		>=dev-python/authlib-1.7.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-ai-documentintelligence-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/azure-identity-1.25.3[${PYTHON_USEDEP}]
@@ -193,13 +168,9 @@ RDEPEND+="
 		>=dev-python/einops-0.8.2[${PYTHON_USEDEP}]
 		>=dev-python/fake-useragent-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/fastapi-0.136.3[${PYTHON_USEDEP}]
-		>=dev-python/fpdf2-2.8.7[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.3.1[${PYTHON_USEDEP}]
-		>=dev-python/google-api-python-client-2.197.0[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-httplib2-0.4.0[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-oauthlib-1.4.0[${PYTHON_USEDEP}]
 		>=dev-python/google-cloud-storage-3.9.0[${PYTHON_USEDEP}]
-		>=dev-python/google-genai-1.66.0[${PYTHON_USEDEP}]
+		>=dev-python/google-re2-1.1.20251105[${PYTHON_USEDEP}]
 		>=dev-python/googleapis-common-protos-1.75.0[${PYTHON_USEDEP}]
 		>=dev-python/hiredis-3.4.0[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},brotli,cli,http2,socks,zstd]
@@ -207,15 +178,12 @@ RDEPEND+="
 		>=dev-python/lxml-6.1.1[${PYTHON_USEDEP}]
 		>=dev-python/joserfc-1.7.4[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
-		>=dev-python/langchain-1.2.10[${PYTHON_USEDEP}]
 		>=dev-python/langchain-classic-1.0.7[${PYTHON_USEDEP}]
-		>=dev-python/langchain-community-0.4.2[${PYTHON_USEDEP}]
 		>=dev-python/langchain-text-splitters-1.1.2[${PYTHON_USEDEP}]
 		>=dev-python/loguru-0.7.3[${PYTHON_USEDEP}]
 		>=dev-python/markdown-3.10.2[${PYTHON_USEDEP}]
 		>=dev-python/msoffcrypto-tool-6.0.0[${PYTHON_USEDEP}]
 		>=dev-python/mcp-1.27.2[${PYTHON_USEDEP}]
-		>=dev-python/nltk-3.9.4[${PYTHON_USEDEP}]
 		>=dev-python/openai-2.29.0[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-3.2.0[${PYTHON_USEDEP}]
@@ -228,21 +196,19 @@ RDEPEND+="
 		>=dev-python/pydantic-2.13.4[${PYTHON_USEDEP}]
 		>=dev-python/pydub-0.25.1[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.13.0[${PYTHON_USEDEP},crypto(+)]
-		>=dev-python/pymdown-extensions-10.21.3[${PYTHON_USEDEP}]
 		>=dev-python/pymysql-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pypandoc-1.17[${PYTHON_USEDEP}]
 		>=dev-python/pypdf-6.7.5[${PYTHON_USEDEP}]
+		>=dev-python/python-docx-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/python-mimeparse-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/python-multipart-0.0.32[${PYTHON_USEDEP}]
 		>=dev-python/python-pptx-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/python-socketio-5.16.2[${PYTHON_USEDEP}]
-		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytz-2026.2[${PYTHON_USEDEP}]
 		>=dev-python/pyxlsb-1.0.10[${PYTHON_USEDEP}]
 		>=dev-python/rank-bm25-0.2.2[${PYTHON_USEDEP}]
 		>=dev-python/redis-8.0.1[${PYTHON_USEDEP}]
 		>=dev-python/regex-2026.5.9[${PYTHON_USEDEP}]
-		>=dev-python/RestrictedPython-8.2[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.13.1[${PYTHON_USEDEP}]
 		>=dev-python/starlette-compress-1.7.1[${PYTHON_USEDEP}]
 		>=dev-python/starsessions-2.2.1[${PYTHON_USEDEP},redis]
@@ -257,15 +223,11 @@ RDEPEND+="
 		>=virtual/pillow-12.2.0[${PYTHON_USEDEP}]
 		all? (
 			>=dev-python/azure-search-documents-12.0.0[${PYTHON_USEDEP}]
-			>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 			>=dev-python/elasticsearch-9.4.1[${PYTHON_USEDEP}]
 			>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
 			>=dev-python/oracledb-3.4.2[${PYTHON_USEDEP}]
 			>=dev-python/pinecone-6.0.2[${PYTHON_USEDEP}]
 			>=dev-python/playwright-bin-1.60.0[${PYTHON_USEDEP}]
-			>=dev-python/pymongo-4.17.0[${PYTHON_USEDEP}]
-			>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
-			>=dev-python/pytest-docker-3.2.5[${PYTHON_USEDEP}]
 			>=dev-python/qdrant-client-1.18.0[${PYTHON_USEDEP}]
 			>=dev-python/weaviate-client-4.20.3[${PYTHON_USEDEP}]
 		)
