@@ -2896,9 +2896,11 @@ einfo "AI agent support:  OFF"
 ewarn
 ewarn "SECURITY NOTICE"
 ewarn
-ewarn "You are enabling AI agent support which is accessible by the launch command."
-ewarn "This has the potential to be abused and may cause real world damages,"
-ewarn "or compromise security from within."
+ewarn "You are enabling AI agent support which is accessible by the launch"
+ewarn "command.  This has the potential to be abused by insider threats or"
+ewarn "remote threat actors and may cause real world damages, compromise"
+ewarn "security from within with LLM generated malware, or be used for Living"
+ewarn "of the LLM (LOLLM) attacks."
 ewarn
 	fi
 }
@@ -4490,9 +4492,11 @@ ewarn
 ewarn
 ewarn "SECURITY NOTICE"
 ewarn
-ewarn "You are enabling AI agent support which is accessible by the launch command."
-ewarn "This has the potential to be abused and may cause real world damages,"
-ewarn "or compromise security from within."
+ewarn "You are enabling AI agent support which is accessible by the launch"
+ewarn "command.  This has the potential to be abused by insider threats or"
+ewarn "remote threat actors and may cause real world damages, compromise"
+ewarn "security from within with LLM generated malware, or be used for Living"
+ewarn "of the LLM (LOLLM) attacks."
 ewarn
 ewarn "It is suggested to whitelist or blacklist users for the ollama"
 ewarn "executable using ACL to protect the AI agent."
