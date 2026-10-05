@@ -113,7 +113,7 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "${S}/package-lock.json" || die
-#		sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^0.5.0\"|g" "${S}/package-lock.json" || die
+#		sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^${NODE_FLATTED_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^0.19.0\"|\"http-proxy-middleware\": \"^2.0.10\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
