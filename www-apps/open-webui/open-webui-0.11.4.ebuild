@@ -42,6 +42,11 @@ NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
 
+NPM_DEDUPE_ARGS=(
+	"--prefer-offline"
+	"--legacy-peer-deps"
+)
+
 NPM_INSTALL_ARGS=(
 	"--prefer-offline"
 	"--legacy-peer-deps"
@@ -83,7 +88,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr -telemetry unstructured systemd
 valkey
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	all? (
@@ -342,6 +347,8 @@ npm_dedupe_post() {
 			sed -i -e "s|\"vitest\": \"^1.6.1\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die # 1 -> 4 bump may cause breakage
 		}
 
+		patch_lockfile
+
 		local pkgs
 		pkgs=(
 			"cookie@^${NODE_COOKIE_PV}"
@@ -354,10 +361,18 @@ npm_dedupe_post() {
 		)
 		enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
+		patch_lockfile
+
 		pkgs=(
 			"sharp@^${NODE_SHARP_PV}"
 		)
 		enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
+		epnpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+
+		patch_lockfile
 	fi
 }
 
