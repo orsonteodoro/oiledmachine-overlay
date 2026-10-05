@@ -66,40 +66,41 @@ BDEPEND+="
 "
 DOCS=( "readme.md" )
 
-npm_update_lock_install_post() {
+npm_dedupe_post() {
 einfo "Called npm_update_lock_install_post()"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 einfo "npm_update_lock_install_post():  Updating lockfile"
 		patch_lockfile() {
-			sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
-			sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
-			sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^7.0.5\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
-			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^7.0.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|g" "package-lock.json" || die
+			sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^${NODE_BRACES_PV}\"|g" "package-lock.json" || die
 
-			sed -i -e "s|\"sha.js\": \"^2.4.0\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
-			sed -i -e "s|\"sha.js\": \"^2.4.8\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
-			sed -i -e "s|\"sha.js\": \"^2.4.11\"|\"sha.js\": \"^2.4.12\"|g" "package-lock.json" || die
-			sed -i -e "s|\"uuid\": \"^3.3.2\"|\"uuid\": \"^14.0.0\"|g" "package-lock.json" || die
-			:
+			sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"postcss\": \"^7.0.5\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"uuid\": \"^3.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 		}
-		#patch_lockfile
+		patch_lockfile
 
 		local pkgs=(
-			"braces@^3.0.3"
-			"postcss@^8.4.31"
-			"serialize-javascript@^7.0.5"
-			"pbkdf2@^3.1.3"
-			"sha.js@^2.4.12"
-			"uuid@^14.0.0"
+			"braces@^${NODE_BRACES_PV}"
+			"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
+			"postcss@^${NODE_POSTCSS_PV}"
+			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
+			"uuid@^${NODE_UUID_11_PV}"
 		)
-		#enpm add "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
-		#patch_lockfile
-		:
+		enpm add "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
+		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+
+		patch_lockfile
 	fi
 }
 
