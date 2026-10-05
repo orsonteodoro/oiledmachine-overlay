@@ -324,16 +324,41 @@ pkg_setup() {
 	node-sharp_pkg_setup
 }
 
-npm_update_lock_install_post() {
+npm_dedupe_post() {
+	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 #ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-lock.json."
-	local pkgs
-	pkgs=(
-	)
-	#enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+		patch_lockfile() {
+			sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"^${NODE_COOKIE_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"pdfjs-dist\": \"^5.4.149\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"qs\": \"~6.14.1\"|\"qs\": \"^${NODE_QS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0\"#\"vite\": \"^${NODE_VITE_6_PV}\"#g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die # 5 -> 6 bump may cause breakage
+			sed -i -e "s#\"vite\": \"^5.0.0 || ^6.0.0\"#\"vite\": \"^${NODE_VITE_6_PV}\"#g" "package-lock.json" || die
+			sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0 || ^7.0.0-beta.0 || ^8.0.0\"#\"vite\": \"^${NODE_VITE_6_PV}\"#g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.4.21\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die # 5 -> 6 bump may cause breakage
+			sed -i -e "s|\"vitest\": \"^1.6.1\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die # 1 -> 4 bump may cause breakage
+		}
 
-	pkgs=(
-	)
-	#enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+		local pkgs
+		pkgs=(
+			"cookie@^${NODE_COOKIE_PV}"
+			"esbuild@^${NODE_ESBUILD_PV}"
+			"pdfjs-dist@^${NODE_PDFJS_DIST_PV}"
+			"qs@^${NODE_QS_PV}"
+			"uuid@^${NODE_UUID_11_PV}"
+			"vite@^${NODE_VITE_6_PV}"
+			"vitest@^${NODE_VITEST_4_PV}"
+		)
+		enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+
+		pkgs=(
+			"sharp@^${NODE_SHARP_PV}"
+		)
+		enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
+	fi
 }
 
 _rebuild_sharp() {
