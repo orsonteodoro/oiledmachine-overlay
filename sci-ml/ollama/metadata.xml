@@ -144,6 +144,9 @@
     <flag name="droid">
       Add support for Droid coding agent.
     </flag>
+    <flag name="dsh">
+      Add support for DeepSeek Harness coding agent.
+    </flag>
     <flag name="emoji">
       Support emojis.
     </flag>

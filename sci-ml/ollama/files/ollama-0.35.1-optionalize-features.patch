@@ -1,0 +1,725 @@
+diff '--color=auto' -urp ollama-0.35.1.orig/api/client.go ollama-0.35.1/api/client.go
+--- ollama-0.35.1.orig/api/client.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/api/client.go	2026-10-05 13:01:13.120740003 -0700
+@@ -479,6 +479,7 @@ func (c *Client) Version(ctx context.Con
+ // CloudStatusExperimental returns whether cloud features are disabled on the server.
+ func (c *Client) CloudStatusExperimental(ctx context.Context) (*StatusResponse, error) {
+ 	var status StatusResponse
++	return &status, fmt.Errorf("cloud support is disabled") // DISABLE_CLOUD
+ 	if err := c.do(ctx, http.MethodGet, "/api/status", nil, &status); err != nil {
+ 		return nil, err
+ 	}
+Only in ollama-0.35.1/api: client.go.orig
+diff '--color=auto' -urp ollama-0.35.1.orig/app/cmd/app/app.go ollama-0.35.1/app/cmd/app/app.go
+--- ollama-0.35.1.orig/app/cmd/app/app.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/app/cmd/app/app.go	2026-10-05 14:49:56.075003745 -0700
+@@ -488,6 +488,8 @@ func openInBrowser(url string) {
+ 	var cmd string
+ 	var args []string
+ 
++	return // oiledmachine-overlay added
++
+ 	switch runtime.GOOS {
+ 	case "windows":
+ 		cmd = "rundll32"
+diff '--color=auto' -urp ollama-0.35.1.orig/app/tools/cloud_policy.go ollama-0.35.1/app/tools/cloud_policy.go
+--- ollama-0.35.1.orig/app/tools/cloud_policy.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/app/tools/cloud_policy.go	2026-10-05 13:01:13.120952733 -0700
+@@ -17,6 +17,8 @@ func ensureCloudEnabledForTool(ctx conte
+ 	// the connected server's /api/status endpoint below.
+ 	disabledMessage := internalcloud.DisabledError(operation)
+ 
++	return errors.New(disabledMessage + " (cloud support is disabled)") // DISABLE_CLOUD
++
+ 	client, err := api.ClientFromEnvironment()
+ 	if err != nil {
+ 		return errors.New(disabledMessage + " (unable to verify server cloud policy)")
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/interactive.go ollama-0.35.1/cmd/interactive.go
+--- ollama-0.35.1.orig/cmd/interactive.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/interactive.go	2026-10-05 13:01:13.121142096 -0700
+@@ -641,6 +641,7 @@ func extractFileData(input string) (stri
+ }
+ 
+ func editInExternalEditor(content string) (string, error) {
++	return "", fmt.Errorf("external editor support is disabled") // DISABLE_EXTERNAL_EDITOR
+ 	editor := envconfig.Editor()
+ 	if editor == "" {
+ 		editor = os.Getenv("VISUAL")
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/claude_desktop.go ollama-0.35.1/cmd/launch/claude_desktop.go
+--- ollama-0.35.1.orig/cmd/launch/claude_desktop.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/claude_desktop.go	2026-10-05 14:44:25.690421495 -0700
+@@ -1068,6 +1068,7 @@ func (c *ClaudeDesktop) Open() error {
+ }
+ 
+ func defaultClaudeDesktopRunning(ctx context.Context) (bool, error) {
++	return false, nil // DISABLE_CLAUDE_DESKTOP
+ 	var (
+ 		out []byte
+ 		err error
+@@ -1093,6 +1094,7 @@ func defaultClaudeDesktopRunning(ctx con
+ }
+ 
+ func defaultClaudeDesktopOpenApp() error {
++	return errors.New("Claude Desktop support is disabled"); // DISABLE_CLAUDE_DESKTOP
+ 	switch claudeDesktopGOOS {
+ 	case "windows":
+ 		if path := claudeDesktopAppPath(); path != "" {
+@@ -1114,6 +1116,7 @@ func defaultClaudeDesktopOpenApp() error
+ }
+ 
+ func defaultClaudeDesktopOpenAppPath(path string) error {
++	return errors.New("Claude Desktop support is disabled") // DISABLE_CLAUDE_DESKTOP
+ 	switch claudeDesktopGOOS {
+ 	case "windows":
+ 		return exec.Command("powershell.exe", "-NoProfile", "-Command", "Start-Process -FilePath "+quotePowerShellString(path)).Run()
+@@ -1129,6 +1132,7 @@ func claudeDesktopDarwinOpenArgs(path st
+ }
+ 
+ func openClaudeDesktopDarwin(path string) error {
++	return errors.New("Claude Desktop support is disabled") // DISABLE_CLAUDE_DESKTOP
+ 	cmd := exec.Command("/usr/bin/open", claudeDesktopDarwinOpenArgs(path)...)
+ 	cmd.Stdout = os.Stdout
+ 	cmd.Stderr = os.Stderr
+@@ -1136,6 +1140,7 @@ func openClaudeDesktopDarwin(path string
+ }
+ 
+ func defaultClaudeDesktopRunningAppPath() string {
++	return "" // DISABLE_CLAUDE_DESKTOP
+ 	if claudeDesktopGOOS != "windows" {
+ 		return ""
+ 	}
+@@ -1148,6 +1153,7 @@ func defaultClaudeDesktopRunningAppPath(
+ }
+ 
+ func defaultClaudeDesktopQuitApp(ctx context.Context) error {
++	return errors.New("Claude Desktop support is disabled") // DISABLE_CLAUDE_DESKTOP
+ 	if claudeDesktopGOOS == "windows" {
+ 		script := `Get-Process claude -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { [void]$_.CloseMainWindow() }`
+ 		return exec.CommandContext(ctx, "powershell.exe", "-NoProfile", "-Command", script).Run()
+Only in ollama-0.35.1/cmd/launch: claude_desktop.go.orig
+Only in ollama-0.35.1/cmd/launch: claude_desktop.go.rej
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/claude.go ollama-0.35.1/cmd/launch/claude.go
+--- ollama-0.35.1.orig/cmd/launch/claude.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/claude.go	2026-10-05 14:40:00.812085658 -0700
+@@ -27,6 +27,7 @@ func (c *Claude) args(model string, extr
+ }
+ 
+ func (c *Claude) findPath() (string, error) {
++	return "", fmt.Errorf("claude support is disabled") // DISABLE_CLAUDE
+ 	if p, err := exec.LookPath("claude"); err == nil {
+ 		return p, nil
+ 	}
+@@ -50,6 +51,7 @@ func (c *Claude) findPath() (string, err
+ }
+ 
+ func (c *Claude) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("claude support is disabled") // DISABLE_CLAUDE
+ 	claudePath, err := ensureClaudeInstalled()
+ 	if err != nil {
+ 		return err
+@@ -87,6 +89,7 @@ func (c *Claude) envVars(model string) [
+ }
+ 
+ func ensureClaudeInstalled() (string, error) {
++	return "", fmt.Errorf("claude support is disabled") // DISABLE_CLAUDE
+ 	if path, err := (&Claude{}).findPath(); err == nil {
+ 		return path, nil
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/cline.go ollama-0.35.1/cmd/launch/cline.go
+--- ollama-0.35.1.orig/cmd/launch/cline.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/cline.go	2026-10-05 14:45:16.520218941 -0700
+@@ -21,6 +21,7 @@ type Cline struct{}
+ func (c *Cline) String() string { return "Cline" }
+ 
+ func (c *Cline) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("cline support is disabled") // DISABLE_CLINE
+ 	bin, err := ensureClineInstalled()
+ 	if err != nil {
+ 		return err
+@@ -35,6 +36,7 @@ func (c *Cline) Run(model string, _ []La
+ }
+ 
+ func ensureClineInstalled() (string, error) {
++	return "", fmt.Errorf("cline support is disabled") // DISABLE_CLINE
+ 	if _, err := exec.LookPath("cline"); err == nil {
+ 		return "cline", nil
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/codex_app.go ollama-0.35.1/cmd/launch/codex_app.go
+--- ollama-0.35.1.orig/cmd/launch/codex_app.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/codex_app.go	2026-10-05 14:39:08.074123642 -0700
+@@ -1581,6 +1581,7 @@ func defaultCodexAppCodexExecutable() (s
+ }
+ 
+ func defaultCodexAppRunDebugModels(executable, codexHome string, bundled bool) ([]byte, error) {
++	return nil, fmt.Errorf("codex-app support is disabled") // DISABLE_CODEX_APP
+ 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+ 	defer cancel()
+ 
+@@ -2031,6 +2032,7 @@ func codexAppOllamaProfileProcessIdentit
+ }
+ 
+ func defaultCodexAppProcessCommand(pid int) (string, error) {
++	return "", fmt.Errorf("codex-app support is disabled") // DISABLE_CODEX_APP
+ 	out, err := exec.Command("ps", "-p", strconv.Itoa(pid), "-o", "command=").Output()
+ 	return string(out), err
+ }
+@@ -2077,6 +2079,7 @@ func defaultCodexAppStopOllamaProfile()
+ }
+ 
+ func defaultCodexAppOpenApp(args []string) error {
++	return fmt.Errorf("codex-app support is disabled") // DISABLE_CODEX_APP
+ 	if len(args) > 0 {
+ 		cmd := exec.Command("codex", args...)
+ 		cmd.Stdout = os.Stdout
+@@ -2122,6 +2125,7 @@ func codexAppDarwinOpenArgs(path string)
+ }
+ 
+ func defaultCodexAppOpenAppPath(path string) error {
++	return fmt.Errorf("codex-app support is disabled") // DISABLE_CODEX_APP
+ 	switch codexAppGOOS {
+ 	case "windows":
+ 		return exec.Command("powershell.exe", "-NoProfile", "-Command", "Start-Process -FilePath "+quotePowerShellString(path)).Run()
+@@ -2136,10 +2140,12 @@ func defaultCodexAppOpenAppPath(path str
+ }
+ 
+ func defaultCodexAppOpenStartAppID(appID string) error {
++	return fmt.Errorf("codex-app support is disabled") // DISABLE_CODEX_APP
+ 	return exec.Command("powershell.exe", "-NoProfile", "-Command", "Start-Process "+quotePowerShellString(`shell:AppsFolder\`+appID)).Run()
+ }
+ 
+ func defaultCodexAppQuitApp() error {
++	return fmt.Errorf("codex-app support is disabled") // DISABLE_CODEX_APP
+ 	if codexAppGOOS == "windows" {
+ 		script := `Get-Process ChatGPT,Codex -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object { [void]$_.CloseMainWindow() }`
+ 		return exec.Command("powershell.exe", "-NoProfile", "-Command", script).Run()
+@@ -2156,6 +2162,7 @@ func defaultCodexAppQuitApp() error {
+ }
+ 
+ func defaultCodexAppIsRunning() bool {
++	return false // DISABLE_CODEX_APP
+ 	switch codexAppGOOS {
+ 	case "windows":
+ 		return len(codexAppMatchingProcessIDs()) > 0
+@@ -2170,6 +2177,7 @@ func defaultCodexAppIsRunning() bool {
+ }
+ 
+ func codexAppMatchingProcessIDs() []int {
++	return nil // DISABLE_CODEX_APP
+ 	if codexAppGOOS == "windows" {
+ 		return codexAppWindowsMatchingProcessIDs()
+ 	}
+@@ -2201,6 +2209,7 @@ func codexAppMatchingProcessIDs() []int
+ }
+ 
+ func codexAppWindowsMatchingProcessIDs() []int {
++	return nil // DISABLE_CODEX_APP
+ 	script := fmt.Sprintf(`$current = %d; Get-CimInstance Win32_Process -Filter "Name = 'Codex.exe' OR Name = 'codex.exe' OR Name = 'ChatGPT.exe' OR Name = 'chatgpt.exe'" | Where-Object { $_.ProcessId -ne $current -and ((($_.Name -ieq 'Codex.exe' -or $_.Name -ieq 'ChatGPT.exe') -and (($null -eq $_.CommandLine) -or ($_.CommandLine -notlike '* --type=*'))) -or ((($_.Name -ieq 'codex.exe') -or ($_.Name -ieq 'chatgpt.exe')) -and ($_.CommandLine -like '*app-server*'))) } | Select-Object -ExpandProperty ProcessId`, os.Getpid())
+ 	out, err := exec.Command("powershell.exe", "-NoProfile", "-Command", script).Output()
+ 	if err != nil {
+@@ -2218,6 +2227,7 @@ func codexAppWindowsMatchingProcessIDs()
+ }
+ 
+ func defaultCodexAppRunningAppPath() string {
++	return "" // DISABLE_CODEX_APP
+ 	if codexAppGOOS != "windows" {
+ 		return ""
+ 	}
+@@ -2230,6 +2240,7 @@ func defaultCodexAppRunningAppPath() str
+ }
+ 
+ func defaultCodexAppStartAppID() string {
++	return "" // DISABLE_CODEX_APP
+ 	if codexAppGOOS != "windows" {
+ 		return ""
+ 	}
+@@ -2242,6 +2253,7 @@ func defaultCodexAppStartAppID() string
+ }
+ 
+ func defaultCodexAppCanOpenBundleID() bool {
++	return false // DISABLE_CODEX_APP
+ 	if codexAppGOOS != "darwin" {
+ 		return false
+ 	}
+Only in ollama-0.35.1/cmd/launch: codex_app.go.orig
+Only in ollama-0.35.1/cmd/launch: codex_app.go.rej
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/codex.go ollama-0.35.1/cmd/launch/codex.go
+--- ollama-0.35.1.orig/cmd/launch/codex.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/codex.go	2026-10-05 14:45:47.366694926 -0700
+@@ -52,6 +52,7 @@ func (c *Codex) args(model, modelCatalog
+ }
+ 
+ func (c *Codex) Run(model string, models []LaunchModel, args []string) error {
++	return fmt.Errorf("codex support is disabled") // DISABLE_CODEX
+ 	if err := checkCodexVersion(); err != nil {
+ 		return err
+ 	}
+@@ -762,6 +763,7 @@ func buildCodexModelEntry(launchModel La
+ }
+ 
+ func checkCodexVersion() error {
++	return fmt.Errorf("codex support is disabled") // DISABLE_CODEX
+ 	if _, err := exec.LookPath("codex"); err != nil {
+ 		return fmt.Errorf("codex is not installed, install with: npm install -g @openai/codex")
+ 	}
+Only in ollama-0.35.1/cmd/launch: codex.go.orig
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/copilot.go ollama-0.35.1/cmd/launch/copilot.go
+--- ollama-0.35.1.orig/cmd/launch/copilot.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/copilot.go	2026-10-05 13:01:13.629958977 -0700
+@@ -25,6 +25,7 @@ func (c *Copilot) args(model string, ext
+ }
+ 
+ func (c *Copilot) findPath() (string, error) {
++	return "", fmt.Errorf("copilot support is disabled") // DISABLE_COPILOT
+ 	if p, err := exec.LookPath("copilot"); err == nil {
+ 		return p, nil
+ 	}
+@@ -44,6 +45,7 @@ func (c *Copilot) findPath() (string, er
+ }
+ 
+ func (c *Copilot) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("copilot support is disabled") // DISABLE_COPILOT
+ 	copilotPath, err := c.findPath()
+ 	if err != nil {
+ 		return fmt.Errorf("copilot is not installed, install from https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli")
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/deepseek_harness.go ollama-0.35.1/cmd/launch/deepseek_harness.go
+--- ollama-0.35.1.orig/cmd/launch/deepseek_harness.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/deepseek_harness.go	2026-10-05 14:55:53.914526698 -0700
+@@ -39,6 +39,7 @@ type DeepSeekHarness struct{}
+ func (d *DeepSeekHarness) String() string { return "DeepSeek Harness" }
+ 
+ func (d *DeepSeekHarness) Run(_ string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("dsh support is disabled") // DISABLE_DSH
+ 	if err := validateDeepSeekHarnessArgs(args); err != nil {
+ 		return err
+ 	}
+@@ -138,6 +139,7 @@ func deepSeekHarnessNpmCommand(bin strin
+ }
+ 
+ func deepSeekHarnessLaunchCommand(args []string) (*exec.Cmd, error) {
++	return nil, fmt.Errorf("dsh support is disabled") // DISABLE_DSH
+ 	bin, dshErr := deepSeekHarnessLookPath("dsh")
+ 	if dshErr == nil {
+ 		return deepSeekHarnessExecutableCommand(bin, args)
+@@ -156,6 +158,7 @@ func deepSeekHarnessLaunchCommand(args [
+ // CreateProcess with an argv. Invoke their JavaScript entrypoints with Node so
+ // passthrough arguments remain data rather than cmd.exe syntax.
+ func deepSeekHarnessNodeShimCommand(shim string, entrypointParts, args []string) (*exec.Cmd, error) {
++	return nil, fmt.Errorf("dsh support is disabled") // DISABLE_DSH
+ 	if deepSeekHarnessGOOS != "windows" || !deepSeekHarnessIsCommandShim(shim) {
+ 		return deepSeekHarnessCommand(shim, args...), nil
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/droid.go ollama-0.35.1/cmd/launch/droid.go
+--- ollama-0.35.1.orig/cmd/launch/droid.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/droid.go	2026-10-05 13:01:13.630103382 -0700
+@@ -41,6 +41,7 @@ type modelEntry struct {
+ func (d *Droid) String() string { return "Droid" }
+ 
+ func (d *Droid) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("droid support is disabled") // DISABLE_DROID
+ 	if _, err := exec.LookPath("droid"); err != nil {
+ 		return fmt.Errorf("droid is not installed, install from https://docs.factory.ai/cli/getting-started/quickstart")
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/hermes.go ollama-0.35.1/cmd/launch/hermes.go
+--- ollama-0.35.1.orig/cmd/launch/hermes.go	2026-10-05 12:49:09.881494286 -0700
++++ ollama-0.35.1/cmd/launch/hermes.go	2026-10-05 14:33:55.671844606 -0700
+@@ -71,6 +71,8 @@ type Hermes struct{}
+ func (h *Hermes) String() string { return "Hermes Agent" }
+ 
+ func (h *Hermes) Run(_ string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
++
+ 	// Hermes reads its primary model from config.yaml. launch configures that
+ 	// default model ahead of time so we can keep runtime invocation simple and
+ 	// still let Hermes discover additional models later via its own UX.
+@@ -93,6 +95,8 @@ type HermesDesktop struct {
+ func (h *HermesDesktop) String() string { return "Hermes Desktop" }
+ 
+ func (h *HermesDesktop) Run(_ string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
++
+ 	bin, err := h.binary()
+ 	if err != nil {
+ 		return err
+@@ -104,6 +108,7 @@ func (h *HermesDesktop) Run(_ string, _
+ }
+ 
+ func (h *HermesDesktop) ensureHermesDesktopMinVersion(bin string) error {
++	return fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
+ 	if hermesGOOS == "windows" {
+ 		return nil
+ 	}
+@@ -122,6 +127,7 @@ func (h *HermesDesktop) ensureHermesDesk
+ }
+ 
+ func hermesVersionOf(bin string) string {
++	return "" // DISABLE_HERMES
+ 	out, err := hermesCommand(bin, "--version").Output()
+ 	if err != nil {
+ 		return ""
+@@ -359,6 +365,7 @@ func (h *Hermes) installed() bool {
+ }
+ 
+ func (h *Hermes) ensureInstalled() error {
++	return fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
+ 	return h.ensureInstalledFor("hermes")
+ }
+ 
+@@ -403,6 +410,7 @@ func (h *Hermes) ensureInstalledFor(comm
+ }
+ 
+ func (h *Hermes) runInstallScript() error {
++	return fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
+ 	if hermesGOOS == "windows" {
+ 		return hermesAttachedCommand("powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", hermesWindowsInstallCmd).Run()
+ 	}
+@@ -441,6 +449,7 @@ func (h *Hermes) listModels(defaultModel
+ }
+ 
+ func (h *Hermes) binary() (string, error) {
++	return "", fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
+ 	if path, err := hermesLookPath("hermes"); err == nil {
+ 		return path, nil
+ 	}
+@@ -615,6 +624,7 @@ func (h *Hermes) gatewayRunning() (bool,
+ }
+ 
+ func (h *Hermes) gatewayStatusOutput() (string, error) {
++	return "", fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
+ 	bin, err := h.binary()
+ 	if err != nil {
+ 		return "", err
+@@ -624,6 +634,7 @@ func (h *Hermes) gatewayStatusOutput() (
+ }
+ 
+ func (h *Hermes) restartGateway() error {
++	return fmt.Errorf("hermes support is disabled") // DISABLE_HERMES
+ 	bin, err := h.binary()
+ 	if err != nil {
+ 		return err
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/kimi.go ollama-0.35.1/cmd/launch/kimi.go
+--- ollama-0.35.1.orig/cmd/launch/kimi.go	2026-10-05 12:49:09.882008387 -0700
++++ ollama-0.35.1/cmd/launch/kimi.go	2026-10-05 14:45:32.208786132 -0700
+@@ -37,6 +37,7 @@ func (k *Kimi) args(config string, extra
+ }
+ 
+ func (k *Kimi) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("kimi support is disabled") // DISABLE_KIMI
+ 	if strings.TrimSpace(model) == "" {
+ 		return fmt.Errorf("model is required")
+ 	}
+@@ -62,6 +63,7 @@ func (k *Kimi) Run(model string, _ []Lau
+ }
+ 
+ func findKimiBinary() (string, error) {
++	return "", fmt.Errorf("kimi support is disabled") // DISABLE_KIMI
+ 	if path, err := exec.LookPath("kimi"); err == nil {
+ 		return path, nil
+ 	}
+@@ -234,6 +236,7 @@ func modelInfoContextLength(modelInfo ma
+ }
+ 
+ func ensureKimiInstalled() (string, error) {
++	return "", fmt.Errorf("kimi support is disabled") // DISABLE_KIMI
+ 	if path, err := findKimiBinary(); err == nil {
+ 		return path, nil
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/models.go ollama-0.35.1/cmd/launch/models.go
+--- ollama-0.35.1.orig/cmd/launch/models.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/models.go	2026-10-05 13:01:13.630661445 -0700
+@@ -155,6 +155,7 @@ const (
+ 
+ // OpenBrowser opens the URL in the user's browser.
+ func OpenBrowser(url string) {
++	return // DISABLE_CLOUD
+ 	switch runtime.GOOS {
+ 	case "darwin":
+ 		_ = exec.Command("open", url).Start()
+@@ -184,6 +185,7 @@ func ensureAuth(ctx context.Context, cli
+ }
+ 
+ func ensureCloudAuth(ctx context.Context, client *api.Client, modelList string) error {
++	return errors.New(internalcloud.DisabledError("cloud support is disabled")) // DISABLE_CLOUD
+ 	if disabled, known := cloudStatusDisabled(ctx, client); known && disabled {
+ 		return errors.New(internalcloud.DisabledError("remote inference is unavailable"))
+ 	}
+@@ -259,6 +261,7 @@ func showOrPullWithPolicy(ctx context.Co
+ 		return nil
+ 	} else {
+ 		if isCloudModel {
++			return errors.New(internalcloud.DisabledError("cloud support is disabled")) // DISABLE_CLOUD
+ 			if disabled, known := cloudStatusDisabled(ctx, client); known && disabled {
+ 				return errors.New(internalcloud.DisabledError("remote inference is unavailable"))
+ 			}
+@@ -528,6 +531,7 @@ func isCloudModel(ctx context.Context, c
+ // cloudStatusDisabled returns whether cloud usage is currently disabled.
+ func cloudStatusDisabled(ctx context.Context, client *api.Client) (disabled bool, known bool) {
+ 	status, err := client.CloudStatusExperimental(ctx)
++	return status.Cloud.Disabled, true // DISABLE_CLOUD
+ 	if err != nil {
+ 		var statusErr api.StatusError
+ 		if errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound {
+Only in ollama-0.35.1/cmd/launch: models.go.orig
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/muse.go ollama-0.35.1/cmd/launch/muse.go
+--- ollama-0.35.1.orig/cmd/launch/muse.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/muse.go	2026-10-05 14:29:11.044487485 -0700
+@@ -62,6 +62,7 @@ var museInstallCommand = []string{"bash"
+ // ensureMuseInstalled returns the muse binary path, offering to run the
+ // official installer when it is missing and verifying the binary afterward.
+ func ensureMuseInstalled() (string, error) {
++	return "", fmt.Errorf("muse support is disabled") // DISABLE_MUSE
+ 	if path, err := findMuse(); err == nil {
+ 		return path, nil
+ 	}
+@@ -116,6 +117,7 @@ func (m *Muse) Supported() error {
+ }
+ 
+ func (m *Muse) Run(model string, models []LaunchModel, args []string) error {
++	return fmt.Errorf("muse support is disabled") // DISABLE_MUSE
+ 	if err := m.Supported(); err != nil {
+ 		return err
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/omp.go ollama-0.35.1/cmd/launch/omp.go
+--- ollama-0.35.1.orig/cmd/launch/omp.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/omp.go	2026-10-05 13:01:13.630888277 -0700
+@@ -136,6 +136,7 @@ func ompExecutableNames() []string {
+ }
+ 
+ func (o *OMP) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("omp support is disabled") // DISABLE_OMP
+ 	ompPath, err := o.findPath()
+ 	if err != nil {
+ 		return fmt.Errorf("omp is not installed, install from https://omp.sh")
+@@ -152,6 +153,7 @@ func (o *OMP) Run(model string, _ []Laun
+ }
+ 
+ func ensureOMPWebSearchPlugin(bin string) {
++	return // DISABLE_OMP
+ 	if !shouldManageOllamaWebSearch() {
+ 		fmt.Fprintf(os.Stderr, "%sCloud is disabled; skipping %s setup.%s\n", ansiGray, ompWebSearchPlugin, ansiReset)
+ 		return
+@@ -187,6 +189,7 @@ func ensureOMPWebSearchPlugin(bin string
+ }
+ 
+ func ompPluginInstalled(bin, plugin string) (bool, error) {
++	return false, fmt.Errorf("omp support is disabled") // DISABLE_OMP
+ 	cmd := exec.Command(bin, "plugin", "list")
+ 	out, err := cmd.CombinedOutput()
+ 	if err != nil {
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/openclaw.go ollama-0.35.1/cmd/launch/openclaw.go
+--- ollama-0.35.1.orig/cmd/launch/openclaw.go	2026-10-05 12:49:09.882452918 -0700
++++ ollama-0.35.1/cmd/launch/openclaw.go	2026-10-05 14:43:01.262243664 -0700
+@@ -28,6 +28,7 @@ type Openclaw struct{}
+ func (c *Openclaw) String() string { return "OpenClaw" }
+ 
+ func (c *Openclaw) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("OpenClaw support is disabled") // DISABLE_OPENCLAW
+ 	bin, err := ensureOpenclawInstalled()
+ 	if err != nil {
+ 		return err
+@@ -157,6 +158,7 @@ func shouldEnsureGatewayForArgs(args []s
+ }
+ 
+ func (c *Openclaw) ensureGatewayReady(bin string) (func(), string, int, error) {
++	return nil, "", 0, fmt.Errorf("openclaw support is disabled") // DISABLE_OPENCLAW
+ 	token, port := c.gatewayInfo()
+ 	addr := fmt.Sprintf("127.0.0.1:%d", port)
+ 
+@@ -216,6 +218,7 @@ func (c *Openclaw) ensureGatewayReady(bi
+ // starting the built-in gateway+TUI flow. In interactive sessions, it loops
+ // until a channel is configured, unless the user chooses "Set up later".
+ func (c *Openclaw) runChannelSetupPreflight(bin string) error {
++	return fmt.Errorf("openclaw support is disabled") // DISABLE_OPENCLAW
+ 	if !isInteractiveSession() {
+ 		return nil
+ 	}
+@@ -589,6 +592,7 @@ func canInstallDaemon() bool {
+ }
+ 
+ func ensureOpenclawInstalled() (string, error) {
++	return "", fmt.Errorf("OpenClaw support is disabled") // DISABLE_OPENCLAW
+ 	if _, err := exec.LookPath("openclaw"); err == nil {
+ 		return "openclaw", nil
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/opencode.go ollama-0.35.1/cmd/launch/opencode.go
+--- ollama-0.35.1.orig/cmd/launch/opencode.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/opencode.go	2026-10-05 14:40:34.773048000 -0700
+@@ -30,6 +30,7 @@ func (o *OpenCode) String() string { ret
+ // findOpenCode returns the opencode binary path, checking PATH first then the
+ // curl installer location (~/.opencode/bin) which may not be on PATH yet.
+ func findOpenCode() (string, bool) {
++	return "", false // DISABLE_OPENCODE
+ 	if p, err := exec.LookPath("opencode"); err == nil {
+ 		return p, true
+ 	}
+@@ -49,6 +50,7 @@ func findOpenCode() (string, bool) {
+ }
+ 
+ func (o *OpenCode) Run(model string, models []LaunchModel, args []string) error {
++	return fmt.Errorf("opencode support is disabled") // DISABLE_OPENCODE
+ 	opencodePath, err := ensureOpenCodeInstalled()
+ 	if err != nil {
+ 		return err
+@@ -66,6 +68,7 @@ func (o *OpenCode) Run(model string, mod
+ }
+ 
+ func ensureOpenCodeInstalled() (string, error) {
++	return "", fmt.Errorf("opencode support is disabled") // DISABLE_OPENCODE
+ 	if opencodePath, ok := findOpenCode(); ok {
+ 		return opencodePath, nil
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/pi.go ollama-0.35.1/cmd/launch/pi.go
+--- ollama-0.35.1.orig/cmd/launch/pi.go	2026-10-05 12:49:09.882932222 -0700
++++ ollama-0.35.1/cmd/launch/pi.go	2026-10-05 13:01:13.631594354 -0700
+@@ -34,6 +34,7 @@ func (p *Pi) String() string { return "P
+ var npmRegistryBaseURL = "https://registry.npmjs.org"
+ 
+ func (p *Pi) Run(_ string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("Pi support is disabled") // DISABLE_PI
+ 	fmt.Fprintf(os.Stderr, "\n%sPreparing Pi...%s\n", ansiGray, ansiReset)
+ 	if err := ensureNpmInstalled(); err != nil {
+ 		return err
+@@ -57,6 +58,7 @@ func (p *Pi) Run(_ string, _ []LaunchMod
+ }
+ 
+ func ensureNpmInstalled() error {
++	return fmt.Errorf("Pi support is disabled") // DISABLE_PI
+ 	if _, err := exec.LookPath("npm"); err != nil {
+ 		return fmt.Errorf("npm (Node.js) is required to launch pi\n\nInstall it first:\n  https://nodejs.org/\n\nThen re-run:\n  ollama launch pi")
+ 	}
+@@ -64,6 +66,7 @@ func ensureNpmInstalled() error {
+ }
+ 
+ func ensurePiInstalled() (string, error) {
++	return "", fmt.Errorf("Pi support is disabled") // DISABLE_PI
+ 	if _, err := exec.LookPath("pi"); err == nil {
+ 		install, pkgErr := installedPiPackageInfo()
+ 		if pkgErr != nil {
+@@ -185,6 +188,7 @@ func uninstallLegacyPiPackageWithPrefix(
+ }
+ 
+ func runQuietCommand(name string, args ...string) error {
++	return fmt.Errorf("Pi support is disabled") // DISABLE_PI
+ 	cmd := exec.Command(name, args...)
+ 	out, err := cmd.CombinedOutput()
+ 	if err == nil {
+@@ -312,6 +316,7 @@ func npmPackageInstalled(pkg string) (bo
+ }
+ 
+ func npmPackageInstalledWithPrefix(pkg, prefix string) (bool, error) {
++	return false, fmt.Errorf("Pi support is disabled") // DISABLE_PI
+ 	cmd := exec.Command("npm", npmArgs(prefix, "ls", "-g", pkg, "--depth=0", "--json")...)
+ 	out, err := cmd.Output()
+ 
+@@ -353,6 +358,7 @@ func npmArgs(prefix string, args ...stri
+ }
+ 
+ func ensurePiWebSearchPackage(bin string) {
++	return // DISABLE_PI
+ 	if !shouldManageOllamaWebSearch() {
+ 		fmt.Fprintf(os.Stderr, "%sCloud is disabled; skipping %s setup.%s\n", ansiGray, piWebSearchPkg, ansiReset)
+ 		return
+@@ -416,6 +422,7 @@ type piPackageListEntry struct {
+ }
+ 
+ func piPackageInfo(bin, source string) (piPackageListEntry, error) {
++	return piPackageListEntry{}, fmt.Errorf("Pi support is disabled") // DISABLE_PI
+ 	cmd := exec.Command(bin, "list")
+ 	out, err := cmd.CombinedOutput()
+ 	if err != nil {
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/poolside.go ollama-0.35.1/cmd/launch/poolside.go
+--- ollama-0.35.1.orig/cmd/launch/poolside.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/poolside.go	2026-10-05 13:01:13.631778084 -0700
+@@ -30,6 +30,7 @@ func (p *Poolside) args(model string, ex
+ }
+ 
+ func (p *Poolside) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("pool support is disabled") // DISABLE_POOL
+ 	if poolsideGOOS == "windows" {
+ 		return poolsideUnsupportedError()
+ 	}
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/qwen.go ollama-0.35.1/cmd/launch/qwen.go
+--- ollama-0.35.1.orig/cmd/launch/qwen.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/qwen.go	2026-10-05 14:43:16.685518966 -0700
+@@ -94,6 +94,7 @@ func qwenWindowsLocalAppData(home string
+ }
+ 
+ func ensureQwenInstalled() (string, error) {
++	return "", fmt.Errorf("qwen code support is disabled") // DISABLE_QWEN_CODE
+ 	if path, err := (&Qwen{}).findPath(); err == nil {
+ 		return path, nil
+ 	}
+@@ -223,6 +224,7 @@ func qwenInstallerCommand(goos string) (
+ }
+ 
+ func (q *Qwen) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("qwen code support is disabled") // DISABLE_QWEN_CODE
+ 	qwenPath, err := q.findPath()
+ 	if err != nil {
+ 		return fmt.Errorf("qwen is not installed: %w", err)
+diff '--color=auto' -urp ollama-0.35.1.orig/cmd/launch/vscode.go ollama-0.35.1/cmd/launch/vscode.go
+--- ollama-0.35.1.orig/cmd/launch/vscode.go	2026-10-01 18:05:01.000000000 -0700
++++ ollama-0.35.1/cmd/launch/vscode.go	2026-10-05 14:45:03.320724777 -0700
+@@ -27,6 +27,7 @@ func (v *VSCode) String() string { retur
+ // findBinary returns the path/command to launch VS Code, or "" if not found.
+ // It checks platform-specific locations only.
+ func (v *VSCode) findBinary() string {
++	return "" // DISABLE_VSCODE
+ 	var candidates []string
+ 	switch runtime.GOOS {
+ 	case "darwin":
+@@ -55,6 +56,7 @@ func (v *VSCode) findBinary() string {
+ // Each platform uses a pattern specific enough to avoid matching Cursor or
+ // other VS Code forks.
+ func (v *VSCode) IsRunning() bool {
++	return false // DISABLE_VSCODE
+ 	switch runtime.GOOS {
+ 	case "darwin":
+ 		out, err := exec.Command("pgrep", "-f", "Visual Studio Code.app/Contents/MacOS/Code").Output()
+@@ -80,6 +82,7 @@ func (v *VSCode) IsRunning() bool {
+ // Quit gracefully quits VS Code and waits for it to exit so that it flushes
+ // its in-memory state back to the database.
+ func (v *VSCode) Quit() {
++	return // DISABLE_VSCODE
+ 	if !v.IsRunning() {
+ 		return
+ 	}
+@@ -127,6 +130,7 @@ const (
+ )
+ 
+ func (v *VSCode) Run(model string, _ []LaunchModel, args []string) error {
++	return fmt.Errorf("vscode integration disabled") // DISABLE_VSCODE
+ 	v.checkVSCodeVersion()
+ 	v.checkCopilotChatVersion()
+ 
+@@ -214,6 +218,7 @@ func (v *VSCode) ensureModelsRegistered(
+ 
+ // FocusVSCode brings VS Code to the foreground.
+ func (v *VSCode) FocusVSCode() {
++	return // DISABLE_VSCODE
+ 	binary := v.findBinary()
+ 	if binary == "" {
+ 		return
+@@ -473,6 +478,7 @@ func (v *VSCode) vscodePath(parts ...str
+ 
+ // checkVSCodeVersion warns if VS Code is older than minVSCodeVersion.
+ func (v *VSCode) checkVSCodeVersion() {
++	return // DISABLE_VSCODE
+ 	codeCLI := v.findCodeCLI()
+ 	if codeCLI == "" {
+ 		return
+@@ -499,6 +505,7 @@ func (v *VSCode) checkVSCodeVersion() {
+ // checkCopilotChatVersion warns if the GitHub Copilot Chat extension is
+ // missing or older than minCopilotChatVersion.
+ func (v *VSCode) checkCopilotChatVersion() {
++	return // DISABLE_VSCODE
+ 	codeCLI := v.findCodeCLI()
+ 	if codeCLI == "" {
+ 		return
+@@ -525,6 +532,7 @@ func (v *VSCode) checkCopilotChatVersion
+ // On macOS, findBinary may return an .app bundle which can't run --list-extensions,
+ // so this resolves to the actual CLI binary inside the bundle.
+ func (v *VSCode) findCodeCLI() string {
++	return "" // DISABLE_VSCODE
+ 	binary := v.findBinary()
+ 	if binary == "" {
+ 		return ""
