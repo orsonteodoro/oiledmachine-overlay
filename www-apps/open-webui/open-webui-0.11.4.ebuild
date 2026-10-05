@@ -330,7 +330,7 @@ pkg_setup() {
 }
 
 npm_dedupe_post() {
-	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-lock.json."
 		patch_lockfile() {
 			sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"^${NODE_COOKIE_PV}\"|g" "package-lock.json" || die
@@ -370,7 +370,7 @@ npm_dedupe_post() {
 
 		patch_lockfile
 
-		epnpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
 		patch_lockfile
 	fi
