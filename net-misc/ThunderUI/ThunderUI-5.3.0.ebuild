@@ -57,7 +57,7 @@ IUSE+="
 ebuild_revision_9
 "
 RDEPEND+="
-	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
+	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}=[webassembly(+)]
 "
 DEPEND+="
 	${RDEPEND}
