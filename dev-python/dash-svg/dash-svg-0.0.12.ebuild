@@ -56,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -119,6 +119,7 @@ npm_update_lock_audit_post() {
 #		sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^${NODE_FLATTED_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^0.19.0\"|\"http-proxy-middleware\": \"^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
