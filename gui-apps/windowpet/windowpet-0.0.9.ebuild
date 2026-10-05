@@ -901,32 +901,28 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 			sed -i -e "s|\"mdast-util-to-hast\": \"^13.0.0\"|\"mdast-util-to-hast\": \"^13.2.1\"|g" "package-lock.json" || die
 		}
 
-		patch_lockfile
+#		patch_lockfile
 		local L
 		L=(
-			"@babel/runtime@^7.26.10"			# CVE-2025-27789; DoS; Moderate
-			"form-data@^4.0.4"				# CVE-2025-7783; VS(DT, ID), SS(DT, ID); Critical
-			"minimatch@^3.1.3"				# CVE-2026-26996; VS(DoS); High
-									# CVE-2026-27903; ZC, DoS; High
-									# CVE-2026-27904; ZC, DoS; High
-			"@remix-run/router@^1.23.2"			# CVE-2026-22029; DT, ID; High
-			"react-router@^6.30.2"				# CVE-2025-68470; DT; Moderate
-			"mdast-util-to-hast@^13.2.1"			# CVE-2025-66400; ZC, VS(DT); Moderate
-			"brace-expansion@^1.1.13"			# CVE-2026-33750; DoS; Moderate
+			"@babel/runtime@^7.26.10"
+			"form-data@^4.0.4"
+			"minimatch@^3.1.3"
+			"@remix-run/router@^1.23.2"
+			"react-router@^6.30.2"
+			"mdast-util-to-hast@^13.2.1"
+			"brace-expansion@^1.1.13"
 		)
-		enpm install "${L[@]}" -P
+#		enpm install "${L[@]}" -P
 
 
 		L=(
-			"esbuild@^0.25.12"				# GHSA-67mh-4wv8-2f99; ID; Moderate
-			"vite@^6.4.2"					# CVE-2025-58751; VS(ID); Low
-									# CVE-2025-58752; VS(ID); Low
-									# CVE-2026-39365; VS(ID); Moderate
-			"picomatch@^4.0.2"				# CVE-2026-33672; DoS, DT; Moderate
-			"rollup@^4.59.0"				# CVE-2026-27606; ZC, VS(DT, ID); High
+			"esbuild@^0.25.12"
+			"vite@^6.4.2"
+			"picomatch@^4.0.2"
+			"rollup@^4.59.0"
 		)
-		enpm install "${L[@]}" -D
-		patch_lockfile
+#		enpm install "${L[@]}" -D
+#		patch_lockfile
 	fi
 }
 
