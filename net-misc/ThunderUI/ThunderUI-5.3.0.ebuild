@@ -54,7 +54,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 	net-libs/nodejs:${NODE_SLOT}[webassembly(+)]
@@ -79,6 +79,7 @@ einfo "npm_update_lock_install_post():  Updating lockfile"
 
 			sed -i -e "s|\"postcss\": \"^7.0.5\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
