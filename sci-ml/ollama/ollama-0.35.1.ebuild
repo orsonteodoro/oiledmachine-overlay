@@ -4463,6 +4463,7 @@ warn_red_teamer_llm() {
 		"ollama_llms_ALIENTELLIGENCE-whiterabbit"
 		"ollama_llms_ALIENTELLIGENCE-whiterabbitv2"
 		"ollama_llms_captainkyd-whiterabbitneo7b"
+		"ollama_llms_DeepHat-DeepHat-V1-7B"
 		"ollama_llms_deepseek-r1"
 		"ollama_llms_deepseek-v4-flash"
 		"ollama_llms_deepseek-v4-pro"

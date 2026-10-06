@@ -3570,7 +3570,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"d4n5h/white-rabbit-neo-70b-v2": "cybersecurity red-team-cybersecurity blue-team-cybersecurity Llama-3.1-WhiteRabbitNeo-2-70B",
 +	"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
 +	"deepcoder": "code-reasoning finetuned-deepseek-r1-distilled-qwen code-generation coding",
-+	"DeepHat/DeepHat-V1-7B": "cybersecurity offensive-cybersecurity defensive-cybersecurity devops",
++	"DeepHat/DeepHat-V1-7B": "cybersecurity red-team-cybersecurity devops",
 +	"deepscaler": "math-word-problems calculus statistics fine-tuned-deepseek-r1-distilled-qwen",
 +	"deepseek-coder": "coding english chinese code-completion fim fill-in-the-middle python",
 +	"deepseek-coder-v2": "coding code-completion code-insertion code-generator",
