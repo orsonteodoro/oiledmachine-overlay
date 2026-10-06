@@ -13,7 +13,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  	"runtime"
  	"slices"
  	"sort"
-@@ -314,6 +316,3916 @@ func createSafetensorsModel(cmd *cobra.C
+@@ -314,6 +316,3913 @@ func createSafetensorsModel(cmd *cobra.C
  	return createModelRemote(cmd.Context(), client, opts, p)
  }
  
@@ -1350,9 +1350,6 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"Maternion/mimo-v2.6-heretic:9b-instruct-q6_K": "8.3GB",
 +	"Maternion/mimo-v2.6-heretic:9b-instruct-q8_0": "10GB",
 +	"Maternion/mimo-v2.6-heretic:9b-thinking": "6.5GB",
-+	"Maternion/mimo-v2.6-heretic:9b-instruct-q6_K": "8.3GB",
-+	"Maternion/mimo-v2.6-heretic:9b-instruct-q8_0": "10GB",
-+	"Maternion/mimo-v2.6-heretic:9b-thinking": "6.5GB",
 +	"Maternion/mimo-v2.6-heretic:9b-thinking-q4_K_M": "6.5GB",
 +	"Maternion/mimo-v2.6-heretic:9b-thinking-q6_K": "8.3GB",
 +	"Maternion/mimo-v2.6-heretic:9b-thinking-q8_0": "10GB",
@@ -1575,21 +1572,21 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"moondream:1.8b-v2-fp16": "3.7GB",
 +	"mshojaei77/gemma3persian:latest": "4.1GB",
 +	"mtayyar/trendmicro-ailab-Llama-Primus-Reasoning:latest": "16GB",
-+	"muse-glimmer:latest", "18GB",
-+	"muse-glimmer:30b", "18GB",
-+	"muse-glimmer:30b-bf16-dflash", "59GB",
-+	"muse-glimmer:30b-mlx", "19GB",
-+	"muse-glimmer:30b-mlx-bf16-dflash", "65GB",
-+	"muse-glimmer:30b-mlx-bf16", "60GB",
-+	"muse-glimmer:30b-mxfp8", "33GB",
-+	"muse-glimmer:30b-mxfp8-dflash", "35GB",
-+	"muse-glimmer:30b-nvfp4", "17GB",
-+	"muse-glimmer:30b-nvfp4-dflash", "19GB",
-+	"muse-glimmer:30b-q4_K_M-dflash", "20GB",
-+	"muse-glimmer:30b-q8_0-dflash", "33GB",
-+	"muse-glimmer:30b-q4_K_M", "18GB",
-+	"muse-glimmer:30b-q8_0", "31GB",
-+	"muse-glimmer:30b-bf16", "57GB",
++	"muse-glimmer:latest": "18GB",
++	"muse-glimmer:30b": "18GB",
++	"muse-glimmer:30b-bf16-dflash": "59GB",
++	"muse-glimmer:30b-mlx": "19GB",
++	"muse-glimmer:30b-mlx-bf16-dflash": "65GB",
++	"muse-glimmer:30b-mlx-bf16": "60GB",
++	"muse-glimmer:30b-mxfp8": "33GB",
++	"muse-glimmer:30b-mxfp8-dflash": "35GB",
++	"muse-glimmer:30b-nvfp4": "17GB",
++	"muse-glimmer:30b-nvfp4-dflash": "19GB",
++	"muse-glimmer:30b-q4_K_M-dflash": "20GB",
++	"muse-glimmer:30b-q8_0-dflash": "33GB",
++	"muse-glimmer:30b-q4_K_M": "18GB",
++	"muse-glimmer:30b-q8_0": "31GB",
++	"muse-glimmer:30b-bf16": "57GB",
 +	"mxbai-embed-large:335m": "670MB",
 +	"mxbai-embed-large:v1": "670MB",
 +	"mxbai-embed-large:335m-v1-fp16": "670MB",
