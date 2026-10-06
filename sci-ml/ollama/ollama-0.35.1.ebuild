@@ -4464,7 +4464,6 @@ warn_red_teamer_llm() {
 		"ollama_llms_deepseek-v4.1-flash"
 		"ollama_llms_devstral"
 		"ollama_llms_frob-mimo-v2.6-pro"
-		"ollama_llms_gemma4"
 		"ollama_llms_glm-5.1"
 		"ollama_llms_glm-5.3"
 		"ollama_llms_kimi-k2"
