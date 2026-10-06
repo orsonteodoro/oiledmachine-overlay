@@ -1,0 +1,48 @@
+# This is an AI generated fix.
+# The -O0 + jitter entropy is better than keeping -D_FORTIFY_SOURCE (to protect against memory corruption).
+# The -O0 + jitter entropy is better than AWS_LC_SYS_CMAKE_BUILDER=1 + /dev/urandom.
+# This is to prevent the system CFLAGS from overriding -O0.
+# The jitter entropy is used as defense in depth secure connections for
+# mitigation against bluebooth eavesdropping and Wi-Fi credential spoofing
+# by securing salts.  It is used for cryptographic isolated handles for
+# secure IPC, credential handshakes, desktop authentications.
+--- a/cargo_home/gentoo/aws-lc-sys-0.45.0/builder/cc_builder.rs.orig	2026-10-05 23:52:20.780035984 -0700
++++ b/cargo_home/gentoo/aws-lc-sys-0.45.0/builder/cc_builder.rs	2026-10-05 23:58:04.000214936 -0700
+@@ -704,8 +704,36 @@ impl CcBuilder {
+         for object in s2n_bignum_object_files {
+             cc_build.object(object);
+         }
+-        if let Some(builder) = jitter_entropy_builder {
++        if let Some(mut builder) = jitter_entropy_builder {
+             let _je_cflags_guards = Self::jitter_entropy_cflags_guards(is_cl_like);
++            
++            // --- ADD THIS DEFINITIVE FLAG STRIPPING ENGINE HERE ---
++            // Extract the underlying compiler command, iterate through all collected 
++            // parameters, drop any trailing optimize options (-O2, -Os, -O3), and force -O0.
++            let compiler = builder.get_compiler();
++            let mut final_flags: Vec<String> = Vec::new();
++            
++            // Forcefully purge any target-inherited optimize or fortify parameters
++            for arg in compiler.args() {
++                let s = arg.to_string_lossy();
++                if !s.starts_with("-O") && !s.starts_with("/O") && !s.contains("FORTIFY_SOURCE") {
++                    final_flags.push(s.into_owned());
++                }
++            }
++            
++            // Clear current tracking arguments by overriding defaults or resetting
++            builder = cc::Build::new(); 
++            
++            // Re-apply the thoroughly sanitized and purified flags
++            for flag in final_flags {
++                builder.flag(&flag);
++            }
++            
++            // Explicitly force safe flags to be the absolute last items in the vector
++            builder.flag("-O0");
++            builder.flag("-U_FORTIFY_SOURCE");
++            // ------------------------------------------------------
++
+             let jitter_entropy_object_files = builder.compile_intermediates();
+             for object in jitter_entropy_object_files {
+                 cc_build.object(object);

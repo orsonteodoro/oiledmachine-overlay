@@ -748,6 +748,7 @@ src_prepare() {
 	default
 	pushd "${WORKDIR}" || die
 		eapply "${FILESDIR}/wayle-cava-0.1.2-path-max.patch"
+		eapply "${FILESDIR}/aws-lc-sys-0.45.0-append-O0.patch"
 	popd || die
 }
 
