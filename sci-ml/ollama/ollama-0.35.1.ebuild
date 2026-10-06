@@ -4444,11 +4444,14 @@ pkg_preinst() {
 	fowners "${PN}:${PN}" "/var/log/${PN}"
 }
 
+# It is preferred to hard mask them but not currently done so because you can
+# find them on other AI apps or it is like free speech censorship.
+# Users can decide to hard mask them.
 warn_red_teamer_llm() {
 # The AI said that above 0.0% demonstrates dangerous quality.
 # TODO:
-# mimo v2.6
 # deepseek-r1 heretic/abliterated models
+# Qwen3.6-Coder
 #
 # Hints which may indicate:
 # 1. >30b or >70b params
@@ -4459,6 +4462,7 @@ warn_red_teamer_llm() {
 		"ollama_llms_deepseek-v4-flash"
 		"ollama_llms_deepseek-v4-pro"
 		"ollama_llms_deepseek-v4.1-flash"
+		"ollama_llms_devstral"
 		"ollama_llms_frob-mimo-v2.6-pro"
 		"ollama_llms_gemma4"
 		"ollama_llms_glm-5.1"
@@ -4473,10 +4477,10 @@ warn_red_teamer_llm() {
 	)
 	local u
 	for u in "${L[@]}" ; do
-ewarn "The ${u} has been identified as having offensive cybersecurity capabilities that are considered dangerous if in the hands of insider threats or remote threat actors."
+ewarn "The ${u} has been identified as having offensive cybersecurity capabilities or may assist in finding 0-days and are considered dangerous if in the hands of insider threats or remote threat actors."
 	done
 	if use unrestrict ; then
-ewarn "The unstrict USE flag may allow for use/access to offensive cybersecurity models that are considered dangerous if in the hands of insider threats or remote threat actors."
+ewarn "The unstrict USE flag may allow for use/access to offensive cybersecurity models or may assist in finding 0-days and are considered dangerous if in the hands of insider threats or remote threat actors."
 	fi
 }
 
