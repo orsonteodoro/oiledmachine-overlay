@@ -2306,6 +2306,8 @@ LICENSE="
 	GO-PATENTS
 	MIT
 	Boost-1.0
+	Ollama-Privacy-Policy
+	Ollama-Terms-of-Service
 	W3C-Test-Suite-Licence
 "
 # Apache-2.0 BSD BSD-2 MIT UoI-NCSA - go-mod/github.com/apache/arrow/NOTICE.txt
