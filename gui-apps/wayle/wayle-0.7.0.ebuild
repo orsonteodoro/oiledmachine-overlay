@@ -658,6 +658,9 @@ REQUIRED_USE="
 	pipewire-pulse? (
 		pipewire
 	)
+	^^ (
+		"${LLVM_COMPAT[@]/#/llvm_slot_}"
+	)
 "
 RDEPEND+="
 	>=gui-libs/gtk-${GTK4_PV}:4=
@@ -772,6 +775,7 @@ einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
 einfo "CPPFLAGS:  ${CPPFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "PATH:  ${PATH}"
 }
 
 src_compile() {
