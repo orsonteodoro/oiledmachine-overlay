@@ -4450,14 +4450,26 @@ pkg_preinst() {
 # find them on other AI apps or it is like free speech censorship.
 # Users can decide to hard mask them.
 warn_red_teamer_llm() {
-# The AI said that above 0.0% demonstrates dangerous quality.
-# TODO:
-# deepseek-r1 heretic/abliterated models
-# Qwen3.6-Coder
 #
-# Hints which may indicate:
+# TODO:
+#
+# cypher-21/SentinalX
+# deepseek-r1 heretic/abliterated models
+# IHA089/drana-infinity-3b
+# IHA089/drana-infinity-7b
+# IHA089/drana-infinity-v1
+# luisppb16/Qwen3.5-9B-Red_Team
+# Qwen3.6-Coder
+# xploiter/bugbounty-ai
+# xploiter/pentester
+# xploiter/the-xploiter
+#
+# Hints that may indicate a dangerous model:
+#
 # 1. >30b or >70b params
 # 2. High scores on SWE-bench
+# 3. The AI said that above 0.0% demonstrates dangerous quality.
+# 4. Lists a score on CyberGym, ExploitGym, ExploitBench
 #
 	local L=(
 		"ollama_llms_ALIENTELLIGENCE-whiterabbit"
@@ -4489,7 +4501,9 @@ warn_red_teamer_llm() {
 	)
 	local u
 	for u in "${L[@]}" ; do
+		if in_iuse "${u}" && use "${u}" ; then
 ewarn "The ${u} has been identified as having offensive cybersecurity capabilities or may assist in finding 0-days and considered dangerous if in the hands of insider threats or remote threat actors."
+		fi
 	done
 	if use unrestrict ; then
 ewarn "The unstrict USE flag may allow for use or access to offensive cybersecurity models or may assist in finding 0-days and considered dangerous if in the hands of insider threats or remote threat actors."
