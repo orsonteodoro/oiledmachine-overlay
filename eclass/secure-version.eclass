@@ -117,6 +117,9 @@ _SECURE_VERSION_ECLASS=1
 
 # Ebuilds or users can override this
 
+# Use CPE for ambiguous names.
+# https://nvd.nist.gov/products/cpe/search/results?keyword=<CPE-ID>
+
 _7ZIP_PV=${_7ZIP_PV:-"26.02"}
 ACL_PV=${ACL_PV:-"2.4.0"}
 ALSA_LIB_PV=${ALSA_LIB_PV:-"9999"}
@@ -230,6 +233,7 @@ FREETYPE_PV=${FREETYPE_PV:-"9999"}
 FREI0R_PLUGINS_PV=${FREI0R_PLUGINS_PV:-"3.2.1"}
 FRIBIDI_PV=${FRIBIDI_PV:-"9999"}
 GEOCLUE_PV=${GEOCLUE_PV:-"2.8.2"}
+GIT_PV=${GIT_PV:-"2.50.1"} # Same as git not gh.  Use cpe:2.3:a:git-scm:git:-:*:*:*:*:*:*:* and https://github.com/git/git/security
 GIFLIB_PV=${GIFLIB_PV:-"9999"}
 GIMP_PV=${GIMP_PV:-"9999"}
 GHOSTSCRIPT_GPL_PV=${GHOSTSCRIPT_GPL_PV:-"9999"}
@@ -237,7 +241,7 @@ GLFW_PV=${GLFW_PV:-"9999"}
 GLSLANG_PV=${GLSLANG_PV:-"9999"}
 GMP_PV=${GMP_PV:-"6.3.0-r100"}
 GNUPG_PV=${GNUPG_PV:-"2.5.20"}
-GO_PV=${GO_PV:-"1.26.5"} # Same as golang.  See https://nvd.nist.gov/products/cpe/search/results?keyword=cpe:2.3:a:golang:go
+GO_PV=${GO_PV:-"1.26.5"} # Same as golang.  Use cpe:2.3:a:golang:go:-:*:*:*:*:*:*:*
 GOOGLE_CLOUD_CPP_PV=${GOOGLE_CLOUD_CPP_PV:-"3.6.0"}
 GRAPHITE2_PV=${GRAPHITE2_PV:-"1.3.15"}
 GREP_PV=${GREP_PV:-"3.8"}

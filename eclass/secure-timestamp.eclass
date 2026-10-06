@@ -220,6 +220,10 @@ SECURE_TIMESTAMP["dev_util_spirv_headers_9999"]="Aug 26, 2026 11:41 AM PDT"
 SECURE_TIMESTAMP["dev_util_spirv_tools_9999"]="Sep 08, 2026 4:41 PM PDT"
 SECURE_TIMESTAMP["dev_util_vulkan_headers_9999"]="Sep 3, 2026 6:20 PM PDT"
 SECURE_TIMESTAMP["dev_util_vulkan_tools_9999"]="Sep 3, 2026 8:25 PM PDT"
+SECURE_TIMESTAMP["dev_vcs_git_9999_r3"]="Jun 15, 2025 9:57 PM PDT"
+SECURE_TIMESTAMP["dev_vcs_git_9999_r2"]="Jun 15, 2025 9:57 PM PDT"
+SECURE_TIMESTAMP["dev_vcs_git_9999_r1"]="Jun 15, 2025 9:57 PM PDT"
+SECURE_TIMESTAMP["dev_vcs_git_9999"]="Jun 15, 2025 9:57 PM PDT"
 SECURE_TIMESTAMP["dev_vcs_subversion_9999"]="May 30, 2026, 1:40 PM PDT"
 SECURE_TIMESTAMP["dev_vcs_mercurial_9999"]="Tue, 17 Mar 2026 18:37:39 +0000"
 SECURE_TIMESTAMP["gnome_base_librsvg_9999"]="2026-09-08 T21:40:44 +00:00"
@@ -512,8 +516,6 @@ SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-04-06 08:00:12 +0000"
 SECURE_TIMESTAMP["x11_libs_pango_9999"]="Jun 1, 2026 3:30 PM PDT"
 SECURE_TIMESTAMP["x11_libs_pixman_9999"]="Aug 1, 2025 9:38:49 AM PDT"
 SECURE_TIMESTAMP["x11_misc_colord_9999"]="Feb 2, 2026 1:31 AM PST"
-
-
 #SECURE_TIMESTAMP[""]=""
 
 	declare -p SECURE_TIMESTAMP
