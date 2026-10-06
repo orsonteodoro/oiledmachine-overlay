@@ -621,7 +621,7 @@ CHKL_TIMESTAMPS=(
 	"net-misc/networkmanager-9999"
 )
 
-inherit cargo cflags-hardened flag-o-matic-om libcxx-slot libstdcxx-slot lcnr rust rustflags-hardened secure-version systemd xdg
+inherit cargo cflags-hardened chkl flag-o-matic-om libcxx-slot libstdcxx-slot lcnr rust rustflags-hardened secure-version systemd xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -756,6 +756,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export CARGO_TERM_VERBOSE="true"
 	export CC="${CHOST}-gcc" # Prevent GCC atomic issue with Clang
 	export CXX="${CHOST}-g++"
