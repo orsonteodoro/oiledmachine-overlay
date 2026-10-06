@@ -4460,6 +4460,9 @@ warn_red_teamer_llm() {
 # 2. High scores on SWE-bench
 #
 	local L=(
+		"ollama_llms_ALIENTELLIGENCE-whiterabbit"
+		"ollama_llms_ALIENTELLIGENCE-whiterabbitv2"
+		"ollama_llms_captainkyd-whiterabbitneo7b"
 		"ollama_llms_deepseek-r1"
 		"ollama_llms_deepseek-v4-flash"
 		"ollama_llms_deepseek-v4-pro"
@@ -4468,20 +4471,27 @@ warn_red_teamer_llm() {
 		"ollama_llms_frob-mimo-v2.6-pro"
 		"ollama_llms_glm-5.1"
 		"ollama_llms_glm-5.3"
+		"ollama_llms_jimscard-whiterabbit-neo"
 		"ollama_llms_kimi-k2"
 		"ollama_llms_kimi-k3"
 		"ollama_llms_kiwi_kiwi-mimo-v2.6-heretic"
 		"ollama_llms_Maternion-mimo-v2.6-heretic"
 		"ollama_llms_mistral-small"
+		"ollama_llms_monotykamary-whiterabbitneo-v1.5a"
+		"ollama_llms_rfc-whiterabbitneo"
+		"ollama_llms_savethedoctor-whiterabbitneo13bq8_0"
 		"ollama_llms_qwen3.6"
 		"ollama_llms_qwen3.8"
+		"ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"
+		"ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"
+		"ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
 	)
 	local u
 	for u in "${L[@]}" ; do
-ewarn "The ${u} has been identified as having offensive cybersecurity capabilities or may assist in finding 0-days and are considered dangerous if in the hands of insider threats or remote threat actors."
+ewarn "The ${u} has been identified as having offensive cybersecurity capabilities or may assist in finding 0-days and considered dangerous if in the hands of insider threats or remote threat actors."
 	done
 	if use unrestrict ; then
-ewarn "The unstrict USE flag may allow for use/access to offensive cybersecurity models or may assist in finding 0-days and are considered dangerous if in the hands of insider threats or remote threat actors."
+ewarn "The unstrict USE flag may allow for use or access to offensive cybersecurity models or may assist in finding 0-days and considered dangerous if in the hands of insider threats or remote threat actors."
 	fi
 }
 
