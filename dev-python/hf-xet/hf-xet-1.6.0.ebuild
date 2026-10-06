@@ -10,8 +10,8 @@ MY_P="${PN/-/_}-${PV}"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_MAX_VER="1.98.1"
+RUST_MIN_VER="1.98.1" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 declare -A GIT_CRATES=(
@@ -138,7 +138,7 @@ csv-core-0.1.13
 ctor-1.0.13
 ctr-0.10.1
 ctutils-0.4.3
-curve25519-dalek-5.0.0-rc.0
+curve25519-dalek-5.0.0
 curve25519-dalek-derive-0.1.1
 data-encoding-2.11.1
 deadpool-0.12.3
@@ -155,11 +155,11 @@ dirs-sys-0.5.0
 displaydoc-0.2.7
 downcast-0.11.0
 dunce-1.0.5
-ecdsa-0.17.0-rc.18
+ecdsa-0.17.0
 ed25519-3.0.0
-ed25519-dalek-3.0.0-rc.0
+ed25519-dalek-3.0.0
 either-1.18.0
-elliptic-curve-0.14.0-rc.33
+elliptic-curve-0.14.1
 embedded-io-0.4.0
 embedded-io-0.6.1
 enum_dispatch-0.3.13
@@ -250,7 +250,6 @@ idna_adapter-1.2.2
 indexmap-2.14.2
 inferno-0.11.21
 inout-0.2.2
-internal-russh-num-bigint-0.5.0
 inventory-0.3.24
 ipnet-2.12.2
 is-terminal-0.4.17
@@ -305,7 +304,7 @@ nix-0.31.3
 nom-8.0.0
 ntapi-0.4.3
 nu-ansi-term-0.50.3
-num-bigint-0.4.8
+num-bigint-0.5.1
 num-conv-0.2.2
 num_cpus-1.17.0
 num-format-0.4.4
@@ -326,9 +325,9 @@ openssl-src-300.6.1+3.6.3
 openssl-sys-0.9.117
 option-ext-0.2.0
 os_str_bytes-6.6.1
-p256-0.14.0-rc.10
-p384-0.14.0-rc.10
-p521-0.14.0-rc.10
+p256-0.14.0
+p384-0.14.0
+p521-0.14.0
 pageant-0.2.4
 parking-2.2.1
 parking_lot-0.12.5
@@ -363,7 +362,7 @@ predicates-3.1.4
 predicates-core-1.0.10
 predicates-tree-1.0.13
 primefield-0.14.0
-primeorder-0.14.0-rc.10
+primeorder-0.14.0
 proc-macro2-1.0.107
 prost-0.12.6
 prost-0.14.4
@@ -400,12 +399,12 @@ regex-automata-0.4.18
 regex-syntax-0.8.11
 reqwest-0.13.5
 reqwest-middleware-0.5.2
-rfc6979-0.5.0
+rfc6979-0.6.0
 rgb-0.8.53
 ring-0.17.14
 rsa-0.10.0-rc.18
-russh-0.61.2
-russh-cryptovec-0.61.0
+russh-0.63.3
+russh-cryptovec-0.62.0
 russh-util-0.52.0
 rustc-demangle-0.1.28
 rustc-hash-2.1.3
@@ -446,6 +445,7 @@ sha1-0.10.7
 sha1-0.11.0
 sha2-0.11.0
 sha3-0.11.0
+sha3-0.12.0
 sharded-slab-0.1.7
 shellexpand-3.1.2
 shell-words-1.1.1
@@ -463,9 +463,10 @@ smol-2.0.2
 socket2-0.6.5
 spin-0.10.1
 spki-0.8.1
-ssh-cipher-0.3.0-rc.9
-ssh-encoding-0.3.0-rc.9
-ssh-key-0.7.0-rc.10
+sponge-cursor-0.1.0
+ssh-cipher-0.3.0
+ssh-encoding-0.3.0
+ssh-key-0.7.0-rc.11
 stable_deref_trait-1.2.1
 static_assertions-1.1.0
 statrs-0.18.0
@@ -589,6 +590,7 @@ windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.52.6
 wiremock-0.6.5
 wit-bindgen-0.57.1
+wnaf-0.14.1
 writeable-0.6.4
 xet-client-1.6.0
 xet-core-structures-1.6.0
@@ -632,7 +634,7 @@ SLOT="0"
 # Upstream enables lto by default
 IUSE+="
 lto test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 "
