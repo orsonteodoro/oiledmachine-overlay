@@ -287,6 +287,7 @@ COMMUNITY_LLMS=(
 	"fixt-home-3b-v3"
 	"fixt-home-3b-v2"
 	"fluffy-l3-8b-stheno-v3.2"
+	"frob-mimo-v2.6-pro"
 	"hemanth-chessplayer"
 	"hookingai-monah-8b"
 	"iKhalid-ALLaM"
@@ -294,12 +295,14 @@ COMMUNITY_LLMS=(
 	"jimscard-whiterabbit-neo"
 	"joefamous-grok-1"
 	"jwnder-jais-adaptive"
+	"kiwi_kiwi-mimo-v2.6-heretic"
 	"leeplenty-lumimaid-v0.2"
 	"mannix-replete-adapted-llama3-8b"
 	"mannix-llamax3-8b-alpaca"
 	"mannix-smaug-qwen2-72b"
 	"mannix-replete-coder-llama3-8b"
 	"Maternion-LightOnOCR-2"
+	"Maternion-mimo-v2.6-heretic"
 	"MichelRosselli-grok-2"
 	"monotykamary-whiterabbitneo-v1.5a"
 	"mshojaei77-gemma3persian"
@@ -489,6 +492,7 @@ FEATURED_LLMS=(
 	"mistrallite"
 	"mixtral"
 	"moondream"
+	"muse-glimmer"
 	"mxbai-embed-large"
 	"nemotron"
 	"nemotron-3-nano"
@@ -1431,6 +1435,9 @@ LLM_LICENSES="
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
 	)
+	ollama_llms_frob-mimo-v2.6-pro? (
+		MIT
+	)
 	ollama_llms_gemini-3-flash-preview? (
 		all-rights-reserved
 	)
@@ -1569,6 +1576,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_jwnder-jais-adaptive? (
 		Apache-2.0
+	)
+	ollama_llms_kiwi_kiwi-mimo-v2.6-heretic? (
+		MIT
 	)
 	ollama_llms_lfm2? (
 		LFM-Open-License-v1.0
@@ -1793,6 +1803,9 @@ LLM_LICENSES="
 	ollama_llms_Maternion-LightOnOCR-2? (
 		Apache-2.0
 	)
+	ollama_llms_Maternion-mimo-v2.6-heretic? (
+		MIT
+	)
 	ollama_llms_MichelRosselli-grok-2? (
 		Grok-2-Community-License-Agreement-20251104
 		xAI-Acceptable-Use-Policy
@@ -1806,6 +1819,9 @@ LLM_LICENSES="
 		Apache-2.0
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
+	)
+	ollama_llms_muse-glimmer? (
+		Apache-2.0
 	)
 	ollama_llms_moondream? (
 		Apache-2.0
@@ -3597,6 +3613,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["fixt-home-3b-v3"]="fixt/home-3b-v3"
 		["fixt-home-3b-v2"]="fixt/home-3b-v2"
 		["fluffy-l3-8b-stheno-v3.2"]="fluffy/l3-8b-stheno-v3.2"
+		["frob-mimo-v2.6-pro"]="frob/mimo-v2.6-pro"
 		["hemanth-chessplayer"]="hemanth/chessplayer"
 		["hookingai-monah-8b"]="hookingai/monah-8b"
 		["iKhalid-ALLaM"]="iKhalid/ALLaM"
@@ -3604,11 +3621,13 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
 		["joefamous-grok-1"]="joefamous/grok-1"
 		["jwnder-jais-adaptive"]="jwnder/jais-adaptive"
+		["kiwi_kiwi-mimo-v2.6-heretic"]="kiwi_kiwi/mimo-v2.6-heretic"
 		["leeplenty-lumimaid-v0.2"]="leeplenty/lumimaid-v0.2"
 		["mannix-llamax3-8b-alpaca"]="mannix/llamax3-8b-alpaca"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["Maternion-LightOnOCR-2"]="Maternion/LightOnOCR-2"
+		["Maternion-mimo-v2.6-heretic"]="Maternion/mimo-v2.6-heretic"
 		["MichelRosselli-grok-2"]="MichelRosselli/grok-2"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"]="mtayyar/trendmicro-ailab-Llama-Primus-Reasoning"
@@ -4425,6 +4444,42 @@ pkg_preinst() {
 	fowners "${PN}:${PN}" "/var/log/${PN}"
 }
 
+warn_red_teamer_llm() {
+# The AI said that above 0.0% demonstrates dangerous quality.
+# TODO:
+# mimo v2.6
+# deepseek-r1 heretic/abliterated models
+#
+# Hints which may indicate:
+# 1. >30b or >70b params
+# 2. High scores on SWE-bench
+#
+	local L=(
+		"ollama_llms_deepseek-r1"
+		"ollama_llms_deepseek-v4-flash"
+		"ollama_llms_deepseek-v4-pro"
+		"ollama_llms_deepseek-v4.1-flash"
+		"ollama_llms_frob-mimo-v2.6-pro"
+		"ollama_llms_gemma4"
+		"ollama_llms_glm-5.1"
+		"ollama_llms_glm-5.3"
+		"ollama_llms_kimi-k2"
+		"ollama_llms_kimi-k3"
+		"ollama_llms_kiwi_kiwi-mimo-v2.6-heretic"
+		"ollama_llms_Maternion-mimo-v2.6-heretic"
+		"ollama_llms_mistral-small"
+		"ollama_llms_qwen3.6"
+		"ollama_llms_qwen3.8"
+	)
+	local u
+	for u in "${L[@]}" ; do
+ewarn "The ${u} has been identified as having offensive cybersecurity capabilities that are considered dangerous if in the hands of insider threats or remote threat actors."
+	done
+	if use unrestrict ; then
+ewarn "The unstrict USE flag may allow for use/access to offensive cybersecurity models that are considered dangerous if in the hands of insider threats or remote threat actors."
+	fi
+}
+
 pkg_postinst() {
 einfo
 einfo "Quick guide:"
@@ -4505,6 +4560,7 @@ ewarn "It is suggested to blacklist immature users for the ollama executable to"
 ewarn "prevent AI agent abuse."
 ewarn
 	fi
+	warn_red_teamer_llm
 
 # Check if user created their own acct-{user,group}/ollama ebuilds.
 	if ! ( groups "ollama" | grep -q -e "video" ) ; then
