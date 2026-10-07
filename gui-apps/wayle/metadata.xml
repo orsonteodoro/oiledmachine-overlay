@@ -10,4 +10,25 @@
     <bugs-to>https://github.com/wayle-rs/wayle/issues</bugs-to>
     <remote-id type="github">wayle-rs/wayle</remote-id>
   </upstream>
+  <use>
+    <flag name="bluez">
+      Add support for Bluetooth connect status and device power percent.
+    </flag>
+    <flag name="networkmanager">
+      Add support for networking (Wi-Fi, Ethernet).
+    </flag>
+    <flag name="pipewire-pulse">
+      Allow to control the system volume, mute state, and per app volume.
+    </flag>
+    <flag name="power-profiles-daemon">
+      Add support for applying energy profile control
+      (e.g. Balanced, Power Saver, Performance)
+    </flag>
+    <flag name="upower">
+      Add support for keeping track of battery level.
+    </flag>
+    <flag name="wireplumber">
+      Add support for audio device switching and session routing.
+    </flag>
+  </use>
 </pkgmetadata>

@@ -651,13 +651,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-bluez doc networkmanager pipewire pipewire-pulse power-profiles-daemon upower wireplumber
+bluez doc networkmanager pipewire-pulse power-profiles-daemon upower wireplumber
 ebuild_revision_3
 "
 REQUIRED_USE="
-	pipewire-pulse? (
-		pipewire
-	)
 	^^ (
 		"${LLVM_COMPAT[@]/#/llvm_slot_}"
 	)
@@ -676,11 +673,8 @@ RDEPEND+="
 	networkmanager? (
 		>=net-misc/networkmanager-${NETWORKMANAGER_PV}:=
 	)
-	pipewire? (
-		>=media-video/pipewire-${PIPEWIRE_PV}:=
-		pipewire-pulse? (
-			>=media-video/pipewire-${PIPEWIRE_PV}:=[sound-server]
-		)
+	pipewire-pulse? (
+		>=media-video/pipewire-${PIPEWIRE_PV}:=[sound-server]
 	)
 	power-profiles-daemon? (
 		sys-power/power-profiles-daemon:=
@@ -753,14 +747,25 @@ src_prepare() {
 		eapply "${FILESDIR}/wayle-cava-0.1.2-path-max.patch"
 		eapply "${FILESDIR}/aws-lc-sys-0.45.0-append-O0.patch"
 	popd || die
+	if ! grep -e "aws-lc-rs.*1.18.1.*bindgen" "${S}/Cargo.toml" ; then
+einfo "QA:  Add the following to Cargo.toml"
+einfo 'aws-lc-rs = { version = "1.18.1", features = ["bindgen"] }'
+		die
+	fi
 }
 
 src_configure() {
 	chkl_check_many_timestamps
+
+	# Prevent
+	# bcm.c:(.text.tree_jitter_initialize_once+0x60): undefined reference to `aws_lc_0_45_0_jent_entropy_collector_alloc'
+	export AWS_LC_SYS_EXTERNAL_BINDGEN=1
+
 	export CARGO_TERM_VERBOSE="true"
 	export CC="${CHOST}-gcc" # Prevent GCC atomic issue with Clang
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
+
 	fix_mb_len_max
 	unset LD
 	cflags-hardened_append
@@ -786,8 +791,8 @@ src_compile() {
 
 src_install() {
 	exeinto "/usr/bin"
-	doexe "target/"*"/release/wayle-settings"
-	doexe "target/"*"/release/wayle"
+	doexe "target/release/wayle-settings"
+	doexe "target/release/wayle"
 
 	# Install resources (icons, config examples, etc.)
 	if [[ -d resources ]]; then
@@ -811,7 +816,7 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party"
-        lcnr_install_files
+#        lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
