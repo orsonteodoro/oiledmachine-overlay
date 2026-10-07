@@ -151,10 +151,10 @@ CDPARANOIA_PV=${CDPARANOIA_PV:-"9999"}
 # CEF uses the frequent backport technique for Chromium updates and does whole
 # syncs on every major release.  Do not rely solely on major version bumps.
 #
-CEF_PV=${CEF_PV:-"154.0.33"}
-CEF_BIN_PV=${CEF_BIN_PV:-"154.0.33"}
-CEF_BIN_PV_CHROMIUM=${CEF_BIN_PV_CHROMIUM:-"154.0.8037.94"} # keep in sync
-CEF_BIN_PV_REV=${CEF_BIN_PV_REV:-"a03e714"} # keep in sync
+CEF_PV=${CEF_PV:-"154.0.34"}
+CEF_BIN_PV=${CEF_BIN_PV:-"154.0.34"}
+CEF_BIN_PV_CHROMIUM=${CEF_BIN_PV_CHROMIUM:-"154.0.8037.98"} # Keep in sync with CEF version bump
+CEF_BIN_PV_REV=${CEF_BIN_PV_REV:-"14c5a08"} # Keep in sync with CEF version bump; without g prefix
 
 CHROMAPRINT_PV=${CHROMAPRINT_PV:-"9999"}
 CHROMIUM_PV=${CHROMIUM_PV:-"155.0.8059.39"} # Stable
