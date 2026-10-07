@@ -229,7 +229,6 @@ sci-ml/ollama ollama_llms_frob-mimo-v2_6-pro # B
 sci-ml/ollama ollama_llms_glm-5_1
 sci-ml/ollama ollama_llms_glm-5_3 # B
 sci-ml/ollama ollama_llms_huihui_ai-deepseek-r1-abliterated
-sci-ml/ollama ollama_llms_huihui_ai-perplexity-ai-r1-abliterated
 sci-ml/ollama ollama_llms_huihui_ai-deephermes3-abliterated # P
 sci-ml/ollama ollama_llms_huihui_ai-deepscaler-abliterated
 sci-ml/ollama ollama_llms_huihui_ai-dolphin3-abliterated # GP
@@ -248,6 +247,7 @@ sci-ml/ollama ollama_llms_huihui_ai-granite4_1-abliterated
 sci-ml/ollama ollama_llms_huihui_ai-Hermes-3-Llama-3_2-abliterated # P
 sci-ml/ollama ollama_llms_huihui_ai-llama3_2-abliterate # P
 sci-ml/ollama ollama_llms_huihui_ai-llama3_3-abliterated # P
+sci-ml/ollama ollama_llms_huihui_ai-perplexity-ai-r1-abliterated
 sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-abliterate
 sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-coder-abliterate
 sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-1m-abliterated

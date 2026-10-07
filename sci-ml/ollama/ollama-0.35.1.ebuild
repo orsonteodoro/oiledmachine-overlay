@@ -4609,7 +4609,6 @@ warn_red_teamer_llm() {
 		"ollama_llms_CyberCrew-notmythos-8b" # R
 		"ollama_llms_frob-mimo-v2.6-flash" # B
 		"ollama_llms_huihui_ai-deepseek-r1-abliterated"
-		"ollama_llms_huihui_ai-perplexity-ai-r1-abliterated"
 		"ollama_llms_huihui_ai-deephermes3-abliterated" # P
 		"ollama_llms_huihui_ai-deepscaler-abliterated"
 		"ollama_llms_huihui_ai-dolphin3-abliterated" # GP
@@ -4628,6 +4627,7 @@ warn_red_teamer_llm() {
 		"ollama_llms_huihui_ai-Hermes-3-Llama-3.2-abliterated" # P
 		"ollama_llms_huihui_ai-llama3_2-abliterate" # P
 		"ollama_llms_huihui_ai-llama3_3-abliterated" # P
+		"ollama_llms_huihui_ai-perplexity-ai-r1-abliterated"
 		"ollama_llms_huihui_ai-qwen2_5-abliterate"
 		"ollama_llms_huihui_ai-qwen2_5-coder-abliterate"
 		"ollama_llms_huihui_ai-qwen2_5-1m-abliterated"
