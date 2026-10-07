@@ -839,6 +839,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
 		-e "s|@NODE_IP_ADDRESS_PV@|${NODE_IP_ADDRESS_PV}|g" \
 		-e "s|@NODE_LODASH_PV@|${NODE_LODASH_PV}|g" \
+		-e "s|@NODE_POSTCSS_SELECTOR_PARSER_7_PV@|${NODE_POSTCSS_SELECTOR_PARSER_7_PV}|g" \
 		-e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" \
 		-e "s|@NODE_UUID_11_PV@|${NODE_UUID_11_PV}|g" \
 		"pnpm-workspace.yaml" \
