@@ -90,6 +90,11 @@ npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
 			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"shell-quote\": \"^1.10.0\"|\"shell-quote\": \"^${NODE_SHELL_QUOTE_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"shell-quote\": \"^1.8.4\"|\"shell-quote\": \"^${NODE_SHELL_QUOTE_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 		}
 		patch_lockfile
 
@@ -98,21 +103,24 @@ npm_dedupe_post() {
 		)
 		#enpm install "${pkgs[@]}" -P --prefer-offline "${NPM_INSTALL_ARGS[@]}"
 
+		patch_lockfile
+
 		pkgs=(
-			"@babel/core@^7.29.6"
+			"@babel/core@^${NODE_BABEL_CORE_7_PV}"
 			"@babel/plugin-transform-modules-systemjs@^7.29.4"
 			"baseline-browser-mapping@^2.11.0"
 			"brace-expansion@^${NODE_BRACE_EXPANSION_1_PV}"
 			"browserslist@^${NODE_BROWSERSLIST_PV}"
 			"fast-uri@^${NODE_FAST_URI_3_PV}"
-			"http-proxy-middleware@^2.0.10"
+			"http-proxy-middleware@^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}"
 			"js-yaml@${NODE_JS_YAML_3_PV}"
 			"nanoid@^${NODE_NANOID_3_PV}"
 			"launch-editor@^${NODE_LAUNCH_EDITOR_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
-			"postcss-selector-parser@^7.1.3"
+			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
 			"qs@^${NODE_QS_PV}"
 			"shell-quote@^${NODE_SHELL_QUOTE_PV}"
+			"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 			"uuid@^${NODE_UUID_11_PV}"
 			"webpack-dev-server@^5.2.6"
 			"websocket-driver@0.7.5"
@@ -123,15 +131,19 @@ npm_dedupe_post() {
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
-	# Reapplies
 		patch_lockfile
+
+	# Reapplies
 		pkgs=(
 			"uuid@^${NODE_UUID_11_PV}"
 		)
 		enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
 		patch_lockfile
 
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+
+		patch_lockfile
 	fi
 }
 
