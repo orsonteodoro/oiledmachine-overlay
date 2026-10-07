@@ -1,13 +1,12 @@
 {
   "$schema": "./package.schema.json",
-  "packageManager": "pnpm@11.24.0",
   "private": true,
   "name": "signal-desktop",
   "productName": "Signal",
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "8.28.0",
+  "version": "8.30.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -111,8 +110,7 @@
     "build:preload-cache": "node scripts/generate-preload-cache.mjs",
     "electron:install-app-deps": "electron-builder install-app-deps",
     "check-upgradeable-deps": "node scripts/check-upgradeable-deps.mjs",
-    "react-devtools": "react-devtools",
-    "run-with-devtools": "cross-env REACT_DEVTOOLS=1 run-p --print-label react-devtools start",
+    "check:unused-icons": "node scripts/check-unused-icons.mjs",
     "update-signal-symbols": "node scripts/update-signal-symbols.mjs",
     "changeset:version": "changeset version && pnpm install --lockfile-only",
     "changeset:publish": "changeset publish"
@@ -123,9 +121,9 @@
   "dependencies": {
     "@indutny/mac-screen-share": "1.2.5",
     "@indutny/simple-windows-notifications": "2.0.21",
-    "@signalapp/libsignal-client": "0.100.0",
+    "@signalapp/libsignal-client": "0.103.0",
     "@signalapp/mute-state-change": "workspace:*",
-    "@signalapp/ringrtc": "2.71.0",
+    "@signalapp/ringrtc": "2.72.0",
     "@signalapp/sqlcipher": "4.1.0",
     "@signalapp/types": "workspace:*",
     "@signalapp/windows-ucv": "workspace:*",
@@ -242,7 +240,7 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "44.5.1",
+    "electron": "44.6.0",
     "electron-builder": "26.15.7",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
@@ -300,13 +298,11 @@
     "prettier-plugin-tailwindcss": "0.8.0",
     "qrcode-generator": "2.0.4",
     "radix-ui": "1.5.0",
-    "react": "19.2.4",
+    "react": "19.3.0",
     "react-aria": "3.47.0",
     "react-aria-components": "1.16.0",
     "react-blurhash": "0.3.0",
-    "react-devtools": "7.0.1",
-    "react-devtools-core": "7.0.1",
-    "react-dom": "19.2.4",
+    "react-dom": "19.3.0",
     "react-intl": "10.1.0",
     "react-popper": "2.3.0",
     "react-redux": "9.2.0",
@@ -334,7 +330,7 @@
     "svgo": "4.1.0",
     "synckit": "0.11.12",
     "tailwindcss": "4.3.0",
-    "tinykeys": "3.1.0",
+    "tinykeys": "4.0.1",
     "tsx": "4.23.0",
     "type-fest": "5.5.0",
     "typescript": "npm:@typescript/typescript6@6.0.2",
@@ -347,12 +343,12 @@
     "zod": "4.3.6"
   },
   "engines": {
-    "node": "24.19.0"
+    "node": "24.21.0"
   },
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "24.19.0"
+      "version": "24.21.0"
     },
     "packageManager": {
       "name": "pnpm",
@@ -642,6 +638,6 @@
     ]
   },
   "volta": {
-    "node": "24.19.0"
+    "node": "24.21.0"
   }
 }

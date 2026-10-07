@@ -7,7 +7,7 @@ EAPI=8
 # This ebuild uses suggestions from AI to build on Linux.
 
 # TODO:
-# For 8.27.0 or later ebuild release:
+# For 8.30.0 or later ebuild release:
 # Add ebuild @signalapp/libsignal-client (Rust/TS) for custom hardening
 # Add ebuild @signalapp/sqlcipher (C++) for custom hardening
 # Add ebuild @signalapp/ringrtc (C++) for custom hardening
@@ -35,15 +35,15 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.28.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.30.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v8.19.0/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v8.30.0/CONTRIBUTING.md#known-issues
 
 # Do the following in ${S} if you get:
 # [WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
-#PATH="/usr/lib/node/24/bin:/var/tmp/portage/net-im/signal-desktop-8.28.0/homedir/.cache/node/corepack/v1/pnpm/11.10.0/bin:${PATH}" pnpm peers check
+#PATH="/usr/lib/node/24/bin:/var/tmp/portage/net-im/signal-desktop-8.30.0/homedir/.cache/node/corepack/v1/pnpm/11.10.0/bin:${PATH}" pnpm peers check
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -82,7 +82,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="44.4.5" # Chromium 152.0.7977.130, Node 24.21.0
 fi
 
 NPM_INSTALL_ARGS=(
@@ -130,13 +130,13 @@ LICENSE="
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The Electron 44.4.1 license file fingerprint is the same as 44.4.3.
+	# The Electron 44.4.1 license file fingerprint is the same as 44.6.0.
 	LICENSE+="
 		electron-44.4.1-chromium.html
 	"
 else
 	LICENSE+="
-		electron-42.3.0-chromium.html
+		electron-44.4.5-chromium.html
 	"
 fi
 SLOT="0"
@@ -253,8 +253,8 @@ einfo "DEBUG:  Deleting newer app-builder-lib version suggested by pnpm audit --
 		sed -i -e "\|26.15.0|d" "${S}/pnpm-workspace.yaml" || die
 
 	# Only webpack-dev-middleware 6.x is allowed for @storybook/builder-webpack5
-einfo "DEBUG:  Deleting newer webpack-dev-middleware version suggested by pnpm audit --fix"
-		sed -i -e "\|webpack-dev-middleware|d" "${S}/pnpm-workspace.yaml" || die
+#einfo "DEBUG:  Deleting newer webpack-dev-middleware version suggested by pnpm audit --fix"
+#		sed -i -e "\|webpack-dev-middleware|d" "${S}/pnpm-workspace.yaml" || die
 	fi
 }
 
@@ -262,8 +262,17 @@ _apply_patches() {
 	[[ "${ALREADY_PATCHED}" == "1" ]] && return
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-einfo "QA:  Manually change 24.19.0 to @NODE_PV@ in package.json"
-		eapply "${FILESDIR}/${PN}-8.28.0-project-files-changes.patch"
+		export PATH="/usr/lib/node/${NODE_SLOT}/bin:${PATH}"
+		NODE_PV=$(node --version | sed -e "s|^v||g")
+		PNPM_PV=$("${HOME}/.cache/node/corepack/v1/pnpm/"*"/bin/pnpm" --version)
+		[[ -z "${NODE_PV}" ]] && die "QA:  NODE_PV is undefined"
+		[[ -z "${PNPM_PV}" ]] && die "QA:  PNPM_PV is undefined"
+einfo "NODE_PV:  ${NODE_PV}"
+einfo "PNPM_PV:  ${PNPM_PV}"
+		eapply "${FILESDIR}/${PN}-8.30.0-project-files-changes.patch"
+
+		sed -i -e "s|@NODE_PV@|${NODE_PV}|g" "${S}/package.json" || die
+		sed -i -e "s|@PNPM_PV@|${PNPM_PV}|g" "${S}/package.json" || die
 
 	# Must be pinned
 		sed -i -e "s|@ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" "${S}/pnpm-workspace.yaml" || die

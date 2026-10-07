@@ -1,6 +1,37 @@
-diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-Desktop-8.28.0/pnpm-workspace.yaml
---- Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml	2026-09-23 14:15:39.000000000 -0700
-+++ Signal-Desktop-8.28.0/pnpm-workspace.yaml	2026-09-28 10:03:31.094133199 -0700
+diff '--color=auto' -urp Signal-Desktop-8.30.0.orig/package.json Signal-Desktop-8.30.0/package.json
+--- Signal-Desktop-8.30.0.orig/package.json	2026-10-07 12:02:45.000000000 -0700
++++ Signal-Desktop-8.30.0/package.json	2026-10-07 15:13:42.118492016 -0700
+@@ -342,16 +342,16 @@
+     "zod": "4.3.6"
+   },
+   "engines": {
+-    "node": "24.21.0"
++    "node": "@NODE_PV@"
+   },
+   "devEngines": {
+     "runtime": {
+       "name": "node",
+-      "version": "24.21.0"
++      "version": "@NODE_PV@"
+     },
+     "packageManager": {
+       "name": "pnpm",
+-      "version": "11.24.0"
++      "version": "@PNPM_PV@"
+     }
+   },
+   "build": {
+@@ -638,6 +638,6 @@
+     ]
+   },
+   "volta": {
+-    "node": "24.21.0"
++    "node": "@NODE_PV@"
+   }
+ }
+diff '--color=auto' -urp Signal-Desktop-8.30.0.orig/pnpm-workspace.yaml Signal-Desktop-8.30.0/pnpm-workspace.yaml
+--- Signal-Desktop-8.30.0.orig/pnpm-workspace.yaml	2026-10-07 12:02:45.000000000 -0700
++++ Signal-Desktop-8.30.0/pnpm-workspace.yaml	2026-10-07 15:15:19.367696482 -0700
 @@ -1,5 +1,5 @@
  saveExact: true
 -blockExoticSubdeps: true
@@ -8,7 +39,7 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
  lockfileIncludeTarballUrl: true
  verifyDepsBeforeRun: prompt
  verifyStoreIntegrity: true
-@@ -8,16 +8,54 @@ packages:
+@@ -8,15 +8,55 @@ packages:
    - 'packages/*'
    - 'sticker-creator'
  
@@ -24,10 +55,9 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
 +#minimumReleaseAgeIgnoreMissingTime: false
 +#minimumReleaseAgeStrict: true
  minimumReleaseAgeExclude:
--  - '@signalapp/*'
 +  # Upstream rules
+   - '@signalapp/*'
    - 'electron'
--  - node-abi@4.34.0
 +  - 'node-abi@4.34.0'
 +  # oiledmachine-overlay rules
 +  - '@babel/core@@NODE_BABEL_CORE_7_PV@'
@@ -70,36 +100,28 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
  
  trustPolicy: no-downgrade
  trustPolicyExclude:
-@@ -31,21 +67,85 @@ trustPolicyExclude:
-   - 'undici-types@6.21.0'
+@@ -31,17 +71,81 @@ trustPolicyExclude:
    - 'vite@4.5.14'
+   - 'webpack-dev-middleware@7.4.6'
  
 -auditConfig:
 -  ignoreGhsas:
--    - GHSA-3xgq-45jj-v275 # react-devtools > cross-spawn
 -    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
 -    - GHSA-5c6j-r48x-rmvq # @storybook/addon-webpack5-compiler-swc > serialize-javascript
 -    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
 -    - GHSA-395f-4hp3-45gv # shell-quote, only used at dev-time
--    - GHSA-gcfj-64vw-6mp9 # axios, only used at dev-time
 -    - GHSA-v56q-mh7h-f735 # used by sass, only used at dev-time
 -    - GHSA-xvcm-6775-5m9r # used by sass, only used at dev-time
 -    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
--    - GHSA-jmr9-qjv8-65gv # react-devtools > electron > extract-zip
--    - GHSA-7pqw-9j4j-h8q3 # react-devtools > electron > extract-zip
 +#auditConfig:
 +#  ignoreGhsas:
-+#    - GHSA-3xgq-45jj-v275 # react-devtools > cross-spawn
 +#    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
 +#    - GHSA-5c6j-r48x-rmvq # @storybook/addon-webpack5-compiler-swc > serialize-javascript
 +#    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
 +#    - GHSA-395f-4hp3-45gv # shell-quote, only used at dev-time
-+#    - GHSA-gcfj-64vw-6mp9 # axios, only used at dev-time
 +#    - GHSA-v56q-mh7h-f735 # used by sass, only used at dev-time
 +#    - GHSA-xvcm-6775-5m9r # used by sass, only used at dev-time
 +#    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
-+#    - GHSA-jmr9-qjv8-65gv # react-devtools > electron > extract-zip
-+#    - GHSA-7pqw-9j4j-h8q3 # react-devtools > electron > extract-zip
  
 +# Bans or rollbacks
  overrides:
@@ -169,12 +191,12 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
    '@electron/rebuild>node-gyp': '12.4.0'
    '@electron/rebuild>node-abi': '4.34.0'
    '@xmldom/xmldom@0.8': '^0.8.15'
-@@ -53,12 +151,7 @@ overrides:
-   'brace-expansion@2': '^2.1.4'
-   'brace-expansion@1': '^1.1.18'
+@@ -50,36 +154,31 @@ overrides:
+   'brace-expansion@2': '^2.1.6'
+   'brace-expansion@1': '^1.1.20'
    'builder-util-runtime': '9.7.0'
 -  'canvas': '-'
--  'danger@13.0.10>undici': '6.27.0'
+-  'danger@13.0.10>undici@<6.28.1': '^6.28.1'
    'js-yaml@3': '^3.15.2'
 -  'jsdom': '-'
 -  'react-popper@2.3.0>react-dom': '19.2.4'
@@ -182,7 +204,11 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
    'thenify-all>thenify': '3.3.1'
    electron@<39.8.10: ^39.8.10
    electron@<39.8.9: ^39.8.9
-@@ -68,20 +161,20 @@ overrides:
+   ip-address@<=10.3.0: ^10.3.1
+   nanoid@<3.3.17: 3.3.18
+-  webpack-dev-middleware@<7.4.5: ^7.4.5
++  webpack-dev-middleware@<7.4.6: ^7.4.6
+ 
  allowUnusedPatches: false
  patchedDependencies:
    # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
@@ -207,25 +233,21 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
    'qrcode-generator': 'patches/qrcode-generator.patch'
    'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
    'zod@4.3.6': 'patches/zod@4.3.6.patch'
-@@ -92,22 +185,24 @@ allowBuilds:
+@@ -90,30 +189,34 @@ allowBuilds:
    #   ex: 'package@0.0.0': true
    '@indutny/mac-screen-share@1.0.13': true
    '@indutny/simple-windows-notifications@2.0.16': true
 -  '@parcel/watcher@2.5.6': true
 +  '@parcel/watcher@2.6.0': true
-   '@signalapp/libsignal-client@0.92.2': true # duplicate package
-   '@signalapp/libsignal-client@0.100.0': true
-   '@signalapp/ringrtc@2.69.4': true
+   '@signalapp/libsignal-client@0.100.0': true # duplicate for @signalapp/mock-server
+   '@signalapp/libsignal-client@0.103.0': true
+   '@signalapp/ringrtc@2.72.0': true
    '@signalapp/sqlcipher@4.1.0': true
    '@signalapp/windows-ucv@1.0.1': true
 -  '@swc/core@1.10.16': true
-+  '@swc/core@1.16.12': true
++  '@swc/core@1.16.13': true
    '@tailwindcss/oxide@4.3.0': true
-   'electron@23.3.13': false # duplicate package
--  'electron@39.8.10': true # duplicate package through react-devtools
--  'electron@43.0.0': true
-+  'electron@39.8.10': false # duplicate package through react-devtools
-+  'electron@41.10.7': false
+-  'electron@44.4.5': true
 +  'electron@@NODE_24_ELECTRON_PV@': true
    'fs-xattr@0.4.0': true
  
@@ -234,9 +256,15 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
    'bufferutil': false
 +  'canvas@2.11.2': false # For generating lockfile
    'core-js': false
++  'electron@23.3.13': false # duplicate package
++  'electron@39.8.10': false # duplicate package through react-devtools
++  'electron@41.10.7': false
++  'electron@44.4.5': false
    'electron-winstaller': false
    'es5-ext': false
-@@ -117,7 +211,7 @@ allowBuilds:
+   'esbuild': false
+   'utf-8-validate': false
+-  'electron@23.3.13': false # duplicate package
  
  dedupePeers: true
  dedupePeerDependents: true
@@ -245,12 +273,12 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
  peerDependencyRules:
    allowedVersions:
      '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
-@@ -129,23 +223,36 @@ peerDependencyRules:
+@@ -125,23 +228,60 @@ peerDependencyRules:
      'react-intl@10.1.0>typescript': '6.0.2'
      '@storybook/react@8.4.4>@storybook/test': '8.6.15'
      'stylelint-use-logical-spec@5.0.1>stylelint': '17.11.1'
--    'react-popper@2.3.0>react': '18.3.1'
--    'react-popper@2.3.0>react-dom': '18.3.1'
+-    'react-popper@2.3.0>react': '19.3.0'
+-    'react-popper@2.3.0>react-dom': '19.3.0'
 +    'react-popper@2.3.0>react': '@NODE_REACT_19_PV@'
 +    'react-popper@2.3.0>react-dom': '@NODE_REACT_DOM_19_PV@'
  
@@ -290,5 +318,27 @@ diff '--color=auto' -urp Signal-Desktop-8.28.0.orig/pnpm-workspace.yaml Signal-D
 +  'w3c-hr-time': '1.0.2'
 +  'whatwg-encoding': '1.0.5 || 2.0.0'
 +#  'yaeti': '0.0.6'
-Only in Signal-Desktop-8.28.0: pnpm-workspace.yaml.orig
-Only in Signal-Desktop-8.28.0: pnpm-workspace.yaml.rej
++  '@yuku-parser/binding-win32-x64': '0.8.7'
++  '@yuku-parser/binding-darwin-x64': '0.8.7'
++  '@yuku-parser/binding-freebsd-x64': '0.8.7'
++  '@yuku-parser/binding-win32-arm64': '0.8.7'
++  '@yuku-parser/binding-darwin-arm64': '0.8.7'
++  '@yuku-parser/binding-android-arm64': '0.8.7'
++  '@yuku-parser/binding-linux-arm-gnu': '0.8.7'
++  '@yuku-parser/binding-linux-x64-gnu': '0.8.7'
++  '@yuku-parser/binding-linux-arm-musl': '0.8.7'
++  '@yuku-parser/binding-linux-x64-musl': '0.8.7'
++  '@yuku-parser/binding-linux-arm64-gnu': '0.8.7'
++  '@yuku-parser/binding-linux-arm64-musl': '0.8.7'
++  '@yuku-codegen/binding-win32-x64': '0.8.7'
++  '@yuku-codegen/binding-darwin-x64': '0.8.7'
++  '@yuku-codegen/binding-freebsd-x64': '0.8.7'
++  '@yuku-codegen/binding-win32-arm64': '0.8.7'
++  '@yuku-codegen/binding-darwin-arm64': '0.8.7'
++  '@yuku-codegen/binding-android-arm64': '0.8.7'
++  '@yuku-codegen/binding-linux-arm-gnu': '0.8.7'
++  '@yuku-codegen/binding-linux-x64-gnu': '0.8.7'
++  '@yuku-codegen/binding-linux-arm-musl': '0.8.7'
++  '@yuku-codegen/binding-linux-x64-musl': '0.8.7'
++  '@yuku-codegen/binding-linux-arm64-gnu': '0.8.7'
++  '@yuku-codegen/binding-linux-arm64-musl': '0.8.7'

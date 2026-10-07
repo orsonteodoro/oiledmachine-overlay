@@ -16,6 +16,7 @@ packages:
 #minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
   # Upstream rules
+  - '@signalapp/*'
   - 'electron'
   - 'node-abi@4.34.0'
   # oiledmachine-overlay rules
@@ -32,7 +33,7 @@ minimumReleaseAgeExclude:
   - 'ajv@8.18.0'
   - 'csv-parse@7.0.3'
   - 'tar@7.5.21'
-  - 'electron@44.5.1'
+  - 'electron@44.6.0'
   - 'electron-builder@26.15.7'
   - 'esbuild@0.28.2'
   - 'flatted@3.4.4'
@@ -68,20 +69,17 @@ trustPolicyExclude:
   - 'semver@5.7.2 || 6.3.1'
   - 'undici-types@6.21.0'
   - 'vite@4.5.14'
+  - 'webpack-dev-middleware@7.4.6'
 
 #auditConfig:
 #  ignoreGhsas:
-#    - GHSA-3xgq-45jj-v275 # react-devtools > cross-spawn
 #    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
 #    - GHSA-5c6j-r48x-rmvq # @storybook/addon-webpack5-compiler-swc > serialize-javascript
 #    - GHSA-2w69-qvjg-hvjx # sticker-creator > @remix-run/router
 #    - GHSA-395f-4hp3-45gv # shell-quote, only used at dev-time
-#    - GHSA-gcfj-64vw-6mp9 # axios, only used at dev-time
 #    - GHSA-v56q-mh7h-f735 # used by sass, only used at dev-time
 #    - GHSA-xvcm-6775-5m9r # used by sass, only used at dev-time
 #    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
-#    - GHSA-jmr9-qjv8-65gv # react-devtools > electron > extract-zip
-#    - GHSA-7pqw-9j4j-h8q3 # react-devtools > electron > extract-zip
 
 # Bans or rollbacks
 overrides:
@@ -110,7 +108,7 @@ overrides:
   'danger@13.0.10>undici': '6.28.1'
   'dmg-builder': '26.15.7'
   'fabric': '4.6.0'
-  'electron': '44.5.1'
+  'electron': '44.6.0'
   'electron-builder': '26.15.7'
   #'electron-builder@26.15.7>tar': '7.5.21'
   'electron-builder-squirrel-windows': '26.15.7'
@@ -151,21 +149,20 @@ overrides:
   '@electron/rebuild>node-gyp': '12.4.0'
   '@electron/rebuild>node-abi': '4.34.0'
   '@xmldom/xmldom@0.8': '^0.8.15'
-  'brace-expansion@5': '^5.0.9'
-  'brace-expansion@2': '^2.1.4'
-  'brace-expansion@1': '^1.1.18'
+  'axios@1': '^1.20.0'
+  'brace-expansion@5': '^5.0.11'
+  'brace-expansion@2': '^2.1.6'
+  'brace-expansion@1': '^1.1.20'
   'builder-util-runtime': '9.7.0'
   'js-yaml@3': '^3.15.2'
   'thenify-all>thenify': '3.3.1'
   ip-address@<=10.3.0: ^10.3.1
   nanoid@<3.3.17: 3.3.18
-  cross-spawn@<6.0.6: ^6.0.6
+  webpack-dev-middleware@<7.4.6: ^7.4.6
   diff@>=6.0.0 <8.0.3: ^8.0.3
-  electron@<41.10.4: ^41.10.4
-  electron@<41.10.6: ^41.10.6
-  got@<11.8.5: ^11.8.5
   serialize-javascript@<=7.0.2: ^7.0.3
   serialize-javascript@>=5.0.0 <7.0.5: ^7.0.5
+  shell-quote@>=1.8.4 <1.11.0: ^1.11.0
   uuid@<11.1.1: ^11.1.1
 
 allowUnusedPatches: false
@@ -196,16 +193,14 @@ allowBuilds:
   '@indutny/mac-screen-share@1.0.13': true
   '@indutny/simple-windows-notifications@2.0.16': true
   '@parcel/watcher@2.6.0': true
-  '@signalapp/libsignal-client@0.92.2': true # duplicate package
-  '@signalapp/libsignal-client@0.100.0': true
-  '@signalapp/ringrtc@2.69.4': true
+  '@signalapp/libsignal-client@0.100.0': true # duplicate for @signalapp/mock-server
+  '@signalapp/libsignal-client@0.103.0': true
+  '@signalapp/ringrtc@2.72.0': true
   '@signalapp/sqlcipher@4.1.0': true
   '@signalapp/windows-ucv@1.0.1': true
-  '@swc/core@1.16.12': true
+  '@swc/core@1.16.13': true
   '@tailwindcss/oxide@4.3.0': true
-  'electron@23.3.13': false # duplicate package
-  'electron@41.10.7': false
-  'electron@44.5.1': true
+  'electron@44.6.0': true
   'fs-xattr@0.4.0': true
 
   # Disabled Builds: Use wildcard version
@@ -213,11 +208,13 @@ allowBuilds:
   'bufferutil': false
   'canvas@2.11.2': false # For generating lockfile
   'core-js': false
+  'electron@23.3.13': false # duplicate package
+  'electron@41.10.7': false
+  'electron@44.4.5': false
   'electron-winstaller': false
   'es5-ext': false
   'esbuild': false
   'utf-8-validate': false
-  '@signalapp/ringrtc': true
 
 dedupePeers: true
 dedupePeerDependents: true
@@ -265,5 +262,28 @@ allowedDeprecatedVersions:
   'uuid': '3.4.0 || 8.3.2 || 9.0.1'
   'w3c-hr-time': '1.0.2'
   'whatwg-encoding': '1.0.5 || 2.0.0'
-
-#  'yaeti': '0.0.6'
+  #  'yaeti': '0.0.6'
+  '@yuku-parser/binding-win32-x64': '0.8.7'
+  '@yuku-parser/binding-darwin-x64': '0.8.7'
+  '@yuku-parser/binding-freebsd-x64': '0.8.7'
+  '@yuku-parser/binding-win32-arm64': '0.8.7'
+  '@yuku-parser/binding-darwin-arm64': '0.8.7'
+  '@yuku-parser/binding-android-arm64': '0.8.7'
+  '@yuku-parser/binding-linux-arm-gnu': '0.8.7'
+  '@yuku-parser/binding-linux-x64-gnu': '0.8.7'
+  '@yuku-parser/binding-linux-arm-musl': '0.8.7'
+  '@yuku-parser/binding-linux-x64-musl': '0.8.7'
+  '@yuku-parser/binding-linux-arm64-gnu': '0.8.7'
+  '@yuku-parser/binding-linux-arm64-musl': '0.8.7'
+  '@yuku-codegen/binding-win32-x64': '0.8.7'
+  '@yuku-codegen/binding-darwin-x64': '0.8.7'
+  '@yuku-codegen/binding-freebsd-x64': '0.8.7'
+  '@yuku-codegen/binding-win32-arm64': '0.8.7'
+  '@yuku-codegen/binding-darwin-arm64': '0.8.7'
+  '@yuku-codegen/binding-android-arm64': '0.8.7'
+  '@yuku-codegen/binding-linux-arm-gnu': '0.8.7'
+  '@yuku-codegen/binding-linux-x64-gnu': '0.8.7'
+  '@yuku-codegen/binding-linux-arm-musl': '0.8.7'
+  '@yuku-codegen/binding-linux-x64-musl': '0.8.7'
+  '@yuku-codegen/binding-linux-arm64-gnu': '0.8.7'
+  '@yuku-codegen/binding-linux-arm64-musl': '0.8.7'
