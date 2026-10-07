@@ -35,7 +35,8 @@ LLVM_SYSTEM_SLOT_LIVE="1"
 # The unvendored timestamp for system-clang corresponding to
 # https://github.com/llvm/llvm-project/commit/0bd330675f9eb08126e467505a0800f167084473
 # in llvm-ebuilds.eclass for oiledmachine-overlay quality standards.  This
-# commit has passed > 100 checks and all tested sanitizers passed at that time.
+# commit has passed > 100 checks, all tested sanitizers, most recent commit with
+# all sanitizers passed to mitigate multiple miscompilation bugs/vulnerabilities.
 LLVM_SYSTEM_TIMESTAMP_LIVE="Sep 20, 2026 4:35 PM PDT"
 
 # Vendored LLVM commit reference:  https://github.com/chromium/chromium/blob/155.0.8059.39/DEPS#L1074 \
