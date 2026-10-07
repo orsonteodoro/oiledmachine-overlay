@@ -199,9 +199,9 @@ EAPI=8
 # /usr/share/chromium/155.0.8059.39/sources/build/linux/unbundle/replace_gn_files.py
 
 # Use `USE="-system-clang -system-rust" ebuild chromium-toolchain-155.0.8059.39.ebuild digest clean unpack prepare compile install merge` to obtain numbers.
-TC_COUNT_EXPECTED_CLANG=416
-TC_COUNT_EXPECTED_GN=1338
-TC_COUNT_EXPECTED_RUST=7167
+TC_COUNT_EXPECTED_CLANG=419
+TC_COUNT_EXPECTED_GN=1340
+TC_COUNT_EXPECTED_RUST=7258
 SOURCES_COUNT_EXPECTED=1108503 # Update with DOWNLOAD_FLAVOR change
 CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=1
@@ -228,7 +228,7 @@ CHROMIUM_TOOLCHAIN_PREFIX="/usr/share/chromium/${PV%.*}.x/toolchain"
 CURRENT_PROFDATA_VERSION= # Global variable
 CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 CXX_STANDARD=23
-DOWNLOAD_FLAVOR="depot_tools" # tarball-lite, tarball-full, depot_tools; Same as chromium-sources.
+DOWNLOAD_FLAVOR="tarball-lite" # tarball-lite, tarball-full, depot_tools; Same as chromium-sources.
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
 ENABLE_FULL_OPTIMIZATION=1 # Global variable
