@@ -203,3 +203,86 @@ net-libs/webkit-gtk librice
 
 # Insecure protocols
 net-wireless/wpa_supplicant tkip wep wps
+
+# Disabled to avoid malicious use or LOTL weaponization
+# B = Present in red team benchmark
+# G = May generate red team payload
+sci-ml/ollama ollama_llms_ALIENTELLIGENCE-whiterabbit
+sci-ml/ollama ollama_llms_ALIENTELLIGENCE-whiterabbitv2
+sci-ml/ollama ollama_llms_captainkyd-whiterabbitneo7b
+sci-ml/ollama ollama_llms_CyberCrew-notmythos-8b # R
+sci-ml/ollama ollama_llms_cypher-21-SentinalX
+sci-ml/ollama ollama_llms_DeepHat-DeepHat-V1-7B
+sci-ml/ollama ollama_llms_deepseek-r1
+sci-ml/ollama ollama_llms_deepseek-v4-flash # B
+sci-ml/ollama ollama_llms_deepseek-v4-pro # B
+sci-ml/ollama ollama_llms_deepseek-v4_1-flash # B
+sci-ml/ollama ollama_llms_devstral
+sci-ml/ollama ollama_llms_dolphin-llama3 # G
+sci-ml/ollama ollama_llms_dolphin-mistral # R
+sci-ml/ollama ollama_llms_ebowwa-cognitive-hacker # RP
+sci-ml/ollama ollama_llms_ebowwa-cognitive-hacker-0_2
+sci-ml/ollama ollama_llms_frob-mimo-v2_6-flash # B
+sci-ml/ollama ollama_llms_frob-mimo-v2_6-pro # B
+sci-ml/ollama ollama_llms_glm-5_1
+sci-ml/ollama ollama_llms_glm-5_3 # B
+sci-ml/ollama ollama_llms_huihui_ai-deepseek-r1-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-perplexity-ai-r1-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-deephermes3-abliterated # P
+sci-ml/ollama ollama_llms_huihui_ai-deepscaler-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-dolphin3-abliterated # GP
+sci-ml/ollama ollama_llms_huihui_ai-dolphin3-r1-abliterated # GP
+sci-ml/ollama ollama_llms_huihui_ai-foundation-sec-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-gemma-4-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-gemma3-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-gemma3n-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-glm4_6-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-glm-4_7-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-glm-4_7-flash-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-granite3_1-dense-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-granite3_2-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-granite3_2-vision-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-granite4_1-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-Hermes-3-Llama-3_2-abliterated # P
+sci-ml/ollama ollama_llms_huihui_ai-llama3_2-abliterate # P
+sci-ml/ollama ollama_llms_huihui_ai-llama3_3-abliterated # P
+sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-abliterate
+sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-coder-abliterate
+sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-1m-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwen2_5-vl-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwen3-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwen3-coder-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwen3-next-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwen3-vl-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwen3_5-abliterated # G
+sci-ml/ollama ollama_llms_huihui_ai-Qwen3_6-abliterated # GR
+sci-ml/ollama ollama_llms_huihui_ai-Qwen3_8-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwenlong-abliterated
+sci-ml/ollama ollama_llms_huihui_ai-qwenlong-l1_5-abliterated # G
+sci-ml/ollama ollama_llms_huihui_ai-qwq-abliterated
+sci-ml/ollama ollama_llms_IHA089-drana-infinity-3b
+sci-ml/ollama ollama_llms_IHA089-drana-infinity-7b
+sci-ml/ollama ollama_llms_IHA089-drana-infinity-v1
+sci-ml/ollama ollama_llms_jimscard-whiterabbit-neo
+sci-ml/ollama ollama_llms_kimi-k2
+sci-ml/ollama ollama_llms_kimi-k3
+sci-ml/ollama ollama_llms_kiwi_kiwi-mimo-v2_6-heretic
+sci-ml/ollama ollama_llms_llama2-uncensored # P
+sci-ml/ollama ollama_llms_luisppb16-Qwen3_5-9B-Red_Team # GR
+sci-ml/ollama ollama_llms_Maternion-mimo-v2+6-heretic
+sci-ml/ollama ollama_llms_mistral-small
+sci-ml/ollama ollama_llms_monotykamary-whiterabbitneo-v1_5a
+sci-ml/ollama ollama_llms_openhermes # P
+sci-ml/ollama ollama_llms_rfc-whiterabbitneo
+sci-ml/ollama ollama_llms_richardyoung-deepseek-r1-0528-qwen3-8b-heretic
+sci-ml/ollama ollama_llms_ruturaj04-ruturajai
+sci-ml/ollama ollama_llms_savethedoctor-whiterabbitneo13bq8_0
+sci-ml/ollama ollama_llms_qwen3_6
+sci-ml/ollama ollama_llms_qwen3_8
+sci-ml/ollama ollama_llms_WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-70B
+sci-ml/ollama ollama_llms_WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-8B
+sci-ml/ollama ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2_5-Qwen-2_5-Coder-7B
+sci-ml/ollama ollama_llms_xploiter-bugbounty-ai # GR
+sci-ml/ollama ollama_llms_xploiter-pentester # GR
+sci-ml/ollama ollama_llms_xploiter-the-xploiter # GR
+sci-ml/ollama unrestrict

@@ -249,7 +249,7 @@ APP_FEATURES=(
 )
 
 COMMUNITY_LLMS=(
-	"agcobra-liberated-qwen1.5-72b"
+	"agcobra-liberated-qwen1_5-72b"
 	"adens-quran-guide"
 	"akx-viking-7b"
 	"ALIENTELLIGENCE-christiancounselor"
@@ -266,7 +266,7 @@ COMMUNITY_LLMS=(
 	"ALIENTELLIGENCE-whiterabbit"
 	"ALIENTELLIGENCE-whiterabbitv2"
 	"Artalius-lixi"
-	"artifish-mlewd-v2.4"
+	"artifish-mlewd-v2_4"
 	"benevolentjoker-belial"
 	"benevolentjoker-bethanygpt"
 	"benevolentjoker-nsfwmonika"
@@ -278,6 +278,7 @@ COMMUNITY_LLMS=(
 	"chatgph-70b-instruct"
 	"chatgph-gph-main"
 	"chatgph-medix-ph"
+	"cypher-21-SentinalX"
 	"d4n5h-white-rabbit-neo-70b-v2"
 	"disinfozone-telos"
 	"DeepHat-DeepHat-V1-7B"
@@ -286,28 +287,32 @@ COMMUNITY_LLMS=(
 	"etgohome-hackidle-nist-coder"
 	"fixt-home-3b-v3"
 	"fixt-home-3b-v2"
-	"fluffy-l3-8b-stheno-v3.2"
-	"frob-mimo-v2.6-pro"
+	"fluffy-l3-8b-stheno-v3_2"
+	"frob-mimo-v2_6-pro"
 	"hemanth-chessplayer"
 	"hookingai-monah-8b"
+	"IHA089-drana-infinity-3b"
+	"IHA089-drana-infinity-7b"
+	"IHA089-drana-infinity-v1"
 	"iKhalid-ALLaM"
 	"jimscard-adult-film-screenwriter-nsfw"
 	"jimscard-whiterabbit-neo"
 	"joefamous-grok-1"
 	"jwnder-jais-adaptive"
-	"kiwi_kiwi-mimo-v2.6-heretic"
-	"leeplenty-lumimaid-v0.2"
+	"kiwi_kiwi-mimo-v2_6-heretic"
+	"leeplenty-lumimaid-v0_2"
+	"luisppb16-Qwen3_5-9B-Red_Team"
 	"mannix-replete-adapted-llama3-8b"
 	"mannix-llamax3-8b-alpaca"
 	"mannix-smaug-qwen2-72b"
 	"mannix-replete-coder-llama3-8b"
 	"Maternion-LightOnOCR-2"
-	"Maternion-mimo-v2.6-heretic"
+	"Maternion-mimo-v2_6-heretic"
 	"MichelRosselli-grok-2"
-	"monotykamary-whiterabbitneo-v1.5a"
+	"monotykamary-whiterabbitneo-v1_5a"
 	"mshojaei77-gemma3persian"
 	"mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"
-	"nchapman-l3.1-70b-hanami-x1"
+	"nchapman-l3_1-70b-hanami-x1"
 	"nqduc-gemsura"
 	"nqduc-mixsura"
 	"nqduc-mixsura-sft"
@@ -315,25 +320,29 @@ COMMUNITY_LLMS=(
 	"reefer-her2"
 	"reefer-minimonica"
 	"reefer-monica"
+	"richardyoung-deepseek-r1-0528-qwen3-8b-heretic"
 	"rfc-whiterabbitneo"
-	"rouge-replete-coder-qwen2-1.5b"
+	"rouge-replete-coder-qwen2-1_5b"
 	"sam860-lucy"
 	"savethedoctor-whiterabbitneo13bq8_0"
 	"sparksammy-samantha"
-	"sparksammy-samantha-3.1"
+	"sparksammy-samantha-3_1"
 	"sparksammy-samantha-eggplant"
 	"sparksammy-samantha-v3-uncensored"
 	"sparksammy-tinysam-goog"
 	"sparksammy-tinysam-msft"
 	"themanofrod-travel-agent"
-	"uamarchuan-lapa-v0.1.2-instruct"
-	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"
-	"WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"
-	"WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
+	"uamarchuan-lapa-v0_1_2-instruct"
+	"WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-70B"
+	"WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-8B"
+	"WhiteRabbitNeo-WhiteRabbitNeo-2_5-Qwen-2_5-Coder-7B"
 	"windffooxxyang1130764-mesugaki"
 	"windffooxxyang1130764-mesugaki-R18G"
 	"x-flux2-klein"
 	"x-z-image-turbo"
+	"xploiter-bugbounty-ai"
+	"xploiter-pentester"
+	"xploiter-the-xploiter"
 )
 
 FEATURED_LLMS=(
@@ -356,7 +365,7 @@ FEATURED_LLMS=(
 	"codestral"
 	"codeup"
 	"cogito"
-	"cogito-2.1"
+	"cogito-2_1"
 	"command-a"
 	"command-r"
 	"command-r-plus"
@@ -371,13 +380,13 @@ FEATURED_LLMS=(
 	"deepseek-ocr"
 	"deepseek-r1"
 	"deepseek-v2"
-	"deepseek-v2.5"
+	"deepseek-v2_5"
 	"deepseek-v3"
-	"deepseek-v3.1"
-	"deepseek-v3.2"
+	"deepseek-v3_1"
+	"deepseek-v3_2"
 	"deepseek-v4-flash"
 	"deepseek-v4-pro"
-	"deepseek-v4.1-flash"
+	"deepseek-v4_1-flash"
 	"devstral"
 	"devstral-2"
 	"devstral-small-2"
@@ -402,17 +411,18 @@ FEATURED_LLMS=(
 	"gemma3n"
 	"gemma4"
 	"glm4"
-	"glm-4.6"
-	"glm-4.7"
-	"glm-4.7-flash"
+	"glm-4_6"
+	"glm-4_7"
+	"glm-4_7-flash"
 	"glm-5"
-	"glm-5.1"
-	"glm-5.2"
-	"glm-5.3"
-	"glm-5.3-flash"
+	"glm-5_1"
+	"glm-5_2"
+	"glm-5_3"
+	"glm-5_3-flash"
 	"glm-ocr"
 	"embeddinggemma"
-	"exaone3.5"
+	"embeddinggemma-2"
+	"exaone3_5"
 	"exaone-deep"
 	"goliath"
 	"gpt-oss"
@@ -420,31 +430,31 @@ FEATURED_LLMS=(
 	"granite-code"
 	"granite-embedding"
 	"granite3-dense"
-	"granite3.1-dense"
+	"granite3_1-dense"
 	"granite3-guardian"
 	"granite3-moe"
-	"granite3.1-moe"
-	"granite3.2"
-	"granite3.2-vision"
-	"granite3.3"
+	"granite3_1-moe"
+	"granite3_2"
+	"granite3_2-vision"
+	"granite3_3"
 	"granite4"
-	"granite4.1"
-	"granite4.1-guardian"
-	"granite4.2"
+	"granite4_1"
+	"granite4_1-guardian"
+	"granite4_2"
 	"hermes3"
 	"internlm2"
 	"kimi-k2"
 	"kimi-k2-thinking"
-	"kimi-k2.5"
-	"kimi-k2.6"
-	"kimi-k2.7-code"
+	"kimi-k2_5"
+	"kimi-k2_6"
+	"kimi-k2_7-code"
 	"kimi-k3"
-	"laguna-s-2.1"
-	"laguna-xs.2"
-	"laguna-xs-2.1"
+	"laguna-s-2_1"
+	"laguna-xs_2"
+	"laguna-xs-2_1"
 	"lfm2"
-	"lfm2.5"
-	"lfm2.5-thinking"
+	"lfm2_5"
+	"lfm2_5-thinking"
 	"llama-guard3"
 	"llama-pro"
 	"llama2"
@@ -454,10 +464,10 @@ FEATURED_LLMS=(
 	"llama3-chatqa"
 	"llama3-gradient"
 	"llama3-groq-tool-use"
-	"llama3.1"
-	"llama3.2"
-	"llama3.2-vision"
-	"llama3.3"
+	"llama3_1"
+	"llama3_2"
+	"llama3_2-vision"
+	"llama3_3"
 	"llama4"
 	"llava"
 	"llava-llama3"
@@ -468,27 +478,27 @@ FEATURED_LLMS=(
 	"mathstral"
 	"meditron"
 	"medgemma"
-	"medgemma1.5"
+	"medgemma1_5"
 	"medllama2"
 	"megadolphin"
 	"minicpm-v"
-	"minicpm-v4.5"
-	"minicpm-v4.6"
+	"minicpm-v4_5"
+	"minicpm-v4_6"
 	"minimax-m2"
-	"minimax-m2.1"
-	"minimax-m2.5"
-	"minimax-m2.7"
+	"minimax-m2_1"
+	"minimax-m2_5"
+	"minimax-m2_7"
 	"minimax-m3"
 	"ministral-3"
 	"mistral"
 	"mistral-large"
 	"mistral-large-3"
-	"mistral-medium-3.5"
+	"mistral-medium-3_5"
 	"mistral-nemo"
 	"mistral-openorca"
 	"mistral-small"
-	"mistral-small3.1"
-	"mistral-small3.2"
+	"mistral-small3_1"
+	"mistral-small3_2"
 	"mistrallite"
 	"mixtral"
 	"moondream"
@@ -498,7 +508,7 @@ FEATURED_LLMS=(
 	"nemotron-3-nano"
 	"nemotron-3-super"
 	"nemotron-3-ultra"
-	"nemotron-3.5-lightning"
+	"nemotron-3_5-lightning"
 	"nemotron-cascade-2"
 	"nemotron-mini"
 	"neural-chat"
@@ -506,7 +516,7 @@ FEATURED_LLMS=(
 	"nimble"
 	"nomic-embed-text"
 	"nomic-embed-text-v2-moe"
-	"north-mini-code-1.0"
+	"north-mini-code-1_0"
 	"notus"
 	"notux"
 	"nous-hermes"
@@ -514,7 +524,7 @@ FEATURED_LLMS=(
 	"nous-hermes2-mixtral"
 	"nuextract"
 	"olmo-3"
-	"olmo-3.1"
+	"olmo-3_1"
 	"olmo2"
 	"open-orca-platypus2"
 	"openchat"
@@ -527,7 +537,7 @@ FEATURED_LLMS=(
 	"paraphrase-multilingual"
 	"phi"
 	"phi3"
-	"phi3.5"
+	"phi3_5"
 	"phi4"
 	"phi4-mini"
 	"phi4-mini-reasoning"
@@ -536,19 +546,19 @@ FEATURED_LLMS=(
 	"qwen"
 	"qwen2"
 	"qwen2-math"
-	"qwen2.5"
-	"qwen2.5-coder"
-	"qwen2.5vl"
+	"qwen2_5"
+	"qwen2_5-coder"
+	"qwen2_5vl"
 	"qwen3"
 	"qwen3-coder"
 	"qwen3-coder-next"
 	"qwen3-embedding"
 	"qwen3-next"
 	"qwen3-vl"
-	"qwen3.5"
-	"qwen3.6"
-	"qwen3.8"
-	"qwen3.8-flash-next"
+	"qwen3_5"
+	"qwen3_6"
+	"qwen3_8"
+	"qwen3_8-flash-next"
 	"qwq"
 	"r1-1776"
 	"reader-lm"
@@ -556,7 +566,7 @@ FEATURED_LLMS=(
 	"rnj-1"
 	"sailor2"
 	"samantha-mistral"
-	"sammcj-smaug-mixtral-v0.1"
+	"sammcj-smaug-mixtral-v0_1"
 	"shieldgemma"
 	"smallthinker"
 	"smollm"
@@ -1080,7 +1090,7 @@ LLM_LICENSES="
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
-	ollama_llms_agcobra-liberated-qwen1.5-72b? (
+	ollama_llms_agcobra-liberated-qwen1_5-72b? (
 		Tongyi-Qianwen-LICENSE-AGREEMENT
 	)
 	ollama_llms_akx-viking-7b? (
@@ -1152,7 +1162,7 @@ LLM_LICENSES="
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
-	ollama_llms_artifish-mlewd-v2.4? (
+	ollama_llms_artifish-mlewd-v2_4? (
 		CC-BY-NC-4.0
 	)
 	ollama_llms_athene-v2? (
@@ -1254,7 +1264,7 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
-	ollama_llms_cogito-2.1? (
+	ollama_llms_cogito-2_1? (
 		MIT
 	)
 	ollama_llms_command-a? (
@@ -1276,6 +1286,9 @@ LLM_LICENSES="
 	ollama_llms_command-r7b-arabic? (
 		CC-BY-NC-4.0
 		Cohere-Labs-Acceptable-Use-Policy
+	)
+	ollama_llms_cypher-21-SentinalX? (
+		Apache-2.0
 	)
 	ollama_llms_d4n5h-white-rabbit-neo-70b-v2? (
 		llama3_1-LICENSE
@@ -1308,16 +1321,16 @@ LLM_LICENSES="
 	ollama_llms_deepseek-v2? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
-	ollama_llms_deepseek-v2.5? (
+	ollama_llms_deepseek-v2_5? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
 	ollama_llms_deepseek-v3? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
-	ollama_llms_deepseek-v3.1? (
+	ollama_llms_deepseek-v3_1? (
 		MIT
 	)
-	ollama_llms_deepseek-v3.2? (
+	ollama_llms_deepseek-v3_2? (
 		MIT
 	)
 	ollama_llms_deepseek-v4-flash? (
@@ -1326,7 +1339,7 @@ LLM_LICENSES="
 	ollama_llms_deepseek-v4-pro? (
 		MIT
 	)
-	ollama_llms_deepseek-v4.1-flash? (
+	ollama_llms_deepseek-v4_1-flash? (
 		MIT
 	)
 	ollama_llms_deepseek-llm? (
@@ -1398,7 +1411,10 @@ LLM_LICENSES="
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
 	)
-	ollama_llms_exaone3.5? (
+	ollama_llms_embeddinggemma-2? (
+		Apache-2.0
+	)
+	ollama_llms_exaone3_5? (
 		EXAONE-AI-Model-License-Agreement-1.1-NC
 	)
 	ollama_llms_exaone-deep? (
@@ -1426,7 +1442,7 @@ LLM_LICENSES="
 	ollama_llms_fixt-home-3b-v3? (
 		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
 	)
-	ollama_llms_fluffy-l3-8b-stheno-v3.2? (
+	ollama_llms_fluffy-l3-8b-stheno-v3_2? (
 		CC-BY-NC-4.0
 		llama3-LICENSE
 		llama3-USE_POLICY.md
@@ -1435,7 +1451,7 @@ LLM_LICENSES="
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
 	)
-	ollama_llms_frob-mimo-v2.6-pro? (
+	ollama_llms_frob-mimo-v2_6-pro? (
 		MIT
 	)
 	ollama_llms_gemini-3-flash-preview? (
@@ -1466,28 +1482,28 @@ LLM_LICENSES="
 	ollama_llms_glm4? (
 		glm-4-9b-LICENSE
 	)
-	ollama_llms_glm-4.6? (
+	ollama_llms_glm-4_6? (
 		MIT
 	)
-	ollama_llms_glm-4.7? (
+	ollama_llms_glm-4_7? (
 		MIT
 	)
-	ollama_llms_glm-4.7-flash? (
+	ollama_llms_glm-4_7-flash? (
 		MIT
 	)
 	ollama_llms_glm-5? (
 		MIT
 	)
-	ollama_llms_glm-5.1? (
+	ollama_llms_glm-5_1? (
 		MIT
 	)
-	ollama_llms_glm-5.2? (
+	ollama_llms_glm-5_2? (
 		MIT
 	)
-	ollama_llms_glm-5.3? (
+	ollama_llms_glm-5_3? (
 		GLM-5.3
 	)
-	ollama_llms_glm-5.3-flash? (
+	ollama_llms_glm-5_3-flash? (
 		MIT
 	)
 	ollama_llms_glm-ocr? (
@@ -1512,7 +1528,7 @@ LLM_LICENSES="
 	ollama_llms_granite3-dense? (
 		Apache-2.0
 	)
-	ollama_llms_granite3.1-dense? (
+	ollama_llms_granite3_1-dense? (
 		Apache-2.0
 	)
 	ollama_llms_granite3-guardian? (
@@ -1521,28 +1537,28 @@ LLM_LICENSES="
 	ollama_llms_granite3-moe? (
 		Apache-2.0
 	)
-	ollama_llms_granite3.1-moe? (
+	ollama_llms_granite3_1-moe? (
 		Apache-2.0
 	)
-	ollama_llms_granite3.2? (
+	ollama_llms_granite3_2? (
 		Apache-2.0
 	)
-	ollama_llms_granite3.2-vision? (
+	ollama_llms_granite3_2-vision? (
 		Apache-2.0
 	)
-	ollama_llms_granite3.3? (
+	ollama_llms_granite3_3? (
 		Apache-2.0
 	)
 	ollama_llms_granite4? (
 		Apache-2.0
 	)
-	ollama_llms_granite4.1? (
+	ollama_llms_granite4_1? (
 		Apache-2.0
 	)
-	ollama_llms_granite4.1-guardian? (
+	ollama_llms_granite4_1-guardian? (
 		Apache-2.0
 	)
-	ollama_llms_granite4.2? (
+	ollama_llms_granite4_2? (
 		Apache-2.0
 	)
 	ollama_llms_hemanth-chessplayer? (
@@ -1554,6 +1570,15 @@ LLM_LICENSES="
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_hookingai-monah-8b? (
+		Apache-2.0
+	)
+	ollama_llms_IHA089-drana-infinity-3b? (
+		Apache-2.0
+	)
+	ollama_llms_IHA089-drana-infinity-7b? (
+		Apache-2.0
+	)
+	ollama_llms_IHA089-drana-infinity-v1? (
 		Apache-2.0
 	)
 	ollama_llms_iKhalid-ALLaM? (
@@ -1577,16 +1602,16 @@ LLM_LICENSES="
 	ollama_llms_jwnder-jais-adaptive? (
 		Apache-2.0
 	)
-	ollama_llms_kiwi_kiwi-mimo-v2.6-heretic? (
+	ollama_llms_kiwi_kiwi-mimo-v2_6-heretic? (
 		MIT
 	)
 	ollama_llms_lfm2? (
 		LFM-Open-License-v1.0
 	)
-	ollama_llms_lfm2.5? (
+	ollama_llms_lfm2_5? (
 		LFM-Open-License-v1.0
 	)
-	ollama_llms_lfm2.5-thinking? (
+	ollama_llms_lfm2_5-thinking? (
 		LFM-Open-License-v1.0
 	)
 	ollama_llms_llama-guard3? (
@@ -1624,19 +1649,19 @@ LLM_LICENSES="
 		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
-	ollama_llms_llama3.1? (
+	ollama_llms_llama3_1? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
-	ollama_llms_llama3.2? (
+	ollama_llms_llama3_2? (
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
-	ollama_llms_llama3.2-vision? (
+	ollama_llms_llama3_2-vision? (
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
-	ollama_llms_llama3.3? (
+	ollama_llms_llama3_3? (
 		llama3_3-LICENSE
 		llama3_3-USE_POLICY.md
 	)
@@ -1662,33 +1687,36 @@ LLM_LICENSES="
 	ollama_llms_kimi-k2-thinking? (
 		Kimi-K2-LICENSE
 	)
-	ollama_llms_kimi-k2.5? (
+	ollama_llms_kimi-k2_5? (
 		Kimi-K2.5-LICENSE
 	)
-	ollama_llms_kimi-k2.6? (
+	ollama_llms_kimi-k2_6? (
 		Kimi-K2.6-LICENSE
 	)
-	ollama_llms_kimi-k2.7-code? (
+	ollama_llms_kimi-k2_7-code? (
 		Kimi-K2.7-Code-LICENSE
 	)
 	ollama_llms_kimi-k3? (
 		Kimi-K3-License
 	)
-	ollama_llms_laguna-s-2.1? (
+	ollama_llms_laguna-s-2_1? (
 		OpenMDW-1.1
 	)
-	ollama_llms_laguna-xs.2? (
+	ollama_llms_laguna-xs_2? (
 		Apache-2.0
 		Poolside-Acceptable-Use-Policy
 	)
-	ollama_llms_laguna-xs-2.1? (
+	ollama_llms_laguna-xs-2_1? (
 		OpenMDW-1.1
 	)
-	ollama_llms_leeplenty-lumimaid-v0.2? (
+	ollama_llms_leeplenty-lumimaid-v0_2? (
 		Apache-2.0
 		CC-BY-NC-4.0
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_luisppb16-Qwen3_5-9B-Red_Team? (
+		Apache-2.0
 	)
 	ollama_llms_magicoder? (
 		llama2-LICENSE
@@ -1724,7 +1752,7 @@ LLM_LICENSES="
 	ollama_llms_medgemma? (
 		Health-AI-Developer-Foundations-Terms-of-Use-20241115
 	)
-	ollama_llms_medgemma1.5? (
+	ollama_llms_medgemma1_5? (
 		Health-AI-Developer-Foundations-Terms-of-Use-20241115
 	)
 	ollama_llms_medllama2? (
@@ -1737,27 +1765,27 @@ LLM_LICENSES="
 	ollama_llms_minicpm-v? (
 		Apache-2.0
 	)
-	ollama_llms_minicpm-v4.5? (
+	ollama_llms_minicpm-v4_5? (
 		Apache-2.0
 	)
-	ollama_llms_minicpm-v4.6? (
+	ollama_llms_minicpm-v4_6? (
 		Apache-2.0
 	)
 	ollama_llms_minimax-m2? (
 		MiniMax-M2
 		MIT
 	)
-	ollama_llms_minimax-m2.1? (
+	ollama_llms_minimax-m2_1? (
 		MiniMax-M2.1
 		MIT
 	)
-	ollama_llms_minimax-m2.5? (
+	ollama_llms_minimax-m2_5? (
 		MINIMAX-MODEL-LICENSE
 	)
-	ollama_llms_minimax-m2.7? (
+	ollama_llms_minimax-m2_7? (
 		MiniMax-M2.7
 	)
-	ollama_llms_minimax-m2.7? (
+	ollama_llms_minimax-m2_7? (
 		all-rights-reserved
 	)
 	ollama_llms_ministral-3? (
@@ -1772,7 +1800,7 @@ LLM_LICENSES="
 	ollama_llms_mistral-large-3? (
 		Apache-2.0
 	)
-	ollama_llms_mistral-medium-3.5? (
+	ollama_llms_mistral-medium-3_5? (
 		Mistral-Medium-3.5-LICENSE
 	)
 	ollama_llms_mistral-nemo? (
@@ -1785,10 +1813,10 @@ LLM_LICENSES="
 		Apache-2.0
 		MRL-0.1.md
 	)
-	ollama_llms_mistral-small3.1? (
+	ollama_llms_mistral-small3_1? (
 		Apache-2.0
 	)
-	ollama_llms_mistral-small3.2? (
+	ollama_llms_mistral-small3_2? (
 		Apache-2.0
 	)
 	ollama_llms_mistrallite? (
@@ -1803,14 +1831,14 @@ LLM_LICENSES="
 	ollama_llms_Maternion-LightOnOCR-2? (
 		Apache-2.0
 	)
-	ollama_llms_Maternion-mimo-v2.6-heretic? (
+	ollama_llms_Maternion-mimo-v2_6-heretic? (
 		MIT
 	)
 	ollama_llms_MichelRosselli-grok-2? (
 		Grok-2-Community-License-Agreement-20251104
 		xAI-Acceptable-Use-Policy
 	)
-	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
+	ollama_llms_monotykamary-whiterabbitneo-v1_5a? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
@@ -1845,7 +1873,7 @@ LLM_LICENSES="
 	ollama_llms_nemotron-3-ultra? (
 		OpenMDW-1.1
 	)
-	ollama_llms_nemotron-3.5-lightning? (
+	ollama_llms_nemotron-3_5-lightning? (
 		OpenMDW-1.1
 	)
 	ollama_llms_nemotron-cascade-2? (
@@ -1869,7 +1897,7 @@ LLM_LICENSES="
 	ollama_llms_nomic-embed-text-v2-moe? (
 		Apache-2.0
 	)
-	ollama_llms_north-mini-code-1.0? (
+	ollama_llms_north-mini-code-1_0? (
 		Apache-2.0
 	)
 	ollama_llms_notus? (
@@ -1888,7 +1916,7 @@ LLM_LICENSES="
 	ollama_llms_nous-hermes2-mixtral? (
 		Apache-2.0
 	)
-	ollama_llms_nchapman-l3.1-70b-hanami-x1? (
+	ollama_llms_nchapman-l3_1-70b-hanami-x1? (
 		CC-BY-NC-4.0
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
@@ -1908,7 +1936,7 @@ LLM_LICENSES="
 	ollama_llms_olmo-3? (
 		Apache-2.0
 	)
-	ollama_llms_olmo-3.1? (
+	ollama_llms_olmo-3_1? (
 		Apache-2.0
 	)
 	ollama_llms_olmo2? (
@@ -1951,7 +1979,7 @@ LLM_LICENSES="
 	ollama_llms_phi3? (
 		MIT
 	)
-	ollama_llms_phi3.5? (
+	ollama_llms_phi3_5? (
 		MIT
 	)
 	ollama_llms_phi4? (
@@ -1981,13 +2009,13 @@ LLM_LICENSES="
 	ollama_llms_qwen2-math? (
 		Apache-2.0
 	)
-	ollama_llms_qwen2.5? (
+	ollama_llms_qwen2_5? (
 		Apache-2.0
 	)
-	ollama_llms_qwen2.5-coder? (
+	ollama_llms_qwen2_5-coder? (
 		Apache-2.0
 	)
-	ollama_llms_qwen2.5vl? (
+	ollama_llms_qwen2_5vl? (
 		Apache-2.0
 	)
 	ollama_llms_qwen3? (
@@ -2008,16 +2036,16 @@ LLM_LICENSES="
 	ollama_llms_qwen3-vl? (
 		Apache-2.0
 	)
-	ollama_llms_qwen3.5? (
+	ollama_llms_qwen3_5? (
 		Apache-2.0
 	)
-	ollama_llms_qwen3.6? (
+	ollama_llms_qwen3_6? (
 		Apache-2.0
 	)
-	ollama_llms_qwen3.8? (
+	ollama_llms_qwen3_8? (
 		Apache-2.0
 	)
-	ollama_llms_qwen3.8-flash-next? (
+	ollama_llms_qwen3_8-flash-next? (
 		Qwen-Community-License-1.0
 	)
 	ollama_llms_qwq? (
@@ -2052,6 +2080,9 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_richardyoung-deepseek-r1-0528-qwen3-8b-heretic? (
+		MIT
+	)
 	ollama_llms_rfc-whiterabbitneo? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -2061,7 +2092,7 @@ LLM_LICENSES="
 	ollama_llms_rnj-1? (
 		Apache-2.0
 	)
-	ollama_llms_rouge-replete-coder-qwen2-1.5b? (
+	ollama_llms_rouge-replete-coder-qwen2-1_5b? (
 		Apache-2.0
 	)
 	ollama_llms_sailor2? (
@@ -2073,7 +2104,7 @@ LLM_LICENSES="
 	ollama_llms_samantha-mistral? (
 		Apache-2.0
 	)
-	ollama_llms_sammcj-smaug-mixtral-v0.1? (
+	ollama_llms_sammcj-smaug-mixtral-v0_1? (
 		Apache-2.0
 	)
 	ollama_llms_savethedoctor-whiterabbitneo13bq8_0? (
@@ -2112,7 +2143,7 @@ LLM_LICENSES="
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
-	ollama_llms_sparksammy-samantha-3.1? (
+	ollama_llms_sparksammy-samantha-3_1? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
@@ -2178,7 +2209,7 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
-	ollama_llms_uamarchuan-lapa-v0.1.2-instruct? (
+	ollama_llms_uamarchuan-lapa-v0_1_2-instruct? (
 		Gemma-Terms-of-Use-20250324
 		Gemma-Prohibited-Use-Policy-20240221
 	)
@@ -2220,19 +2251,19 @@ LLM_LICENSES="
 	ollama_llms_wizardlm2? (
 		Apache-2.0
 	)
-	ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B? (
+	ollama_llms_WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-70B? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
 	)
-	ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B? (
+	ollama_llms_WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-8B? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
 	)
-	ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B? (
+	ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2_5-Qwen-2_5-Coder-7B? (
 		Apache-2.0
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
@@ -2253,6 +2284,15 @@ LLM_LICENSES="
 	ollama_llms_xwinlm? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
+	)
+	ollama_llms_xploiter-bugbounty-ai? (
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+	)
+	ollama_llms_xploiter-pentester? (
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+	)
+	ollama_llms_xploiter-the-xploiter? (
+		the-xploiter-license
 	)
 	ollama_llms_yi? (
 		Apache-2.0
@@ -3578,7 +3618,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 
 	declare -A use_alias=(
 		["adens-quran-guide"]="adens/quran-guide"
-		["agcobra-liberated-qwen1.5-72b"]="agcobra/liberated-qwen1.5-72b"
+		["agcobra-liberated-qwen1_5-72b"]="agcobra/liberated-qwen1.5-72b"
 		["akx-viking-7b"]="akx/viking-7b"
 		["ALIENTELLIGENCE-christiancounselor"]="ALIENTELLIGENCE/christiancounselor"
 		["ALIENTELLIGENCE-crisisintervention"]="ALIENTELLIGENCE/crisisintervention"
@@ -3594,7 +3634,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["ALIENTELLIGENCE-whiterabbit"]="ALIENTELLIGENCE/whiterabbit"
 		["ALIENTELLIGENCE-whiterabbitv2"]="ALIENTELLIGENCE/whiterabbitv2"
 		["Artalius-lixi"]="Artalius/lixi"
-		["artifish-mlewd-v2.4"]="artifish/mlewd-v2.4"
+		["artifish-mlewd-v2_4"]="artifish/mlewd-v2.4"
 		["benevolentjoker-belial"]="benevolentjoker/belial"
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
@@ -3606,6 +3646,7 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["chatgph-70b-instruct"]="chatgph/70b-instruct"
 		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
+		["cypher-21-SentinalX"]="cypher-21/SentinalX"
 		["d4n5h-white-rabbit-neo-70b-v2"]="d4n5h/white-rabbit-neo-70b-v2"
 		["DeepHat-DeepHat-V1-7B"]="DeepHat/DeepHat-V1-7B"
 		["disinfozone-telos"]="disinfozone/telos"
@@ -3614,26 +3655,30 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["etgohome-hackidle-nist-coder"]="etgohome/hackidle-nist-coder"
 		["fixt-home-3b-v3"]="fixt/home-3b-v3"
 		["fixt-home-3b-v2"]="fixt/home-3b-v2"
-		["fluffy-l3-8b-stheno-v3.2"]="fluffy/l3-8b-stheno-v3.2"
-		["frob-mimo-v2.6-pro"]="frob/mimo-v2.6-pro"
+		["fluffy-l3-8b-stheno-v3_2"]="fluffy/l3-8b-stheno-v3.2"
+		["frob-mimo-v2_6-pro"]="frob/mimo-v2.6-pro"
 		["hemanth-chessplayer"]="hemanth/chessplayer"
 		["hookingai-monah-8b"]="hookingai/monah-8b"
+		["IHA089-drana-infinity-3b"]="IHA089/drana-infinity-3b"
+		["IHA089-drana-infinity-7b"]="IHA089/drana-infinity-7b"
+		["IHA089-drana-infinity-v1"]="IHA089/drana-infinity-v1"
 		["iKhalid-ALLaM"]="iKhalid/ALLaM"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
 		["joefamous-grok-1"]="joefamous/grok-1"
 		["jwnder-jais-adaptive"]="jwnder/jais-adaptive"
-		["kiwi_kiwi-mimo-v2.6-heretic"]="kiwi_kiwi/mimo-v2.6-heretic"
-		["leeplenty-lumimaid-v0.2"]="leeplenty/lumimaid-v0.2"
+		["kiwi_kiwi-mimo-v2_6-heretic"]="kiwi_kiwi/mimo-v2.6-heretic"
+		["leeplenty-lumimaid-v0_2"]="leeplenty/lumimaid-v0.2"
+		["luisppb16-Qwen3_5-9B-Red_Team"]="luisppb16/Qwen3.5-9B-Red_Team"
 		["mannix-llamax3-8b-alpaca"]="mannix/llamax3-8b-alpaca"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["Maternion-LightOnOCR-2"]="Maternion/LightOnOCR-2"
-		["Maternion-mimo-v2.6-heretic"]="Maternion/mimo-v2.6-heretic"
+		["Maternion-mimo-v2_6-heretic"]="Maternion/mimo-v2.6-heretic"
 		["MichelRosselli-grok-2"]="MichelRosselli/grok-2"
-		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
+		["monotykamary-whiterabbitneo-v1_5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["mtayyar-trendmicro-ailab-Llama-Primus-Reasoning"]="mtayyar/trendmicro-ailab-Llama-Primus-Reasoning"
-		["nchapman-l3.1-70b-hanami-x1"]="nchapman/l3.1-70b-hanami-x1"
+		["nchapman-l3_1-70b-hanami-x1"]="nchapman/l3.1-70b-hanami-x1"
 		["nqduc-gemsura"]="nqduc/gemsura"
 		["nqduc-mixsura"]="nqduc/mixsura"
 		["nqduc-mixsura-sft"]="nqduc/mixsura-sft"
@@ -3641,41 +3686,84 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["reefer-her2"]="reefer/her2"
 		["reefer-minimonica"]="reefer/minimonica"
 		["reefer-monica"]="reefer/monica"
+		["richardyoung-deepseek-r1-0528-qwen3-8b-heretic"]="richardyoung/deepseek-r1-0528-qwen3-8b-heretic"
 		["rfc-whiterabbitneo"]="rfc/whiterabbitneo"
-		["rouge-replete-coder-qwen2-1.5b"]="rouge/replete-coder-qwen2-1.5b"
+		["rouge-replete-coder-qwen2-1_5b"]="rouge/replete-coder-qwen2-1.5b"
 		["sam860-lucy"]="sam860/lucy"
 		["savethedoctor-whiterabbitneo13bq8_0"]="savethedoctor/whiterabbitneo13bq8_0"
 		["sparksammy-samantha"]="sparksammy/samantha"
-		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
+		["sparksammy-samantha-3_1"]="sparksammy/samantha-3.1"
 		["sparksammy-samantha-eggplant"]="sparksammy/samantha-eggplant"
 		["sparksammy-samantha-v3-uncensored"]="sparksammy/samantha-v3-uncensored"
 		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
 		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
 		["themanofrod-travel-agent"]="themanofrod/travel-agent"
-		["uamarchuan-lapa-v0.1.2-instruct"]="uamarchuan/lapa-v0.1.2-instruct"
-		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-70B"
-		["WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-8B"
-		["WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"]="WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
+		["uamarchuan-lapa-v0_1_2-instruct"]="uamarchuan/lapa-v0.1.2-instruct"
+		["WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-70B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-70B"
+		["WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-8B"]="WhiteRabbitNeo/Llama-3.1-WhiteRabbitNeo-2-8B"
+		["WhiteRabbitNeo-WhiteRabbitNeo-2_5-Qwen-2_5-Coder-7B"]="WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
 		["windffooxxyang1130764-mesugaki"]="windffooxxyang1130764/mesugaki"
 		["windffooxxyang1130764-mesugaki-R18G"]="windffooxxyang1130764/mesugaki-R18G"
 		["x-flux2-klein"]="x/flux2-klein"
 		["x-z-image-turbo"]="x/z-image-turbo"
+		["xploiter-bugbounty-ai"]="xploiter/bugbounty-ai"
+		["xploiter-pentester"]="xploiter/pentester"
+		["xploiter-the-xploiter"]="xploiter/the-xploiter"
+
+	# TODO:  add to patch
+		["ebowwa-cognitive-hacker"]="ebowwa/cognitive-hacker"
+		["ebowwa-cognitive-hacker-0.2"]="ebowwa/cognitive-hacker-0.2"
+		["erukude-cve-expert"]="erukude/cve-expert"
+		["frob-mimo-v2.6-flash"]="frob/mimo-v2.6-flash"
+		["huihui_ai-deepseek-r1-abliterated"]="huihui_ai/deepseek-r1-abliterated"
+		["huihui_ai-perplexity-ai-r1-abliterated"]="huihui_ai/perplexity-ai-r1-abliterated"
+		["huihui_ai-deephermes3-abliterated"]="huihui_ai/deephermes3-abliterated"
+		["huihui_ai-deepscaler-abliterated"]="huihui_ai/deepscaler-abliterated"
+		["huihui_ai-dolphin3-abliterated"]="huihui_ai/dolphin3-abliterated"
+		["huihui_ai-dolphin3-r1-abliterated"]="huihui_ai/dolphin3-r1-abliterated"
+		["huihui_ai-foundation-sec-abliterated"]="huihui_ai/foundation-sec-abliterated"
+		["huihui_ai-gemma-4-abliterated"]="huihui_ai/gemma-4-abliterated"
+		["huihui_ai-gemma3-abliterated"]="huihui_ai/gemma3-abliterated"
+		["huihui_ai-gemma3n-abliterated"]="huihui_ai/gemma3n-abliterated"
+		["huihui_ai-glm4.6-abliterated"]="huihui_ai/glm4.6-abliterated"
+		["huihui_ai-glm-4_7-abliterated"]="huihui_ai/glm-4.7-abliterated"
+		["huihui_ai-glm-4_7-flash-abliterated"]="huihui_ai/glm-4.7-flash-abliterated"
+		["huihui_ai-granite3_1-dense-abliterated"]="huihui_ai/granite3.1-dense-abliterated"
+		["huihui_ai-granite3_2-abliterated"]="huihui_ai/granite3.2-abliterated"
+		["huihui_ai-granite3_2-vision-abliterated"]="huihui_ai/granite3.2-vision-abliterated"
+		["huihui_ai-granite4_1-abliterated"]="huihui_ai/granite4.1-abliterated"
+		["huihui_ai-Hermes-3-Llama-3.2-abliterated"]="huihui_ai/Hermes-3-Llama-3.2-abliterated"
+		["huihui_ai-llama3_2-abliterate"]="huihui_ai/llama3.2-abliterate"
+		["huihui_ai-llama3_3-abliterated"]="huihui_ai/llama3.3-abliterated"
+		["huihui_ai-qwen2_5-abliterate"]="huihui_ai/qwen2.5-abliterate"
+		["huihui_ai-qwen2_5-coder-abliterate"]="huihui_ai/qwen2.5-coder-abliterate"
+		["huihui_ai-qwen2_5-1m-abliterated"]="huihui_ai/qwen2.5-1m-abliterated"
+		["huihui_ai-qwen2_5-vl-abliterated"]="huihui_ai/qwen2.5-vl-abliterated"
+		["huihui_ai-qwen3-abliterated"]="huihui_ai/qwen3-abliterated"
+		["huihui_ai-qwen3-coder-abliterated"]="huihui_ai/qwen3-coder-abliterated"
+		["huihui_ai-qwen3-next-abliterated"]="huihui_ai/qwen3-next-abliterated"
+		["huihui_ai-qwen3-vl-abliterated"]="huihui_ai/qwen3-vl-abliterated"
+		["huihui_ai-qwen3_5-abliterated"]="huihui_ai/qwen3.5-abliterated"
+		["huihui_ai-qwen3_6-abliterated"]="huihui_ai/Qwen3.6-abliterated"
+		["huihui_ai-qwen3_8-abliterated"]="huihui_ai/Qwen3.8-abliterated"
+		["huihui_ai-qwenlong-abliterated"]="huihui_ai/qwenlong-abliterated"
+		["huihui_ai-qwenlong-l1.5-abliterated"]="huihui_ai/qwenlong-l1.5-abliterated"
+		["huihui_ai-qwq-abliterated"]="huihui_ai/qwq-abliterated"
+		["ruturaj04-ruturajai"]="ruturaj04/ruturajai"
 	)
 
 	# Toggle LLM in whitelist to filter out LLM support by license.
 	local n
 	for n in "${LLMS[@]}" ; do
 		local key="${use_alias[${n}]}"
-		if [[ -n "${key}" ]] ; then
-			if use "ollama_llms_${n}" ; then
-				sed -i -e "s|\"${key}\": 1|\"${key}\": 1|g" "cmd/cmd.go" || die
-			else
-				sed -i -e "s|\"${key}\": 1|\"${key}\": 0|g" "cmd/cmd.go" || die
-			fi
+		if [[ -z "${key}" ]] ; then
+			:
+		elif ! in_iuse "${key}" ; then
+			:
 		elif use "ollama_llms_${n}" ; then
-			sed -i -e "s|\"${n}\": 1|\"${n}\": 1|g" "cmd/cmd.go" || die
+			sed -i -e "s|\"${key}\": 1|\"${key}\": 1|g" "cmd/cmd.go" || die
 		else
-			sed -i -e "s|\"${n}\": 1|\"${n}\": 0|g" "cmd/cmd.go" || die
+			sed -i -e "s|\"${key}\": 1|\"${key}\": 0|g" "cmd/cmd.go" || die
 		fi
 	done
 
@@ -4446,58 +4534,114 @@ pkg_preinst() {
 	fowners "${PN}:${PN}" "/var/log/${PN}"
 }
 
-# It is preferred to hard mask them but not currently done so because you can
-# find them on other AI apps or it is like free speech censorship.
-# Users can decide to hard mask them.
 warn_red_teamer_llm() {
 #
 # TODO:
 #
-# cypher-21/SentinalX
 # deepseek-r1 heretic/abliterated models
-# IHA089/drana-infinity-3b
-# IHA089/drana-infinity-7b
-# IHA089/drana-infinity-v1
-# luisppb16/Qwen3.5-9B-Red_Team
 # Qwen3.6-Coder
-# xploiter/bugbounty-ai
-# xploiter/pentester
-# xploiter/the-xploiter
+# llama2 abliterated/uncensored P
+# llama3 abliterated/uncensored P
 #
 # Hints that may indicate a dangerous model:
 #
 # 1. >30b or >70b params
 # 2. High scores on SWE-bench
 # 3. The AI said that above 0.0% demonstrates dangerous quality.
-# 4. Lists a score on CyberGym, ExploitGym, ExploitBench
+# 4. Lists a score on CyberGym [blue team], ExploitGym [red team], ExploitBench [red team]
 #
+
+	#
+	# B = Presence on red team benchmark
+	# G = Payload generation
+	# P = Red team phishing
+	# R = Reconnaissance
+	#
+	# It is planned to hard mask B and G class of models for this ebuild.
+	# The other LLM packages we may deal with later.
+	#
 	local L=(
 		"ollama_llms_ALIENTELLIGENCE-whiterabbit"
 		"ollama_llms_ALIENTELLIGENCE-whiterabbitv2"
 		"ollama_llms_captainkyd-whiterabbitneo7b"
+		"ollama_llms_cypher-21-SentinalX"
 		"ollama_llms_DeepHat-DeepHat-V1-7B"
 		"ollama_llms_deepseek-r1"
-		"ollama_llms_deepseek-v4-flash"
-		"ollama_llms_deepseek-v4-pro"
-		"ollama_llms_deepseek-v4.1-flash"
+		"ollama_llms_deepseek-v4-flash" # B
+		"ollama_llms_deepseek-v4-pro" # B
+		"ollama_llms_deepseek-v4_1-flash" # B
 		"ollama_llms_devstral"
-		"ollama_llms_frob-mimo-v2.6-pro"
-		"ollama_llms_glm-5.1"
-		"ollama_llms_glm-5.3"
+		"ollama_llms_dolphin-llama3" # G
+		"ollama_llms_dolphin-mistral" # R
+		"ollama_llms_frob-mimo-v2_6-pro" # B
+		"ollama_llms_glm-5_1"
+		"ollama_llms_glm-5_3" # B
+		"ollama_llms_IHA089-drana-infinity-3b"
+		"ollama_llms_IHA089-drana-infinity-7b"
+		"ollama_llms_IHA089-drana-infinity-v1"
 		"ollama_llms_jimscard-whiterabbit-neo"
 		"ollama_llms_kimi-k2"
 		"ollama_llms_kimi-k3"
-		"ollama_llms_kiwi_kiwi-mimo-v2.6-heretic"
-		"ollama_llms_Maternion-mimo-v2.6-heretic"
+		"ollama_llms_kiwi_kiwi-mimo-v2_6-heretic"
+		"ollama_llms_llama2-uncensored" # P
+		"ollama_llms_luisppb16-Qwen3_5-9B-Red_Team" # GR
+		"ollama_llms_Maternion-mimo-v2_6-heretic"
 		"ollama_llms_mistral-small"
-		"ollama_llms_monotykamary-whiterabbitneo-v1.5a"
+		"ollama_llms_monotykamary-whiterabbitneo-v1_5a"
+		"ollama_llms_openhermes" # P
 		"ollama_llms_rfc-whiterabbitneo"
+		"ollama_llms_richardyoung-deepseek-r1-0528-qwen3-8b-heretic"
 		"ollama_llms_savethedoctor-whiterabbitneo13bq8_0"
-		"ollama_llms_qwen3.6"
-		"ollama_llms_qwen3.8"
-		"ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-70B"
-		"ollama_llms_WhiteRabbitNeo-Llama-3.1-WhiteRabbitNeo-2-8B"
-		"ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B"
+		"ollama_llms_qwen3_6"
+		"ollama_llms_qwen3_8"
+		"ollama_llms_WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-70B"
+		"ollama_llms_WhiteRabbitNeo-Llama-3_1-WhiteRabbitNeo-2-8B"
+		"ollama_llms_WhiteRabbitNeo-WhiteRabbitNeo-2_5-Qwen-2_5-Coder-7B"
+		"ollama_llms_xploiter-bugbounty-ai" # GR
+		"ollama_llms_xploiter-pentester" # GR
+		"ollama_llms_xploiter-the-xploiter" # GR
+
+	# TODO:  Add to patch
+		"ollama_llms_ebowwa-cognitive-hacker" # RP
+		"ollama_llms_ebowwa-cognitive-hacker-0.2"
+		"ollama_llms_CyberCrew-notmythos-8b" # R
+		"ollama_llms_frob-mimo-v2.6-flash" # B
+		"ollama_llms_huihui_ai-deepseek-r1-abliterated"
+		"ollama_llms_huihui_ai-perplexity-ai-r1-abliterated"
+		"ollama_llms_huihui_ai-deephermes3-abliterated" # P
+		"ollama_llms_huihui_ai-deepscaler-abliterated"
+		"ollama_llms_huihui_ai-dolphin3-abliterated" # GP
+		"ollama_llms_huihui_ai-dolphin3-r1-abliterated" # GP
+		"ollama_llms_huihui_ai-foundation-sec-abliterated"
+		"ollama_llms_huihui_ai-gemma-4-abliterated"
+		"ollama_llms_huihui_ai-gemma3-abliterated"
+		"ollama_llms_huihui_ai-gemma3n-abliterated"
+		"ollama_llms_huihui_ai-glm4.6-abliterated"
+		"ollama_llms_huihui_ai-glm-4_7-abliterated"
+		"ollama_llms_huihui_ai-glm-4_7-flash-abliterated"
+		"ollama_llms_huihui_ai-granite3_1-dense-abliterated"
+		"ollama_llms_huihui_ai-granite3_2-abliterated"
+		"ollama_llms_huihui_ai-granite3_2-vision-abliterated"
+		"ollama_llms_huihui_ai-granite4_1-abliterated"
+		"ollama_llms_huihui_ai-Hermes-3-Llama-3.2-abliterated" # P
+		"ollama_llms_huihui_ai-llama3_2-abliterate" # P
+		"ollama_llms_huihui_ai-llama3_3-abliterated" # P
+		"ollama_llms_huihui_ai-qwen2_5-abliterate"
+		"ollama_llms_huihui_ai-qwen2_5-coder-abliterate"
+		"ollama_llms_huihui_ai-qwen2_5-1m-abliterated"
+		"ollama_llms_huihui_ai-qwen2_5-vl-abliterated"
+		"ollama_llms_huihui_ai-qwen3-abliterated"
+		"ollama_llms_huihui_ai-qwen3-coder-abliterated"
+		"ollama_llms_huihui_ai-qwen3-next-abliterated"
+		"ollama_llms_huihui_ai-qwen3-vl-abliterated"
+		"ollama_llms_huihui_ai-qwen3_5-abliterated" # G
+		"ollama_llms_huihui_ai-qwen3_6-abliterated" # GR
+		"ollama_llms_huihui_ai-qwen3_8-abliterated"
+		"ollama_llms_huihui_ai-qwenlong-abliterated"
+		"ollama_llms_huihui_ai-qwenlong-l1.5-abliterated" # G
+		"ollama_llms_huihui_ai-qwq-abliterated"
+		"ollama_llms_ruturaj04-ruturajai"
+
 	)
 	local u
 	for u in "${L[@]}" ; do

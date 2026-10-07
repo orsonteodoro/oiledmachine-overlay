@@ -1,6 +1,6 @@
 diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 --- ollama-0.35.1.orig/cmd/cmd.go	2026-10-01 18:05:01.000000000 -0700
-+++ ollama-0.35.1/cmd/cmd.go	2026-10-05 17:03:16.343457318 -0700
++++ ollama-0.35.1/cmd/cmd.go	2026-10-06 15:14:19.352544207 -0700
 @@ -17,9 +17,11 @@ import (
  	"net"
  	"net/http"
@@ -13,7 +13,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  	"runtime"
  	"slices"
  	"sort"
-@@ -314,6 +316,3913 @@ func createSafetensorsModel(cmd *cobra.C
+@@ -314,6 +316,3971 @@ func createSafetensorsModel(cmd *cobra.C
  	return createModelRemote(cmd.Context(), client, opts, p)
  }
  
@@ -269,6 +269,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"command-r7b-arabic:7b": "5.1GB",
 +	"command-r7b-arabic:7b-02-2025-fp16": "16GB",
 +	"command-r7b-arabic:7b-02-2025-q8_0": "8.5GB",
++	"cypher-21/SentinalX:latest": "4.7GB",
 +	"d4n5h/white-rabbit-neo-70b-v2:latest": "75GB",
 +	"dbrx:132b": "74GB",
 +	"dbrx:instruct": "74GB",
@@ -506,6 +507,23 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"embeddinggemma:300m-qat-q4_0": "239MB",
 +	"embeddinggemma:300m-qat-q8_0": "338MB",
 +	"embeddinggemma:300m-bf16": "622MB",
++	"embeddinggemma-2:latest": "1.3GB",
++	"embeddinggemma-2:270m": "378MB",
++	"embeddinggemma-2:440m": "714MB",
++	"embeddinggemma-2:570m": "990MB",
++	"embeddinggemma-2:740m": "1.3GB",
++	"embeddinggemma-2:270m-bf16-text": "574GB",
++	"embeddinggemma-2:270m-mxfp8-text": "442MB",
++	"embeddinggemma-2:270m-nvfp4-text": "378MB",
++	"embeddinggemma-2:440m-bf16-text-vision": "910MB",
++	"embeddinggemma-2:440m-mxfp8-text-vision": "778GB",
++	"embeddinggemma-2:440m-nvfp4-text-vision": "714MB",
++	"embeddinggemma-2:570m-bf16-text-audio": "1.2GB",
++	"embeddinggemma-2:570m-mxfp8-text-audio": "1.1GB",
++	"embeddinggemma-2:570m-nvfp4-text-audio": "990MB",
++	"embeddinggemma-2:740m-mxfp8": "1.4GB",
++	"embeddinggemma-2:740m-nvfp4": "1.3GB",
++	"embeddinggemma-2:740m-bf16": "1.5GB",
 +	"etgohome/hackidle-nist-coder:latest": "4.7GB",
 +	"etgohome/hackidle-nist-coder:v1.1": "4.7GB",
 +	"exaone3.5:2.4b": "1.6GB",
@@ -926,6 +944,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"hookingai/monah-8b:q5_k_M": "5.7GB",
 +	"hookingai/monah-8b:q6_K": "6.6GB",
 +	"hookingai/monah-8b:F16": "16GB",
++	"IHA089/drana-infinity-3b:3b": "1.9GB",
++	"IHA089/drana-infinity-7b:7b": "4.7GB",
++	"IHA089/drana-infinity-v1:latest": "4.7GB",
 +	"iKhalid/ALLaM:7b": "4GB",
 +	"iKhalid/ALLaM:7b-fb16": "14GB",
 +	"iKhalid/ALLaM:7b-q3_K_S": "3.1GB",
@@ -1311,6 +1332,14 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"llava-phi3:3.8b": "2.9GB",
 +	"llava-phi3:3.8b-mini-fp16": "8.3GB",
 +	"llava-phi3:3.8b-mini-q4_0": "2.9GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:Q2_K_L": "4.9GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:Q3_K_M": "4.7GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:Q4_K_M": "5.8GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:Q5_K_M": "6.6GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:Q6_K": "7.6GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:Q8_0": "9.8GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:F16": "18GB",
++	"luisppb16/Qwen3.5-9B-Red_Team:BF16": "18GB",
 +	"magicoder:7b": "3.8GB",
 +	"magicoder:7b-s-cl-q6_K": "5.5GB",
 +	"magicoder:7b-s-cl-q8_0": "7.2GB",
@@ -2421,6 +2450,11 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"reflection:70b-q6_K": "58GB",
 +	"reflection:70b-q8_0": "75GB",
 +	"reflection:70b-fp16": "141GB",
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic:latest": "5.0GB",
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic:Q4_K_M": "5.0GB",
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic:Q5_K_M": "5.9GB",
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic:Q6_K": "6.7GB",
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic:Q8_0": "8.7GB",
 +	"rfc/whiterabbitneo": "7.4GB",
 +	"rnj-1:8b": "5.1GB",
 +	"rnj-1:8b-cloud": "0GB",
@@ -3006,6 +3040,10 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"x/z-image-turbo:latest": "13GB",
 +	"x/z-image-turbo:fp8": "13GB",
 +	"x/z-image-turbo:bf16": "33GB",
++	"xploiter/bugbounty-ai:latest": "1.6GB",
++	"xploiter/pentester:latest": "1.6GB",
++	"xploiter/pentester:v2": "1.6GB",
++	"xploiter/the-xploiter:latest": "9.2GB",
 +	"xwinlm:7b": "3.8GB",
 +	"xwinlm:13b": "7.4GB",
 +	"xwinlm:7b-v0.1": "3.8GB",
@@ -3195,6 +3233,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"command-r-plus": 1,
 +	"command-r7b": 1,
 +	"command-r7b-arabic": 1,
++	"cypher-21/SentinalX": 1,
 +	"d4n5h/white-rabbit-neo-70b-v2": 1,
 +	"dbrx": 1,
 +	"disinfozone/telos": 1,
@@ -3225,6 +3264,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"duckdb-nsql": 1,
 +	"ehartford/theprofessor": 1,
 +	"embeddinggemma": 1,
++	"embeddinggemma-2": 1,
 +	"eramax/aura_v3": 1,
 +	"etgohome/hackidle-nist-coder": 1,
 +	"exaone3.5": 1,
@@ -3256,6 +3296,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"hemanth/chessplayer": 1,
 +	"hermes3": 1,
 +	"hookingai/monah-8b": 1,
++	"IHA089/drana-infinity-3b": 1,
++	"IHA089/drana-infinity-7b": 1,
++	"IHA089/drana-infinity-v1": 1,
 +	"iKhalid/ALLaM": 1,
 +	"internlm2": 1,
 +	"jimscard/adult-film-screenwriter-nsfw": 1,
@@ -3293,6 +3336,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"llava": 1,
 +	"llava-llama3": 1,
 +	"llava-phi3": 1,
++	"luisppb16/Qwen3.5-9B-Red_Team": 1,
 +	"fluffy/l3-8b-stheno-v3.2": 1,
 +	"functiongemma": 1,
 +	"frob/mimo-v2.6-pro": 1,
@@ -3424,6 +3468,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"reefer/minimonica": 1,
 +	"reefer/monica": 1,
 +	"reflection": 1,
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic": 1,
 +	"rnj-1": 1,
 +	"rfc/whiterabbitneo": 1,
 +	"rouge/replete-coder-qwen2-1.5b": 1,
@@ -3477,6 +3522,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"WhiteRabbitNeo/WhiteRabbitNeo-2.5-Qwen-2.5-Coder-7B": 1,
 +	"x/flux2-klein": 1,
 +	"x/z-image-turbo": 1,
++	"xploiter/bugbounty-ai": 1,
++	"xploiter/pentester": 1,
++	"xploiter/the-xploiter": 1,
 +	"xwinlm": 1,
 +	"yarn-llama2": 1,
 +	"yarn-mistral": 1,
@@ -3567,6 +3615,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r7b": "tool-use ai-applications for-gpus for-edge-devices reasoning qa coding rag  multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"command-r7b-arabic": "rag middle-east northern-africa arabic instruction-following high-level-reasoning chain-of-thought multi-step-reasoning",
++	"cypher-21/SentinalX": "cybersecurity red-team-cybersecurity",
 +	"d4n5h/white-rabbit-neo-70b-v2": "cybersecurity red-team-cybersecurity blue-team-cybersecurity Llama-3.1-WhiteRabbitNeo-2-70B",
 +	"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
 +	"deepcoder": "code-reasoning finetuned-deepseek-r1-distilled-qwen code-generation coding",
@@ -3605,6 +3654,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"ehartford/theprofessor": "brainstorming research reasoning science medical math computer-science physics cosmology professor theoretical-explanations",
 +	"eramax/aura_v3": "nsfw erotica roleplay",
 +	"embeddinggemma": "embedding search-tasks retrieval-tasks mobile laptop",
++	"embeddinggemma-2": "embedding multimodal-to-vector-space multimodal-embeddings mobile laptop",
 +	"etgohome/hackidle-nist-coder": "cybersecurity qa nist-standards python terraform security-compliant-code-generation",
 +	"exaone3.5": "coding code-generation python general-knowledge math-word-problems common-sense abstract-reasoning multilingual english korean high-school-math",
 +	"exaone-deep": "math high-school-math undergrad-math",
@@ -3649,6 +3699,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"hemanth/chessplayer": "chess chess-player white-player ai-moves-first",
 +	"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
 +	"hookingai/monah-8b": "online-dating hook-up llm-trainer nsfw adult-content uncensored",
++	"IHA089/drana-infinity-3b": "cybersecurity red-team-cybersecurity blue-team-cybersecurity red-team-primary blue-team-secondary",
++	"IHA089/drana-infinity-7b": "cybersecurity red-team-cybersecurity blue-team-cybersecurity red-team-primary blue-team-secondary",
++	"IHA089/drana-infinity-v1": "cybersecurity red-team-cybersecurity blue-team-cybersecurity red-team-primary blue-team-secondary",
 +	"iKhalid/ALLaM": "arabic saudi-arabia grade-school-education arab-alignment moral-reasoning common-sense text-generation",
 +	"internlm2": "tool-use word-math-problems",
 +	"jimscard/adult-film-screenwriter-nsfw": "nsfw adult-content",
@@ -3697,6 +3750,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot ocr optical-character-recognition",
 +	"llava-llama3": "image-to-text ocr optical-character-recognition",
 +	"llava-phi3": "image-to-text ocr optical-character-recognition",
++	"luisppb16/Qwen3.5-9B-Red_Team": "cybersecurity red-team-cybersecurity",
 +	"fluffy/l3-8b-stheno-v3.2": "nsfw character-driven roleplay immersive-storytelling story-driven anime-capable waifu",
 +	"functiongemma": "function-calling tool-use",
 +	"frob/mimo-v2.6-pro": "coding-agent long-horizon-coding agentic-terminal-coding desktop-or-web-task-completion cybersecurity offensive-cybersecurity defensive-cybersecurity MiMo-V2.6-Pro-RL",
@@ -3853,6 +3907,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"reefer/minimonica": "erotica assistant adult-content ai-girlfriend girlfriend chat",
 +	"reefer/monica": "erotica assistant adult-content ai-girlfriend girlfriend appimage-creation app-questions computer-technician",
 +	"reflection": "reasoning",
++	"richardyoung/deepseek-r1-0528-qwen3-8b-heretic": "decensored abliterated cybersecurity red-team-cybersecurity",
 +	"rfc/whiterabbitneo": "cybersecurity red-team-cybersecurity blue-team-cybersecurity WhiteRabbitNeo-13B-v1",
 +	"rouge/replete-coder-qwen2-1.5b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention mobile",
 +	"rnj-1": "python stem science technology engineering math math-word-problems high-school-math code-generation basic-coding-agent fill-in-the-middle",
@@ -3915,6 +3970,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +	"x/z-image-turbo": "bilingual-text-generation memes meme-generation image-generation chinese-calligraphy photorealistic-portraits visual-compositions",
 +	"x/z-image-turbo:fp8": "bilingual-text-generation memes meme-generation image-generation chinese-calligraphy photorealistic-portraits visual-compositions balanced-quality",
 +	"x/z-image-turbo:bf16": "bilingual-text-generation memes meme-generation image-generation chinese-calligraphy photorealistic-portraits visual-compositions highest-quality",
++	"xploiter/bugbounty-ai": "cybersecurity red-team-cybersecurity",
++	"xploiter/pentester": "cybersecurity red-team-cybersecurity",
++	"xploiter/the-xploiter": "cybersecurity red-team-cybersecurity",
 +	"xwinlm": "common-sense detailed-response",
 +	"xwinlm:70b-v0.1": "common-sense abstract-reasoning wrinkled detailed-response",
 +	"yarn-llama2": "text-generation",
@@ -3927,7 +3985,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -814,6 +4726,25 @@ func showOrPullModel(cmd *cobra.Command,
+@@ -814,6 +4781,25 @@ func showOrPullModel(cmd *cobra.Command,
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -3953,7 +4011,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  	opts := runOptions{
  		Model:       args[0],
  		WordWrap:    os.Getenv("TERM") == "xterm-256color",
-@@ -1287,10 +5218,12 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1287,10 +5273,12 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -3967,7 +4025,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -1319,13 +5252,430 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -1319,13 +5307,440 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -4047,6 +4105,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +		"command-r-plus": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
 +		"command-r7b": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
 +		"command-r7b-arabic": "CC-BY-NC-4.0, Cohere Labs Acceptable Use Policy",
++		"cypher-21/SentinalX": "Apache-2.0",
 +		"d4n5h/white-rabbit-neo-70b-v2": "MIT LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"dbrx": "Databricks Open Model License, Databricks Open Model Acceptable Use Policy",
 +		"deepcoder": "MIT",
@@ -4085,6 +4144,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +		"ehartford/theprofessor": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"eramax/aura_v3": "Apache-2.0",
 +		"embeddinggemma": "Gemma Terms of Use 20250324, Gemma Prohibited Use Policy 20240221",
++		"embeddinggemma-2": "Apache-2.0",
 +		"etgohome/hackidle-nist-coder": "CC0-1.0 Apache-2.0",
 +		"exaone3.5": "EXAONE AI Model License Agreement 1.1 - NC",
 +		"exaone-deep": "EXAONE AI Model License Agreement 1.1 - NC",
@@ -4135,6 +4195,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +		"hemanth/chessplayer": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"hermes3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"hookingai/monah-8b": "Apache-2.0",
++		"IHA089/drana-infinity-3b": "Apache-2.0",
++		"IHA089/drana-infinity-7b": "Apache-2.0",
++		"IHA089/drana-infinity-v1": "Apache-2.0",
 +		"iKhalid/ALLaM": "Apache-2.0",
 +		"internlm2": "Apache-2.0",
 +		"jimscard/adult-film-screenwriter-nsfw": "Apache-2.0",
@@ -4172,6 +4235,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +		"llava": "Apache-2.0",
 +		"llava-llama3": "Apache-2.0, META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"llava-phi3": "Apache-2.0, MIT",
++		"luisppb16/Qwen3.5-9B-Red_Team": "Apache-2.0", // Based on Qwen3.5-9b
 +		"magicoder": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"magistral": "Apache-2.0",
 +		"mannix/llamax3-8b-alpaca": "MIT",
@@ -4293,6 +4357,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +		"reefer/minimonica": "",
 +		"reefer/monica": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"reflection": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
++		"richardyoung/deepseek-r1-0528-qwen3-8b-heretic": "MIT",
 +		"rfc/whiterabbitneo": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"rnj-1": "Apache-2.0",
 +		"rouge/replete-coder-qwen2-1.5b": "Apache-2.0",
@@ -4350,6 +4415,9 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
 +		"x/flux2-klein:4b": "Apache-2.0",
 +		"x/flux2-klein:9b": "FLUX-Non-Commercial-License-v2.1",
 +		"x/z-image-turbo": "Apache-2.0",
++		"xploiter/bugbounty-ai": "MICROSOFT RESEARCH LICENSE TERMS",
++		"xploiter/pentester": "MICROSOFT RESEARCH LICENSE TERMS",
++		"xploiter/the-xploiter": "the-xploiter-license",
 +		"xwinlm": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"yarn-llama2": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"yarn-mistral": "Apache-2.0",
@@ -4399,7 +4467,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0], Verbose: verbose}
-@@ -1687,6 +6037,160 @@ func pullModelWithProgress(ctx context.C
+@@ -1687,6 +6102,160 @@ func pullModelWithProgress(ctx context.C
  	return err
  }
  
@@ -4560,7 +4628,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -2390,9 +6894,14 @@ func NewCLI() *cobra.Command {
+@@ -2390,9 +6959,14 @@ func NewCLI() *cobra.Command {
  		console.ConsoleFromFile(os.Stdin) //nolint:errcheck
  	}
  
@@ -4576,7 +4644,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  		SilenceUsage:  true,
  		SilenceErrors: true,
  		CompletionOptions: cobra.CompletionOptions{
-@@ -2445,7 +6954,9 @@ func NewCLI() *cobra.Command {
+@@ -2445,7 +7019,9 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -4586,7 +4654,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -2588,6 +7099,30 @@ func NewCLI() *cobra.Command {
+@@ -2588,6 +7164,30 @@ func NewCLI() *cobra.Command {
  	}
  	gpuDiscoverCmd.Flags().StringArrayVar(&gpuDiscoverLibDirs, "lib-dir", nil, "Ollama runtime library directory")
  
@@ -4617,7 +4685,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -2604,6 +7139,9 @@ func NewCLI() *cobra.Command {
+@@ -2604,6 +7204,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -4627,7 +4695,7 @@ diff '--color=auto' -urp ollama-0.35.1.orig/cmd/cmd.go ollama-0.35.1/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -2655,7 +7193,12 @@ func NewCLI() *cobra.Command {
+@@ -2655,7 +7258,12 @@ func NewCLI() *cobra.Command {
  		deleteCmd,
  		runnerCmd,
  		gpuDiscoverCmd,
