@@ -31,8 +31,8 @@ PNPM_TARBALL="${TARBALL}"
 PYTHON_COMPAT=( "python3_12" )
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
-RUST_MAX_VER="1.93.1" # Inclusive
-RUST_MIN_VER="1.93.1" # llvm-21.1
+RUST_MAX_VER="1.98.1" # Inclusive
+RUST_MIN_VER="1.98.1" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
 TARBALL="${P}.tar.gz"
 
