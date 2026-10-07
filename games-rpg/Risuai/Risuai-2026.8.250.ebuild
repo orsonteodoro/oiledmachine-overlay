@@ -104,6 +104,7 @@ cfg-expr-0.15.8
 cfg-if-1.0.5
 chacha20-0.10.2
 chrono-0.4.45
+cidr-0.3.2
 cipher-0.4.4
 combine-4.6.8
 concurrent-queue-2.5.0
@@ -169,7 +170,7 @@ erased-serde-0.4.10
 errno-0.3.14
 event-listener-5.4.2
 event-listener-strategy-0.5.4
-eventsource-client-0.12.2
+eventsource-client-0.18.1
 fancy-regex-0.11.0
 fastrand-2.5.0
 fdeflate-0.3.7
@@ -222,6 +223,8 @@ h2-0.4.20
 hashbrown-0.12.3
 hashbrown-0.14.5
 hashbrown-0.17.1
+headers-0.4.2
+headers-core-0.3.0
 heck-0.4.1
 heck-0.5.0
 hermit-abi-0.5.3
@@ -238,9 +241,9 @@ httpdate-1.0.3
 http-range-0.1.5
 hyper-0.14.32
 hyper-1.12.0
-hyper-rustls-0.24.2
+hyper-http-proxy-1.2.0
 hyper-rustls-0.27.10
-hyper-timeout-0.4.1
+hyper-timeout-0.5.2
 hyper-tls-0.5.0
 hyper-util-0.1.21
 iana-time-zone-0.1.65
@@ -282,6 +285,7 @@ json-patch-4.2.0
 jsonptr-0.7.1
 js-sys-0.3.106
 keyboard-types-0.8.3
+launchdarkly-sdk-transport-0.1.4
 lazy_static-1.5.1
 libappindicator-0.9.0
 libappindicator-sys-0.9.0
@@ -311,6 +315,7 @@ ndk-context-0.1.1
 ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
 nix-0.31.3
+no-proxy-0.3.7
 num-conv-0.2.2
 num_enum-0.7.6
 num_enum_derive-0.7.6
@@ -338,7 +343,6 @@ once_cell-1.21.4
 open-5.4.4
 openssl-0.10.81
 openssl-macros-0.1.1
-openssl-probe-0.1.6
 openssl-probe-0.2.1
 openssl-sys-0.9.117
 option-ext-0.2.0
@@ -414,15 +418,12 @@ rustc-hash-2.1.3
 rustc_version-0.4.1
 rust-ini-0.21.3
 rustix-1.1.5
-rustls-0.21.12
 rustls-0.23.45
-rustls-native-certs-0.6.3
 rustls-native-certs-0.8.4
 rustls-pemfile-1.0.4
 rustls-pki-types-1.15.1
 rustls-platform-verifier-0.7.1
 rustls-platform-verifier-android-0.2.0
-rustls-webpki-0.101.7
 rustls-webpki-0.103.15
 rustversion-1.0.23
 ryu-1.0.23
@@ -433,8 +434,6 @@ schemars-0.9.0
 schemars-1.2.2
 schemars_derive-0.8.22
 scopeguard-1.2.0
-sct-0.7.1
-security-framework-2.11.1
 security-framework-3.7.0
 security-framework-sys-2.17.0
 selectors-0.38.0
@@ -527,10 +526,8 @@ tiny-keccak-2.0.2
 tinystr-0.8.4
 tinyvec-1.13.3
 tokio-1.53.2
-tokio-io-timeout-1.2.1
 tokio-macros-2.7.2
 tokio-native-tls-0.3.1
-tokio-rustls-0.24.1
 tokio-rustls-0.26.6
 tokio-util-0.7.19
 toml-0.8.2
@@ -542,6 +539,7 @@ toml_edit-0.20.2
 toml_edit-0.25.15+spec-1.1.0
 toml_parser-1.1.3+spec-1.1.0
 toml_writer-1.1.2+spec-1.1.0
+tower-0.4.13
 tower-0.5.3
 tower-http-0.6.11
 tower-layer-0.3.3
@@ -729,7 +727,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_30
+ebuild_revision_31
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -1047,9 +1045,10 @@ eerror
 	fi
 
 	# For manual lockfile creation
+ewarn "QA:  Manually bump eventsource-client in Cargo.toml"
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	unpack ${A}
-#	die
+	#die
 
 	pnpm_src_unpack
 
