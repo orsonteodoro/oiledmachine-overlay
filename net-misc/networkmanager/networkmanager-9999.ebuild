@@ -339,6 +339,12 @@ einfo "| Use cases                 | cEL            | eiglpst | c=college/campus
 einfo
 	fi
 
+	if grep -r -e "^wifi.backend=" "${ESYSROOT}/etc/NetworkManager/conf.d" >/dev/null 2>&1 ; then
+eerror "Remove all wifi.backend lines in these following locations to continue."
+		grep -l -r -e "^wifi.backend=" "${ESYSROOT}/etc/NetworkManager/conf.d" || true
+		die
+	fi
+
 	if use iwd ; then
 		if ! grep -q -e "EnableNetworkConfiguration=false" "/etc/iwd/main.conf" ; then
 # Prevent "Secrets were required, but not provided" rejection.
