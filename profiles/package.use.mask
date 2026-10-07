@@ -264,12 +264,14 @@ sci-ml/ollama ollama_llms_IHA089-drana-infinity-3b
 sci-ml/ollama ollama_llms_IHA089-drana-infinity-7b
 sci-ml/ollama ollama_llms_IHA089-drana-infinity-v1
 sci-ml/ollama ollama_llms_jimscard-whiterabbit-neo
+sci-ml/ollama ollama_llms_joefamous-grok-1
 sci-ml/ollama ollama_llms_kimi-k2
 sci-ml/ollama ollama_llms_kimi-k3
 sci-ml/ollama ollama_llms_kiwi_kiwi-mimo-v2_6-heretic
 sci-ml/ollama ollama_llms_llama2-uncensored # P
 sci-ml/ollama ollama_llms_luisppb16-Qwen3_5-9B-Red_Team # GR
 sci-ml/ollama ollama_llms_Maternion-mimo-v2+6-heretic
+sci-ml/ollama ollama_llms_MichelRosselli-grok-2
 sci-ml/ollama ollama_llms_mistral-small
 sci-ml/ollama ollama_llms_monotykamary-whiterabbitneo-v1_5a
 sci-ml/ollama ollama_llms_openhermes # P

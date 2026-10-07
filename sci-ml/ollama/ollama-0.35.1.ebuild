@@ -3749,6 +3749,8 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		["huihui_ai-qwenlong-abliterated"]="huihui_ai/qwenlong-abliterated"
 		["huihui_ai-qwenlong-l1.5-abliterated"]="huihui_ai/qwenlong-l1.5-abliterated"
 		["huihui_ai-qwq-abliterated"]="huihui_ai/qwq-abliterated"
+		["joefamous-grok-1"]="joefamous/grok-1" # TODO:  add more variants
+		["MichelRosselli-grok-2"]="MichelRosselli/grok-2" # TODO:  add more variants
 		["ruturaj04-ruturajai"]="ruturaj04/ruturajai"
 	)
 
@@ -4640,6 +4642,8 @@ warn_red_teamer_llm() {
 		"ollama_llms_huihui_ai-qwenlong-abliterated"
 		"ollama_llms_huihui_ai-qwenlong-l1.5-abliterated" # G
 		"ollama_llms_huihui_ai-qwq-abliterated"
+		"ollama_llms_joefamous-grok-1"
+		"ollama_llms_MichelRosselli-grok-2"
 		"ollama_llms_ruturaj04-ruturajai"
 
 	)
