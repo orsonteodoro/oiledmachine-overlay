@@ -15,7 +15,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
-NSPR_VER="4.39" # See https://github.com/mozilla/nss/blob/NSS_3_130_RTM/automation/release/nspr-version.txt
+NSPR_VER="4.39" # See https://github.com/mozilla/nss/blob/NSS_3_131_RTM/automation/release/nspr-version.txt
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 # If the release is made in Github only, not released at the official archive.mozilla.org. These
