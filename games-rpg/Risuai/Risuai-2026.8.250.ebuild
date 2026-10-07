@@ -13,8 +13,8 @@ EAPI=8
 # TODO package
 # llama-cpp-python
 
-# U24, rust 1.75.0, llvm 17.0
-# @swc/core, rust 1.77.1, llvm 18.0
+# U24, Rust 1.75.0, llvm 17.0
+# @swc/core, Rust 1.77.1, llvm 18.0
 
 # To generate lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
@@ -1036,7 +1036,7 @@ einfo "PATH: ${PATH}"
 
 	if ver_test "${rust_pv}" -ne "${RUST_PV}" ; then
 eerror
-eerror "Switch rust to ${RUST_PV} via \`eselect rust\`"
+eerror "Switch Rust to ${RUST_PV} via \`eselect rust\`"
 eerror
 eerror "Current Rust version: ${rust_pv}"
 eerror "Expected Rust version: ${RUST_PV}"
@@ -1352,14 +1352,15 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (139.2.0, 20241125)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (146.1.0, 20250120)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (149.1.0, 20250209)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (154.1.0, 20250209) with rust 1.81.0
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250318) with rust 1.81.0
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250630) with rust 1.85.1
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (166.1.0, 20250810) with rust 1.85.1
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with rust 1.85.1
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with rust 1.88.0.  tiktoken wasm errors and ollama/app freezes
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.4.181, 20260522) with rust 1.88.0, js-tiktoken
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.6.214, 20260726) with rust 1.93.1, js-tiktoken
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.8.250, 20260917) with rust 1.93.1, js-tiktoken
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.8.250, 20260929) with rust 1.93.1, js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (154.1.0, 20250209) with Rust 1.81.0
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250318) with Rust 1.81.0
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (155.0.0, 20250630) with Rust 1.85.1
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (166.1.0, 20250810) with Rust 1.85.1
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (166.3.0, 20251004) with Rust 1.85.1
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (2026.4.181, 20260428) with Rust 1.88.0.  tiktoken wasm errors and ollama/app freezes
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.4.181, 20260522) with Rust 1.88.0, js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.6.214, 20260726) with Rust 1.93.1, js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.8.250, 20260917) with Rust 1.93.1, js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.8.250, 20260929) with Rust 1.93.1, js-tiktoken
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2026.8.250, 20261007) with Rust 1.98.1, js-tiktoken
 # ollama support - passed
