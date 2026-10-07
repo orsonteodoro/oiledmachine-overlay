@@ -31,7 +31,8 @@ HOMEPAGE="https://git.kernel.org/pub/scm/network/wireless/iwd.git/"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="
-+client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor networkmanager ofono selinux standalone systemd wired
++client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor networkmanager ofono
+selinux standalone -system-ell systemd wired
 ebuild_revision_6
 "
 REQUIRED_USE="
@@ -43,11 +44,13 @@ REQUIRED_USE="
 
 DEPEND="
 	>=sys-apps/dbus-${DBUS_PV}:=
-	client? ( >=sys-libs/readline-${READLINE_PV}:= )
+	client? (
+		>=sys-libs/readline-${READLINE_PV}:=
+	)
+	system-ell? (
+		>=dev-libs/ell-${ELL_REQ}:=
+	)
 "
-
-[[ -z "${ELL_REQ}" ]] || DEPEND+=" >=dev-libs/ell-${ELL_REQ}"
-
 RDEPEND="
 	${DEPEND}
 	acct-group/netdev:*
@@ -157,13 +160,13 @@ src_configure() {
 		"$(use_enable client)"
 		"$(use_enable monitor)"
 		"$(use_enable ofono)"
+		"$(use_enable system-ell external-ell)"
 		"$(use_enable wired)"
 		--enable-systemd-service
 		--with-systemd-unitdir="$(systemd_get_systemunitdir)"
 		--with-systemd-modloaddir="${EPREFIX}/usr/lib/modules-load.d"
 		--with-systemd-networkdir="$(systemd_get_utildir)/network"
 	)
-	[[ ${PV} == *9999* ]] || myeconfargs+=(--enable-external-ell)
 	econf "${myeconfargs[@]}"
 }
 
