@@ -4554,7 +4554,7 @@ warn_red_teamer_llm() {
 #
 
 	#
-	# B = Presence on red team benchmark
+	# B = Presence on a red team benchmark
 	# G = Payload generation
 	# P = Red team phishing
 	# R = Reconnaissance
@@ -4642,8 +4642,8 @@ warn_red_teamer_llm() {
 		"ollama_llms_huihui_ai-qwenlong-abliterated"
 		"ollama_llms_huihui_ai-qwenlong-l1.5-abliterated" # G
 		"ollama_llms_huihui_ai-qwq-abliterated"
-		"ollama_llms_joefamous-grok-1"
-		"ollama_llms_MichelRosselli-grok-2"
+		"ollama_llms_joefamous-grok-1" # P
+		"ollama_llms_MichelRosselli-grok-2" # PR
 		"ollama_llms_ruturaj04-ruturajai"
 
 	)
