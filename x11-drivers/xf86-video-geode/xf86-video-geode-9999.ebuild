@@ -3,11 +3,17 @@
 
 EAPI=8
 
+FALLBACK_COMMIT="64f2bd3ea95bf63380b2254cbd23bc1cdb86270d" # Sep 10, 2026
+
 inherit xorg-3
 
-DESCRIPTION="AMD Geode GX and LX graphics driver"
 KEYWORDS="x86"
-IUSE="ztv"
+
+DESCRIPTION="AMD Geode GX and LX graphics driver"
+IUSE+="
+ztv
+ebuild_revision_3
+"
 
 DEPEND="
 	ztv? (
