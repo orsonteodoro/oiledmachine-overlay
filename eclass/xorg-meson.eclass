@@ -32,6 +32,9 @@ inherit flag-o-matic
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 fi
 
 # @ECLASS_VARIABLE: XORG_MULTILIB
