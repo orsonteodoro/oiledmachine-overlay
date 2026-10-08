@@ -11,7 +11,7 @@ CFLAGS_HARDENED_LANG="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data security-critical"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BU BOR CE CRSH DOS DT DBZ DP HO ID IL IPI IU LPE MC ML OOBA OOBR OOBW PE RC RCE SO UAF"
 
-FALLBACK_COMMIT="5541a5c8befbb3975f69c1d7666a2ba76a57b682"
+FALLBACK_COMMIT="ad26c26bf795e6464f74c8ef5bb1d41403d877ab"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
@@ -47,7 +47,7 @@ fi
 IUSE_SERVERS="xephyr xnest xorg xvfb"
 IUSE+="
 ${IUSE_SERVERS} debug +elogind minimal pciaccess selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_7
+ebuild_revision_9
 "
 RESTRICT="!test? ( test )"
 
