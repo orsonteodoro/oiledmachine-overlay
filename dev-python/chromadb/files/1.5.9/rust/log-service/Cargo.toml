@@ -29,7 +29,7 @@ tracing = { workspace = true }
 uuid = { workspace = true }
 tokio = { workspace = true }
 serde_json = { workspace = true }
-serde_yml = { workspace = true }
+yaml_serde = { workspace = true }
 futures = { workspace = true }
 google-cloud-spanner = { workspace = true }
 google-cloud-gax = { workspace = true }

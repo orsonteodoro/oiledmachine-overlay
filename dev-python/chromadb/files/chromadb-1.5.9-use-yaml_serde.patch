@@ -1,0 +1,20 @@
+--- a/rust/cache/src/bin/cops-memory-cache-config-writer.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/cache/src/bin/cops-memory-cache-config-writer.rs	2026-10-08 15:48:04.165672099 -0700
+@@ -7,6 +7,6 @@ use chroma_cache::{CacheConfig, FoyerCac
+ fn main() {
+     let mut config = FoyerCacheConfig::parse();
+     config.dir = None;
+-    let out = serde_yaml::to_string(&CacheConfig::Memory(config)).unwrap();
++    let out = yaml_serde::to_string(&CacheConfig::Memory(config)).unwrap();
+     print!("{out}");
+ }
+--- a/rust/cache/src/bin/cops-disk-cache-config-writer.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/cache/src/bin/cops-disk-cache-config-writer.rs	2026-10-08 15:48:01.813727469 -0700
+@@ -9,6 +9,6 @@ fn main() {
+     if config.dir.is_none() {
+         panic!("Disk cache is required for disk cache config writer");
+     }
+-    let out = serde_yaml::to_string(&CacheConfig::Disk(config)).unwrap();
++    let out = yaml_serde::to_string(&CacheConfig::Disk(config)).unwrap();
+     print!("{out}");
+ }

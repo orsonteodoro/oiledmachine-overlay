@@ -172,9 +172,7 @@ aws-smithy-schema-0.2.1
 aws-smithy-types-1.8.1
 aws-smithy-xml-0.62.1
 aws-types-1.6.0
-axum-0.7.9
 axum-0.8.9
-axum-core-0.4.5
 axum-core-0.5.6
 axum-macros-0.5.1
 backoff-0.4.0
@@ -404,7 +402,6 @@ guacamole-0.11.0
 h2-0.3.27
 h2-0.4.20
 half-2.7.1
-hashbrown-0.12.3
 hashbrown-0.13.2
 hashbrown-0.14.5
 hashbrown-0.15.5
@@ -458,7 +455,6 @@ ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.2
 image-0.25.10
-indexmap-1.9.3
 indexmap-2.14.2
 indicatif-0.17.11
 indoc-2.0.7
@@ -509,7 +505,7 @@ libloading-0.8.9
 libm-0.2.16
 libredox-0.1.25
 libsqlite3-sys-0.30.1
-libyml-0.0.5
+libyaml-rs-0.3.0
 link-cplusplus-1.0.12
 linux-raw-sys-0.12.1
 linux-raw-sys-0.4.15
@@ -529,7 +525,6 @@ madsim-macros-0.2.12
 madsim-tokio-0.2.30
 mappings-0.7.0
 matchers-0.2.0
-matchit-0.7.3
 matchit-0.8.4
 matrixmultiply-0.3.11
 md-5-0.10.6
@@ -606,10 +601,12 @@ openssl-probe-0.2.1
 openssl-sys-0.9.117
 opentelemetry-0.27.1
 opentelemetry-0.31.0
-opentelemetry-http-0.27.0
-opentelemetry-otlp-0.27.0
-opentelemetry-proto-0.27.0
+opentelemetry-0.33.0
+opentelemetry-http-0.33.0
+opentelemetry-otlp-0.33.0
+opentelemetry-proto-0.33.0
 opentelemetry_sdk-0.27.1
+opentelemetry_sdk-0.33.0
 option-ext-0.2.0
 ordered-float-2.10.1
 ordered_hash_map-0.4.0
@@ -679,11 +676,11 @@ pulldown-cmark-to-cmark-22.0.3
 pulp-0.22.3
 pulp-wasm-simd-flag-0.1.1
 pxfm-0.1.30
-pyo3-0.24.2
-pyo3-build-config-0.24.2
-pyo3-ffi-0.24.2
-pyo3-macros-0.24.2
-pyo3-macros-backend-0.24.2
+pyo3-0.29.3
+pyo3-build-config-0.29.3
+pyo3-ffi-0.29.3
+pyo3-macros-0.29.3
+pyo3-macros-backend-0.29.3
 qd-0.8.0
 quick-error-1.2.3
 quick-error-2.0.1
@@ -791,7 +788,6 @@ serde_spanned-1.1.2
 serde_urlencoded-0.7.1
 serde-value-0.7.0
 serde_yaml-0.9.34+deprecated
-serde_yml-0.0.12
 serial_test-3.5.0
 serial_test_derive-3.5.0
 setsum-0.7.0
@@ -911,7 +907,6 @@ toml_edit-0.22.27
 toml_parser-1.1.4+spec-1.1.0
 toml_write-0.1.2
 toml_writer-1.1.3+spec-1.1.0
-tonic-0.12.3
 tonic-0.14.6
 tonic-build-0.14.6
 tonic-health-0.14.6
@@ -927,7 +922,7 @@ tracing-0.1.44
 tracing-attributes-0.1.31
 tracing-core-0.1.36
 tracing-log-0.2.0
-tracing-opentelemetry-0.28.0
+tracing-opentelemetry-0.34.0
 tracing-subscriber-0.3.23
 tracing-test-0.2.6
 tracing-test-macro-0.2.6
@@ -949,7 +944,6 @@ unicode-truncate-1.1.0
 unicode-width-0.1.14
 unicode-width-0.2.0
 unicode-xid-0.1.0
-unindent-0.2.4
 unsafe-libyaml-0.2.11
 untrusted-0.7.1
 untrusted-0.9.0
@@ -1044,6 +1038,7 @@ wyz-0.5.1
 x11rb-0.13.2
 x11rb-protocol-0.13.2
 xmlparser-0.13.6
+yaml_serde-0.10.7
 yansi-1.0.1
 yoke-0.8.3
 yoke-derive-0.8.4
@@ -1067,7 +1062,6 @@ zstd-safe-7.3.0
 zstd-sys-2.1.0+zstd.1.5.7
 zune-core-0.5.3
 zune-jpeg-0.5.15
-
 "
 
 # Cargo must go after distutils-r1
@@ -1240,6 +1234,9 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.5.9-use-yaml_serde.patch"
+)
 
 pkg_setup() {
 	python-single-r1_pkg_setup
@@ -1284,6 +1281,7 @@ src_unpack() {
 		"${FILESDIR}/${PV}/Cargo."* \
 		"${S}" \
 		|| die
+	die
 	gen_git_tag "${S}" "${PV}"
 }
 

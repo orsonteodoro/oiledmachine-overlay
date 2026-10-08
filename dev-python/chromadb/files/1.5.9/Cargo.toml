@@ -24,13 +24,14 @@ object_store = { version = "0.12", features = ["gcp"] }
 lazy_static = { version = "1.4" }
 lexical-core = "1.0"
 libc = "0.2"
+lru = "0.16.3"
 murmur3 = "0.5.2"
 num_cpus = "1.16.0"
 once_cell = "1.21.3"
-opentelemetry = { version = "0.27.0", default-features = false, features = ["trace", "metrics"] }
-opentelemetry-otlp = { version = "0.27", features = ["http-proto"] }
-opentelemetry-http = { version = "0.27", features = ["reqwest-rustls"] }
-opentelemetry_sdk = { version = "0.27", features = ["rt-tokio"] }
+opentelemetry = { version = "0.33.0", default-features = false, features = ["trace", "metrics"] }
+opentelemetry-otlp = { version = "0.33", features = ["http-proto"] }
+opentelemetry-http = { version = "0.33", features = ["reqwest-rustls"] }
+opentelemetry_sdk = { version = "0.33", features = ["rt-tokio"] }
 parking_lot = { version = "0.12.3", features = ["serde"] }
 parquet = { version = "55.1", features = ["async"] }
 pin-project = "1.1.10"
@@ -43,7 +44,7 @@ sea-query = "0.32"
 sea-query-binder = "0.7"
 serde = { version = "1.0.215", features = ["derive", "rc"] }
 serde_json = "1.0.133"
-serde_yml = "0.0.12"
+yaml_serde = "0.10"
 setsum = "0.7"
 simsimd = "6.5"
 sprs = "0.11"
@@ -56,16 +57,17 @@ tonic-health = "0.14"
 tower = { version = "0.5.2", features = ["discover"] }
 backon = "1.5.2"
 dashmap = "6.1.0"
+thrift = "0.23.0"
 tracing = { version = "0.1" }
 tracing-bunyan-formatter = "0.3"
-tracing-opentelemetry = "0.28.0"
+tracing-opentelemetry = "0.34.0"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1.11.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
 utoipa = { version = "5", features = ["macros", "axum_extras", "debug", "uuid"] }
 sqlx = { version = "0.8.3", features = ["runtime-tokio", "sqlite", "postgres", "chrono"] }
 sha2 = "0.10.8"
 md5 = "0.7.0"
-pyo3 = { version = "0.24.1", features = ["abi3-py39"] }
+pyo3 = { version = "0.29.3", features = ["abi3-py39"] }
 http = "1.1.0"
 tower-http = { version = "0.6.8", features = ["trace", "cors"] }
 bytemuck = { version = "1.21.0", features = ["derive"] }
@@ -79,6 +81,7 @@ faer = { version = "0.24.0", default-features = false, features = ["std", "rand"
 reqwest = { version = "0.13", features = ["rustls", "http2", "query"], default-features = false }
 random-port = "0.1.1"
 rustls = { version = "0.23.37", features = ["aws-lc-rs"] }
+rustls-webpki = "0.103.13"
 ndarray = { version = "0.16.1", features = ["approx"] }
 humantime = { version = "2.2.0" }
 petgraph = { version = "0.8.1" }
