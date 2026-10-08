@@ -32,7 +32,7 @@ inherit flag-o-matic
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
-	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+	if [[ -n "${FALLBACK_COMMIT}" && ! ( "${IUSE}" =~ "fallback-commit" ) ]] ; then
 		IUSE+=" fallback-commit"
 	fi
 fi
