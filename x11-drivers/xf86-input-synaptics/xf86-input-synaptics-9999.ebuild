@@ -3,6 +3,8 @@
 
 EAPI=8
 
+FALLBACK_COMMIT="1dee04e3f29840b3618a5cd4dc87367419103d18" # Apr 14, 2026
+
 CHKL_TIMESTAMPS=(
 	"x11-base/xorg-server-9999"
 	"x11-libs/libX11-9999"
@@ -10,10 +12,10 @@ CHKL_TIMESTAMPS=(
 
 inherit chkl linux-info secure-version xorg-3
 
-DESCRIPTION="Driver for Synaptics touchpads"
-
 KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 x86"
 
+DESCRIPTION="Driver for Synaptics touchpads"
+IUSE+=" ebuild_revision_3"
 RDEPEND="
 	>=x11-base/xorg-server-${XORG_SERVER_PV}:=
 	>=x11-libs/libX11-${LIBX11_PV}:=
@@ -23,7 +25,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	>=sys-kernel/linux-headers-2.6.37:=
-	x11-base/xorg-proto:="
+	x11-base/xorg-proto:=
+"
 
 check_reqs() {
 	linux-info_pkg_setup
