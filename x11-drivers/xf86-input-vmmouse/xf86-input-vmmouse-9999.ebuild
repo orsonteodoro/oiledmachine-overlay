@@ -2,10 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+FALLBACK_COMMIT="c4ec4b582a48b751a28777419860abf182197c5d" # Aug 12, 2025
+
 inherit udev xorg-3
 
 DESCRIPTION="VMWare mouse input driver"
 
+IUSE+=" ebuild_revision_2"
 DEPEND="x11-base/xorg-proto:="
 
 src_configure() {
