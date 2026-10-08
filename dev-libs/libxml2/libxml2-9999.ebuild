@@ -26,7 +26,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 if [[ ${PV} == 9999 ]] ; then
 	PV_MAJOR="2"
 	SO_MINOR_COMPAT=14
-	FALLBACK_COMMIT="c63248941708bc1d2e3a4292954593312212f6ca"
+	FALLBACK_COMMIT="c43dc98d27ac315a48d93dbd399c6c22cf7125b1"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -47,7 +47,7 @@ SOVER=$(( ${PV_MAJOR} + ${MINOR_COMPAT} ))
 SLOT="${PV_MAJOR}/${SOVER}"
 IUSE+="
 doc icu python readline static-libs test
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
