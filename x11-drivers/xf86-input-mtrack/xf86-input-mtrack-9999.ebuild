@@ -10,7 +10,7 @@ CHKL_TIMESTAMPS=(
 inherit chkl secure-version vcs-snapshot
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="d38088b4330603fdc8353509eab2387d5dd2ef3b"
+	FALLBACK_COMMIT="d38088b4330603fdc8353509eab2387d5dd2ef3b" # May 21, 2023
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/p2rkw/xf86-input-mtrack.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -21,19 +21,24 @@ else
 	SRC_URI="https://github.com/p2rkw/xf86-input-mtrack/archive/v${PV/_/-}.tar.gz -> ${P}.tar.gz"
 fi
 
+KEYWORDS="amd64 ~arm x86"
+
 DESCRIPTION="Xorg Driver for Multitouch Trackpads"
 HOMEPAGE="https://github.com/p2rkw/xf86-input-mtrack"
-
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ~arm x86"
-IUSE+=" debug"
-
+IUSE+="
+debug
+ebuild_revision_2
+"
 RDEPEND="
 	>=sys-libs/mtdev-1.0:=
-	>=x11-base/xorg-server-${XORG_SERVER_PV}:="
-DEPEND="${RDEPEND}
-	x11-base/xorg-proto:="
+	>=x11-base/xorg-server-${XORG_SERVER_PV}:=
+"
+DEPEND="
+	${RDEPEND}
+	x11-base/xorg-proto:=
+"
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
