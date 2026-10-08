@@ -3,6 +3,7 @@
 
 EAPI=8
 
+FALLBACK_COMMIT="2d8e0f866e6f901434ea1c551a3d44f6c4576a41" # Mar 8, 2026
 CHKL_TIMESTAMPS=(
 	"x11-libs/libX11-9999"
 )
@@ -10,7 +11,6 @@ CHKL_TIMESTAMPS=(
 inherit chkl linux-info systemd udev secure-version xorg-3 meson
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="2d8e0f866e6f901434ea1c551a3d44f6c4576a41"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/linuxwacom/xf86-input-wacom.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -21,22 +21,27 @@ else
 	SRC_URI="https://github.com/linuxwacom/${PN}/releases/download/${P}/${P}.tar.bz2"
 fi
 
+KEYWORDS="~alpha amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86"
+
 DESCRIPTION="Driver for Wacom tablets and drawing devices"
 HOMEPAGE="https://linuxwacom.github.io/"
-
 LICENSE="GPL-2+"
-KEYWORDS="~alpha amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_3
+"
 RESTRICT="!test? ( test )"
-
 RDEPEND="
 	>=x11-libs/libX11-${LIBX11_PV}:=
 	>=x11-libs/libXext-${LIBXEXT_PV}:=
 	>=x11-libs/libXi-${LIBXI_PV}:=
 	>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
 	>=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
-	virtual/libudev:="
-DEPEND="${RDEPEND}"
+	virtual/libudev:=
+"
+DEPEND="
+	${RDEPEND}
+"
 
 pkg_pretend() {
 	linux-info_pkg_setup
