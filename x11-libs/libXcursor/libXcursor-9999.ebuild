@@ -11,6 +11,7 @@ fi
 
 inherit secure-version xorg-3
 
+# https://gitlab.freedesktop.org/xorg/lib/libXcursor
 DESCRIPTION="X.Org Xcursor library"
 LICENSE="HPND"
 
