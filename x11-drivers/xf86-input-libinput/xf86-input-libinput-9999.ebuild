@@ -3,19 +3,23 @@
 
 EAPI=8
 
+FALLBACK_COMMIT="ac862672e4d04e78f2b647af9d3d14544454e4b9" # Nov 4, 2025
+
 CHKL_TIMESTAMPS=(
 	"dev-libs/libinput-9999"
 )
 
 inherit chkl linux-info secure-version xorg-3
 
-DESCRIPTION="X.org input driver based on libinput"
-
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 
+DESCRIPTION="X.org input driver based on libinput"
+IUSE+=" ebuild_revision_2"
 RDEPEND=">=dev-libs/libinput-${LIBINPUT_PV}:="
-DEPEND="${RDEPEND}
-	>=x11-base/xorg-proto-2021.5:="
+DEPEND="
+	${RDEPEND}
+	>=x11-base/xorg-proto-2021.5:=
+"
 
 DOCS=( "README.md" )
 
