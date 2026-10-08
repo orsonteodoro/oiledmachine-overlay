@@ -5,9 +5,23 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical sensitive-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS"
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
-inherit cflags-hardened flag-o-matic gnome.org meson python-any-r1 vala xdg
+CHKL_TIMESTAMPS=(
+	"app-arch/lz4-9999"
+	"dev-libs/fribidi-9999"
+	"dev-libs/glib-2.90.9999"
+	"dev-libs/icu-79.1.9999"
+	"dev-libs/libfmt-9999"
+	"dev-libs/libpcre2-9999"
+	"dev-libs/libxml2-9999"
+	"sys-apps/systemd-9999"
+	"x11-libs/cairo-9999"
+	"x11-libs/pango-9999"
+	"x11-libs/gtk+-3.24.9999"
+)
+
+inherit cflags-hardened chkl flag-o-matic gnome.org meson python-any-r1 secure-version vala xdg
 
 DESCRIPTION="Library providing a virtual terminal emulator widget"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/vte"
@@ -16,7 +30,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/vte"
 LICENSE="LGPL-3+ GPL-3+"
 
 SLOT="2.91"      # vte_api_version in meson.build
-KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="X +crypt debug gtk-doc +icu +introspection systemd +vala wayland"
 REQUIRED_USE="
 	gtk-doc? ( introspection )
@@ -24,26 +38,27 @@ REQUIRED_USE="
 "
 
 DEPEND="
-	>=x11-libs/gtk+-3.24.22:3[X?,introspection?,wayland?]
-	>=x11-libs/cairo-1.0
-	dev-cpp/fast_float
-	>=dev-libs/fribidi-1.0.0
-	>=dev-libs/glib-2.72:2
-	crypt?  ( >=net-libs/gnutls-3.2.7:0= )
-	icu? ( dev-libs/icu:= )
-	>=x11-libs/pango-1.22.0
-	>=dev-libs/libpcre2-10.21:=
-	systemd? ( >=sys-apps/systemd-220:= )
-	>=app-arch/lz4-1.9
+	>=app-arch/lz4-${LZ4_PV}:=
+	>=dev-libs/libfmt-${LIBFMT_PV}:=
+	>=dev-libs/fribidi-${FRIBIDI_PV}:=
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+	>=dev-cpp/simdutf-6.2.0:=
+	>=x11-libs/cairo-${CAIRO_PV}:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[X?,introspection?,wayland?]
+	>=x11-libs/pango-${PANGO_PV}:=[introspection?]
+	dev-cpp/fast_float:=
+	crypt?  ( >=net-libs/gnutls-${GNUTLS_PV}:= )
+	icu? ( >=dev-libs/icu-${ICU_PV}:= )
+	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
-	x11-libs/pango[introspection?]
 "
 RDEPEND="${DEPEND}
-	~gui-libs/vte-common-${PV}[systemd?]
+	~gui-libs/vte-common-${PV}:=[systemd?]
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	dev-libs/libxml2:2
+	>=dev-libs/libxml2-${LIBXML2_PV}:=
 	dev-util/glib-utils
 	gtk-doc? ( dev-util/gi-docgen )
 	>=sys-devel/gettext-0.19.8
@@ -56,7 +71,7 @@ src_prepare() {
 	use vala && vala_setup
 	xdg_environment_reset
 
-	use elibc_musl && eapply "${FILESDIR}"/${PN}-0.66.2-musl-W_EXITCODE.patch
+	use elibc_musl && eapply "${FILESDIR}"/${PN}-0.84.0-musl-W_EXITCODE.patch
 
 	# -Ddebug option enables various debug support via VTE_DEBUG, but also ggdb3; strip the latter
 	sed -e '/ggdb3/d' -i meson.build || die
@@ -64,6 +79,8 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+	cflags-hardened_append
 	# Upstream don't support LTO & error out on it in meson.build
 	filter-lto
 
@@ -72,6 +89,7 @@ src_configure() {
 
 	local emesonargs=(
 		-Da11y=true
+		-Dapp-hidden=true
 		$(meson_use debug)
 		$(meson_use gtk-doc docs)
 		$(meson_use introspection gir)
