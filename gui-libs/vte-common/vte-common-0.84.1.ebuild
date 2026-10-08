@@ -3,9 +3,20 @@
 
 EAPI=8
 
+CXX_STANDARD=23
 CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical sensitive-data"
 PYTHON_COMPAT=( python3_{12..14} )
 GNOME_ORG_MODULE="vte"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
+)
 
 CHKL_TIMESTAMPS=(
 	"app-arch/lz4-9999"
@@ -19,7 +30,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cflags-hardened chkl flag-o-matic gnome.org meson secure-version python-any-r1
+inherit cflags-hardened chkl flag-o-matic gnome.org libcxx-slot libstdcxx-slot meson secure-version python-any-r1
 
 DESCRIPTION="Library providing a virtual terminal emulator widget"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/vte"
@@ -36,7 +47,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 IUSE="
 systemd gtk3 gtk4
-ebuild_revision_1
+ebuild_revision_2
 "
 
 DEPEND="
@@ -64,6 +75,12 @@ BDEPEND="
 	dev-util/glib-utils
 	virtual/pkgconfig
 "
+
+pkg_setup() {
+	python-any-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
