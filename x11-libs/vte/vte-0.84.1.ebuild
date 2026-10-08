@@ -51,7 +51,7 @@ DEPEND="
 	crypt?  ( >=net-libs/gnutls-${GNUTLS_PV}:= )
 	icu? ( >=dev-libs/icu-${ICU_PV}:= )
 	systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
-	introspection? ( >=dev-libs/gobject-introspection-1.82.0-r2:= )
+	introspection? ( >=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:= )
 "
 RDEPEND="${DEPEND}
 	~gui-libs/vte-common-${PV}:=[systemd?]
