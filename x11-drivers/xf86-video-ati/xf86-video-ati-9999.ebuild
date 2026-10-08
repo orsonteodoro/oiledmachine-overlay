@@ -3,7 +3,8 @@
 
 EAPI=8
 
-XORG_DRI=always
+FALLBACK_COMMIT="dbaecc7c43fe2de3fabca81744c2b2f36e289b2f" # Oct 4, 2026
+XORG_DRI="always"
 
 CHKL_TIMESTAMPS=(
 	"media-libs/mesa-9999"
@@ -18,20 +19,21 @@ fi
 
 DESCRIPTION="ATI video driver"
 HOMEPAGE="https://www.x.org/wiki/ati/"
-
 IUSE+="
 udev
-ebuild_revision_1
+ebuild_revision_3
 "
-
 RDEPEND="
 	>=media-libs/mesa-${MESA_PV}:=
 	>=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_radeon]
 	>=x11-libs/libpciaccess-${LIBPCIACCESS_PV}:=
 	>=x11-base/xorg-server-${XORG_SERVER_PV}:=[-minimal]
-	udev? ( virtual/libudev:= )"
-DEPEND="${RDEPEND}
-	x11-base/xorg-proto:="
+	udev? ( virtual/libudev:= )
+"
+DEPEND="
+	${RDEPEND}
+	x11-base/xorg-proto:=
+"
 
 pkg_pretend() {
 	if use kernel_linux; then
