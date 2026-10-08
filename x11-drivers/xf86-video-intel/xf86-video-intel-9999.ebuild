@@ -3,8 +3,9 @@
 
 EAPI=8
 
-XORG_DRI=dri
-XORG_EAUTORECONF=yes
+FALLBACK_COMMIT="4a64400ec6a7d8c0aba0e6a39b16a5e86d0af843" # Mar 21, 2025
+XORG_DRI="dri"
+XORG_EAUTORECONF="yes"
 
 CHKL_TIMESTAMPS=(
 	"x11-base/xorg-server-9999"
@@ -18,15 +19,15 @@ inherit chkl linux-info xorg-3 flag-o-matic secure-version
 
 if [[ ${PV} != 9999* ]]; then
 	KEYWORDS="~amd64 ~x86"
-	COMMIT_ID=""
 	SRC_URI="https://gitlab.freedesktop.org/xorg/driver/xf86-video-intel/-/archive/${COMMIT_ID}/${P}.tar.bz2"
 	S="${WORKDIR}/${PN}-${COMMIT_ID}"
 fi
 
 DESCRIPTION="X.Org driver for Intel cards"
-
-IUSE="debug +sna tools +udev uxa valgrind xvmc"
-
+IUSE="
+debug +sna tools +udev uxa valgrind xvmc
+ebuild_revision_2
+"
 REQUIRED_USE="
 	|| ( sna uxa )
 	uxa? ( dri )
@@ -42,12 +43,12 @@ RDEPEND="
 		>=x11-libs/libX11-${LIBX11_PV}:=
 		>=x11-libs/libxcb-${LIBXCB_PV}:=
 		>=x11-libs/libXcursor-${LIBXCURSOR_PV}:=
-		x11-libs/libXdamage:=
 		>=x11-libs/libXinerama-${LIBXINERAMA_PV}:=
 		>=x11-libs/libXrandr-${LIBXRANDR_PV}:=
 		>=x11-libs/libXrender-${LIBXRENDER_PV}:=
 		>=x11-libs/libxshmfence-${LIBXSHMFENCE_PV}:=
 		>=x11-libs/libXtst-${LIBXTST_PV}:=
+		x11-libs/libXdamage:=
 	)
 	udev? (
 		virtual/libudev:=
