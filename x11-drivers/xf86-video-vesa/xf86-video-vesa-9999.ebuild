@@ -3,10 +3,14 @@
 
 EAPI=8
 
+FALLBACK_COMMIT="de217f8e8fd11ea07279036b112601a912293333" # Sep 13, 2026
+
 inherit linux-info secure-version xorg-3
 
-DESCRIPTION="Generic VESA video driver"
 KEYWORDS="-* ~alpha amd64 x86"
+
+DESCRIPTION="Generic VESA video driver"
+IUSE+=" ebuild_revision_3"
 
 pkg_pretend() {
 	linux-info_pkg_setup
