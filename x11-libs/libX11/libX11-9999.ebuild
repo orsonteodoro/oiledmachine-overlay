@@ -17,7 +17,7 @@ CHKL_TIMESTAMPS=(
 )
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="bb2fe763e11b71d83371305750e0865f19adcc6c"
+	FALLBACK_COMMIT="797eaf0bd69524144e0df7af516b680f4b7694e9"
 fi
 
 inherit cflags-hardened chkl secure-version toolchain-funcs xorg-3
@@ -28,7 +28,7 @@ DESCRIPTION="X.Org X11 library"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
