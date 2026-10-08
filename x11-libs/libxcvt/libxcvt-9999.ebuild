@@ -8,7 +8,7 @@ EAPI=8
 inherit xorg-3 meson
 
 if [[ ${PV} == *9999* ]]; then
-	FALLBACK_COMMIT="049b79b74a42dfdc5feea6dd9b98256269610935"
+	FALLBACK_COMMIT="049b79b74a42dfdc5feea6dd9b98256269610935" # Apr 30, 2026
 else
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi

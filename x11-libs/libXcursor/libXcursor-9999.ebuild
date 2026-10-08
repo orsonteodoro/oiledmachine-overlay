@@ -6,7 +6,7 @@ EAPI=8
 XORG_MULTILIB=yes
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="15efad7ccd035f5d1ddc8d437e047569d1775fa7"
+	FALLBACK_COMMIT="15efad7ccd035f5d1ddc8d437e047569d1775fa7" # Jan 25, 2026
 fi
 
 inherit secure-version xorg-3
