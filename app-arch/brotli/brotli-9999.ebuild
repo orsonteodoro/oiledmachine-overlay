@@ -15,7 +15,7 @@ SO_AGE=2
 inherit cflags-hardened cmake-multilib distutils-r1 flag-o-matic
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="4508218e7fef90fa4273286f7a415065946f2c43"
+	FALLBACK_COMMIT="392b261debb0f478811ddacb98b118da36b06158"
 	EGIT_REPO_URI="https://github.com/google/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -37,7 +37,7 @@ SOVER=$(( ${SO_CURRENT} - ${SO_AGE} )) # The distro formula is wrong.
 SLOT="0/${SOVER}"
 IUSE+="
 python test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 RESTRICT="!test? ( test )"
