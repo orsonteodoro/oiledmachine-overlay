@@ -28,8 +28,8 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/vte"
 
 # Once SIXEL support ships (0.66 or later), might need xterm license (but code might be considered upgraded to LGPL-3+)
 LICENSE="LGPL-3+ GPL-3+"
-
-SLOT="2.91"      # vte_api_version in meson.build
+API_VERSION="2.91" # vte_api_version in meson.build
+SLOT="${API_VERSION}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="X +crypt debug gtk-doc +icu +introspection systemd +vala wayland"
 REQUIRED_USE="
@@ -59,12 +59,34 @@ RDEPEND="${DEPEND}
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-libs/libxml2-${LIBXML2_PV}:=
-	dev-util/glib-utils
-	gtk-doc? ( dev-util/gi-docgen )
 	>=sys-devel/gettext-0.19.8
+	dev-util/glib-utils
 	virtual/pkgconfig
+	gtk-doc? ( dev-util/gi-docgen )
 	vala? ( $(vala_depend) )
 "
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
+
+	local expected_api_version="${API_VERSION}"
+	local api_ver_c1=$(grep -E -o -e "vte_api_major_version = [0-9]+" "${S}/meson.build" | cut -f 3 -d " ")
+	local api_ver_c2=$(grep -E -o -e "vte_api_minor_version = [0-9]+" "${S}/meson.build" | cut -f 3 -d " ")
+	local actual_api_version="${api_ver_c1}.${api_ver_c2}"
+	if ver_test "${actual_api_version}" "-ne" "${expected_api_version}" ; then
+eerror "QA:  Update API_VERSION"
+eerror "Actual API_VERSION:  ${actual_api_version}"
+eerror "Expected API_VERSION:  ${expected_api_version}"
+		die
+	fi
+}
 
 src_prepare() {
 	default
