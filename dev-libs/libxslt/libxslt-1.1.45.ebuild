@@ -10,13 +10,24 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
 CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBW TC UAF UM"
 
-PYTHON_COMPAT=( python3_{11..14} )
-inherit cflags-hardened check-compiler-switch python-r1 multilib-minimal
+PYTHON_COMPAT=( "python3_"{10..14} )
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/libgcrypt-9999"
+	"dev-libs/libxml2-9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl python-r1 secure-version multilib-minimal
 
 DESCRIPTION="XSLT libraries and tools"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libxslt"
 if [[ ${PV} == 9999 ]] ; then
+	FALLBACK_COMMIT="ec95343e75c503523b91495f021d109173e169c4"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxslt"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit autotools git-r3
 else
 	inherit libtool gnome.org
@@ -29,27 +40,32 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="
+IUSE+="
 crypt debug examples python static-libs
-ebuild_revision_9
+ebuild_revision_11
 "
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE="
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+"
 
-BDEPEND=">=virtual/pkgconfig-1"
 RDEPEND="
-	>=dev-libs/libxml2-2.15.1:2[${MULTILIB_USEDEP}]
-	dev-libs/libxml2:=
+	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	crypt? (
-		>=dev-libs/libgcrypt-1.5.3[${MULTILIB_USEDEP}]
-		dev-libs/libgcrypt:=
+		>=dev-libs/libgcrypt-${LIBGCRYPT_PV}:=[${MULTILIB_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
-		>=dev-libs/libxml2-2.13:2[${MULTILIB_USEDEP},python,${PYTHON_USEDEP}]
-		dev-libs/libxml2:=
+		>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP},python,${PYTHON_USEDEP}]
 	)
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	>=virtual/pkgconfig-1
+"
 
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/xslt-config"
@@ -64,6 +80,17 @@ pkg_setup() {
 	python_setup
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	default
 
@@ -76,6 +103,8 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
+
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
