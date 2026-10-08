@@ -705,8 +705,9 @@ einfo
 einfo "You must etc-update to finish update."
 	if use iwd ; then
 ewarn
-ewarn "If \"Secrets were required, but not provided\" message is encountered in"
-ewarn "nmtui, you may need reset the system."
+ewarn "If a \"Secrets were required, but not provided\" pathological condition"
+ewarn "is encountered in nmtui, you may need reset the system and the"
+ewarn "router."
 ewarn
 	fi
 }
