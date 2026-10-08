@@ -3,7 +3,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..13} )
+FALLBACK_COMMIT="4588d937be301b928f77e88105670575ee9a3c77" # Jan 4, 2026
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 CHKL_TIMESTAMPS=(
 	"x11-base/xorg-server-9999"
@@ -11,24 +12,30 @@ CHKL_TIMESTAMPS=(
 
 inherit chkl python-single-r1 secure-version xorg-3
 
-DESCRIPTION="QEMU QXL paravirt video driver"
-
 KEYWORDS="amd64 ~loong x86"
-IUSE="xspice"
-REQUIRED_USE="xspice? ( ${PYTHON_REQUIRED_USE} )"
 
+DESCRIPTION="QEMU QXL paravirt video driver"
+IUSE+="
+xspice
+ebuild_revision_3
+"
+REQUIRED_USE="xspice? ( ${PYTHON_REQUIRED_USE} )"
 RDEPEND="
 	xspice? (
 		app-emulation/spice:=
 		${PYTHON_DEPS}
 	)
 	>=x11-base/xorg-server-${XORG_SERVER_PV}:=[-minimal]
-	>=x11-libs/libdrm-${LIBDRM_PV}:="
+	>=x11-libs/libdrm-${LIBDRM_PV}:=
+"
 DEPEND="
 	${RDEPEND}
 	>=app-emulation/spice-protocol-0.12.0:=
-	x11-base/xorg-proto:="
-BDEPEND="virtual/pkgconfig"
+	x11-base/xorg-proto:=
+"
+BDEPEND="
+	virtual/pkgconfig
+"
 
 pkg_setup() {
 	use xspice && python-single-r1_pkg_setup
