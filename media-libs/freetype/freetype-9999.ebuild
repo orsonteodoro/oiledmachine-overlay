@@ -10,7 +10,6 @@ CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"app-arch/bzip2-9999"
 	"gnome-base/librsvg-9999"
-	"gnome-base/librsvg-9999"
 	"media-libs/libpng-9999"
 	"x11-libs/libX11-9999"
 )
