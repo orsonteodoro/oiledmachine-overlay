@@ -12,7 +12,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl secure-version meson-multilib
 
 if [[ "${PV}" =~ "9999" ]]; then
-	FALLBACK_COMMIT="5a819837646842aa74cb0a1b3c74d2fe14694ac6"
+	FALLBACK_COMMIT="1bd29e0709db70b6463c947f150ea20dcfce9cac"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/wayland/wayland.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -30,7 +30,7 @@ LICENSE="MIT doc? ( Apache-2.0 OFL-1.1 )"
 SLOT="0" # For soname, see https://gitlab.freedesktop.org/wayland/wayland/-/blob/main/src/meson.build?ref_type=heads#L233
 IUSE+="
 doc test selinux
-ebuild_revision_1
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
