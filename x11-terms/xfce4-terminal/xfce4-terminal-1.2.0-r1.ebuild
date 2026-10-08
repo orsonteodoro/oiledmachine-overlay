@@ -25,7 +25,10 @@ SRC_URI="https://archive.xfce.org/src/apps/${PN}/$(ver_cut 1-2)/${P}.tar.xz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86 ~x64-solaris"
-IUSE="+color-themes utempter wayland X"
+IUSE="
++color-themes utempter wayland X
+ebuild_revision_1
+"
 REQUIRED_USE="|| ( wayland X )"
 
 RDEPEND="
