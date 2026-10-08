@@ -3,7 +3,17 @@
 
 EAPI=8
 
-inherit meson optfeature xdg-utils
+CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical sensitive-data"
+
+CHKL_TIMESTAMPS=(
+	"dev-libs/glib-2.90.9999"
+	"dev-libs/libpcre2-9999"
+	"dev-libs/libxml2-9999"
+	"x11-libs/gtk+-3.24.9999"
+	"x11-libs/libX11-9999"
+)
+
+inherit cflags-hardened chkl meson optfeature secure-version xdg-utils
 
 DESCRIPTION="A terminal emulator for the Xfce desktop environment"
 HOMEPAGE="
@@ -19,22 +29,22 @@ IUSE="+color-themes utempter wayland X"
 REQUIRED_USE="|| ( wayland X )"
 
 RDEPEND="
-	>=dev-libs/glib-2.44.0:2
-	>=dev-libs/libpcre2-10.00:=
-	>=x11-libs/gtk+-3.22.0:3[wayland?,X?]
-	>=x11-libs/vte-0.51.3:2.91
+	>=dev-libs/glib-${GLIB_PV}:=
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
+	>=x11-libs/vte-0.51.3:2.91=
 	>=xfce-base/libxfce4ui-4.17.5:=[X?]
 	>=xfce-base/libxfce4util-4.16.0:=
 	>=xfce-base/xfconf-4.16.0:=
 	utempter? ( sys-libs/libutempter:= )
-	wayland? ( >=gui-libs/gtk-layer-shell-0.7.0 )
-	X? ( >=x11-libs/libX11-1.6.7 )
+	wayland? ( >=gui-libs/gtk-layer-shell-0.7.0:= )
+	X? ( >=x11-libs/libX11-${LIBX11_PV}:= )
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	dev-libs/libxml2
+	>=dev-libs/libxml2-${LIBXML2_PV}
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
@@ -45,6 +55,7 @@ PATCHES=(
 )
 
 src_configure() {
+	chkl_check_many_timestamps
 	local emesonargs=(
 		$(meson_feature X x11)
 		$(meson_feature wayland)
