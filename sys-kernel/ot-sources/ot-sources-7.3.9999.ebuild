@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="6addb4f385570ebc11c4eb499a4f1c149f313e84" # 2026-10-03 21:14:25 -0700 @ Merge tag 'edac_urgent_for_v7.3_rc6'
+LINUX_SOURCES_FALLBACK_COMMIT="47324d3a5b3abd781295044d01d92d09f184e872" # 2026-10-08 13:35:07 +0200 @ Merge tag 'pwrseq-fixes-for-v7.3-rc7'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
