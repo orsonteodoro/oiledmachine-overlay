@@ -828,6 +828,7 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!app-misc/elfx86exts
 	!app-misc/fastfetch
 	!app-misc/hyfetch
+	!app-misc/macchina
 	!app-misc/mirafetch
 	!app-misc/neofetch
 	!app-misc/nerdfetch
@@ -840,9 +841,11 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!app-misc/wego
 	!dev-python/archey4
 	!net-analyzer/iftop
+	!net-analyzer/iptraf-ng
 	!net-analyzer/jnettop
 	!net-analyzer/nethogs
 	!net-analyzer/nettop
+	!net-analyzer/nload
 	!net-analyzer/traceroute
 	!net-misc/iputils
 	!net-wireless/iw
@@ -856,6 +859,7 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!sys-apps/pciutils
 	!sys-libs/geoclue
 	!sys-process/ctop
+	!sys-process/glances
 	!sys-process/iotop
 	!sys-process/iotop-c
 	!sys-cluster/k9scli
@@ -863,6 +867,7 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!x11-misc/redshift
 "
 
+# Some are dual use between red team and dev team.
 BANNED_RED_TEAM_TOOLS="
 	!app-crypt/hashcat
 	!app-crypt/hashtopolis
@@ -871,7 +876,13 @@ BANNED_RED_TEAM_TOOLS="
 	!app-crypt/libzc
 	!app-crypt/mimikatz
 	!app-crypt/webhashcat
+	!dev-python/frida
+	!dev-python/frida-bin
 	!dev-python/impacket
+	!dev-util/ghidra
+	!dev-util/ghidra-mcp-bin
+	!dev-util/radare2
+	!dev-util/scanmem
 	!net-analyzer/arp-scan
 	!net-analyzer/bettercap
 	!net-analyzer/cewl
@@ -900,22 +911,44 @@ BANNED_RED_TEAM_TOOLS="
 	!net-misc/socat
 	!net-proxy/chisel
 	!net-wireless/sliver
+	!virtual/frida
+"
+
+# Ban process injection, sensitive data dumps, or input hijacking
+# Some are dual use between red team and dev team.
+BANNED_DEBUGGING_TOOLS="
+	!dev-debug/gdb
+	!dev-debug/ltrace
+	!dev-debug/strace
+	!dev-python/frida
+	!dev-python/frida-bin
+	!dev-util/scanmem
+	!dev-util/strace
+	!llvm-core/lldb
+	!virtual/frida
+	!x11-misc/xdotool
+	!x11-misc/ydotool
 "
 
 # Prevent password keyboard snooping, show password screen grabs
-# Ban unapproved ciphers
-BANNED_RDEPEND="
-	!sys-kernel/gostcrypt-linux-crypto
+BANNED_X11="
 	!x11-base/xlibre
 	!x11-base/xorg-server
+"
+
+# Ban unapproved ciphers
+BANNED_CIPHERS="
+	!sys-kernel/gostcrypt-linux-crypto
 "
 
 RDEPEND="
 	!virtual/dss
 	enforce? (
-		${BANNED_RDEPEND}
+		${BANNED_CIPHERS}
+		${BANNED_DEBUGGING_TOOLS}
 		${BANNED_RECONNAISSANCE_TOOLS}
 		${BANNED_RED_TEAM_TOOLS}
+		${BANNED_X11}
 		${ANTIVIRUS_DEPENDS}
 		${CLOUD_COMPLIANCE_DEPENDS}
 		${DATA_ENCRYPTION_DEPENDS}
