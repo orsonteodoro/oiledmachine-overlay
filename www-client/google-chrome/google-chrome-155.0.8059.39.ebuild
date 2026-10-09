@@ -269,7 +269,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.90.9999"
 	"dev-qt/qtbase-6.9999"
-	"gui-libs/gtk-4.24.9999"
+	"gui-libs/gtk-4.25.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/mesa-9999"
 	"net-misc/curl-9999"
@@ -305,7 +305,7 @@ KEYWORDS="-* amd64"
 
 IUSE="
 gtk3 +gtk4 qt6 selinux
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
