@@ -1,0 +1,241 @@
+diff '--color=auto' -urp lobehub-2.2.19.orig/apps/cli/pnpm-workspace.yaml lobehub-2.2.19/apps/cli/pnpm-workspace.yaml
+--- lobehub-2.2.19.orig/apps/cli/pnpm-workspace.yaml	2026-10-07 03:39:15.000000000 -0700
++++ lobehub-2.2.19/apps/cli/pnpm-workspace.yaml	2026-10-09 07:16:43.523702496 -0700
+@@ -40,5 +40,8 @@ allowBuilds:
+   esbuild: true
+ 
+ overrides:
+-  '@types/react': 19.2.13
+-  antd: 6.3.5
++  # Upstream rules
++  '@types/react': '19.2.13'
++  'antd': '6.3.5'
++  # Vulnerability fixes
++  'file-type@<@NODE_FILE_TYPE_22_PV@': '@NODE_FILE_TYPE_22_PV@'
+Only in lobehub-2.2.19/apps/cli: pnpm-workspace.yaml.orig
+Only in lobehub-2.2.19/apps/cli: pnpm-workspace.yaml.rej
+diff '--color=auto' -urp lobehub-2.2.19.orig/apps/desktop/pnpm-workspace.yaml lobehub-2.2.19/apps/desktop/pnpm-workspace.yaml
+--- lobehub-2.2.19.orig/apps/desktop/pnpm-workspace.yaml	2026-10-07 03:39:15.000000000 -0700
++++ lobehub-2.2.19/apps/desktop/pnpm-workspace.yaml	2026-10-09 07:15:34.581498401 -0700
+@@ -47,23 +47,28 @@ publicHoistPattern:
+   - 'pdfjs-dist'
+ 
+ allowBuilds:
++  # Upstream rules
+   '@sentry/cli': true
+-  electron: true
+-  electron-builder: true
+-  electron-sparkle-updater: false
+-  electron-winstaller: false
+-  esbuild: false
+-  get-windows: false
+-  node-mac-permissions: true
+-  protobufjs: false
++  'electron': true
++  'electron-builder': true
++  'electron-sparkle-updater': false
++  'electron-winstaller': false
++  'esbuild': false
++  'get-windows': false
++  'protobufjs': false
++  # oiledmachine overlay rules
++  'electron-winstaller@5.4.0': false
++  'esbuild@0.18.20': false
++  'esbuild@0.25.12': false
++  'esbuild@0.27.2': false
++  'esbuild@0.27.7': false
++  'esbuild@@NODE_ESBUILD_PV@': false
++  #'esbuild@0.28.2': false
++  'get-windows@9.3.0': false
++  'node-mac-permissions': false
+ 
+-overrides:
+-  node-gyp: ^12.4.0
+-  react: 19.2.7
+-  react-dom: 19.2.7
+-  vitest: 5.0.3
+-  'zod@^4': 4.6.5
+ minimumReleaseAgeExclude:
++  # Upstream rules
+   - '@auv-js/api-client@0.0.28'
+   - '@auv-js/cli-darwin-arm64@0.0.28'
+   - '@auv-js/cli-darwin-x64@0.0.28'
+@@ -73,6 +78,29 @@ minimumReleaseAgeExclude:
+   - '@auv-js/cli-win32-x64-msvc@0.0.28'
+   - '@auv-js/cli@0.0.28'
+   - '@auv-js/sdk@0.0.28'
+-  - electron-sparkle-updater@0.5.2
++  - 'electron-sparkle-updater@0.5.2'
++  # oiledmachine-overlay rules
++  - 'electron@@NODE_ELECTRON_PV@'
++  - 'electron-builder@@NODE_ELECTRON_BUILDER_PV@'
++  - 'esbuild@@NODE_ESBUILD_PV@'
++  - 'vite@@NODE_VITE_8_PV@'
++
++overrides:
++  # Upstream pinned
++  'node-gyp': '^12.4.0'
++  'react': '19.2.7'
++  'react-dom': '19.2.7'
++  'vitest': '5.0.3'
++  'zod@^4': '4.6.5'
++  # Pinned versions by oiledmachine-overlay
++  'electron@<@NODE_ELECTRON_PV@': '@NODE_ELECTRON_PV@'
++  # Vulnerability fixes
++  '@vanilla-extract/vite-plugin@5.2.6>vite': '@NODE_VITE_8_PV@'
++  'drizzle-kit@0.31.10>esbuild': '@NODE_ESBUILD_PV@'
++  'electron-builder@<@NODE_ELECTRON_BUILDER_PV@': '@NODE_ELECTRON_BUILDER_PV@'
++  'get-windows@9.3.0>tar': '@NODE_TAR_PV@'
++  'file-type@<@NODE_FILE_TYPE_22_PV@': '@NODE_FILE_TYPE_22_PV@'
++  'vite@<@NODE_VITE_8_PV@': '@NODE_VITE_8_PV@'
++
+ patchedDependencies:
+-  electron-sparkle-updater@0.5.2: patches/electron-sparkle-updater@0.5.2.patch
++  'electron-sparkle-updater@0.5.2': 'patches/electron-sparkle-updater@0.5.2.patch'
+Only in lobehub-2.2.19/apps/desktop: pnpm-workspace.yaml.orig
+Only in lobehub-2.2.19/apps/desktop: pnpm-workspace.yaml.rej
+diff '--color=auto' -urp lobehub-2.2.19.orig/pnpm-workspace.yaml lobehub-2.2.19/pnpm-workspace.yaml
+--- lobehub-2.2.19.orig/pnpm-workspace.yaml	2026-10-07 03:39:15.000000000 -0700
++++ lobehub-2.2.19/pnpm-workspace.yaml	2026-10-09 07:07:27.841465231 -0700
+@@ -28,6 +28,7 @@ packages:
+   - apps/workbench
+ 
+ minimumReleaseAgeExclude:
++  # Upstream changes
+   - '@auv-js/api-client@0.0.25'
+   - '@auv-js/cli-darwin-arm64@0.0.25'
+   - '@auv-js/cli-darwin-x64@0.0.25'
+@@ -37,6 +38,26 @@ minimumReleaseAgeExclude:
+   - '@auv-js/cli@0.0.25'
+   - '@auv-js/sdk@0.0.25'
+   - '@lobehub/*'
++  # oiledmachine-overlay changes
++  - '@apidevtools/json-schema-ref-parser@@NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV@'
++  - '@octokit/plugin-paginate-rest@@NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV@'
++  - '@octokit/request@@NODE_AT_OCTOKIT_REQUEST_PV@'
++  - '@octokit/request-error@@NODE_AT_OCTOKIT_REQUEST_ERROR_PV@'
++  - '@opentelemetry/core@@NODE_AT_OPENTELEMETRY_CORE_PV@'
++  - '@opentelemetry/propagator-jaeger@@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@'
++  - 'adm-zip@@NODE_ADM_ZIP_PV@'
++  - 'better-auth@@NODE_BETTER_AUTH_PV@'
++  - 'esbuild@@NODE_ESBUILD_PV@'
++  - 'fast-xml-parser@@NODE_FAST_XML_PARSER_5_PV@'
++  - 'file-type@@NODE_FILE_TYPE_22_PV@'
++  - 'form-data@@NODE_FORM_DATA_4_PV@'
++  - 'jsondiffpatch@@NODE_JSONDIFFPATCH_PV@'
++  - 'minimatch@@NODE_MINIMATCH_9_PV@'
++  - 'protobufjs@@NODE_PROTOBUFJS_8_PV@'
++  - 'qs@@NODE_QS_PV@'
++  - 'sharp@@NODE_SHARP_PV@'
++  - 'tough-cookie@@NODE_TOUGH_COOKIE_PV@'
++  - 'uuid@@NODE_UUID_11_PV@'
+ 
+ # Build scripts run one at a time. Several peer-variant copies of
+ # @lobehub/editor resolve in this workspace and every copy's postinstall
+@@ -61,24 +82,86 @@ allowBuilds:
+   workerd: true
+ 
+ overrides:
+-  '@ant-design/icons': 6.3.2
+-  '@react-pdf/image': 3.0.4
+-  '@types/react': 19.2.13
+-  '@vitest/coverage-v8': 5.0.0
+-  antd: 6.3.5
+-  baseline-browser-mapping: 2.10.31
+-  drizzle-orm: ^0.45.2
+-  fast-xml-parser: 5.4.2
+-  lexical: 0.42.0
+-  node-gyp: ^12.4.0
+-  pdfjs-dist: 5.4.530
+-  react: 19.2.7
+-  react-dom: 19.2.7
+-  's3rver>fast-xml-parser': 3.21.1
+-  stylelint-config-clean-order: 7.0.0
+-  typescript: 6.0.3
+-  vitest: 5.0.0
+-  'zod@^4': 4.6.5
++  # Upstream pinned versions
++  '@ant-design/icons': '6.3.2'
++  '@react-pdf/image': '3.0.4'
++  '@types/react': '19.2.13'
++  '@vitest/coverage-v8': '5.0.0'
++  'antd': '6.3.5'
++  'baseline-browser-mapping': '2.10.31'
++  'lexical': '0.42.0'
++  'node-gyp': '^12.4.0'
++  'stylelint-config-clean-order': '7.0.0'
++  'typescript': '6.0.3'
++  'zod@^4': '4.6.5'
++  # Pinned versions by oiledmachine-overlay
++  'drizzle-kit@<@NODE_DRIZZLE_KIT_PV@': '@NODE_DRIZZLE_KIT_PV@'
++  'drizzle-orm': '@NODE_DRIZZLE_ORM_PV@'
++  'react': '@NODE_REACT_19_PV@'
++  'react-dom': '@NODE_REACT_DOM_19_PV@'
++  'sharp': '@NODE_SHARP_PV@'
++  # Vulnerability fixes
++  '@aws-sdk/client-s3@3.932.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  '@aws-sdk/s3-request-presigner@3.932.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  '@better-auth/expo@1.6.15>esbuild': '@NODE_ESBUILD_PV@'
++  '@better-auth/passkey@1.6.15>esbuild': '@NODE_ESBUILD_PV@'
++  '@google/genai@1.50.1>qs': '@NODE_QS_PV@'
++  '@lobehub/lint@2.1.5>@apidevtools/json-schema-ref-parser': '@NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV@'
++  '@lobehub/lint@2.1.5>ajv': '@NODE_AJV_PV@'
++  '@lobehub/lint@2.1.5>minimatch': '@NODE_MINIMATCH_9_PV@'
++  '@modelcontextprotocol/sdk@1.30.0>qs': '@NODE_QS_PV@'
++  '@octokit/plugin-paginate-rest': '@NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV@'
++  '@octokit/request': '@NODE_AT_OCTOKIT_REQUEST_PV@'
++  '@octokit/request-error': '@NODE_AT_OCTOKIT_REQUEST_ERROR_PV@'
++  '@opentelemetry/auto-instrumentations-node@0.76.0>@opentelemetry/core': '@NODE_AT_OPENTELEMETRY_CORE_PV@'
++  '@opentelemetry/auto-instrumentations-node@0.76.0>@opentelemetry/propagator-jaeger': '@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@'
++  '@rolldown/plugin-transform-imports@0.1.1>ajv': '@NODE_AJV_PV@'
++  '@rolldown/plugin-transform-imports@0.1.1>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  '@rolldown/plugin-transform-imports@0.1.1>qs': '@NODE_QS_PV@'
++  '@saintno/comfyui-sdk@0.2.53>file-type': '@NODE_FILE_TYPE_22_PV@'
++  '@saintno/comfyui-sdk@0.2.53>form-data': '@NODE_FORM_DATA_4_PV@'
++  '@saintno/comfyui-sdk@0.2.53>qs': '@NODE_QS_PV@'
++  '@saintno/comfyui-sdk@0.2.53>tough-cookie': '@NODE_TOUGH_COOKIE_PV@'
++  '@upstash/workflow@0.2.23>jsondiffpatch': '@NODE_JSONDIFFPATCH_PV@'
++  '@vitejs/devtools@0.2.0>ajv': '@NODE_AJV_PV@'
++  '@vitejs/devtools@0.2.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  '@vitejs/devtools@0.2.0>qs': '@NODE_QS_PV@'
++  '@vitejs/plugin-react@6.0.5>ajv': '@NODE_AJV_PV@'
++  '@vitejs/plugin-react@6.0.5>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  '@vitejs/plugin-react@6.0.5>qs': '@NODE_QS_PV@'
++  'better-auth@<@NODE_BETTER_AUTH_PV@': '@NODE_BETTER_AUTH_PV@'
++  'better-auth@@NODE_BETTER_AUTH_PV@>esbuild': '@NODE_ESBUILD_PV@'
++  'dbdocs@0.16.2>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'drizzle-kit@@NODE_DRIZZLE_KIT_PV@>esbuild': '@NODE_ESBUILD_PV@'
++  'epub2@3.0.2>adm-zip': '@NODE_ADM_ZIP_PV@'
++  'esbuild@<@NODE_ESBUILD_PV@': '@NODE_ESBUILD_PV@'
++  'fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'fast-xml-parser@<@NODE_FAST_XML_PARSER_5_PV@': '@NODE_FAST_XML_PARSER_5_PV@'
++  'file-type@<@NODE_FILE_TYPE_22_PV@': '@NODE_FILE_TYPE_22_PV@'
++  'officeparser@5.1.1>file-type': '@NODE_FILE_TYPE_22_PV@'
++  'mcp-hello-world@1.1.2>qs': '@NODE_QS_PV@'
++  'pdfjs-dist': '@NODE_PDFJS_DIST_PV@'
++  'protobufjs@<@NODE_PROTOBUFJS_8_PV@': '@NODE_PROTOBUFJS_8_PV@'
++  'qs@<@NODE_QS_PV@': '@NODE_QS_PV@'
++  'raw-loader@4.0.2>ajv': '@NODE_AJV_PV@'
++  'react-scan@0.5.7>ajv': '@NODE_AJV_PV@'
++  'react-scan@0.5.7>@opentelemetry/core': '@NODE_AT_OPENTELEMETRY_CORE_PV@'
++  'react-scan@0.5.7>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'react-scan@0.5.7>qs': '@NODE_QS_PV@'
++  'resend@6.8.0>uuid': '@NODE_UUID_11_PV@'
++  's3rver>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  's3rver@3.7.1>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'stripe@17.7.0>qs': '@NODE_QS_PV@'
++  'vite@@NODE_VITE_8_PV@>ajv': '@NODE_AJV_PV@'
++  'vite@@NODE_VITE_8_PV@>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'vite@@NODE_VITE_8_PV@>qs': '@NODE_QS_PV@'
++  'vite-plugin-pwa@1.3.0>ajv': '@NODE_AJV_PV@'
++  'vite-plugin-pwa@1.3.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'vite-plugin-pwa@1.3.0>qs': '@NODE_QS_PV@'
++  'vite-tsconfig-paths@6.1.1>ajv': '@NODE_AJV_PV@'
++  'vite-tsconfig-paths@6.1.1>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  'vite-tsconfig-paths@6.1.1>qs': '@NODE_QS_PV@'
++  'vitest': '@NODE_VITEST_5_PV@'
+ 
+ patchedDependencies:
+   '@upstash/qstash': patches/@upstash__qstash.patch
+Only in lobehub-2.2.19: pnpm-workspace.yaml.orig
+Only in lobehub-2.2.19: pnpm-workspace.yaml.rej
