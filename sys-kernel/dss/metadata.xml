@@ -81,13 +81,6 @@
     <flag name="audit">
       Use auditd for kernel level activity logging.
     </flag>
-    <flag name="chrony">
-      Use chrony as a secure NTP that has been audited, sandboxed, reduced
-      attack surface reduction.
-    </flag>
-    <flag name="clamav">
-      Use ClamAV to meet virus scan requirement for audit.
-    </flag>
     <flag name="apparmor">
       Add AppArmor support for containers, desktop, or server environments.
     </flag>
@@ -97,6 +90,13 @@
     <flag name="casual">
       Adjusted data security that is not overkill for home users but still
       scores high.
+    </flag>
+    <flag name="chrony">
+      Use chrony as a secure NTP that has been audited, sandboxed, reduced
+      attack surface reduction.
+    </flag>
+    <flag name="clamav">
+      Use ClamAV to meet virus scan requirement for audit.
     </flag>
     <flag name="compliant">
       Limit package selection what is allowed universally in standard data
@@ -127,13 +127,14 @@
       security alternatives than what auditors may allow.
     </flag>
     <flag name="keepass">
-      Use .NET based KeePass for password management on the desktop.
+      Use Mono/.NET based KeePass for password management on the desktop.
     </flag>
     <flag name="keepassxc">
       Use Qt6 based KeePassXC for password management on the desktop.
     </flag>
     <flag name="kpcli">
-      Use kpcli for password management from the command line.
+      Use the Perl based kpcli for password management for desktop less
+      environments.
     </flag>
     <flag name="iptables">
       Add iptables as a firewall, CLI only.
