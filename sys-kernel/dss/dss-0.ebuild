@@ -817,13 +817,13 @@ SANDBOX_DEPENDS="
 # Prevent leaking hardware vulnerabilties for unpatched systems.
 # Prevent leaking the kernel version for unpatched systems.
 BANNED_RECONNAISSANCE_TOOLS="
+	!app-admin/facter
+	!app-admin/ohai
+	!app-admin/puppet-agent
 	!app-benchmarks/geekbench
 	!app-benchmarks/phoronix-test-suite
 	!app-benchmarks/sysbench
 	!app-containers/ducker
-	!app-admin/facter
-	!app-admin/ohai
-	!app-admin/puppet-agent
 	!app-misc/cpufetch
 	!app-misc/elfx86exts
 	!app-misc/fastfetch
