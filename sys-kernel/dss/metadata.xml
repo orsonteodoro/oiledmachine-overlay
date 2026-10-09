@@ -78,14 +78,14 @@
       
       Use AI to help set up private reporting or mail based reporting.
     </flag>
-    <flag name="audit">
-      Use auditd for kernel level activity logging.
-    </flag>
     <flag name="apparmor">
       Add AppArmor support for containers, desktop, or server environments.
     </flag>
     <flag name="audit">
       Add packages for maintenance or the audit workstation.
+    </flag>
+    <flag name="auditd">
+      Use auditd for kernel level activity logging.
     </flag>
     <flag name="casual">
       Adjusted data security that is not overkill for home users but still
