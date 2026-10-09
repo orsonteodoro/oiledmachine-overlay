@@ -181,6 +181,7 @@ REQUIRED_USE="
 	)
 
 	compliant? (
+		!aide
 		!ecryptfs
 		!iptables
 		!keepass
@@ -191,7 +192,6 @@ REQUIRED_USE="
 		!shorewall
 		!smack
 		!tomoyo
-		!tripwire
 		!veracrypt
 	)
 
@@ -453,8 +453,10 @@ REQUIRED_USE="
 			)
 		)
 
-		|| (
-			aide
+		^^ (
+			ossec
+			tripwire
+			wazuh
 		)
 		clamav
 
@@ -467,10 +469,6 @@ REQUIRED_USE="
 		)
 
 		auditd
-		^^ (
-			ossec
-			wazuh
-		)
 		^^ (
 			rsyslog
 			syslog-ng
@@ -504,6 +502,7 @@ REQUIRED_USE="
 			ossec
 			samhain
 			tripwire
+			wazuh
 		)
 		clamav
 
@@ -527,10 +526,6 @@ REQUIRED_USE="
 		)
 
 		auditd
-		^^ (
-			ossec
-			wazuh
-		)
 		^^ (
 			rsyslog
 			syslog-ng
