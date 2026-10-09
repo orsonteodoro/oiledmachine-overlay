@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"gui-libs/gtk-4.24.9999"
+	"gui-libs/gtk-4.25.9999"
 )
 
 inherit cflags-hardened chkl gnome.org libcxx-slot libstdcxx-slot meson secure-version python-any-r1 virtualx
@@ -38,7 +38,7 @@ RESTRICT="
 SLOT="${API_VERSION}"
 IUSE="
 gtk-doc test vulkan
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=dev-cpp/glibmm-2.75.0:2.68=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gtk-doc?]
