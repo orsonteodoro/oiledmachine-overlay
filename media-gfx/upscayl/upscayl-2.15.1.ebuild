@@ -149,7 +149,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_34
+	ebuild_revision_35
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
