@@ -922,6 +922,7 @@ BANNED_DEBUGGING_TOOLS="
 	!dev-debug/strace
 	!dev-python/frida
 	!dev-python/frida-bin
+	!dev-util/ROCgdb
 	!dev-util/scanmem
 	!dev-util/strace
 	!llvm-core/lldb
