@@ -78,6 +78,9 @@
       
       Use AI to help set up private reporting or mail based reporting.
     </flag>
+    <flag name="audit">
+      Use auditd for kernel level activity logging.
+    </flag>
     <flag name="chrony">
       Use chrony as a secure NTP that has been audited, sandboxed, reduced
       attack surface reduction.
@@ -117,7 +120,7 @@
       Enforce package checks and systemwide flag checks.
     </flag>
     <flag name="firewalld">
-      Add firewalld as a firewall.
+      Add firewalld as a firewall, with GUI.
     </flag>
     <flag name="flexible">
       Allow for open-ended package selection which some may be more superior
@@ -133,7 +136,7 @@
       Use kpcli for password management from the command line.
     </flag>
     <flag name="iptables">
-      Add iptables as a firewall.
+      Add iptables as a firewall, CLI only.
     </flag>
     <flag name="internal-chokepoint">
       Configure as the Internal Chokepoint, between critical network segments or
@@ -147,7 +150,7 @@
       score.
     </flag>
     <flag name="nftables">
-      Add nftables as a firewall.
+      Add nftables as a firewall, CLI only.
     </flag>
     <flag name="ntp">
       Use the insecure legacy NTP package for clock synchronization that has
@@ -167,9 +170,6 @@
     <flag name="rsyslog">
       Use rsyslog for traditional system or application logging.
     </flag>
-    <flag name="syslog-ng">
-      Use syslog-ng for traditional system or application logging.
-    </flag>
     <flag name="samhain">
       Use Samhain for hardened and stealth based File Integrity Monitoring (FIM)
       against tampering.
@@ -181,14 +181,20 @@
       Add SELinux support for enterprise environments or critical infrastructure.
     </flag>
     <flag name="shorewall">
-      Add shorewall as a firewall.
+      Add shorewall as a firewall, with web based Webmin UI.
     </flag>
     <flag name="smack">
       Add SMACK support for IOT, embedded, automotive devices.
     </flag>
+    <flag name="snort">
+      Use Snort as NIDS.
+    </flag>
     <flag name="soc">
       Configure as part of the Security Operations Center (SOC).
       Add the Wahzuh Docker container (SEIM+XDR) to SOC.
+    </flag>
+    <flag name="syslog-ng">
+      Use syslog-ng for traditional system or application logging.
     </flag>
     <flag name="tomoyo">
       Add Tomoyo support for system analysis or learned confinement.
@@ -197,14 +203,8 @@
       Use Tripwire for File Integrity Monitoring (FIM), with cryptographic
       signing.
     </flag>
-    <flag name="audit">
-      Use auditd for kernel level activity logging.
-    </flag>
-    <flag name="snort">
-      Use Snort as NIDS.
-    </flag>
     <flag name="ufw">
-      Add ufw as a firewall.
+      Add ufw as a firewall, with GUI.
     </flag>
     <flag name="veracrypt">
       Add veracrypt for encrypting data.

@@ -183,6 +183,7 @@ REQUIRED_USE="
 
 	compliant? (
 		!ecryptfs
+		!iptables
 		!keepass
 		!keepassxc
 		!kpcli
@@ -471,7 +472,6 @@ REQUIRED_USE="
 
 		^^ (
 			firewalld
-			iptables
 			nftables
 			ufw
 		)
