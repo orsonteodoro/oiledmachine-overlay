@@ -33,7 +33,7 @@ minimumReleaseAgeExclude:
   - 'ajv@8.18.0'
   - 'csv-parse@7.0.3'
   - 'tar@7.5.21'
-  - 'electron@44.6.0'
+  - 'electron@44.7.0'
   - 'electron-builder@26.15.7'
   - 'esbuild@0.28.2'
   - 'flatted@3.4.4'
@@ -108,7 +108,7 @@ overrides:
   'danger@13.0.10>undici': '6.28.1'
   'dmg-builder': '26.15.7'
   'fabric': '4.6.0'
-  'electron': '44.6.0'
+  'electron': '44.7.0'
   'electron-builder': '26.15.7'
   #'electron-builder@26.15.7>tar': '7.5.21'
   'electron-builder-squirrel-windows': '26.15.7'
@@ -200,7 +200,7 @@ allowBuilds:
   '@signalapp/windows-ucv@1.0.1': true
   '@swc/core@1.16.13': true
   '@tailwindcss/oxide@4.3.0': true
-  'electron@44.6.0': true
+  'electron@44.7.0': true
   'fs-xattr@0.4.0': true
 
   # Disabled Builds: Use wildcard version
