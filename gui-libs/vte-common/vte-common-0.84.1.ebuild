@@ -23,7 +23,7 @@ CHKL_TIMESTAMPS=(
 	"dev-cpp/fast_float-9999"
 	"dev-libs/fribidi-9999"
 	"dev-libs/glib-2.90.9999"
-	"gui-libs/gtk-4.24.9999"
+	"gui-libs/gtk-4.25.9999"
 	"sys-apps/systemd-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gtk+-3.24.9999"
@@ -47,7 +47,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 IUSE="
 systemd gtk3 gtk4
-ebuild_revision_2
+ebuild_revision_3
 "
 
 DEPEND="
