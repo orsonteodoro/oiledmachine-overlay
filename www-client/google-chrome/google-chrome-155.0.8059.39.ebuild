@@ -432,6 +432,11 @@ src_install() {
 	pax-mark m "${CHROME_HOME}/chrome"
 }
 
+pkg_postinst() {
+	xdg_pkg_postinst
+einfo "TIP:  If the interface is flickering, run google-chrome-stable in wayland or in x11 do \`google-chrome-stable --disable-gpu\`."
+}
+
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 150.0.7871.124 (interactive testing, 20260714)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 151.0.7922.71 (interactive testing, 20260730)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 152.0.7977.64 (interactive testing, 20260826)
