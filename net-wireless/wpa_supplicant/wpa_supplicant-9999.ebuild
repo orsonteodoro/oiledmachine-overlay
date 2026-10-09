@@ -37,8 +37,8 @@ fi
 
 SLOT="0"
 IUSE+="
-+ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps
-ebuild_revision_4
++ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh networkmanager p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps
+ebuild_revision_5
 "
 
 # CONFIG_PRIVSEP=y does not have sufficient support for the new driver
@@ -439,6 +439,11 @@ src_install() {
 	systemd_dounit "systemd/wpa_supplicant@.service"
 	systemd_dounit "systemd/wpa_supplicant-nl80211@.service"
 	systemd_dounit "systemd/wpa_supplicant-wired@.service"
+
+	if use networkmanager ; then
+	# Using D-Bus to start and control wpa_supplicant
+		rm -f "${ED}/etc/init.d/wpa_supplicant" || true
+	fi
 }
 
 pkg_postinst() {
@@ -476,4 +481,10 @@ ewarn "WPA-NONE is considered insecure.  Do not use."
 ewarn "WPA1 + TKIP is considered insecure.  Do not use."
 ewarn "WPS is considered insecure.  Do not use."
 einfo "Use a 16 length password safe generated preshared key for WPA2-Personal to mitigate against dictionary or brute force attack"
+
+	if use networkmanager ; then
+	# Using D-Bus to start and control wpa_supplicant
+		rm -f "${ED}/etc/init.d/wpa_supplicant" || true
+		rm -f "${EROOT}/etc/runlevels/"*"/wpa_supplicant" || true
+	fi
 }
