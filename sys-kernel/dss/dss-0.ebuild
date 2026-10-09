@@ -250,8 +250,8 @@ REQUIRED_USE="
 		!compliant
 	)
 	firewalld? (
-		!casual
 		^^ (
+			casual
 			compliant
 			flexible
 		)
@@ -303,6 +303,7 @@ REQUIRED_USE="
 	)
 	rsyslog? (
 		^^ (
+			casual
 			compliant
 			flexible
 		)
@@ -351,6 +352,7 @@ REQUIRED_USE="
 	)
 	syslog-ng? (
 		^^ (
+			casual
 			compliant
 			flexible
 		)
@@ -366,8 +368,8 @@ REQUIRED_USE="
 		flexible
 	)
 	ufw? (
-		!casual
 		^^ (
+			casual
 			compliant
 			flexible
 		)
@@ -398,21 +400,14 @@ REQUIRED_USE="
 			)
 			firejail
 
-			!firewalld
 			!iptables
 			!nftables
 			!shorewall
-			!ufw
-
-			!rsyslog
-			!syslog-ng
 
 			!ossec
 			!wazuh
 
 			!snort
-
-			!auditd
 
 			!aide
 			!samhain
@@ -421,11 +416,9 @@ REQUIRED_USE="
 			!lynis
 			!openscap
 
-			!apparmor
 			!selinux
 			!smack
 			!tomoyo
-
 		)
 
 		audit? (
