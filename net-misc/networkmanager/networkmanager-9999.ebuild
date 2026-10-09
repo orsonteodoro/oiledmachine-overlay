@@ -168,7 +168,7 @@ RDEPEND="${COMMON_DEPEND}
 	)
 	wpa_supplicant? (
 		!net-wireless/iwd
-		>=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus]
+		>=net-wireless/wpa_supplicant-${WPA_SUPPLICANT_PV}:=[dbus,networkmanager]
 	)
 "
 DEPEND="${COMMON_DEPEND}

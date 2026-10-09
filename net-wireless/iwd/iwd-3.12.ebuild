@@ -33,7 +33,7 @@ SLOT="0"
 IUSE="
 +client cpu_flags_x86_aes cpu_flags_x86_ssse3 +monitor networkmanager ofono
 selinux standalone -system-ell systemd wired
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
@@ -224,7 +224,7 @@ pkg_postinst() {
 einfo "You must etc-update to finish update."
 	if use networkmanager ; then
 	# Using D-Bus to start and control iwd
-		rm -f "${ED}/etc/init.d/iwd" || true
+		rm -f "${EROOT}/etc/init.d/iwd" || true
 		rm -f "${EROOT}/etc/runlevels/"*"/iwd" || true
 	fi
 }
