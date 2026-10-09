@@ -356,10 +356,10 @@ pnpm_src_unpack() {
 			|| die
 	fi
 
-	# Set per ebuild
-	#if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-	#	pnpm config set lockfile true || die
-	#fi
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" && -e "pnpm-workspace.yaml" ]] ; then
+		#pnpm config set lockfile true || die # Broken with pnpm 12.4.1
+		sed -i -e "s|lockfile: false|lockfile: true|g" "pnpm-workspace.yaml"
+	fi
 
 	epnpm install ${PNPM_INSTALL_ARGS[@]}
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
