@@ -264,15 +264,12 @@ REQUIRED_USE="
 		)
 	)
 	keepass? (
-		casual
 		!compliant
 	)
 	keepassxc? (
-		casual
 		!compliant
 	)
 	kpcli? (
-		casual
 		!compliant
 	)
 	lynis? (
@@ -320,7 +317,6 @@ REQUIRED_USE="
 		)
 	)
 	secrets? (
-		casual
 		!compliant
 	)
 	selinux? (
