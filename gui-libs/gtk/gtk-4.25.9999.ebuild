@@ -366,6 +366,7 @@ pkg_postinst() {
 	if use examples ; then
 		optfeature "syntax highlighting in gtk4-demo" app-text/highlight
 	fi
+einfo "TIP:  GSK_RENDERER=cairo can be used to run in software rendering mode if flicker or input issue.  Running in Wayland can solve the issue."
 }
 
 pkg_postrm() {

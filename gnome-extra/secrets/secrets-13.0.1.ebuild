@@ -374,6 +374,7 @@ einfo
         optfeature "DMA attack mitigation for USB4 (USB-C) and USB keyboard snooping mitigation against an evil maid attack" "sys-apps/usbguard"
         optfeature "DMA attack mitigation for Thunderbolt" "sys-apps/bolt"
 	# TODO: Add PCIe DMA attack hotplug mitigation suggestion
+einfo "TIP: GSK_RENDERER=cairo ${PN} in command line can be used to disable hardware acceleration to fix input issue in X11.  Running ${PN} in Wayland can fix the issue."
 }
 
 pkg_postrm() {
