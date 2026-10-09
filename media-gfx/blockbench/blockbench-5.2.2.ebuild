@@ -9,7 +9,7 @@ EAPI=8
 
 # To update lockfile:
 # PATH=$(realpath ../../scripts)":${PATH}"
-# NPM_UPDATER_VERSIONS="5.2.1" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="5.2.2" npm_updater_update_locks.sh
 
 MY_PN="${PN^}"
 
@@ -197,6 +197,20 @@ einfo "QA:  Remove node_modules/postcss-modules-scope/node_modules/postcss in pa
 einfo "QA:  Remove node_modules/postcss-modules-sync/node_modules/postcss in package-lock.json"
 einfo "QA:  Remove node_modules/@vue/component-compiler-utils/node_modules/postcss in package-lock.json"
 einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\" in package-lock.json"
+		patch_lockfile() {
+			sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^6.0.1\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^7.0.3\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^7.1.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"source-map-js\": \">=0.6.2 <2.0.0\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
+		}
+
+
 	# Pinned versions
 		local L
 		L=(
@@ -213,11 +227,13 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 	# Fix vulnerabilities
 		local L
 		L=(
-			"decode-uri-component@^0.5.0"
+			"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
 			"json5@^${NODE_JSON5_PV}"
 			"loader-utils@^${NODE_LOADER_UTILS_1_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
+			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
+			"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
