@@ -127,13 +127,14 @@
       security alternatives than what auditors may allow.
     </flag>
     <flag name="keepass">
-      Use Mono/.NET based KeePass for password management on the desktop.
+      Use Mono/.NET based KeePass for password management for desktop
+      environments.
     </flag>
     <flag name="keepassxc">
-      Use Qt6 based KeePassXC for password management on the desktop.
+      Use Qt6 based KeePassXC for password management for desktop environments.
     </flag>
     <flag name="kpcli">
-      Use the Perl based kpcli for password management for desktop less
+      Use the Perl based kpcli for password management for command line
       environments.
     </flag>
     <flag name="iptables">
@@ -172,7 +173,7 @@
       against tampering.
     </flag>
     <flag name="secrets">
-      Use GTK4 based secrets for password management from the desktop.
+      Use GTK 4 based Secrets for password management for desktop environments.
     </flag>
     <flag name="selinux">
       Add SELinux support for enterprise environments or critical infrastructure.
