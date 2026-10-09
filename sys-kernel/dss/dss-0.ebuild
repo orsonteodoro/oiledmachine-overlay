@@ -820,6 +820,7 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!app-benchmarks/geekbench
 	!app-benchmarks/phoronix-test-suite
 	!app-benchmarks/sysbench
+	!app-containers/ducker
 	!app-admin/facter
 	!app-admin/ohai
 	!app-admin/puppet-agent
@@ -838,6 +839,10 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!app-misc/ufetch
 	!app-misc/wego
 	!dev-python/archey4
+	!net-analyzer/iftop
+	!net-analyzer/jnettop
+	!net-analyzer/nethogs
+	!net-analyzer/nettop
 	!net-analyzer/traceroute
 	!net-misc/iputils
 	!net-wireless/iw
@@ -850,6 +855,10 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!sys-apps/lsvpd
 	!sys-apps/pciutils
 	!sys-libs/geoclue
+	!sys-process/ctop
+	!sys-process/iotop
+	!sys-process/iotop-c
+	!sys-cluster/k9scli
 	!x11-misc/gammastep
 	!x11-misc/redshift
 "
