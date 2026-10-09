@@ -203,6 +203,10 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"postcss\": \"8.4.31\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"postcss\": \"^8.4.47\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss-selector-parser\": \"6.0.10\"|\"postcss-selector-parser\": \"${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss-selector-parser\": \"^6.1.1\"|\"postcss-selector-parser\": \"${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"postcss-selector-parser\": \"^6.1.2\"|\"postcss-selector-parser\": \"${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
 	}
@@ -240,7 +244,9 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 		"@types/node@^${AT_TYPES_NODE_24_PV}"
 		"electron@^${ELECTRON_APP_ELECTRON_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
+		"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
 		"tar@^${NODE_TAR_PV}"
+		"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 	)
 	enpm install -D "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
