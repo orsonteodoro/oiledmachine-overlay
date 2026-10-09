@@ -614,7 +614,7 @@ CHKL_TIMESTAMPS=(
 	"dev-vcs/git-9999-r2"
 	"dev-vcs/git-9999-r1"
 	"dev-vcs/git-9999"
-	"gui-libs/gtk-4.24.9999"
+	"gui-libs/gtk-4.25.9999"
 	"media-libs/libpulse-9999"
 	"media-video/pipewire-9999"
 	"net-wireless/bluez-9999"
@@ -652,7 +652,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 bluez doc networkmanager pipewire-pulse power-profiles-daemon upower wireplumber
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
