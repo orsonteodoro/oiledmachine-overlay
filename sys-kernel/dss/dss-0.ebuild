@@ -813,16 +813,100 @@ SANDBOX_DEPENDS="
 	)
 "
 
+# Reduce on device, lateral movement, social engineering, physical location recon.
+# Prevent leaking hardware vulnerabilties for unpatched systems.
+# Prevent leaking the kernel version for unpatched systems.
+BANNED_RECONNAISSANCE_TOOLS="
+	!app-benchmarks/geekbench
+	!app-benchmarks/phoronix-test-suite
+	!app-benchmarks/sysbench
+	!app-admin/facter
+	!app-admin/ohai
+	!app-admin/puppet-agent
+	!app-misc/cpufetch
+	!app-misc/elfx86exts
+	!app-misc/fastfetch
+	!app-misc/hyfetch
+	!app-misc/mirafetch
+	!app-misc/neofetch
+	!app-misc/nerdfetch
+	!app-misc/onefetch
+	!app-misc/pfetch
+	!app-misc/resolve-march-native
+	!app-misc/rustormy
+	!app-misc/screenfetch
+	!app-misc/ufetch
+	!app-misc/wego
+	!dev-python/archey4
+	!net-analyzer/traceroute
+	!net-misc/iputils
+	!net-wireless/iw
+	!sys-apps/cpuid
+	!sys-apps/dmidecode
+	!sys-apps/hardinfo
+	!sys-apps/hwinfo
+	!sys-apps/inxi
+	!sys-apps/lshw
+	!sys-apps/lsvpd
+	!sys-apps/pciutils
+	!sys-libs/geoclue
+	!x11-misc/gammastep
+	!x11-misc/redshift
+"
+
+BANNED_RED_TEAM_TOOLS="
+	!app-crypt/hashcat
+	!app-crypt/hashtopolis
+	!app-crypt/john
+	!app-crypt/johntheripper
+	!app-crypt/libzc
+	!app-crypt/mimikatz
+	!app-crypt/webhashcat
+	!dev-python/impacket
+	!net-analyzer/arp-scan
+	!net-analyzer/bettercap
+	!net-analyzer/cewl
+	!net-analyzer/dsniff
+	!net-analyzer/dnsreaper
+	!net-analyzer/ettercap
+	!net-analyzer/eyewitness
+	!net-analyzer/gobuster
+	!net-analyzer/hydra
+	!net-analyzer/impacket
+	!net-analyzer/ncrack
+	!net-analyzer/masscan
+	!net-analyzer/medusa
+	!net-analyzer/metasploit
+	!net-analyzer/metasploit-framework
+	!net-analyzer/ncrack
+	!net-analyzer/netcat
+	!net-analyzer/nmap
+	!net-analyzer/responder
+	!net-analyzer/routersploit
+	!net-analyzer/scapy
+	!net-analyzer/sliver
+	!net-analyzer/tcpdump
+	!net-analyzer/wireshark
+	!net-misc/iodine
+	!net-misc/socat
+	!net-proxy/chisel
+	!net-wireless/sliver
+"
+
 # Prevent password keyboard snooping, show password screen grabs
+# Ban unapproved ciphers
 BANNED_RDEPEND="
-	!x11-base/xorg-server
+	!sys-kernel/gostcrypt-linux-crypto
 	!x11-base/xlibre
+	!x11-base/xorg-server
 "
 
 RDEPEND="
 	!virtual/dss
 	enforce? (
 		${BANNED_RDEPEND}
+		${BANNED_RECONNAISSANCE_TOOLS}
+		${BANNED_RED_TEAM_TOOLS}
 		${ANTIVIRUS_DEPENDS}
 		${CLOUD_COMPLIANCE_DEPENDS}
 		${DATA_ENCRYPTION_DEPENDS}
@@ -894,5 +978,9 @@ eerror "Valid optimization levels for security-critical data security:  -O1, -O2
 
 	if use linux-firmware ; then
 		chkl_check_many_timestamps
+	fi
+
+	if which lscpu >/dev/null ; then
+ewarn "The lscpu must have ACL, executible restrictions, or be removed to restrict reconnaissance against CPU vulnerabilities."
 	fi
 }
