@@ -4,7 +4,7 @@
 EAPI=8
 
 if [[ ${PV} = *9999* ]]; then
-	FALLBACK_COMMIT="95c36fb641e4186cc0daa7ff902f6b1902032de3"
+	FALLBACK_COMMIT="25bf90b72056ba32429d50c10dacdac3742bad1c"
 	GIT_ECLASS="git-r3"
 	EGIT_REPO_URI="https://github.com/xkbcommon/${PN}"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -17,7 +17,7 @@ else
 fi
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data"
-PYTHON_COMPAT=( python3_{10..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/libxml2-9999"
@@ -32,7 +32,10 @@ HOMEPAGE="https://xkbcommon.org/ https://github.com/xkbcommon/libxkbcommon/"
 LICENSE="MIT"
 SLOT="0"
 
-IUSE+=" doc static-libs test tools wayland X"
+IUSE+="
+doc static-libs test tools wayland X
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
