@@ -153,10 +153,6 @@
     <flag name="nftables">
       Add nftables as a firewall, CLI only.
     </flag>
-    <flag name="ntp">
-      Use the insecure legacy NTP package for clock synchronization that has
-      been audited.
-    </flag>
     <flag name="ntpsec">
       Use ntpsec as a secure NTP, that has been sandboxed, audited, attack
       surface reduced.

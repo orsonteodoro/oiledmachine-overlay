@@ -93,7 +93,6 @@ LSM_IUSE=(
 
 NTP_IUSE=(
 	"chrony"
-	"ntp"
 	"ntpsec"
 )
 
@@ -187,7 +186,6 @@ REQUIRED_USE="
 		!keepass
 		!keepassxc
 		!kpcli
-		!ntpsec
 		!samhain
 		!secrets
 		!shorewall
@@ -283,13 +281,6 @@ REQUIRED_USE="
 	nftables? (
 		!casual
 		^^ (
-			compliant
-			flexible
-		)
-	)
-	ntp? (
-		^^ (
-			casual
 			compliant
 			flexible
 		)
@@ -451,7 +442,6 @@ REQUIRED_USE="
 
 		^^ (
 			chrony
-			ntp
 			ntpsec
 		)
 	)
@@ -497,7 +487,7 @@ REQUIRED_USE="
 
 		^^ (
 			chrony
-			ntp
+			ntpsec
 		)
 
 	)
@@ -525,7 +515,6 @@ REQUIRED_USE="
 
 		^^ (
 			chrony
-			ntp
 			ntpsec
 		)
 
@@ -757,20 +746,15 @@ LOGGER_DEPENDS="
 "
 
 NTP_DEPENDS="
+	!net-misc/ntp
 	!chrony? (
 		!net-misc/chrony
-	)
-	!ntp? (
-		!net-misc/ntp
 	)
 	!ntpsec? (
 		!net-misc/ntpsec
 	)
 	chrony? (
 		net-misc/chrony
-	)
-	ntp? (
-		net-misc/ntp
 	)
 	ntpsec? (
 		net-misc/ntpsec
