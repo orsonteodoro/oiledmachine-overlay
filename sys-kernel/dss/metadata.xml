@@ -69,8 +69,8 @@
 
     -->
     <flag name="aide">
-      Use AIDE for lightweight File Integrity Monitoring (FIM), without database
-      encryption.
+      Use AIDE for lightweight and ease of use File Integrity Monitoring (FIM),
+      without database encryption.
 
       Important fingerprints for compliance:
       - System config and binaries
