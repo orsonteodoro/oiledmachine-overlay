@@ -289,7 +289,14 @@ REQUIRED_USE="
 		)
 	)
 	openscap? (
+		!casual
 		audit
+		audit? (
+			^^ (
+				compliant
+				flexible
+			)
+		)
 	)
 	ossec? (
 		!casual
@@ -419,10 +426,7 @@ REQUIRED_USE="
 
 		audit? (
 			auditd
-			|| (
-				lynis
-				openscap
-			)
+			lynis
 
 			aide
 
