@@ -538,7 +538,8 @@ REQUIRED_USE="
 "
 SLOT="0"
 
-# We force remove most of the tools if disabled to prevent weaponization except for availability issue.
+# Never leave the audit tool in production because can be weaponized for
+# reconnaissance or chained to increase the impact.
 
 AUDIT_DEPENDS="
 	!lynis (
