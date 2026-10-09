@@ -1279,7 +1279,7 @@ einfo "Generating tag done"
 src_unpack() {
 	# For maintenance
 	unpack ${A}
-	die
+#	die
 
 	# When updating Cargo.lock
 	# QA:  Replace from serde_yml to yaml_serde in .rs, Cargo.toml
