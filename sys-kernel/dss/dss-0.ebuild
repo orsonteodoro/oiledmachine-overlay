@@ -754,11 +754,11 @@ LSM_DEPENDS="
 	!apparmor? (
 		!sys-apps/apparmor
 	)
-	!smack? (
-		!sys-apps/smack-utils
-	)
 	!selinux? (
 		!sec-policy/selinux-base
+	)
+	!smack? (
+		!sys-apps/smack-utils
 	)
 	!tomoyo? (
 		!sys-apps/tomoyo-tools
@@ -766,11 +766,11 @@ LSM_DEPENDS="
 	apparmor? (
 		sys-apps/apparmor
 	)
-	smack? (
-		sys-apps/smack-utils
-	)
 	selinux? (
 		sec-policy/selinux-base
+	)
+	smack? (
+		sys-apps/smack-utils
 	)
 	tomoyo? (
 		sys-apps/tomoyo-tools
@@ -895,6 +895,4 @@ eerror "Valid optimization levels for security-critical data security:  -O1, -O2
 	if use linux-firmware ; then
 		chkl_check_many_timestamps
 	fi
-
-	verify-binutils_check
 }
