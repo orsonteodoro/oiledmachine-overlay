@@ -38,7 +38,7 @@ fi
 SLOT="0"
 IUSE+="
 +ap broadcom-sta dbus eap-sim eapol-test +fils gui macsec +mbo +mesh networkmanager p2p privsep readline selinux smartcard tkip uncommon-eap-types wep wps
-ebuild_revision_5
+ebuild_revision_6
 "
 
 # CONFIG_PRIVSEP=y does not have sufficient support for the new driver
@@ -484,7 +484,7 @@ einfo "Use a 16 length password safe generated preshared key for WPA2-Personal t
 
 	if use networkmanager ; then
 	# Using D-Bus to start and control wpa_supplicant
-		rm -f "${ED}/etc/init.d/wpa_supplicant" || true
+		rm -f "${EROOT}/etc/init.d/wpa_supplicant" || true
 		rm -f "${EROOT}/etc/runlevels/"*"/wpa_supplicant" || true
 	fi
 }
