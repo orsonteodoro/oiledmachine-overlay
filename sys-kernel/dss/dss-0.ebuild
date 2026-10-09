@@ -539,7 +539,7 @@ REQUIRED_USE="
 SLOT="0"
 
 # Never leave the audit tool in production because can be weaponized for
-# reconnaissance or chained to increase the impact.
+# reconnaissance to find other weaknesses to chain to increase the impact.
 
 AUDIT_DEPENDS="
 	!lynis (
