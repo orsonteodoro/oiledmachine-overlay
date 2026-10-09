@@ -68,17 +68,29 @@
 
 
     -->
+    <flag name="aide">
+      Use AIDE for lightweight File Integrity Monitoring (FIM), without database
+      encryption.
+
+      Important fingerprints for compliance:
+      - System config and binaries
+      - User config and data
+      
+      Use AI to help set up private reporting or mail based reporting.
+    </flag>
+    <flag name="chrony">
+      Use chrony as a secure NTP that has been audited, sandboxed, reduced
+      attack surface reduction.
+    </flag>
+    <flag name="clamav">
+      Use ClamAV to meet virus scan requirement for audit.
+    </flag>
+    <flag name="apparmor">
+      Add AppArmor support for containers, desktop, or server environments.
+    </flag>
     <flag name="audit">
       Add packages for maintenance or the audit workstation.
     </flag>
-    <flag name="production">
-      Add packages for the production system.
-    </flag>
-
-    <flag name="enforce">
-      Enforce package checks and systemwide flag checks.
-    </flag>
-
     <flag name="casual">
       Adjusted data security that is not overkill for home users but still
       scores high.
@@ -87,33 +99,119 @@
       Limit package selection what is allowed universally in standard data
       security audits.  It is required for payment card readers.
     </flag>
+    <flag name="dm-crypt">
+      Add dm-crypt for encrypting data.
+    </flag>
+    <flag name="dmz">
+      Configure as part of the Demilitarized Zone, a section of the network that
+      separates internal and external networks.
+    </flag>
+    <flag name="ecryptfs">
+      Add ecryptfs for encrypting data.
+    </flag>
+    <flag name="endpoint">
+      Configure as an Endpoint.
+      Add Wahzuh agent to the endpoint.
+    </flag>
+    <flag name="enforce">
+      Enforce package checks and systemwide flag checks.
+    </flag>
+    <flag name="firewalld">
+      Add firewalld as a firewall.
+    </flag>
     <flag name="flexible">
       Allow for open-ended package selection which some may be more superior
       security alternatives than what auditors may allow.
     </flag>
-
-    <flag name="apparmor">
-      Add AppArmor support for containers, desktop, or server environments.
+    <flag name="keepass">
+      Use .NET based KeePass for password management on the desktop.
+    </flag>
+    <flag name="keepassxc">
+      Use Qt6 based KeePassXC for password management on the desktop.
+    </flag>
+    <flag name="kpcli">
+      Use kpcli for password management from the command line.
+    </flag>
+    <flag name="iptables">
+      Add iptables as a firewall.
+    </flag>
+    <flag name="internal-chokepoint">
+      Configure as the Internal Chokepoint, between critical network segments or
+      VLANs.
+    </flag>
+    <flag name="internet-edge">
+      Configure as the Internet Edge, outside or inside the firewall perimiter.
+    </flag>
+    <flag name="lynis">
+      Use Lynis for system audit and compliance checking.  Outputs hardening
+      score.
+    </flag>
+    <flag name="nftables">
+      Add nftables as a firewall.
+    </flag>
+    <flag name="ntp">
+      Use the insecure legacy NTP package for clock synchronization that has
+      been audited.
+    </flag>
+    <flag name="ntpsec">
+      Use ntpsec as a secure NTP, that has been sandboxed, audited, attack
+      surface reduced.
+    </flag>
+    <flag name="openscap">
+      Use OpenSCAP for vulnerability management, measurement, and compliance
+      checking.  Outputs compliant percents and reports.
+    </flag>
+    <flag name="ossec">
+      Use the historical OSSEC as EDR, real-time FIM, HIDS, SOC threat analysis.
+    </flag>
+    <flag name="rsyslog">
+      Use rsyslog for traditional system or application logging.
+    </flag>
+    <flag name="syslog-ng">
+      Use syslog-ng for traditional system or application logging.
+    </flag>
+    <flag name="samhain">
+      Use Samhain for hardened and stealth based File Integrity Monitoring (FIM)
+      against tampering.
+    </flag>
+    <flag name="secrets">
+      Use GTK4 based secrets for password management from the desktop.
     </flag>
     <flag name="selinux">
       Add SELinux support for enterprise environments or critical infrastructure.
     </flag>
+    <flag name="shorewall">
+      Add shorewall as a firewall.
+    </flag>
     <flag name="smack">
       Add SMACK support for IOT, embedded, automotive devices.
+    </flag>
+    <flag name="soc">
+      Configure as part of the Security Operations Center (SOC).
+      Add the Wahzuh Docker container (SEIM+XDR) to SOC.
     </flag>
     <flag name="tomoyo">
       Add Tomoyo support for system analysis or learned confinement.
     </flag>
-
-    <flag name="aide">
-      Use AIDE for file fingerprinting and report inconsistencies.
-
-      Important fingerprints for compliance:
-      - System config and binaries
-      - User config and data
-      
-      Use AI to help set up private reporting or mail based reporting.
+    <flag name="tripwire">
+      Use Tripwire for File Integrity Monitoring (FIM), with cryptographic
+      signing.
     </flag>
-
+    <flag name="audit">
+      Use auditd for kernel level activity logging.
+    </flag>
+    <flag name="snort">
+      Use Snort as NIDS.
+    </flag>
+    <flag name="ufw">
+      Add ufw as a firewall.
+    </flag>
+    <flag name="veracrypt">
+      Add veracrypt for encrypting data.
+    </flag>
+    <flag name="wazuh">
+      Use the more recent Wazuh as EDR, real-time FIM, HIDS, SEIM, XDR, SOC
+      threat analysis.
+    </flag>
   </use>
 </pkgmetadata>

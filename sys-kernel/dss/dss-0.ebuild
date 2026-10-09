@@ -4,12 +4,30 @@
 
 EAPI=8
 
-# This ebuild and metadata.xml uses AI based synthetic data.
+# This ebuild and metadata.xml uses AI based synthetic data or clarification/notes.
 
 # This package is WIP
 
 # TODO package:
+# app-admin/wazuh-agent
+# app-admin/wazuh-docker
 # prowler
+
+# For the compliant, only certified components (e.g. FIPS) should be listed.
+
+# ossec
+#   logging
+#   fim
+#   policy enforcement
+# wazuh
+#   secure config (check tampering)
+#   secure sys (deps -> cve mapping)
+#   track & monitor (log)
+#   regular test (fim)
+
+#HOST_TYPE_IUSE:
+#	"audit"		# Computer #1
+#	"+production"	# Computer #2, same as !audit
 
 inherit secure-version
 
@@ -35,8 +53,10 @@ DATA_ENCRYPTION_IUSE=(
 # File Integrity Monitoring
 FIM_IUSE=(
 	"aide"
+	"ossec"
 	"samhain"
 	"tripwire"
+	"wazuh"
 )
 
 FIREWALL_IUSE=(
@@ -47,7 +67,12 @@ FIREWALL_IUSE=(
 	"ufw"
 )
 
-IDS_IUSE=(
+HIDS_IUSE=(
+	"ossec"
+	"wazuh"
+)
+
+NIDS_IUSE=(
 	"snort"
 )
 
@@ -56,6 +81,7 @@ LOGGER_IUSE=(
 	"ossec"
 	"rsyslog"
 	"syslog-ng"
+	"wazuh"
 )
 
 LSM_IUSE=(
@@ -71,15 +97,11 @@ NTP_IUSE=(
 	"ntpsec"
 )
 
-HOST_TYPE_IUSE=(
-	"audit"		# Computer #1
-	"+production"	# Computer #2
-)
-
 PASSWORD_MANAGER_IUSE=(
-	"kpcli"
 	"keepass"
 	"keepassxc"
+	"kpcli"
+	"secrets"
 )
 
 PROFILES_IUSE=(
@@ -90,6 +112,14 @@ PROFILES_IUSE=(
 
 SANDBOX_IUSE=(
 	"firejail"
+)
+
+SECURITY_ARCHITECTURE_ROLE=(
+	"dmz"
+	"endpoint"
+	"internal-chokepoint"
+	"internet-edge"
+	"soc"
 )
 
 inherit chkl secure-timestamp secure-version verify-binutils
@@ -104,86 +134,273 @@ ${CLOUD_COMPLIANCE_IUSE[@]}
 ${DATA_ENCRYPTION_IUSE[@]}
 ${FIM_IUSE[@]}
 ${FIREWALL_IUSE[@]}
-${HOST_TYPE_IUSE[@]/+}
-${IDS_IUSE[@]}
+${HIDS_IUSE[@]}
 ${LOGGER_IUSE[@]}
 ${LSM_IUSE[@]}
+${NIDS_IUSE[@]}
 ${NTP_IUSE[@]}
 ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
-+enforce
-ebuild_revision_71
+${SECURITY_ARCHITECTURE_ROLE[@]}
+audit +enforce
+ebuild_revision_72
 "
 REQUIRED_USE="
-	^^ (
-		${PROFILES_IUSE[@]}
-	)
-	^^ (
-		${HOST_TYPE_IUSE[@]/+}
-	)
 	?? (
 		rsyslog
 		syslog-ng
 	)
+	^^ (
+		${PROFILES_IUSE[@]}
+	)
+
+	^^ (
+		${SECURITY_ARCHITECTURE_ROLE[@]}
+	)
+
+	!audit? (
+		!lynis
+		!openscap
+		casual? (
+			!auditd
+			!aide
+			!nftables
+		)
+	)
+
+	audit? (
+		casual? (
+			auditd
+			aide
+			nftables
+		)
+		|| (
+			lynis
+			openscap
+		)
+	)
+
+	compliant? (
+		!ecryptfs
+		!keepass
+		!keepassxc
+		!kpcli
+		!ntpsec
+		!samhain
+		!secrets
+		!shorewall
+		!smack
+		!tomoyo
+		!tripwire
+		!veracrypt
+	)
 
 	aide? (
-		!audit
-		production
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
+	)
+	apparmor? (
+		!selinux
+		^^ (
+			casual
+			compliant
+			flexible
+		)
 	)
 	auditd? (
-		!audit
-		production
+		^^ (
+			casual
+			compliant
+			flexible
+		)
+	)
+	chrony? (
+		^^ (
+			casual
+			compliant
+			flexible
+		)
 	)
 	clamav? (
-		!audit
-		production
+		^^ (
+			casual
+			compliant
+			flexible
+		)
+	)
+	dm-crypt? (
+		^^ (
+			casual
+			compliant
+			flexible
+		)
+	)
+	ecryptfs? (
+		!compliant
+		^^ (
+			casual
+			flexible
+		)
+	)
+	firejail? (
+		casual
+		!compliant
+	)
+	firewalld? (
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
+	)
+	iptables? (
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
+	)
+	keepass? (
+		casual
+		!compliant
+	)
+	keepassxc? (
+		casual
+		!compliant
+	)
+	kpcli? (
+		casual
+		!compliant
 	)
 	lynis? (
 		audit
-		!production
+	)
+	nftables? (
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
+	)
+	ntp? (
+		^^ (
+			casual
+			compliant
+			flexible
+		)
 	)
 	ntpsec? (
-		!compliant
-		flexible
+		^^ (
+			casual
+			flexible
+		)
 	)
 	openscap? (
 		audit
-		!production
 	)
-	shorewall? (
-		!compliant
-		flexible
+	ossec? (
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
+	)
+	rsyslog? (
+		^^ (
+			compliant
+			flexible
+		)
 	)
 	samhain? (
+		!casual
 		!compliant
-		audit
 		flexible
+	)
+	shorewall? (
+		!casual
+		^^ (
+			flexible
+		)
+	)
+	secrets? (
+		casual
+		!compliant
+	)
+	selinux? (
+		!apparmor
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
+	)
+	shorewall? (
+		^^ (
+			flexible
+		)
 	)
 	smack? (
+		!casual
 		!compliant
 		flexible
 	)
+	snort? (
+		!endpoint
+		!soc
+		^^ (
+			internal-chokepoint
+			internet-edge
+			dmz
+		)
+	)
+	syslog-ng? (
+		^^ (
+			compliant
+			flexible
+		)
+	)
 	tomoyo? (
+		!casual
 		!compliant
 		flexible
 	)
 	tripwire? (
+		!casual
 		!compliant
-		audit
 		flexible
 	)
 	ufw? (
-		audit
-		!production
+		!casual
+		^^ (
+			compliant
+			flexible
+		)
 	)
 	veracrypt? (
 		!compliant
-		flexible
+		^^ (
+			casual
+			flexible
+		)
+	)
+	wazuh? (
+		!casual
+		^^ (
+			endpoint
+			soc
+		)
+		^^ (
+			compliant
+			flexible
+		)
 	)
 
 	casual? (
-		production? (
+		!audit? (
 			|| (
 				${PASSWORD_MANAGER_IUSE[@]}
 			)
@@ -195,9 +412,13 @@ REQUIRED_USE="
 			!shorewall
 			!ufw
 
-			!ossec
 			!rsyslog
 			!syslog-ng
+
+			!ossec
+			!wazuh
+
+			!snort
 
 			!auditd
 
@@ -256,7 +477,10 @@ REQUIRED_USE="
 		)
 
 		auditd
-		ossec
+		^^ (
+			ossec
+			wazuh
+		)
 		^^ (
 			rsyslog
 			syslog-ng
@@ -314,7 +538,10 @@ REQUIRED_USE="
 		)
 
 		auditd
-		ossec
+		^^ (
+			ossec
+			wazuh
+		)
 		^^ (
 			rsyslog
 			syslog-ng
@@ -337,101 +564,83 @@ SLOT="0"
 # We force remove most of the tools if disabled to prevent weaponization except for availability issue.
 
 AUDIT_DEPENDS="
-	audit? (
-		lynis? (
-			app-forensics/lynis[audit]
-		)
-		openscap? (
-			app-forensics/openscap[oscap,python]
-		)
-	)
-	production? (
-		!app-forensics/lynis
-		!app-forensics/openscap
-	)
-
 	!lynis (
 		!app-forensics/lynis
 	)
 	!openscap? (
 		!app-forensics/openscap
 	)
-
+	lynis? (
+		app-forensics/lynis[audit]
+	)
+	openscap? (
+		app-forensics/openscap[oscap,python]
+	)
 "
 
 ANTIVIRUS_DEPENDS="
-	audit? (
-		!app-antivirus/clamav
-	)
-	production? (
-		clamav? (
-			app-antivirus/clamav[milter,unrar]
-		)
-	)
-
 	!clamav? (
 		!app-antivirus/clamav
+	)
+	clamav? (
+		app-antivirus/clamav[milter,unrar]
 	)
 "
 
 CLOUD_COMPLIANCE_DEPENDS="
-	audit? (
-		prowler? (
-			app-admin/prowler
-		)
-	)
-	production? (
-		!app-admin/prowler
-	)
-
 	!prowler? (
 		!app-admin/prowler
+	)
+	prowler? (
+		app-admin/prowler
 	)
 "
 
 FIM_DEPENDS="
-	audit? (
-		samhain? (
-			app-forensics/samhain[mysql,postgres]
-		)
-		tripwire? (
-			app-admin/tripwire[ssl]
-		)
+	!aide? (
+		app-forensics/aide
 	)
-	production? (
-		!app-admin/tripwire
-		!app-forensics/samhain
-		aide? (
-			app-forensics/aide[acl,zlib]
-		)
-	)
-
 	!samhain? (
 		!app-forensics/samhain
 	)
 	!tripwire? (
 		!app-admin/tripwire
 	)
+	aide? (
+		app-forensics/aide[acl,zlib]
+	)
+	samhain? (
+		app-forensics/samhain[mysql,postgres]
+	)
+	tripwire? (
+		app-admin/tripwire[ssl]
+	)
 "
 
-IDS_DEPENDS="
-	audit? (
-		snort? (
-			net-analyzer/snort[openappid]
-		)
-	)
-	production? (
-		snort? (
-			net-analyzer/snort[flexresp]
-		)
-	)
-
+NIDS_DEPENDS="
 	!snort? (
 		!net-analyzer/snort
+	)
+	snort? (
+		!audit? (
+			net-analyzer/snort[flexresp]
+		)
+		audit? (
+			net-analyzer/snort[openappid]
+		)
 	)
 "
 
 DATA_ENCRYPTION_DEPENDS="
+	!dm-crypt? (
+		!sys-fs/cryptsetup
+	)
+	!ecryptfs? (
+		!sys-fs/ecryptfs-utils
+	)
+	!veracrypt? (
+		!app-crypt/veracrypt
+	)
 	app-crypt/gnupg[smartcard,ssl]
 	dm-crypt? (
 		sys-fs/cryptsetup
@@ -444,27 +653,40 @@ DATA_ENCRYPTION_DEPENDS="
 	)
 "
 
+# Assets = Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
+# EDR = Endpoint Detection and Response [behavioral analysis, remediation, active containment]
+# Endpoint = User facing devices (laptops, mobile phones, workstations)
+# DMZ = Demilitarized Zone [network Segment in the middle between internal and external network]
+# IC = Internal Chokepoint [between critical network segments and VLANs to detect lateral movement]
+# IE = Internet Edge [inside or outside the perimeter of the firewall]
+# IDS = Intrustion Detection System [alert of signature/policy violations on system or network]
+#   HIDS - Host-based IDS
+#   NIDS - Network-based IDS
+# SEIM = Security Information and Event Management [the software in SOC]
+# SOC = Security Operations Center [monitoring center]
+# XDR = Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
+HIDS_DEPENDS="
+	!ossec? (
+		!net-analyzer/ossec-hids
+	)
+	!wazuh? (
+		!app-admin/wazuh-agent
+		!app-admin/wazuh-docker
+	)
+	ossec? (
+		net-analyzer/ossec-hids
+	)
+	wazuh? (
+		endpoint? (
+			app-admin/wazuh-agent
+		)
+		soc? (
+			app-admin/wazuh-docker
+		)
+	)
+"
+
 FIREWALL_DEPENDS="
-	firewalld? (
-		net-firewall/firewalld
-	)
-	iptables? (
-		net-firewall/iptables
-	)
-	nftables? (
-		net-firewall/nftables
-	)
-	shorewall? (
-		net-firewall/shorewall
-	)
-	ufw? (
-		net-firewall/ufw
-	)
-
-	production? (
-		!net-firewall/ufw
-	)
-
 	!firewalld? (
 		!net-firewall/firewalld
 	)
@@ -480,49 +702,70 @@ FIREWALL_DEPENDS="
 	!ufw? (
 		!net-firewall/ufw
 	)
-
+	firewalld? (
+		net-firewall/firewalld
+	)
+	iptables? (
+		net-firewall/iptables
+	)
+	nftables? (
+		net-firewall/nftables
+	)
+	shorewall? (
+		net-firewall/shorewall
+	)
+	ufw? (
+		net-firewall/ufw
+	)
 "
 
 LOGGER_DEPENDS="
-	audit? (
-		ossec? (
-			app-admin/ossec-hids[mysql,server]
-		)
+	!auditd? (
+		!sys-process/audit
 	)
-
-	production? (
-		auditd? (
-			sys-process/audit[python]
-		)
-		ossec? (
-			app-admin/ossec-hids[agent,-mysql,-server]
-		)
-		rsyslog? (
-			!app-admin/syslog-ng
-			app-admin/rsyslog[mysql,relp,ssl]
-		)
-		syslog-ng? (
-			!app-admin/rsyslog
-			app-admin/syslog-ng[mongodb,redis,ssl]
-		)
-		virtual/logger
+	!ossec? (
+		!app-admin/ossec-hids
+	)
+	!rsyslog? (
+		!app-admin/rsyslog
+	)
+	!syslog-ng? (
+		!app-admin/syslog-ng
 	)
 
 	auditd? (
-		!sys-process/audit
+		sys-process/audit[python]
 	)
 	ossec? (
-		!app-admin/ossec-hids
+		!audit? (
+			net-analyzer/ossec-hids[agent,-mysql,-server]
+		)
+		audit? (
+			net-analyzer/ossec-hids[mysql,server]
+		)
 	)
 	rsyslog? (
-		!app-admin/rsyslog
+		!app-admin/syslog-ng
+		app-admin/rsyslog[mysql,relp,ssl]
+		virtual/logger
 	)
 	syslog-ng? (
-		!app-admin/syslog-ng
+		!app-admin/rsyslog
+		app-admin/syslog-ng[mongodb,redis,ssl]
+		virtual/logger
 	)
 "
 
 NTP_DEPENDS="
+	!chrony? (
+		!net-misc/chrony
+	)
+	!ntp? (
+		!net-misc/ntp
+	)
+	!ntpsec? (
+		!net-misc/ntpsec
+	)
 	chrony? (
 		net-misc/chrony
 	)
@@ -535,19 +778,6 @@ NTP_DEPENDS="
 "
 
 LSM_DEPENDS="
-	apparmor? (
-		sys-apps/apparmor
-	)
-	smack? (
-		sys-apps/smack-utils
-	)
-	selinux? (
-		sec-policy/selinux-base
-	)
-	tomoyo? (
-		sys-apps/tomoyo-tools
-	)
-
 	!apparmor? (
 		!sys-apps/apparmor
 	)
@@ -560,11 +790,32 @@ LSM_DEPENDS="
 	!tomoyo? (
 		!sys-apps/tomoyo-tools
 	)
+	apparmor? (
+		sys-apps/apparmor
+	)
+	smack? (
+		sys-apps/smack-utils
+	)
+	selinux? (
+		sec-policy/selinux-base
+	)
+	tomoyo? (
+		sys-apps/tomoyo-tools
+	)
 "
 
 PASSWORD_MANAGER_DEPENDS="
-	kpcli? (
-		app-admin/kpcli
+	!keepass? (
+		!app-admin/keepass
+	)
+	!keepassxc? (
+		!app-admin/keepassxc
+	)
+	!kpcli? (
+		!app-admin/kpcli
+	)
+	!secrets? (
+		!gnome-extra/secrets
 	)
 	keepass? (
 		app-admin/keepass
@@ -572,15 +823,20 @@ PASSWORD_MANAGER_DEPENDS="
 	keepassxc? (
 		app-admin/keepassxc
 	)
+	kpcli? (
+		app-admin/kpcli
+	)
+	secrets? (
+		gnome-extra/secrets
+	)
 "
 
 SANDBOX_DEPENDS="
-	firejail? (
-		sys-apps/firejail
-	)
-
 	!firejail? (
 		!sys-apps/firejail
+	)
+	firejail? (
+		sys-apps/firejail
 	)
 "
 
@@ -597,11 +853,13 @@ RDEPEND="
 		${ANTIVIRUS_DEPENDS}
 		${CLOUD_COMPLIANCE_DEPENDS}
 		${DATA_ENCRYPTION_DEPENDS}
+		${EDR_DEPENDS}
 		${FIM_DEPENDS}
 		${FIREWALL_DEPENDS}
-		${IDS_DEPENDS}
+		${HIDS_DEPENDS}
 		${LOGGER_DEPENDS}
 		${LSM_DEPENDS}
+		${NIDS_DEPENDS}
 		${NTP_DEPENDS}
 		${PASSWORD_MANAGER_DEPENDS[@]}
 		${SANDBOX_DEPENDS}
