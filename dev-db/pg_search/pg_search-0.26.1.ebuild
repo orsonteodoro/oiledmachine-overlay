@@ -89,6 +89,7 @@ tokenizers-0.26.1
 dst-0.26.1
 "
 
+# Manually add proptest-1.11.0
 CRATES="
 adler2-2.0.1
 adler32-1.2.0
@@ -568,6 +569,7 @@ proc-macro-error3-3.1.1
 proc-macro-error-attr3-3.1.1
 profiling-1.0.18
 profiling-procmacros-1.0.18
+proptest-1.11.0
 proptest-derive-0.8.0
 prost-0.14.4
 prost-derive-0.14.4
@@ -832,7 +834,8 @@ declare -A GIT_CRATES=(
 # Replace datafusion-<INT> with datafusion
 # Remove [tests] row
 # Remove ?tag=snapshot-main-2026-10-06-224907
-[cascade]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;" # 0.1.0
+# Manually disable [proptest] row
+[cascade]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/cascade" # 0.1.0
 [datafusion-catalog]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/catalog" # 55.1.0
 [datafusion-catalog-listing]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/catalog-listing" # 55.1.0
 [datafusion-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/common" # 55.1.0
@@ -841,7 +844,7 @@ declare -A GIT_CRATES=(
 [datafusion-datasource-csv]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/datasource-csv" # 55.1.0
 [datafusion-datasource]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/datasource" # 55.1.0
 [datafusion-datasource-json]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/datasource-json" # 55.1.0
-[datafusion-distributed]="https://github.com/paradedb/datafusion-distributed;2b82e8d2af32a6b15fb301be858ef47d7b629a3c;" # 4.0.0
+[datafusion-distributed]="https://github.com/paradedb/datafusion-distributed;2b82e8d2af32a6b15fb301be858ef47d7b629a3c;datafusion-distributed-%commit%/" # 4.0.0
 [datafusion-doc]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/doc" # 55.1.0
 [datafusion-execution]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/execution" # 55.1.0
 [datafusion-expr-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/expr-common" # 55.1.0
@@ -849,7 +852,7 @@ declare -A GIT_CRATES=(
 [datafusion-functions-aggregate-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions-aggregate-common" # 55.1.0
 [datafusion-functions-aggregate]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions-aggregate" # 55.1.0
 [datafusion-functions]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions" # 55.1.0
-[datafusion-functions-nested]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;" # 55.1.0
+[datafusion-functions-nested]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions-nested" # 55.1.0
 [datafusion-functions-table]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions-table" # 55.1.0
 [datafusion-functions-window-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions-window-common" # 55.1.0
 [datafusion-functions-window]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/functions-window" # 55.1.0
@@ -863,18 +866,18 @@ declare -A GIT_CRATES=(
 [datafusion-physical-plan]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/physical-plan" # 55.1.0
 [datafusion-proto-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/proto-common" # 55.1.0
 [datafusion-proto]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/proto" # 55.1.0
-[datafusion-proto-models]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;" # 55.1.0
+[datafusion-proto-models]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/proto-models" # 55.1.0
 [datafusion-pruning]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/pruning" # 55.1.0
 [datafusion-session]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/session" # 55.1.0
-[datafusion-sql]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;" # 55.1.0
-[fht]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;" # 0.1.0
-[grid-plane]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;" # 0.1.0
-[opencc-jieba-rs]="https://github.com/paradedb/opencc-jieba-rs;75453c464ff30201aeef3c1211482406b66b2e38;" # 0.8.1
+[datafusion-sql]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/sql" # 55.1.0
+[fht]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/fht" # 0.1.0
+[grid-plane]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/grid-plane" # 0.1.0
+[opencc-jieba-rs]="https://github.com/paradedb/opencc-jieba-rs;75453c464ff30201aeef3c1211482406b66b2e38;opencc-jieba-rs-%commit%/" # 0.8.1
 [ownedbytes]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/ownedbytes" # 0.9.0
-[proptest]="https://github.com/antithesishq/proptest;6061eb48d67ff76f882e709677308816d5791ce7;" # 1.11.0
-[quant-model]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;" # 0.1.0
-[sign-plane]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;" # 0.1.0
-[superkmeans-rs]="https://github.com/paradedb/superkmeans-rs;c06dc2b6e9bd15fb5c4a0627178bebbe1fb37a64;" # 0.2.0
+#[proptest]="https://github.com/antithesishq/proptest;6061eb48d67ff76f882e709677308816d5791ce7;proptest-%commit%/proptest" # 1.11.0
+[quant-model]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/quant-model" # 0.1.0
+[sign-plane]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/sign-plane" # 0.1.0
+[superkmeans-rs]="https://github.com/paradedb/superkmeans-rs;c06dc2b6e9bd15fb5c4a0627178bebbe1fb37a64;superkmeans-rs-%commit%" # 0.2.0
 [tantivy-bitpacker]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/bitpacker" # 0.10.0
 [tantivy-columnar]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/columnar" # 0.7.0
 [tantivy-common]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/common" # 0.11.0
@@ -1071,8 +1074,12 @@ is_x86_isa_level4() {
 src_prepare() {
 	default
 	cd "${WORKDIR}" || die
-	eapply "${FILESDIR}/${PN}-0.23.2-unify-tantivy-tokenizer-api-to-paradedb-fork.patch"
-	eapply "${FILESDIR}/${PN}-0.23.2-tantivy-jieba-use-paradedb-fork.patch"
+	eapply "${FILESDIR}/${PN}-0.26.1-symbolize-cargo-packages.patch"
+	sed -i \
+		-e "s|@TANTIVY_COMMIT@|${TANTIVY_COMMIT}|g" \
+		"cargo_home/gentoo/tantivy-stemmers-0.4.0/Cargo.toml" \
+		"cargo_home/gentoo/tantivy-jieba-0.20.0/Cargo.toml" \
+		|| die
 }
 
 src_configure() {
