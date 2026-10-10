@@ -2764,6 +2764,8 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       performance
       secure
       secure-af
+      red-team
+      blue-team
       unset
 
     Meanings:
@@ -2791,6 +2793,21 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       disabled by default due to compatibility issues.
       The -af is intentional because it emphasizes extreme security measures.
       (Acceptable aliases:  secure-af, secure-as-fuck, hard-af, epic-boss)
+
+      blue-team - Alias for secure-af.  Designed for DMZ or public facing
+      nodes.
+
+      red-team - Alias for fast-af with compatibility with red team tools and
+      with tuning as follows:
+
+          CPU  - throughput for cracking
+
+      Network  - generally throughput.  Low latency for interactive shell,
+      brute force, or spraying.  Memory limits are increased to prevent packet
+      drops, crashes, increasing capacity.
+
+      Security - typically disabled for testing or developing payloads or
+      speeding up cracking.
 
       Note: secure-af was original envisioned to be an availability-first
       policy.  There are competing security objectives or philosophies.  For

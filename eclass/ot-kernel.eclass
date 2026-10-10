@@ -14,6 +14,7 @@
 # kernel version.
 
 # This file contains information that was derived from AI synthetic data or from AI inference.
+# This file contains AI generated code for typical red team.
 
 # FIXME:
 # vmlinux.o .vmlinux.export.o init/version-timestamp.o --no-whole-archive --start-group --end-group
@@ -135,6 +136,7 @@ _OT_KERNEL_FORCE_STABILITY=0 # Variable not const
 _OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
 _OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
 _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
+_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_EFIFB="" # Variable not const
@@ -7360,7 +7362,7 @@ ot-kernel_set_kconfig_lsms() {
 		[apparmor]="CONFIG_DEFAULT_SECURITY_APPARMOR"
 		[dac]="CONFIG_DEFAULT_SECURITY_DAC"
 		[smack]="CONFIG_DEFAULT_SECURITY_SMACK"
-		[selinux]="CONFIGDEFAULT_SECURITY_SELINUX"
+		[selinux]="CONFIG_DEFAULT_SECURITY_SELINUX"
 		[tomoyo]="CONFIG_DEFAULT_SECURITY_TOMOYO"
 	)
 
@@ -7403,6 +7405,21 @@ ewarn "You must manually add yama to CONFIG_LSM which was requested by an ebuild
 einfo "OT_KERNEL_LSMS=manual (from kernel .config)"
 einfo "LSMs:  ${lsms}"
 		warn_lsm_changes
+	elif _ot-kernel_is_hardening_level_red_team ; then
+einfo "Detected red-team.  Enabling bpf for debugging payloads"
+		ot_kernel_lsms="bpf"
+		ot-kernel_set_configopt "CONFIG_LSM" "\"bpf\""
+
+		local l
+		for l in ${LSM_MODULES[@]} ; do
+			ot-kernel_unset_configopt "${l}" # Reset
+		done
+
+		for l in ${LSM_LEGACY[@]} ; do
+			ot-kernel_unset_configopt "${l}" # Reset
+		done
+
+		ot-kernel_y_configopt "CONFIG_DEFAULT_SECURITY_DAC"
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
 einfo "OT_KERNEL_LSMS=default"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
@@ -7429,6 +7446,7 @@ eerror
 eerror "  1. Disable CONFIG_SECURITY"
 eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure"
 eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror "  4. OT_KERNEL_HARDENING_LEVEL=blue-team"
 eerror
 			die
 		fi
@@ -7444,6 +7462,7 @@ eerror "  1. Disable CONFIG_IMA"
 eerror "  2. OT_KERNEL_IMA=off"
 eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure"
 eerror "  4. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror "  5. OT_KERNEL_HARDENING_LEVEL=blue-team"
 eerror
 			die
 		fi
@@ -7914,7 +7933,11 @@ ot-kernel_set_kconfig_module_signing() {
 	local sign_modules_upper="${OT_KERNEL_SIGN_MODULES^^}"
 
 	local lockdown_lsm=0
-	if [[ "${OT_KERNEL_LSMS}" =~ "lockdown" || "${work_profile}" == "dss" ]] ; then
+	if _ot-kernel_is_hardening_level_red_team ; then
+einfo "Detected red-team forcing disabling signed modules"
+		sign_modules=0
+		lockdown_lsm=0
+	elif [[ "${OT_KERNEL_LSMS}" =~ "lockdown" || "${work_profile}" == "dss" ]] ; then
 einfo "Detected lockdown LSM, forcing auto signed modules"
 		lockdown_lsm=1
 	fi
@@ -7957,8 +7980,10 @@ einfo "Changing config to auto-signed modules with ${sign_modules_upper}"
 		SIGNED_MODULE_EXTRAVERSIONS+=( "${extraversion}" )
 	elif [[ "${sign_modules}" == "0" ]] ; then
 einfo "Disabling auto-signed modules"
+		ot-kernel_unset_configopt "CONFIG_MODULE_SIG_FORMAT"
 		ot-kernel_unset_configopt "CONFIG_MODULE_SIG"
 		ot-kernel_unset_configopt "CONFIG_MODULE_SIG_ALL"
+		ot-kernel_unset_configopt "CONFIG_MODULE_SIG_FORCE"
 	elif [[ "${sign_modules_lower}" == "manual" ]] ; then
 einfo "Using the manual setting for auto-signed modules"
 	else
@@ -9142,6 +9167,20 @@ _ot-kernel_is_hardening_level_least_secure() {
 		|| "${hardening_level}" == "dangerous" \
 		|| "${hardening_level}" == "dangerous-af" \
 		|| "${hardening_level}" == "dangerous-as-fuck" \
+		|| "${hardening_level}" == "red-team" \
+	]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _ot-kernel_is_hardening_level_red_team
+# @DESCRIPTION:
+# Check settings if the hardening is set to red_team.
+_ot-kernel_is_hardening_level_red_team() {
+	if [[ \
+		"${hardening_level}" == "red-team" \
 	]] ; then
 		return 0
 	else
@@ -9151,7 +9190,7 @@ _ot-kernel_is_hardening_level_least_secure() {
 
 # @FUNCTION: _ot-kernel_is_hardening_level_secure
 # @DESCRIPTION:
-# Check settings if the hardening is set to performance
+# Check settings if the hardening is set to balanced security.
 _ot-kernel_is_hardening_level_secure() {
 	if [[ \
 		   "${hardening_level}" == "default" \
@@ -9175,6 +9214,7 @@ _ot-kernel_is_hardening_level_most_secure() {
 		|| "${hardening_level}" == "hard-af" \
 		|| "${hardening_level}" == "hard-as-fuck" \
 		|| "${hardening_level}" == "epic-boss" \
+		|| "${hardening_level}" == "blue-team" \
 	]] ; then
 		return 0
 	else
@@ -9211,6 +9251,8 @@ eerror "  manual      - Alias for custom"
 eerror "  performance - All mitigations disabled"
 eerror "  practical   - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
 eerror "  secure-af   - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
+eerror "  red-team    - Fast-af cracking + compatibility for red-team tools"
+eerror "  blue-team   - Same as secure-af"
 eerror
 eerror "Actual value:"
 eerror
@@ -14908,6 +14950,50 @@ ewarn "Generating a new default config:  ${path_config}"
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_red_team
+# @DESCRIPTION:
+# Tunes the kernel as the attacker not prey.
+ot-kernel_set_red_team() {
+	if _ot-kernel_is_hardening_level_red_team ; then
+	# Support wireless/radio analysis
+		ot-kernel_y_configopt "CONFIG_NET_3G"
+		ot-kernel_y_configopt "CONFIG_HAMRADIO"
+
+	# Support packet injection
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_CFG80211"
+
+	# Support packet manipulation
+		ot-kernel_y_configopt "CONFIG_NET_DIVERT"
+		ot-kernel_y_configopt "CONFIG_NET_CLS_ACT"
+
+	# Support raw networking
+		ot-kernel_y_configopt "CONFIG_NET_PACKET" # Create raw sockets
+		ot-kernel_y_configopt "CONFIG_NET_CLS_ACT" # Support advanced routing
+
+	# Support custom packets
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_NOTRACK"
+		ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+
+	# Support custom out-of-tree drivers
+		ot-kernel_y_configopt "CONFIG_MODULES"
+
+	# Support disposable virtual target machines
+		ot-kernel_y_configopt "CONFIG_KVM"
+
+	# Support payload evation or blue team tools
+		ot-kernel_y_configopt "CONFIG_NAMESPACES"
+
+	# Performance tuning for cracking
+		ot-kernel_set_kconfig_kernel_cmdline "mitigations=off"
+		ot-kernel_set_kconfig_kernel_cmdline audit=0
+
+	# Performance tuning for network needs, see
+	# ot-kernel_postinst_red_team_optimizations()
+		_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=1
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -15113,6 +15199,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	# Must go after ot-kernel_set_kconfig_work_profile and work_profile
 	# Must go after hardening_level
 	ot-kernel_set_security_critical
+	ot-kernel_set_red_team
 
 	ot-kernel_disable_affected_modules
 	ot-kernel_verify_mitigation_late
@@ -18484,6 +18571,44 @@ ewarn
 	fi
 }
 
+ot-kernel_postinst_red_team_optimizations() {
+	[[ "${_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG}" == "1" ]] || return
+cat <<EOF > "${EROOT}/etc/sysctl.d/red-team-optimizations.conf"
+# Maximize port availability and speed up recycling
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.ip_local_port_range = 1024 65535
+net.ipv4.tcp_fin_timeout = 15
+
+# Prevent connection tracking exhaustion during scans
+net.netfilter.nf_conntrack_max = 2000000
+net.netfilter.nf_conntrack_tcp_timeout_established = 600
+
+# Maximize file descriptor and memory ceilings
+fs.file-max = 2097152
+vm.max_map_count = 262144
+
+# Expand network queue sizes
+net.core.somaxconn = 65535
+net.core.netdev_max_backlog = 100000
+net.ipv4.tcp_max_syn_backlog = 65535
+
+# Expand TCP window sizes to handle huge bursts of data without lagging or dropping packets
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 65536 16777216
+EOF
+	if ! has_version "sys-process/procps" ; then
+ewarn "sys-process/procps is needed to use red-team optimizations."
+	fi
+einfo
+einfo "To prevent freezing, you can bypass Netfilter's connection tracking by"
+einfo "doing:"
+einfo
+einfo "iptables -t raw -A PREROUTING -p tcp --dport 1:65535 -j NOTRACK"
+einfo "iptables -t raw -A OUTPUT -p tcp --sport 1:65535 -j NOTRACK"
+einfo
+}
+
+
 # @FUNCTION: ot-kernel_pkg_postinst
 # @DESCRIPTION:
 # Present warnings and avoid collision checks.
@@ -18519,6 +18644,7 @@ ot-kernel_pkg_postinst() {
 	ot-kernel_postinst_out_of_tree_display_driver_message
 
 	ot-kernel_postinst_remove_eol_configs_for_tcca
+	ot-kernel_postinst_red_team_optimizations
 }
 
 # @FUNCTION: pkg_postrm
@@ -18551,6 +18677,7 @@ einfo "Removing modprobe configs"
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw88_pci.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_core.conf" 2>/dev/null
 		rm "${EROOT}/etc/modprobe.d/ot-kernel-rtw89_pci.conf" 2>/dev/null
+		rm "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" 2>/dev/null
 	fi
 }
 
