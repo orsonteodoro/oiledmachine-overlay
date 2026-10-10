@@ -67,7 +67,7 @@
     "langsmith": "^0.7.3",
     "localbase": "https://github.com/kartikm7/localbase",
     "mammoth": "^1.13.0",
-    "mermaid": "^10.8.0",
+    "mermaid": "^10.9.8",
     "modern-screenshot": "^4.5.5",
     "node-addon-api": "^8.9.2",
     "node-fetch": "^3.3.2",

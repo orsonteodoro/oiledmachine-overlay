@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_31"
+IUSE+=" ebuild_revision_32"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -186,6 +186,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			sed -i -e "s|\"handlebars\": \"^4.7.9\"|\"handlebars\": \"^${NODE_HANDLEBARS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"ip-address\": \"^10.1.1\"|\"ip-address\": \"^${NODE_IP_ADDRESS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"katex\": \"^0.16.47\"|\"katex\": \"^${NODE_KATEX_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"mermaid\": \"^10.8.0\"|\"mermaid\": \"^${NODE_MERMAID_10_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"^9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pdfjs-dist\": \"^5.3.31\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
@@ -194,7 +195,9 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^9.0.0\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^10.0.0\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"uuid\": \"^11.1.1\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
 		}
 		patch_lockfile
@@ -257,6 +260,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			"handlebars@^${NODE_HANDLEBARS_PV}"
 			"ip-address@^${NODE_IP_ADDRESS_PV}"
 			"katex@^${NODE_KATEX_PV}"
+			"mermaid@^${NODE_MERMAID_10_PV}"
 			"pdfjs-dist@^${NODE_PDFJS_DIST_PV}"
 			"sharp@^${NODE_SHARP_PV}"
 			"tar@^${NODE_TAR_PV}"
