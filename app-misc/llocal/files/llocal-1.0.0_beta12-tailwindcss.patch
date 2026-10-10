@@ -1,0 +1,21 @@
+# This is an AI generated patch
+--- a/src/renderer/src/assets/index.css.orig	2025-09-14 06:52:34.000000000 -0700
++++ b/src/renderer/src/assets/index.css	2026-10-09 19:17:34.605126712 -0700
+@@ -1,6 +1,4 @@
+-@tailwind base;
+-@tailwind components;
+-@tailwind utilities;
++@import "tailwindcss";
+ 
+ @font-face {
+   font-family: 'Poppins';
+--- a/postcss.config.js.orig	2025-09-14 06:52:34.000000000 -0700
++++ b/postcss.config.js	2026-10-09 19:15:59.391932683 -0700
+@@ -1,6 +1,6 @@
+ module.exports = {
+   plugins: {
+-    tailwindcss: {},
++    '@tailwindcss/postcss': {},
+     autoprefixer: {},
+   },
+ }

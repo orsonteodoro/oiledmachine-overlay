@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_33"
+IUSE+=" ebuild_revision_35"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -133,6 +133,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_beta12-ollama-changes.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-langchain-updates.patch"
 	"${FILESDIR}/${PN}-1.0.0_beta12-puppeteer-update.patch"
+	"${FILESDIR}/${PN}-1.0.0_beta12-tailwindcss.patch"
 )
 
 _puppeteer_setup_offline_cache() {
@@ -191,6 +192,9 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"^9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pdfjs-dist\": \"^5.3.31\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.38\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.5.29\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss-selector-parser\": \"^6.1.1\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss-selector-parser\": \"^6.1.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
@@ -287,6 +291,13 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 	# Remove vulnerable dependencies
 		enpm uninstall "npm" "${NPM_INSTALL_ARGS[@]}"
 
+	# Add missing required packages
+		L=(
+			"@tailwindcss/postcss@^4.3.3"
+			"postcss@^${NODE_POSTCSS_PV}"
+		)
+		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
+
 		sed -i -e "s|index.mjs|index.js|g" "${S}/package.json" || die
 	fi
 }
@@ -352,6 +363,7 @@ pkg_postinst() {
 ewarn "The ollama service must be started from init system in order to list models."
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260928 with electron 44.7.0 with --use-gl=desktop)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260928 with electron 44.4.5)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260922 with electron 44.4.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260917 with electron 44.4.1)
