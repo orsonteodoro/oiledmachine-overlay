@@ -141,12 +141,15 @@ host    all             all             ::1/128                 md5
       Add support for file management.
     </flag>
     <flag name="lh">
-      Install lh from @lobehub/cli, to manage and connect to LobeHub services,
-      to install marketplace skills.
+      Install the lh command line tool from @lobehub/cli, to manage and connect
+      to LobeHub services, to install marketplace skills.
     </flag>
     <flag name="lhm">
-      Install lhm from @lobehub/market-cli, for device registration, auth
-      management, installing marketplace skills.
+      Install lhm command line tool from @lobehub/market-cli, for device
+      registration, auth management, installing marketplace skills.
+
+      Note:  Installing skills with lhm did not work previously but verified
+      working with lh.
     </flag>
     <flag name="minio">
       Use MinIO as S3 compatible locally hosted storage.
