@@ -1,0 +1,35 @@
+[package]
+name = "benchmarks"
+description = "Benchmarking harness for pg_search"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+
+[lints]
+workspace = true
+
+[dependencies]
+clap = { version = "4.6.7", features = ["derive", "env"] }
+anyhow = "1.0"
+serde_json = "1.0"
+sqlx = { version = "0.9.0", features = [
+  "postgres",
+  "runtime-async-std",
+  "time",
+  "bigdecimal",
+  "uuid",
+  "chrono",
+] }
+tokio = { version = "1.53.2", features = ["full"] }
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "1.1.6"
+duckdb = { version = "1.10506.0", features = ["bundled"] }
+distrs = "0.2.3"
+
+[dev-dependencies]
+approx = "0.5.1"
+rstest = "0.27.0"
+
+[lib]
+name = "paradedb"
+path = "src/lib.rs"
