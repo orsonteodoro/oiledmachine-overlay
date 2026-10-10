@@ -287,7 +287,7 @@ REQUIRED_USE="
 		systemd
 	)
 "
-# sudo is needed for lh wrapper to operate under the assumed lobehub user, group, and HOME path.
+# sudo is needed for the lh command line tool to operate under the assumed lobehub user, group, and HOME path.
 # xdg-open is from x11-misc/xdg-utils
 RDEPEND+="
 	${VIPS_RDEPEND}
