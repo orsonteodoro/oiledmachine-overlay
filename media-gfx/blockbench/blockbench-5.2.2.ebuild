@@ -171,7 +171,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_28"
+IUSE+=" ebuild_revision_29"
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
@@ -205,7 +205,11 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 			sed -i -e "s|\"json5\": \"^1.0.1\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"json5\": \"^2.2.3\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^5.2.5\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^6.0.1\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^7.0.36\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.4.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.5.23\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
