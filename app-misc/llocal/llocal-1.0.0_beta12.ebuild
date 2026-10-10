@@ -27,7 +27,7 @@ RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 ELECTRON_BUILDER_PV="26.15.7" # 24.13.3 used upstream.  Old pinned version required
-SECURE_VERSION_NODE_EBUILD_UPDATE=1790607610
+SECURE_VERSION_NODE_EBUILD_UPDATE=1791575863
 
 inherit secure-version secure-version-node
 
@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_30"
+IUSE+=" ebuild_revision_31"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -183,11 +183,16 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 
 		patch_lockfile() {
 			sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"^${NODE_FILE_TYPE_22_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"handlebars\": \"^4.7.9\"|\"handlebars\": \"^${NODE_HANDLEBARS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"ip-address\": \"^10.1.1\"|\"ip-address\": \"^${NODE_IP_ADDRESS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"katex\": \"^0.16.47\"|\"katex\": \"^${NODE_KATEX_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"^9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pdfjs-dist\": \"^5.3.31\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.1.1\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.1.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^10.0.0\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
@@ -241,6 +246,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		# Required pinned dependencies
 		L=(
 			"electron-builder@${ELECTRON_BUILDER_PV}"
+			"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
@@ -248,7 +254,9 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		L=(
 			"brace-expansion@^${NODE_BRACE_EXPANSION_2_PV}"
 			"file-type@^${NODE_FILE_TYPE_22_PV}"
+			"handlebars@^${NODE_HANDLEBARS_PV}"
 			"ip-address@^${NODE_IP_ADDRESS_PV}"
+			"katex@^${NODE_KATEX_PV}"
 			"pdfjs-dist@^${NODE_PDFJS_DIST_PV}"
 			"sharp@^${NODE_SHARP_PV}"
 			"tar@^${NODE_TAR_PV}"
