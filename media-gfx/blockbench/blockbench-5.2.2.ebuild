@@ -171,7 +171,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_26"
+IUSE+=" ebuild_revision_28"
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
@@ -186,6 +186,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 
 		rm -vf package-lock.json
+		enpm install "${NPM_INSTALL_ARGS[@]}" # Generate lockfile first
 
 einfo "QA:  Change \"loader-utils\": \"^0.2.16\" to \"loader-utils\": \"^1.4.2\" in package-lock.json"
 einfo "QA:  Remove node_modules/generic-names/node_modules/loader-utils in package-lock.json"
@@ -198,11 +199,15 @@ einfo "QA:  Remove node_modules/postcss-modules-sync/node_modules/postcss in pac
 einfo "QA:  Remove node_modules/@vue/component-compiler-utils/node_modules/postcss in package-lock.json"
 einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\" in package-lock.json"
 		patch_lockfile() {
+			[[ -e "package-lock.json" ]] || return
 			sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "package-lock.json" || die
-			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"json5\": \"^0.5.0\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"json5\": \"^1.0.1\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"json5\": \"^2.2.3\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^6.0.1\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^7.0.3\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^7.1.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
@@ -210,6 +215,7 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 			sed -i -e "s|\"source-map-js\": \">=0.6.2 <2.0.0\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 		}
 
+		patch_lockfile
 
 	# Pinned versions
 		local L
@@ -220,7 +226,7 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
-		npm_update_lock_install_post
+		patch_lockfile
 
 		enpm audit fix "${NPM_AUDIT_FIX_ARGS[@]}"
 
@@ -237,7 +243,11 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
+		patch_lockfile
+
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
+
+		patch_lockfile
 
 		_npm_check_errors
 einfo "Updating lockfile done."
