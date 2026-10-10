@@ -953,6 +953,13 @@ BANNED_TERMS="
 	!x11-terms/kitty
 "
 
+# Alleged by AI
+BANNED_UNVALIDATED_FIPS="
+	compliant? (
+		!app-crypt/sequoia-chameleon-gnupg
+	)
+"
+
 RDEPEND="
 	!virtual/dss
 	enforce? (
@@ -961,6 +968,7 @@ RDEPEND="
 		${BANNED_RECONNAISSANCE_TOOLS}
 		${BANNED_RED_TEAM_TOOLS}
 		${BANNED_TERMS}
+		${BANNED_UNVALIDATED_FIPS}
 		${BANNED_X11}
 		${ANTIVIRUS_DEPENDS}
 		${CLOUD_COMPLIANCE_DEPENDS}
