@@ -5,7 +5,7 @@ EAPI=8
 
 # D12, U22, U24
 
-POSTGRES_COMPAT=( {14..19} )
+POSTGRES_COMPAT=( {14..20} )
 POSTGRES_USEDEP="server"
 
 inherit postgres-multi
