@@ -960,11 +960,55 @@ BANNED_UNVALIDATED_FIPS="
 	)
 "
 
+# Ban anonymous networks
+# Ban routing networks
+# Ban evasion proxies
+# Ban ofuscation tools
+BANNED_NETWORKS="
+	!net-misc/socat
+	!net-misc/chisel
+	!net-misc/httptunnel
+	!net-misc/iodine
+	!net-misc/rclone
+	!net-p2p/zeronet
+	!net-p2p/freenet
+	!net-p2p/gnunet
+	!net-p2p/loco-share
+	!net-p2p/quiet
+	!net-p2p/onionutils
+	!net-p2p/ricochet
+	!net-proxy/dante
+	!net-proxy/privoxy
+	!net-proxy/proxychains
+	!net-proxy/proxychains-ng
+	!net-proxy/shadowsocks-libev
+	!net-proxy/squid
+	!net-proxy/tsocks
+	!net-proxy/v2ray
+	!net-proxy/xray
+	!net-vpn/i2p
+	!net-vpn/i2p-bin
+	!net-vpn/i2pd
+	!net-vpn/freenet
+	!net-vpn/safing-portmaster
+	!net-vpn/shadowsocks-libev
+	!net-vpn/nyx
+	!net-vpn/onioncat
+	!net-vpn/tor
+	!net-vpn/torsocks
+	!net-vpn/v2ray
+	!net-vpn/wireguard-tools
+	!net-vpn/xray
+	!www-client/torbrowser
+	!www-client/torbrowser-launcher
+"
+
 RDEPEND="
 	!virtual/dss
 	enforce? (
 		${BANNED_CIPHERS}
 		${BANNED_DEBUGGING_TOOLS}
+		${BANNED_NETWORKS}
 		${BANNED_RECONNAISSANCE_TOOLS}
 		${BANNED_RED_TEAM_TOOLS}
 		${BANNED_TERMS}
