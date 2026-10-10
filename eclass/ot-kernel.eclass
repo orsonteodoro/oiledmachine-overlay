@@ -18606,6 +18606,21 @@ einfo
 einfo "iptables -t raw -A PREROUTING -p tcp --dport 1:65535 -j NOTRACK"
 einfo "iptables -t raw -A OUTPUT -p tcp --sport 1:65535 -j NOTRACK"
 einfo
+ewarn
+ewarn "The red team hardening level is not safe for Internet use."
+ewarn
+ewarn "The red team hardening level is not safe for security-critical activities."
+ewarn
+ewarn "The red team hardening level is not safe for the dark web which state"
+ewarn "sponsored threat actors are known to be found and use documented browser"
+ewarn "exploits.  There is an AI slop infographic that says you can use TOR"
+ewarn "network + a red-team distro, probably created by a state sponsored"
+ewarn "threat actor."
+ewarn
+ewarn "ALL HARDENING HAS BEEN DISABLED."
+ewarn
+ewarn "FAFO RED TEAMERS HAVE BEEN WARNED."
+ewarn
 }
 
 
