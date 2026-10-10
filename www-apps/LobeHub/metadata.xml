@@ -154,8 +154,8 @@ host    all             all             ::1/128                 md5
       Add basic online support by default.
     </flag>
     <flag name="proxychains">
-      Add support for forcing all network traffic through proxychains to access
-      cloud based models in restricted networks.
+      Add support for forcing all network traffic through a proxy to access
+      cloud based models in restricted firewalled networks.
     </flag>
     <flag name="rag">
       Add dependencies to support RAG (Retrieval-Augmented Generation) to allow
