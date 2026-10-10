@@ -14981,12 +14981,12 @@ ot-kernel_set_red_team() {
 	# Support disposable virtual target machines
 		ot-kernel_y_configopt "CONFIG_KVM"
 
-	# Support payload evation or blue team tools
+	# Support payload evasion or evasion from unconditional blue team tools
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 
 	# Performance tuning for cracking
+		ot-kernel_set_kconfig_kernel_cmdline "audit=0"
 		ot-kernel_set_kconfig_kernel_cmdline "mitigations=off"
-		ot-kernel_set_kconfig_kernel_cmdline audit=0
 
 	# Performance tuning for network needs, see
 	# ot-kernel_postinst_red_team_optimizations()
