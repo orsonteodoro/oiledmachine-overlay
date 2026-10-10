@@ -1,0 +1,40 @@
+#LICENSE Portions Copyright 2019-2021 ZomboDB, LLC.
+#LICENSE
+#LICENSE Portions Copyright 2021-2023 Technology Concepts & Design, Inc.
+#LICENSE
+#LICENSE Portions Copyright 2023-2023 PgCentral Foundation, Inc. <contact@pgcentral.org>
+#LICENSE
+#LICENSE All rights reserved.
+#LICENSE
+#LICENSE Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ 
+[package]
+name = "pgrx-macros"
+version = "0.19.3"
+authors.workspace = true
+license.workspace = true
+description = "Proc Macros for 'pgrx'"
+homepage.workspace = true
+repository.workspace = true
+documentation = "https://docs.rs/pgrx-macros"
+readme = "README.md"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+proc-macro = true
+
+[features]
+no-schema-generation = ["pgrx-sql-entity-graph/no-schema-generation"]
+
+
+[dependencies]
+pgrx-sql-entity-graph.workspace = true
+
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true
+
+
+[dev-dependencies]
+serde.workspace = true # for Documentation examples

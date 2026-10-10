@@ -1,0 +1,25 @@
+[package]
+name = "pgrx-bindgen"
+description = "additional bindgen support for pgrx"
+version = "0.19.3"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage = "https://github.com/pgcentralfoundation/pgrx"
+repository = "https://github.com/pgcentralfoundation/pgrx"
+documentation = "https://docs.rs/pgrx-bindgen"
+
+[dependencies]
+pgrx-pg-config.workspace = true
+
+eyre.workspace = true
+proc-macro2.workspace = true
+regex.workspace = true
+syn.workspace = true
+walkdir.workspace = true
+
+bindgen = { version = "0.72.1", default-features = false, features = ["runtime"] }
+clang-sys = { version = "1", features = ["clang_6_0", "runtime"] }
+quote = "1.0.45"
+shlex = "2.0" # shell lexing, also used by many of our deps
+cc = "1.2"
