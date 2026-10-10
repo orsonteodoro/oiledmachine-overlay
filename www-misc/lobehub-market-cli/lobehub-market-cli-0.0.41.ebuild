@@ -10,7 +10,7 @@ EAPI=8
 # PATH=$(realpath "../../scripts")":${PATH}"
 # NPM_UPDATER_VERSIONS="0.0.28" npm_updater_update_locks.sh
 
-NODE_SLOT="22"
+NODE_SLOT="24"
 NPM_AUDIT_FATAL=0
 NPM_TARBALL="lobehub-market-cli-${PV}.tgz"
 
@@ -35,13 +35,13 @@ IUSE+="
 ebuild_revision_8
 "
 RDEPEND+="
-	app-admin/sudo
+	>=app-admin/sudo-${SUDO_PV}:=
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}=
+	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=
 "
 
 pkg_setup() {
