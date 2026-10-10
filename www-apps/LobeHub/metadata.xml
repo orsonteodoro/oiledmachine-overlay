@@ -140,6 +140,14 @@ host    all             all             ::1/128                 md5
     <flag name="file-management">
       Add support for file management.
     </flag>
+    <flag name="lh">
+      Install lh from @lobehub/cli, to manage and connect to LobeHub services,
+      to install marketplace skills.
+    </flag>
+    <flag name="lhm">
+      Install lhm from @lobehub/market-cli, for device registration, auth
+      management, installing marketplace skills.
+    </flag>
     <flag name="minio">
       Use MinIO as S3 compatible locally hosted storage.
     </flag>
@@ -171,14 +179,6 @@ host    all             all             ::1/128                 md5
     <flag name="searxng">
       Add self-hosted SearXNG dependency for partial Web RAG support
       (summaries or web links).
-    </flag>
-    <flag name="tools">
-      Install command line tools referenced in the marketplace.
-
-      It will install the following:
-
-      @lobehub/cli - manage and connect to LobeHub services, install marketplace skills (verified)
-      @lobehub/market-cli - device registration and auth management, install marketplace skills (unverified)
     </flag>
   </use>
 </pkgmetadata>

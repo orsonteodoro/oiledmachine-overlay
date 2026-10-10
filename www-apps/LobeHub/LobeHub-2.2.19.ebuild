@@ -247,11 +247,11 @@ fi
 # The distro's MIT license file does not contain all rights reserved.
 # The PSF-2.2 license differs from the PSF-2.4 license.
 RESTRICT="binchecks mirror strip test"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-ceph -electron +embeddings +file-management minio -online-search
-+openrc -proxychains +pwa +postgres +rag redis +s3 searxng systemd +tools
+ceph -electron +embeddings +file-management lh lhm minio -online-search +openrc
+-proxychains +pwa +postgres +rag redis +s3 searxng systemd
 ebuild_revision_116
 "
 REQUIRED_USE="
@@ -299,6 +299,12 @@ RDEPEND+="
 	embeddings? (
 		>=dev-db/pgvector-${PGVECTOR_PV}:=[postgres_targets_postgres${POSTGRESQL_SLOT}]
 	)
+	lh? (
+		>=app-admin/sudo-${SUDO_PV}:=
+	)
+	lhm? (
+		www-misc/lobehub-market-cli:=
+	)
 	openrc? (
 		>=sys-apps/openrc-${OPENRC_PV}:=[bash]
 		>=sys-process/procps-${PROCPS_PV}:=[kill]
@@ -318,10 +324,6 @@ RDEPEND+="
 	)
 	redis? (
 		>=dev-db/redis-${REDIS_PV}:=
-	)
-	tools? (
-		>=app-admin/sudo-${SUDO_PV}:=
-		www-misc/lobehub-market-cli:=
 	)
 "
 DEPEND+="
@@ -1412,7 +1414,7 @@ src_install() {
 		_install_electron
 	fi
 
-	if use tools ; then
+	if use lh ; then
 		_install_cli
 	fi
 
@@ -1448,24 +1450,31 @@ ewarn "Use the same identifier throughout the /etc/conf.d/lobehub and the remote
 ewarn
 	fi
 	if use minio ; then
+einfo
 ewarn "You must manually update S3_SECRET_ACCESS_KEY in /etc/conf.d/lobehub with the new login details."
+einfo
 	fi
-	if use tools ; then
+	if use lh ; then
+einfo
 einfo "To install skills:  lh skill i <marketplace-identifier>"
+einfo
 	fi
 
 	if use pwa ; then
+einfo
 einfo "To use the Progressive Web App (PWA) from the command line, use"
 einfo "${MY_PN2}-pwa or bookmark http://${LOBEHUB_HOSTNAME}:${LOBEHUB_PORT}"
+einfo
 	fi
 	if use electron ; then
-einfo "To use the Electron app from command line, use ${MY_PN2}-electron."
-	fi
-	if use tools || use electron ; then
-		local lobehub_server=$(get_lobehub_server)
-einfo "To use the @lobehub/cli from command line, use lh."
 einfo
-einfo "@lobehub/cli is now installed.  Details about the wrapper:"
+einfo "To use the Electron app from command line, use ${MY_PN2}-electron."
+einfo
+	fi
+	if use lh ; then
+		local lobehub_server=$(get_lobehub_server)
+einfo
+einfo "Details about using lh (@lobehub/cli), the command line to manage ${PN}:"
 einfo
 einfo "Server configuration details:"
 einfo
@@ -1486,22 +1495,26 @@ einfo
 einfo "Run 'lh --help' for more commands."
 einfo "Run 'lh skill i <marketplace-identifier>' to install skills."
 einfo
-		if use electron ; then
+	fi
+	if use lh && use electron ; then
 einfo
-einfo "The ENABLE_OIDC=1 and JWKS_KEY='<generated-key>' both required for"
-einfo "locally hosted postgres with electron client"
+einfo "The ENABLE_OIDC=1 and JWKS_KEY='<generated-key>' are both required for"
+einfo "locally hosted postgres with the Electron client"
 einfo
-		fi
 	fi
 	if use pwa ; then
+einfo
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
 einfo "LOBEHUB_PORT:  ${LOBEHUB_PORT} (user-definable, per-package environment variable)"
+einfo
+
 ewarn
 ewarn "The LOBEHUB_HOSTNAME needs to be the same on the remote OAuth settings"
 ewarn "and in /etc/conf.d/lobehub and your per-package package.env files."
 ewarn
 ewarn "Do not mix 127.0.0.1 and localhost identifiers in the settings because it breaks OAuth."
 ewarn "Do not mix 127.0.0.1 and localhost identifiers when entering it in the web browser."
+ewarn
 	fi
 }
 
