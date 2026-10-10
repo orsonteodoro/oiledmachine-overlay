@@ -11,7 +11,7 @@ CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-EXPECTED_CARGO_HASH="3eb6b8250c0f0d1d8d081133581b37e96c3444d77c5b2d108c2b066047eb176ccb1c5994376db2bb1ff38d8103f516b732305178421b58464376f3a50a459dad"
+EXPECTED_CARGO_HASH="fe59f1b94c8c549a27ae977606d9b886e31f13a1b1c774f558c167c2973c8683324f89c7e8940721f318f91e9a8d8599b422569622aa4f5e73197572e208e82e"
 PYTHON_COMPAT=( python3_{10..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
@@ -45,16 +45,22 @@ CRATES="
 bitflags-2.13.2
 bytemuck-1.25.2
 bytemuck_derive-1.12.1
-font-types-0.12.5
-harfrust-0.13.3
+font-types-0.12.6
+harfrust-0.14.0
 once_cell-1.21.4
 proc-macro2-1.0.107
 quote-1.0.47
-read-fonts-0.43.3
-skrifa-0.46.2
-smallvec-1.16.1
-syn-3.0.6
+read-fonts-0.45.0
+skrifa-0.48.0
+smallvec-1.16.3
+stable_deref_trait-1.2.1
+syn-3.0.7
+synstructure-0.14.0
 unicode-ident-1.0.26
+yoke-0.8.3
+yoke-derive-0.8.4
+zerofrom-0.1.8
+zerofrom-derive-0.1.8
 "
 
 inherit libstdcxx-compat
@@ -74,7 +80,7 @@ DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="a8dc5479c55c7e51c0e8d576ae379b5dbb4e8f67"
+	FALLBACK_COMMIT="117264edde4b291dedb9fddbe6037231e4b994e1"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -114,7 +120,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_10
+ebuild_revision_11
 "
 RESTRICT="
 	mirror
