@@ -816,6 +816,7 @@ SANDBOX_DEPENDS="
 # Reduce on device, lateral movement, social engineering, physical location recon.
 # Prevent leaking hardware vulnerabilties for unpatched systems.
 # Prevent leaking the kernel version for unpatched systems.
+# Reduce leaking via LotL.
 BANNED_RECONNAISSANCE_TOOLS="
 	!app-admin/facter
 	!app-admin/ohai
@@ -840,6 +841,8 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!app-misc/ufetch
 	!app-misc/wego
 	!dev-python/archey4
+	!dev-python/py-cpuinfo
+	!dev-util/cpuinfo-collection
 	!net-analyzer/iftop
 	!net-analyzer/iptraf-ng
 	!net-analyzer/jnettop
@@ -864,6 +867,7 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!sys-process/iotop
 	!sys-process/iotop-c
 	!sys-process/lsof
+	!x11-apps/mesa-progs
 	!x11-misc/gammastep
 	!x11-misc/redshift
 "
