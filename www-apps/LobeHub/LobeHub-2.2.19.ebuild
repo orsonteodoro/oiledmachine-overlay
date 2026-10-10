@@ -575,7 +575,7 @@ eerror "Then, restart the Postgres ${POSTGRESQL_SLOT} service."
 	fi
 }
 
-fix_lockfiles() {
+patch_lockfile() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
 			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_PV}\"|g" \
@@ -584,6 +584,7 @@ fix_lockfiles() {
 			|| die
 		sed -i \
 			-e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': ${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}|g" \
+			-e "s|'@grpc/grpc-js': 1.14.6|'@grpc/grpc-js': ${NODE_AT_GRPC_GRPC_JS_1_14_PV}|g" \
 			-e "s|adm-zip: 0.5.18|adm-zip: ${NODE_ADM_ZIP_PV}|g" \
 			-e "s|fast-xml-parser: 3.21.1|fast-xml-parser: ${NODE_FAST_XML_PARSER_5_PV}|g" \
 			-e "s|fast-xml-parser: 5.7.0|fast-xml-parser: ${NODE_FAST_XML_PARSER_5_PV}|g" \
@@ -602,9 +603,9 @@ fix_lockfiles() {
 			-e "s|uuid: 9.0.1|uuid: ${NODE_UUID_11_PV}|g" \
 			-e "s|uuid: 11.1.1|uuid: ${NODE_UUID_11_PV}|g" \
 			"${S}/pnpm-lock.yaml" \
-			"${S}/apps/cli/pnpm-lock.yaml" \
 			"${S}/apps/desktop/pnpm-lock.yaml" \
 			|| die
+#			"${S}/apps/cli/pnpm-lock.yaml" \
 	fi
 }
 
@@ -648,6 +649,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_ADM_ZIP_PV@|${NODE_ADM_ZIP_PV}|g" \
 		-e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" \
 		-e "s|@NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV@|${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}|g" \
+		-e "s|@NODE_AT_GRPC_GRPC_JS_1_14_PV@|${NODE_AT_GRPC_GRPC_JS_1_14_PV}|g" \
 		-e "s|@NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV@|${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}|g" \
 		-e "s|@NODE_AT_OCTOKIT_REQUEST_PV@|${NODE_AT_OCTOKIT_REQUEST_PV}|g" \
 		-e "s|@NODE_AT_OCTOKIT_REQUEST_ERROR_PV@|${NODE_AT_OCTOKIT_REQUEST_ERROR_PV}|g" \
@@ -663,6 +665,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_FILE_TYPE_22_PV@|${NODE_FILE_TYPE_22_PV}|g" \
 		-e "s|@NODE_FORM_DATA_4_PV@|${NODE_FORM_DATA_4_PV}|g" \
 		-e "s|@NODE_JSONDIFFPATCH_PV@|${NODE_JSONDIFFPATCH_PV}|g" \
+		-e "s|@NODE_KATEX_PV@|${NODE_KATEX_PV}|g" \
 		-e "s|@NODE_MINIMATCH_9_PV@|${NODE_MINIMATCH_9_PV}|g" \
 		-e "s|@NODE_PDFJS_DIST_PV@|${NODE_PDFJS_DIST_PV}|g" \
 		-e "s|@NODE_PROTOBUFJS_8_PV@|${NODE_PROTOBUFJS_8_PV}|g" \
@@ -729,7 +732,7 @@ einfo "Unpacking @lobehub/cli"
 		)
 		epnpm add "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
-	#fix_lockfiles
+	#patch_lockfile
 }
 
 pnpm_audit_post() {
@@ -748,6 +751,7 @@ pnpm_dedupe_post() {
 	######################
 	# Feature dependencies
 	######################
+
 		pkgs=(
 			"@neondatabase/serverless@${NODE_AT_NEONDATABASE_SERVERLESS_PV}"	# aka neon support
 			"pg@${NODE_PG_PV}"							# aka node, aka node-postgres, battle tested driver
@@ -782,11 +786,15 @@ pnpm_dedupe_post() {
 	#####################
 	# Vulnerability fixes
 	#####################
+
+		patch_lockfile
+
 		pushd "apps/desktop" >/dev/null 2>&1 || die
 			pkgs=(
+				"@grpc/grpc-js@${NODE_AT_GRPC_GRPC_JS_1_14_PV}"
 				"tar@${NODE_TAR_PV}"
-				"esbuild@${NODE_ESBUILD_PV}"
-				"file-type@${NODE_FILE_TYPE_PV}"
+				#"esbuild@${NODE_ESBUILD_PV}"
+				#"file-type@${NODE_FILE_TYPE_PV}"
 			)
 			#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 			pkgs=(
@@ -797,12 +805,16 @@ pnpm_dedupe_post() {
 			#epnpm add "${pkgs[@]}" -D -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
 
+		patch_lockfile
+
 		pushd "apps/cli" >/dev/null 2>&1 || die
 			pkgs=(
 				"file-type@${NODE_FILE_TYPE_PV}"
 			)
 			#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 		popd >/dev/null 2>&1 || die
+
+		patch_lockfile
 
 		pkgs=(
 			"@octokit/plugin-paginate-rest@${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}"
@@ -825,6 +837,8 @@ pnpm_dedupe_post() {
 		)
 		#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
+		patch_lockfile
+
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}"
 		)
@@ -835,7 +849,7 @@ pnpm_dedupe_post() {
 		#epnpm add -D "@types/sharp" "${PNPM_INSTALL_ARGS[@]}"
 		node-sharp_pnpm_lockfile_add_sharp
 
-		#fix_lockfiles
+		patch_lockfile
 
 		# Copy all lockfiles
 		mkdir -p "${WORKDIR}/lockfile-image"

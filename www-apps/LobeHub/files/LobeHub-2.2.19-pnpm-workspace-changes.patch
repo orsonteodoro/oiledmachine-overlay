@@ -60,16 +60,19 @@ diff '--color=auto' -urp lobehub-2.2.19.orig/apps/desktop/pnpm-workspace.yaml lo
    - '@auv-js/api-client@0.0.28'
    - '@auv-js/cli-darwin-arm64@0.0.28'
    - '@auv-js/cli-darwin-x64@0.0.28'
-@@ -73,6 +78,29 @@ minimumReleaseAgeExclude:
+@@ -73,6 +78,39 @@ minimumReleaseAgeExclude:
    - '@auv-js/cli-win32-x64-msvc@0.0.28'
    - '@auv-js/cli@0.0.28'
    - '@auv-js/sdk@0.0.28'
 -  - electron-sparkle-updater@0.5.2
 +  - 'electron-sparkle-updater@0.5.2'
 +  # oiledmachine-overlay rules
++  - '@grpc/grpc-js@@NODE_AT_GRPC_GRPC_JS_1_14_PV@'
 +  - 'electron@@NODE_ELECTRON_PV@'
 +  - 'electron-builder@@NODE_ELECTRON_BUILDER_PV@'
 +  - 'esbuild@@NODE_ESBUILD_PV@'
++  - 'katex@@NODE_KATEX_PV@'
++  - 'tar@@NODE_TAR_PV@'
 +  - 'vite@@NODE_VITE_8_PV@'
 +
 +overrides:
@@ -82,11 +85,18 @@ diff '--color=auto' -urp lobehub-2.2.19.orig/apps/desktop/pnpm-workspace.yaml lo
 +  # Pinned versions by oiledmachine-overlay
 +  'electron@<@NODE_ELECTRON_PV@': '@NODE_ELECTRON_PV@'
 +  # Vulnerability fixes
++  '@auv-js/sdk@0.0.28>@grpc/grpc-js': '@NODE_AT_GRPC_GRPC_JS_1_14_PV@'
++  '@grpc/grpc-js': '@NODE_AT_GRPC_GRPC_JS_1_14_PV@'
 +  '@vanilla-extract/vite-plugin@5.2.6>vite': '@NODE_VITE_8_PV@'
 +  'drizzle-kit@0.31.10>esbuild': '@NODE_ESBUILD_PV@'
++  #'drizzle-kit@0.31.11>esbuild': '@NODE_ESBUILD_PV@'
++  'drizzle-kit@@NODE_DRIZZLE_KIT_PV@>esbuild': '@NODE_ESBUILD_PV@'
 +  'electron-builder@<@NODE_ELECTRON_BUILDER_PV@': '@NODE_ELECTRON_BUILDER_PV@'
++  'esbuild': '@NODE_ESBUILD_PV@'
 +  'get-windows@9.3.0>tar': '@NODE_TAR_PV@'
 +  'file-type@<@NODE_FILE_TYPE_22_PV@': '@NODE_FILE_TYPE_22_PV@'
++  'katex': '@NODE_KATEX_PV@'
++  'tar': '@NODE_TAR_PV@'
 +  'vite@<@NODE_VITE_8_PV@': '@NODE_VITE_8_PV@'
 +
  patchedDependencies:
