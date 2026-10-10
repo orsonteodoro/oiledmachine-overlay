@@ -857,12 +857,13 @@ BANNED_RECONNAISSANCE_TOOLS="
 	!sys-apps/lshw
 	!sys-apps/lsvpd
 	!sys-apps/pciutils
+	!sys-cluster/k9scli
 	!sys-libs/geoclue
 	!sys-process/ctop
 	!sys-process/glances
 	!sys-process/iotop
 	!sys-process/iotop-c
-	!sys-cluster/k9scli
+	!sys-process/lsof
 	!x11-misc/gammastep
 	!x11-misc/redshift
 "
@@ -910,6 +911,7 @@ BANNED_RED_TEAM_TOOLS="
 	!net-misc/iodine
 	!net-misc/socat
 	!net-proxy/chisel
+	!net-wireless/aircrack-ng
 	!net-wireless/sliver
 	!virtual/frida
 "
