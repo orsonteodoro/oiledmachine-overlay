@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_32"
+IUSE+=" ebuild_revision_33"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -185,6 +185,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"^${NODE_FILE_TYPE_22_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"handlebars\": \"^4.7.9\"|\"handlebars\": \"^${NODE_HANDLEBARS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"ip-address\": \"^10.1.1\"|\"ip-address\": \"^${NODE_IP_ADDRESS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"katex\": \"^0.16.9\"|\"katex\": \"^${NODE_KATEX_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"katex\": \"^0.16.47\"|\"katex\": \"^${NODE_KATEX_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"mermaid\": \"^10.8.0\"|\"mermaid\": \"^${NODE_MERMAID_10_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"minimatch\": \"9.0.3\"|\"minimatch\": \"^${NODE_MINIMATCH_9_PV}\"|g" "package-lock.json" || die
@@ -202,7 +203,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		}
 		patch_lockfile
 
-		# Clean out first
+	# Clean out first
 		L=(
 			"@langchain/core"
 			"@langchain/textsplitters"
@@ -218,7 +219,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		)
 		enpm uninstall "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
-		# Install secure active maintained replacements
+	# Install secure active maintained replacements
 		L=(
 			"@langchain/classic@1.0.50"
 			"@langchain/ollama@1.3.0"
@@ -235,7 +236,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
-		# Required pinned dependencies
+	# Required pinned dependencies
 		L=(
 			"@types/node@^20.19.43"				# For import.meta.dirname
 			"kokoro-js@1.2.1"				# For package.json
@@ -246,20 +247,19 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 
-		# Required pinned dependencies
+	# Required pinned dependencies
 		L=(
 			"electron-builder@${ELECTRON_BUILDER_PV}"
 			"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
-		# Security fixes
+	# Security fixes
 		L=(
 			"brace-expansion@^${NODE_BRACE_EXPANSION_2_PV}"
 			"file-type@^${NODE_FILE_TYPE_22_PV}"
 			"handlebars@^${NODE_HANDLEBARS_PV}"
 			"ip-address@^${NODE_IP_ADDRESS_PV}"
-			"katex@^${NODE_KATEX_PV}"
 			"mermaid@^${NODE_MERMAID_10_PV}"
 			"pdfjs-dist@^${NODE_PDFJS_DIST_PV}"
 			"sharp@^${NODE_SHARP_PV}"
@@ -274,9 +274,17 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 		patch_lockfile
 
+	# Dependency of dependency
+		L=(
+			"katex@^${NODE_KATEX_PV}"
+		)
+		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
+
+		patch_lockfile
+
 		enpm dedupe "${NPM_DEDUPE_ARGS[@]}"
 
-		# Remove vulnerable dependencies
+	# Remove vulnerable dependencies
 		enpm uninstall "npm" "${NPM_INSTALL_ARGS[@]}"
 
 		sed -i -e "s|index.mjs|index.js|g" "${S}/package.json" || die
