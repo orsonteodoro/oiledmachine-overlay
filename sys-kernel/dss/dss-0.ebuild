@@ -948,6 +948,11 @@ BANNED_CIPHERS="
 	!sys-kernel/gostcrypt-linux-crypto
 "
 
+# Ban alleged backdoor or misconfiguration that enables it.
+BANNED_TERMS="
+	!x11-terms/kitty
+"
+
 RDEPEND="
 	!virtual/dss
 	enforce? (
@@ -955,6 +960,7 @@ RDEPEND="
 		${BANNED_DEBUGGING_TOOLS}
 		${BANNED_RECONNAISSANCE_TOOLS}
 		${BANNED_RED_TEAM_TOOLS}
+		${BANNED_TERMS}
 		${BANNED_X11}
 		${ANTIVIRUS_DEPENDS}
 		${CLOUD_COMPLIANCE_DEPENDS}
