@@ -1026,4 +1026,9 @@ eerror "Valid optimization levels for security-critical data security:  -O1, -O2
 	if which lscpu >/dev/null ; then
 ewarn "The lscpu must have ACL, executible restrictions, or be removed to restrict reconnaissance against CPU vulnerabilities."
 	fi
+ewarn "Users of app-misc/rustormy need to sanitize location data to mitigate social engineering leverage."
+ewarn "Users of app-misc/wego need to sanitize location data to mitigate social engineering leverage."
+ewarn "Users of sys-libs/geoclue need to sanitize location, API keys, and BSSIDs to mitigate threat actor abuse or lateral movement."
+ewarn "Users of x11-misc/gammastep need to sanitize latitude/longitude data to mitigate physical damage/harm."
+ewarn "Users of x11-misc/redshift need to sanitize latitude/longitude data to mitigate physical damage/harm."
 }
