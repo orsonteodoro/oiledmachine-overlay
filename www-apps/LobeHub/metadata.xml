@@ -153,6 +153,10 @@ host    all             all             ::1/128                 md5
     <flag name="online-search">
       Add basic online support by default.
     </flag>
+    <flag name="proxychains">
+      Add support for forcing all network traffic through proxychains to access
+      cloud based models in restricted networks.
+    </flag>
     <flag name="rag">
       Add dependencies to support RAG (Retrieval-Augmented Generation) to allow
       the AI to give current and up-to-date information or answers with less

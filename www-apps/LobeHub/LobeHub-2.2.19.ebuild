@@ -251,7 +251,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management minio -online-search
-+openrc +pwa +postgres +rag redis +s3 searxng systemd +tools
++openrc -proxychains +pwa +postgres +rag redis +s3 searxng systemd +tools
 ebuild_revision_116
 "
 REQUIRED_USE="
@@ -293,7 +293,6 @@ RDEPEND+="
 	acct-group/lobehub:*
 	acct-user/lobehub:*
 	>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}:=
-	>=net-misc/proxychains-${PROXYCHAINS_PV}:=
 	>=sys-devel/gcc-12.2.0:=
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[corepack,npm]
 	embeddings? (
@@ -306,6 +305,9 @@ RDEPEND+="
 	postgres? (
 		>=dev-db/postgresql-${POSTGRES_17_PV}:${POSTGRESQL_SLOT}=[server]
 		>=dev-db/pg_search-${PG_SEARCH_PV}:=[postgres_targets_postgres${POSTGRESQL_SLOT}]
+	)
+	proxychains? (
+		>=net-misc/proxychains-${PROXYCHAINS_PV}:=
 	)
 	pwa? (
 		>=x11-misc/xdg-utils-${XDG_UTILS_PV}:=
