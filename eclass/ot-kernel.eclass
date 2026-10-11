@@ -7406,7 +7406,7 @@ ewarn "You must manually add yama to CONFIG_LSM which was requested by an ebuild
 einfo "OT_KERNEL_LSMS=manual (from kernel .config)"
 einfo "LSMs:  ${lsms}"
 		warn_lsm_changes
-	elif [[ "${hardening_level}" == "red-team-devlab" ]] ; then
+	elif [[ "${hardening_level}" =~ ("red-team-devlab"|"red-team-prey") ]] ; then
 einfo "Detected red-team.  Enabling bpf for debugging payloads"
 		ot_kernel_lsms="bpf"
 		ot-kernel_set_configopt "CONFIG_LSM" "\"bpf\""
@@ -7934,7 +7934,7 @@ ot-kernel_set_kconfig_module_signing() {
 	local sign_modules_upper="${OT_KERNEL_SIGN_MODULES^^}"
 
 	local lockdown_lsm=0
-	if [[ "${hardening_level}" == "red-team-devlab" ]] ; then
+	if [[ "${hardening_level}" =~ ("red-team-devlab"|"red-team-prey") ]] ; then
 einfo "Detected red-team forcing disabling signed modules"
 		sign_modules=0
 		lockdown_lsm=0
