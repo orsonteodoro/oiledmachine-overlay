@@ -899,7 +899,7 @@ ewarn "QA:  Remove tar@6.2.1 in apps/desktop/pnpm-lock.yaml"
 		        pushd "${S}" >/dev/null 2>&1 || die
 				node-sharp_pnpm_rebuild_sharp
 
-				local node_pv="24.19.1" # The upstream version not the system's
+				local node_pv="24.19.2" # The upstream version not the system's
 
 				# Copy sharp binary to expected location
 				mkdir -p "node_modules/.pnpm/sharp@${NODE_SHARP_PV}_@types+node@${node_pv}/node_modules/sharp/build/${configuration}" || die "Failed to create dir"
