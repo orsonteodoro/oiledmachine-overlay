@@ -166,7 +166,7 @@ host    all             all             ::1/128                 md5
     </flag>
     <flag name="proxychains">
       Add support for forcing all network traffic through a proxy to access
-      cloud based models in restricted censorship networks.
+      cloud based models in censored and restricted nation-state networks.
     </flag>
     <flag name="rag">
       Add dependencies to support RAG (Retrieval-Augmented Generation) to allow
