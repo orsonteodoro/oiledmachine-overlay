@@ -692,6 +692,21 @@ pnpm_unpack_post() {
 		"${S}/pnpm-workspace.yaml" \
 		|| die
 
+
+# Fixes:
+#$ pnpm scripts/ensureWorkspaceLinks.ts && tsdown
+#[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with EACCES: scripts/ensureWorkspaceLinks.ts
+#spawn scripts/ensureWorkspaceLinks.ts EACCES
+#[ELIFECYCLE] Command failed with exit code 1.
+
+	# Prevent misinterpretation of TypeScript's import as imagemagick import
+	# because of lack of shebang (#!/usr/bin/env -S npx tsx) in
+	# ensureWorkspaceLinks.ts.
+	sed -i \
+		-e "s|pnpm scripts/ensureWorkspaceLinks.ts|pnpm exec tsx scripts/ensureWorkspaceLinks.ts|g" \
+		"${S}/apps/cli/package.json" \
+		|| die
+
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
@@ -1137,18 +1152,6 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	fi
 
 	if use electron ; then
-# Fixes:
-#$ pnpm scripts/ensureWorkspaceLinks.ts && tsdown
-#[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with EACCES: scripts/ensureWorkspaceLinks.ts
-#spawn scripts/ensureWorkspaceLinks.ts EACCES
-#[ELIFECYCLE] Command failed with exit code 1.
-
-		# Prevent misinterpretation of TypeScript's import as imagemagick import because of lack of shebang (#!/usr/bin/env -S npx tsx) in ensureWorkspaceLinks.ts.
-		sed -i \
-			-e "s|pnpm scripts/ensureWorkspaceLinks.ts|pnpm exec tsx scripts/ensureWorkspaceLinks.ts|g" \
-			"${S}/apps/cli/package.json" \
-			|| die
-
 		edo npm run "desktop:build:all"
 
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
