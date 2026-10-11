@@ -60,7 +60,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
-	"dev-libs/openssl-3.0.9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot lua multilib-minimal sandbox-changes secure-version
