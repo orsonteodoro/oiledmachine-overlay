@@ -494,7 +494,6 @@ OPENSSL_PV_4_0_PV=${OPENSSL_PV_4_0_PV:-"4.0.9999"}
 OPENSSL_PV_3_6_PV=${OPENSSL_PV_3_6_PV:-"3.6.9999"}
 OPENSSL_PV_3_5_PV=${OPENSSL_PV_3_5_PV:-"3.5.9999"}
 OPENSSL_PV_3_4_PV=${OPENSSL_PV_3_4_PV:-"3.4.9999"}
-OPENSSL_PV_3_0_PV=${OPENSSL_PV_3_0_PV:-"3.0.9999"}
 OPUS_PV=${OPUS_PV:-"9999"}
 OPENH264_PV=${OPENH264_PV:-"9999"}
 OPENSUBDIV_PV=${OPENSUBDIV_PV:-"9999"}
@@ -647,14 +646,13 @@ secure-version_gen_openssl_depends() {
 	local usedep="${2}" # [${MULTILIB_USEDEP}], <empty string>
 	local t=""
 	t+="
-		!=dev-libs/openssl-3.0.9999
 		dev-libs/openssl:=${usedep}
 		|| (
 	"
 	local l=""
 	local r=""
 	if [[ -z "${range}" ]] ; then
-		l="3.0"
+		l="3.4"
 		r="4.0"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"

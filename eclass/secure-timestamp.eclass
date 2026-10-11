@@ -201,7 +201,6 @@ SECURE_TIMESTAMP["dev_libs_openssl_4_0_9999"]="Oct 10, 2026 9:03 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_6_9999"]="Oct 10, 2026 1:24 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_5_9999"]="Oct 10, 2026 1:29 AM PDT"
 SECURE_TIMESTAMP["dev_libs_openssl_3_4_9999"]="Oct 9, 2026 3:49 PM PDT"
-SECURE_TIMESTAMP["dev_libs_openssl_3_0_9999"]="Sep 7, 2026 11:17 AM PDT"
 
 SECURE_TIMESTAMP["dev_libs_pugixml_9999"]="Jun 15, 2026 1:38 PM PDT"
 SECURE_TIMESTAMP["dev_libs_qcoro_9999"]="Feb 13, 2026 1:28 PM PST"
