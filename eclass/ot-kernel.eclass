@@ -14943,7 +14943,7 @@ ewarn "Generating a new default config:  ${path_config}"
 
 # @FUNCTION: ot-kernel_set_red_team
 # @DESCRIPTION:
-# Tunes the kernel as the attacker not prey.
+# Tunes the kernel for red team typical use cases.
 ot-kernel_set_red_team() {
 	if [[ "${hardening_level}" == "red-team-homebase" ]] ; then
 		_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=1
