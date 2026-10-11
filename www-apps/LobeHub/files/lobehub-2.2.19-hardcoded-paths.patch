@@ -1,3 +1,4 @@
+# This is a partially AI assisted patch
 --- a/scripts/serverLauncher/startServer.js.orig	2026-10-07 03:39:15.000000000 -0700
 +++ b/scripts/serverLauncher/startServer.js	2026-10-11 07:37:39.831638825 -0700
 @@ -5,24 +5,58 @@ const { spawn } = require('node:child_pr
