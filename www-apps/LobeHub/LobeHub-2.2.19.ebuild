@@ -1103,6 +1103,18 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 	fi
 
 	if use electron ; then
+# Fixes:
+#$ pnpm scripts/ensureWorkspaceLinks.ts && tsdown
+#[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with EACCES: scripts/ensureWorkspaceLinks.ts
+#spawn scripts/ensureWorkspaceLinks.ts EACCES
+#[ELIFECYCLE] Command failed with exit code 1.
+
+		# Make the script executable
+		chmod +x "${S}/apps/cli/scripts/ensureWorkspaceLinks.ts" || die
+
+		# Also make sure the whole scripts dir is readable/executable if needed
+		chmod -R u+rx "${S}/apps/cli/scripts/" || die
+
 		edo npm run "desktop:build:all"
 
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
