@@ -35,7 +35,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
-	"dev-libs/openssl-3.0.9999"
 	"media-libs/libavif-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
