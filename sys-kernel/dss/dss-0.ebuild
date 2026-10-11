@@ -429,8 +429,16 @@ REQUIRED_USE="
 			lynis
 
 			aide
+		)
 
-			nftables
+		?? (
+			rsyslog
+			syslog-ng
+		)
+
+		?? (
+			firewalld
+			ufw
 		)
 
 		^^ (
