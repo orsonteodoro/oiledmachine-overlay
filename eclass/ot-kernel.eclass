@@ -9168,6 +9168,7 @@ _ot-kernel_is_hardening_level_least_secure() {
 		|| "${hardening_level}" == "dangerous" \
 		|| "${hardening_level}" == "dangerous-af" \
 		|| "${hardening_level}" == "dangerous-as-fuck" \
+		|| "${hardening_level}" == "red-team-devlab" \
 		|| "${hardening_level}" == "red-team-prey" \
 	]] ; then
 		return 0
