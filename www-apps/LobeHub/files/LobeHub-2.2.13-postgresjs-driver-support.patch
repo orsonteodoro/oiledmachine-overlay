@@ -1,3 +1,4 @@
+# This is partly an AI generated fix
 --- a/packages/app-config/src/db.ts.orig	2026-08-01 05:07:55.000000000 -0700
 +++ b/packages/app-config/src/db.ts	2026-08-12 02:08:39.740398678 -0700
 @@ -4,7 +4,7 @@ import { z } from 'zod';

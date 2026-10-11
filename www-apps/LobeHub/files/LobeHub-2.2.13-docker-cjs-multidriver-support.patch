@@ -1,3 +1,4 @@
+# This is an AI generated fix
 --- a/scripts/migrateServerDB/docker.cjs.orig	2026-08-01 05:07:55.000000000 -0700
 +++ b/scripts/migrateServerDB/docker.cjs	2026-08-10 12:28:30.312583572 -0700
 @@ -1,37 +1,86 @@
