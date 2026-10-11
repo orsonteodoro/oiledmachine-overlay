@@ -137,6 +137,7 @@ _OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
 _OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
 _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 _OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
+_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_EFIFB="" # Variable not const
@@ -7405,7 +7406,7 @@ ewarn "You must manually add yama to CONFIG_LSM which was requested by an ebuild
 einfo "OT_KERNEL_LSMS=manual (from kernel .config)"
 einfo "LSMs:  ${lsms}"
 		warn_lsm_changes
-	elif _ot-kernel_is_hardening_level_red_team ; then
+	elif [[ "${hardening_level}" == "red-team-devlab" ]] ; then
 einfo "Detected red-team.  Enabling bpf for debugging payloads"
 		ot_kernel_lsms="bpf"
 		ot-kernel_set_configopt "CONFIG_LSM" "\"bpf\""
@@ -7933,7 +7934,7 @@ ot-kernel_set_kconfig_module_signing() {
 	local sign_modules_upper="${OT_KERNEL_SIGN_MODULES^^}"
 
 	local lockdown_lsm=0
-	if _ot-kernel_is_hardening_level_red_team ; then
+	if [[ "${hardening_level}" == "red-team-devlab" ]] ; then
 einfo "Detected red-team forcing disabling signed modules"
 		sign_modules=0
 		lockdown_lsm=0
@@ -9167,20 +9168,7 @@ _ot-kernel_is_hardening_level_least_secure() {
 		|| "${hardening_level}" == "dangerous" \
 		|| "${hardening_level}" == "dangerous-af" \
 		|| "${hardening_level}" == "dangerous-as-fuck" \
-		|| "${hardening_level}" == "red-team" \
-	]] ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
-# @FUNCTION: _ot-kernel_is_hardening_level_red_team
-# @DESCRIPTION:
-# Check settings if the hardening is set to red_team.
-_ot-kernel_is_hardening_level_red_team() {
-	if [[ \
-		"${hardening_level}" == "red-team" \
+		|| "${hardening_level}" == "red-team-prey" \
 	]] ; then
 		return 0
 	else
@@ -9215,6 +9203,7 @@ _ot-kernel_is_hardening_level_most_secure() {
 		|| "${hardening_level}" == "hard-as-fuck" \
 		|| "${hardening_level}" == "epic-boss" \
 		|| "${hardening_level}" == "blue-team" \
+		|| "${hardening_level}" == "red-team-homebase" \
 	]] ; then
 		return 0
 	else
@@ -14954,10 +14943,38 @@ ewarn "Generating a new default config:  ${path_config}"
 # @DESCRIPTION:
 # Tunes the kernel as the attacker not prey.
 ot-kernel_set_red_team() {
-	if _ot-kernel_is_hardening_level_red_team ; then
+	if [[ "${hardening_level}" == "red-team-homebase" ]] ; then
+		_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=1
+	fi
+	if [[ "${hardening_level}" == "red-team-devlab" ]] ; then
+	# Support disposable virtual target machines
+		ot-kernel_y_configopt "CONFIG_KVM"
+
 	# Support wireless/radio analysis
 		ot-kernel_y_configopt "CONFIG_NET_3G"
 		ot-kernel_y_configopt "CONFIG_HAMRADIO"
+
+	# Enable debug
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+
+	# Full debug
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
+
+	# Stack tracing
+		ot-kernel_y_configopt "CONFIG_FRAME_POINTER"
+
+	# Support GDB
+		ot-kernel_y_configopt "CONFIG_GDB_SCRIPTS"
+	fi
+	if [[ "${hardening_level}" == "red-team-prey" ]] ; then
+	# Disable debug
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_unset_configopt "CONFIG_FRAME_POINTER"
+		ot-kernel_unset_configopt "CONFIG_GDB_SCRIPTS"
+	fi
+	if [[ "${hardening_level}" =~ ("red-team-devlab"|"red-team-prey") ]] ; then
+	# Disable auditing
+		ot-kernel_y_configopt "CONFIG_AUDITSYSCALL"
 
 	# Support packet injection
 		ot-kernel_y_configopt "CONFIG_MAC80211"
@@ -14977,9 +14994,6 @@ ot-kernel_set_red_team() {
 
 	# Support custom out-of-tree drivers
 		ot-kernel_y_configopt "CONFIG_MODULES"
-
-	# Support disposable virtual target machines
-		ot-kernel_y_configopt "CONFIG_KVM"
 
 	# Support payload evasion or evasion from unconditional blue team tools
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
@@ -18572,7 +18586,7 @@ ewarn
 }
 
 ot-kernel_postinst_red_team_optimizations() {
-	[[ "${_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG}" == "1" ]] || return
+	if [[ "${_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG}" == "1" ]] ; then
 cat <<EOF > "${EROOT}/etc/sysctl.d/red-team-optimizations.conf"
 # Maximize port availability and speed up recycling
 net.ipv4.tcp_tw_reuse = 1
@@ -18596,9 +18610,9 @@ net.ipv4.tcp_max_syn_backlog = 65535
 net.ipv4.tcp_rmem = 4096 87380 16777216
 net.ipv4.tcp_wmem = 4096 65536 16777216
 EOF
-	if ! has_version "sys-process/procps" ; then
+		if ! has_version "sys-process/procps" ; then
 ewarn "sys-process/procps is needed to use red-team optimizations."
-	fi
+		fi
 einfo
 einfo "To prevent freezing, you can bypass Netfilter's connection tracking by"
 einfo "doing:"
@@ -18621,6 +18635,10 @@ ewarn "ALL HARDENING HAS BEEN DISABLED."
 ewarn
 ewarn "FAFO RED TEAMERS HAVE BEEN WARNED."
 ewarn
+	fi
+	if [[ "${_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG}" == "1" && -e "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" ]] ; then
+		rm -f "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" || true
+	fi
 }
 
 

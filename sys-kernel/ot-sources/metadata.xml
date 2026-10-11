@@ -2764,7 +2764,9 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       performance
       secure
       secure-af
-      red-team
+      red-team-homebase
+      red-team-devlab
+      red-team-prey
       blue-team
       unset
 
@@ -2797,17 +2799,17 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       blue-team - Alias for secure-af.  Designed for DMZ or public facing
       nodes.
 
-      red-team - Alias for fast-af with compatibility with red team tools and
-      with tuning as follows:
+      red-team-homebase - This is the physical location of red team.  Just
+      an alias for secure-af.
 
-          CPU  - throughput for cracking
+      red-team-devlab - This is the development lab of red team cybersecurity.
+      It is optimized for debugging and is compatible with any performance
+      tuning.  It also has additional red-team networking optimizations.
 
-      Network  - generally throughput.  Low latency for interactive shell,
-      brute force, or spraying.  Memory limits are increased to prevent packet
-      drops, crashes, increasing capacity.
-
-      Security - typically disabled for testing or developing payloads or
-      speeding up cracking.
+      red-team-prey - This is the compromised target machine with a
+      compromised kernel module.  It is optimized for stealth (disabled
+      security).  It is just an alias for fast-af with additional
+      red-team networking optimizations.
 
       Note: secure-af was original envisioned to be an availability-first
       policy.  There are competing security objectives or philosophies.  For
