@@ -1065,7 +1065,9 @@ BANNED_FILE_TRANSFERS="
 			!net-ftp/filezilla
 			!net-misc/dropbox-cli
 			!net-misc/ncftp
+			!net-misc/onedrive
 			!net-misc/wget2
+			!sys-fs/google-drive-ocamlfuse
 		)
 	)
 	compliant? (
@@ -1074,7 +1076,9 @@ BANNED_FILE_TRANSFERS="
 		!net-ftp/filezilla
 		!net-misc/dropbox-cli
 		!net-misc/ncftp
+		!net-misc/onedrive
 		!net-misc/wget2
+		!sys-fs/google-drive-ocamlfuse
 	)
 "
 
