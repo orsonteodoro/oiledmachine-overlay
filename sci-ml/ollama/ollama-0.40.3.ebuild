@@ -27,6 +27,7 @@ EAPI=8
 # 0.24.0 -> 0.30.6
 # 0.30.7 -> 0.32.4
 # 0.32.4 -> 0.35.1
+# 0.35.1 -> 0.40.3
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -65,9 +66,9 @@ LLAMA_CPP_UPDATE=0
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.12.6/CMakePresets.json#L71
-# CUDA:  https://github.com/ollama/ollama/blob/v0.12.6/CMakePresets.json#L33
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.12.6/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.40.3/CMakePresets.json#L71
+# CUDA:  https://github.com/ollama/ollama/blob/v0.40.3/CMakePresets.json#L33
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.40.3/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908_xnack_minus"
 	"gfx908_xnack_plus"
@@ -167,7 +168,7 @@ CPU_FLAGS_X86=(
 )
 
 CUDA_FATTN_TARGETS_COMPAT=(
-# https://github.com/ollama/ollama/blob/v0.12.6/discover/types.go#L173
+# https://github.com/ollama/ollama/blob/v0.40.3/discover/types.go#L173
 	"sm_75"
 	"sm_80"
 	"sm_86"
@@ -632,7 +633,7 @@ ROCM_IUSE=(
 	$(gen_rocm_iuse)
 )
 
-LLAMA_CPP_TAG="b11232" # See https://github.com/ollama/ollama/blob/v0.35.1/LLAMA_CPP_VERSION
+LLAMA_CPP_TAG="b11351" # See https://github.com/ollama/ollama/blob/v0.40.3/LLAMA_CPP_VERSION
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
@@ -713,6 +714,8 @@ else
 		"github.com/cpuguy83/go-md2man/v2 v2.0.2"
 		"github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod"
 		"github.com/creack/pty v1.1.9/go.mod"
+		"github.com/d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1"
+		"github.com/d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1/go.mod"
 		"github.com/davecgh/go-spew v1.1.0"
 		"github.com/davecgh/go-spew v1.1.0/go.mod"
 		"github.com/davecgh/go-spew v1.1.1"
@@ -929,6 +932,8 @@ else
 		"github.com/ugorji/go/codec v1.2.12/go.mod"
 		"github.com/wk8/go-ordered-map/v2 v2.1.8"
 		"github.com/wk8/go-ordered-map/v2 v2.1.8/go.mod"
+		"github.com/x448/float16 v0.8.4"
+		"github.com/x448/float16 v0.8.4/go.mod"
 		"github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e"
 		"github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod"
 		"github.com/yuin/goldmark v1.4.13/go.mod"
