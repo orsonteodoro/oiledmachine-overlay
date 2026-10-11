@@ -1567,6 +1567,10 @@ einfo "The ENABLE_OIDC=1 and JWKS_KEY='<generated-key>' are both required for"
 einfo "locally hosted postgres with the Electron client"
 einfo
 	fi
+	if use electron ; then
+# TODO:  Fix or add wrapper.
+einfo "Do \`lobehub-electron --ozone-platform=wayland\` to run in Wayland."
+	fi
 	if use pwa ; then
 einfo
 einfo "LOBEHUB_HOSTNAME:  ${LOBEHUB_HOSTNAME} (user-definable, per-package environment variable)"
@@ -1607,6 +1611,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.48 (20260409) with sharp 0.34.3.    Tested with only USE=pwa
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.52 (20260421) with sharp 0.34.3.    Tested pwa and electron login to self-hosted server
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.2.13 (20260812) with sharp 0.35.3.    Tested pwa and electron with DATABASE_DRIVER="pg" and AUTH_SSO_PROVIDERS="github"
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.2.19 (20261011) with sharp 0.35.5, Electron 44.7.0.    Tested pwa and electron with DATABASE_DRIVER="pg" and AUTH_SSO_PROVIDERS="github"
 
 # E-mail login:  untested
 # Electron:  passed
