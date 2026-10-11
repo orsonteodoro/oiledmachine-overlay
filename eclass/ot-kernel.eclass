@@ -4241,6 +4241,22 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
 		fi
+	elif [[ \
+		   "${work_profile}" == "red-team-devlab-baremetal-mem" \
+		|| "${work_profile}" == "red-team-devlab-baremetal-cpu" \
+		|| "${work_profile}" == "red-team-devlab-baremetal-vm" \
+	]] ; then
+	# Optimize to prevent incast (50% throughput drop) for flooding.
+	# Flooding is not the most popular attack by red teamers.
+	# The use for bbr is for stealth.  Pacing + rq qdisc is required for
+	# stealth in bbrv1 against EDR suspicious behavior detection.
+		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
+		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+		fi
 	else
 	# Optimize for capabilities.
 		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
@@ -10223,9 +10239,24 @@ ot-kernel_set_rcu_powersave() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_have_nvme
+# @DESCRIPTION:
+# Checks if a NVMe is in the system
+ot-kernel_have_nvme() {
+	local option="${OT_KERNEL_NVME:-auto}"
+	if [[ "${option}" == "1" ]] ; then
+		return 0
+	elif [[ "${option}" == "auto" ]] ; then
+		if blkid | grep -q "nvme" ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
 # @FUNCTION: ot-kernel_have_ssd
 # @DESCRIPTION:
-# Checks if ssd (non-rotational) is in system
+# Checks if a ssd (non-rotational) is in the system
 ot-kernel_have_ssd() {
 	local option="${OT_KERNEL_SSD:-auto}"
 	if [[ "${option}" == "1" ]] ; then
@@ -10238,7 +10269,7 @@ ot-kernel_have_ssd() {
 
 # @FUNCTION: ot-kernel_have_hdd
 # @DESCRIPTION:
-# Checks if hdd (rotational) is in system
+# Checks if a hdd (rotational) is in the system
 ot-kernel_have_hdd() {
 	local option="${OT_KERNEL_HDD:-auto}"
 	if [[ "${option}" == "1" ]] ; then
@@ -10372,48 +10403,88 @@ ot-kernel_iosched_custom() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_iosched_max_throughput
+# @FUNCTION: ot-kernel_iosched_max_throughput_non_interactive
 # @DESCRIPTION:
-# Configures the I/O scheduler for high throughput
-ot-kernel_iosched_max_throughput() {
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "none" "bfq-throughput"
-	elif ot-kernel_have_ssd ; then
-		ot-kernel_set_iosched "none" ""
-	elif ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "" "bfq-throughput"
-	else
-		ot-kernel_set_iosched "none" "none"
-	fi
-}
-
-# @FUNCTION: ot-kernel_iosched_builder_throughput
-# @DESCRIPTION:
-# Configures the I/O scheduler for high throughput when compiling or emerging
-ot-kernel_iosched_builder_throughput() {
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+# Configures the I/O scheduler for high throughput in non interactive scenarios
+ot-kernel_iosched_max_throughput_non_interactive() {
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "mq-deadline"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "none" "mq-deadline"
 	elif ot-kernel_have_ssd ; then
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "" "mq-deadline"
 	else
-		ot-kernel_set_iosched "none" "none"
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
 	fi
 }
 
-# @FUNCTION: ot-kernel_iosched_interactive
+# @FUNCTION: ot-kernel_iosched_max_throughput_interactive
+# @DESCRIPTION:
+# Configures the I/O scheduler for high throughput in interactive scenarios
+ot-kernel_iosched_max_throughput_interactive() {
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-throughput"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-throughput"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "bfq-throughput"
+	else
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_vm_baremetal_disks
+# @DESCRIPTION:
+# Configures the I/O scheduler for goodput in a vm with baremetal disks using pass through
+ot-kernel_iosched_vm_baremetal_disks() {
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "mq-deadline"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "mq-deadline"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "mq-deadline"
+	else
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_vm_virtual_disks
+# @DESCRIPTION:
+# Configures the I/O scheduler for goodput in a vm with virtual disks (e.g. qcow2 or vmdk files)
+ot-kernel_iosched_vm_virtual_disks() {
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "none"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "none"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "none"
+	else
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_low_latency_interactive
 # @DESCRIPTION:
 # Configures the I/O scheduler for saturated heavy I/O prioritizing web browsing I/O
-ot-kernel_iosched_interactive() {
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+ot-kernel_iosched_low_latency_interactive() {
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-low-latency"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "none" "bfq-low-latency"
 	elif ot-kernel_have_ssd ; then
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "" "bfq-low-latency"
 	else
-		ot-kernel_set_iosched "none" "none"
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
 	fi
 }
 
@@ -10422,14 +10493,16 @@ ot-kernel_iosched_interactive() {
 # Configures the I/O scheduler for manual interactivity adjustments via
 # ionice.
 ot-kernel_iosched_custom_interactive() {
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-custom-interactive"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "none" "bfq-custom-interactive"
 	elif ot-kernel_have_ssd ; then
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "" "bfq-custom-interactive"
 	else
-		ot-kernel_set_iosched "none" "none"
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
 	fi
 }
 
@@ -10437,14 +10510,16 @@ ot-kernel_iosched_custom_interactive() {
 # @DESCRIPTION:
 # Configures the I/O scheduler for dropped frames avoidance
 ot-kernel_iosched_streaming() {
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+	if ot-kernel_have_nvme && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-streaming"
+	elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "none" "bfq-streaming"
 	elif ot-kernel_have_ssd ; then
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "" "bfq-streaming"
 	else
-		ot-kernel_set_iosched "none" "none"
+		ot-kernel_set_iosched "none" "none" # Reduce overhead
 	fi
 }
 
@@ -11890,7 +11965,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_interactive
+		ot-kernel_iosched_low_latency_interactive
 	elif [[ \
 		"${work_profile}" == "casual-gaming" \
 	]] ; then
@@ -11903,7 +11978,7 @@ ewarn "The dss work profile is experimental and in development."
 		interactive_critical=1
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_interactive
+		ot-kernel_iosched_low_latency_interactive
 	elif [[ \
 		   "${work_profile}" == "vm-host-desktop" \
 		|| "${work_profile}" == "vm-host-desktop-gpu-passthrough" \
@@ -11953,7 +12028,7 @@ ewarn "The dss work profile is experimental and in development."
 	# with a lot of clicks.
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_interactive
+		ot-kernel_iosched_low_latency_interactive
 		if [[ "${work_profile}" == "pro-gaming" ]] ; then
 			ot-kernel_optimize_gaming
 		elif [[ "${work_profile}" == "gaming-tournament" ]] ; then
@@ -12015,7 +12090,7 @@ ewarn "The dss work profile is experimental and in development."
 		]] ; then
 			ot-kernel_iosched_streaming
 		else
-			ot-kernel_iosched_interactive
+			ot-kernel_iosched_low_latency_interactive
 		fi
 		_OT_KERNEL_FORCE_STABILITY=1
 	elif [[ \
@@ -12032,7 +12107,7 @@ ewarn "The dss work profile is experimental and in development."
 		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
-			ot-kernel_iosched_builder_throughput
+			ot-kernel_iosched_max_throughput_non_interactive
 		else
 			ot-kernel_iosched_custom_interactive
 		fi
@@ -12052,9 +12127,9 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
-			ot-kernel_iosched_max_throughput
+			ot-kernel_iosched_max_throughput_non_interactive
 		else
-			ot-kernel_iosched_interactive
+			ot-kernel_iosched_low_latency_interactive
 		fi
 	elif [[ \
 		   "${work_profile}" == "database-server" \
@@ -12119,7 +12194,7 @@ ewarn "The dss work profile is experimental and in development."
 			   "${work_profile}" == "file-server" \
 			|| "${work_profile}" == "streaming-server" \
 		]] ; then
-			ot-kernel_iosched_max_throughput
+			ot-kernel_iosched_max_throughput_non_interactive
 		elif [[ \
 			   "${work_profile}" == "database-server" \
 			|| "${work_profile}" == "datacenter-backend" \
@@ -12128,7 +12203,7 @@ ewarn "The dss work profile is experimental and in development."
 		]] ; then
 			ot-kernel_iosched_max_tps
 		else
-			ot-kernel_iosched_interactive
+			ot-kernel_iosched_low_latency_interactive
 		fi
 		if [[ \
 			   "${work_profile}" == "website-interactive" \
@@ -12165,7 +12240,7 @@ ewarn "The dss work profile is experimental and in development."
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		fi
-		ot-kernel_iosched_interactive
+		ot-kernel_iosched_low_latency_interactive
 	elif [[ \
 		   "${work_profile}" == "dvr" \
 		|| "${work_profile}" == "jukebox" \
@@ -12258,7 +12333,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-			ot-kernel_iosched_max_throughput
+			ot-kernel_iosched_max_throughput_non_interactive
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "hpc-realtime" ]] ; then
 			timer_handling="tickless-full"
@@ -12269,7 +12344,7 @@ ewarn "The dss work profile is experimental and in development."
 			elif ver_test "${KV_MAJOR_MINOR}" "-lt" "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			fi
-			ot-kernel_iosched_max_throughput
+			ot-kernel_iosched_max_throughput_interactive
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-0}
 		fi
@@ -12280,7 +12355,7 @@ ewarn "The dss work profile is experimental and in development."
 		power_profile="conserve"
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
-		ot-kernel_iosched_interactive
+		ot-kernel_iosched_low_latency_interactive
 	elif [[ \
 		   "${work_profile}" == "pi-deep-learning" \
 		|| "${work_profile}" == "pi-music-production" \
@@ -12303,6 +12378,31 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 		_OT_KERNEL_FORCE_STABILITY=1
+	elif [[ \
+		   "${work_profile}" == "red-team-devlab-baremetal-mem" \
+		|| "${work_profile}" == "red-team-devlab-baremetal-cpu" \
+	]] ; then
+		# devel = coding | hypervisor ; optimize for high memory use (anti DoS)
+		# attack = fuzzing | cracking | flooding ; optimize for max CPU usage
+		ot-kernel_set_kconfig_set_lowest_timer_hz
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		if [[ "${work_profile}" == "red-team-devlab-baremetal-mem" ]] ; then
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
+		else
+			_OT_KERNEL_FORCE_SWAP_OFF="1"
+		fi
+		ot-kernel_unset_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER" # For debugging
+		ot-kernel_iosched_max_throughput_non_interactive
+		# CPU scheduler:  throughput
+	elif [[ \
+		"${work_profile}" == "red-team-devlab-vm" \
+	]] ; then
+		ot-kernel_set_kconfig_set_default_timer_hz
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
+		ot-kernel_unset_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER" # For debugging
+		ot-kernel_iosched_vm_virtual_disks
+		# CPU scheduler:  throughput
 	fi
 
 	export OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"0"}
@@ -14957,7 +15057,7 @@ ot-kernel_set_red_team() {
 		_OT_KERNEL_RED_TEAM_WARN_DANGER=1
 	fi
 	if [[ "${hardening_level}" =~ "red-team-devlab" ]] ; then
-		if [[ "${hardening_level}" == "red-team-devlab-baremetal" ]] ; then
+		if [[ "${work_profile}" == "red-team-devlab-baremetal-hypervisor" ]] ; then
 	# Support disposable virtual target machines
 			ot-kernel_y_configopt "CONFIG_KVM"
 		fi
@@ -18608,6 +18708,14 @@ ewarn
 # @DESCRIPTION:
 # Install red team optimizations.
 _ot-kernel_postinst_gen_sysctl_optimizations() {
+ewarn
+ewarn "A ${EROOT}/etc/sysctl.d/red-team-optimizations.conf is being installed"
+ewarn "but may interfere if multiple kernels are installed."
+ewarn
+ewarn "If your active work profile not any of red-team-devlab then disable by"
+ewarn "moving the file when not in use or completely comment out the sysctl.d"
+ewarn "profile."
+ewarn
 cat <<EOF > "${EROOT}/etc/sysctl.d/red-team-optimizations.conf"
 # Maximize port availability and speed up recycling
 net.ipv4.tcp_tw_reuse = 1
@@ -18644,6 +18752,14 @@ net.ipv4.ip_unprivileged_port_start = 0
 # Remove fingerprinting to increase stealth
 net.ipv4.tcp_timestamps = 0
 
+# Set fq as the default queuing discipline (required for BBR pacing)
+net.core.default_qdisc = fq
+
+# Set BBR as the default TCP congestion control algorithm
+net.ipv4.tcp_congestion_control = bbr
+
+# Optional: Disable slow start after idle to maintain full speed on bursty traffic
+net.ipv4.tcp_slow_start_after_idle = 0
 EOF
 }
 

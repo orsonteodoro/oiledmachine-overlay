@@ -5229,6 +5229,9 @@ unset OT_KERNEL_PRIVATE_KEY
       presentation
       pro-gaming
       radio-broadcaster
+      red-team-devlab-baremetal-mem
+      red-team-devlab-baremetal-cpu
+      red-team-devlab-vm
       renderfarm-dedicated
       renderfarm-workstation
       ros
@@ -5266,6 +5269,17 @@ unset OT_KERNEL_PRIVATE_KEY
       - digital-audio-workstation and PREEMPT_RT=y disables swap, it is
         recommended to build a builder kernel with swap enabled to build the
         entire userland.
+      - red-team-devlab-baremetal-mem is designed for memory hogs use cases
+        It applies to the following red team cybersecurity scenarios:
+        - coding and compilation
+        - hypervisor + VM for broke mobile researchers
+      - red-team-devlab-baremetal-cpu is designed for max CPU utilization
+        It applies to the following red team cybersecurity scenarios:
+        - cracking
+        - flooding
+        - fuzzing
+        - hypervisor + VMs for affluent desktop/server enterprise researchers
+        - hypervisor + VM for affluent mobile researchers
 
     Examples:
 
