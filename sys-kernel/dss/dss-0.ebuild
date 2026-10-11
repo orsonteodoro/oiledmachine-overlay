@@ -1041,6 +1041,7 @@ BANNED_FILE_TRANSFERS="
 	!net-p2p/yggdrasil-go
 	!www-client/uget
 	!file-transfers? (
+		!app-admin/awscli-bin
 		!app-backup/bareos
 		!app-backup/bacula
 		!app-backup/borgbackup
@@ -1051,6 +1052,7 @@ BANNED_FILE_TRANSFERS="
 		!net-misc/rsync
 		!net-misc/wget
 		!compliant? (
+			!app-admin/awscli
 			!app-arch/rclone
 			!net-ftp/filezilla
 			!net-misc/dropbox-cli
@@ -1059,6 +1061,7 @@ BANNED_FILE_TRANSFERS="
 		)
 	)
 	compliant? (
+		!app-admin/awscli
 		!app-arch/rclone
 		!net-ftp/filezilla
 		!net-misc/dropbox-cli
