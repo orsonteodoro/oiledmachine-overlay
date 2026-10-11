@@ -18611,6 +18611,16 @@ net.ipv4.tcp_max_syn_backlog = 65535
 # Expand TCP window sizes to handle huge bursts of data without lagging or dropping packets
 net.ipv4.tcp_rmem = 4096 87380 16777216
 net.ipv4.tcp_wmem = 4096 65536 16777216
+
+# For convenience of debugging payloads when non-root
+# 0 = unrestricted (anyone can access)
+# 1 = restricted (only root can access)
+kernel.dmesg_restrict = 0
+
+# Allow to attach to port 80 for red teamer sites, security bypass
+# 0 = allow port 80 to be attached.
+# 1024 = deny port 80 to be attached.
+net.ipv4.ip_unprivileged_port_start=0
 EOF
 		if ! has_version "sys-process/procps" ; then
 ewarn "sys-process/procps is needed to use red-team optimizations."
