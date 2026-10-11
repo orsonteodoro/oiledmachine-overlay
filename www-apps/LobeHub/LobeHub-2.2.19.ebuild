@@ -1453,7 +1453,7 @@ src_install() {
 	dodoc "LICENSE"
 
 	newicon \
-		"${S}/public/icons/icon-512x512.png" \
+		"${S}/public/app-icons/icon-512x512.png" \
 		"${PN}.png"
 
 	# Include hidden files/dir for *
