@@ -137,6 +137,7 @@ _OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
 _OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
 _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 _OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
+_OT_KERNEL_RED_TEAM_WARN_DANGER=0
 _OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
@@ -7407,7 +7408,7 @@ einfo "OT_KERNEL_LSMS=manual (from kernel .config)"
 einfo "LSMs:  ${lsms}"
 		warn_lsm_changes
 	elif [[ "${hardening_level}" =~ ("red-team-devlab"|"red-team-prey") ]] ; then
-einfo "Detected red-team.  Enabling bpf for debugging payloads"
+einfo "Detected ${hardening_level}.  Enabling bpf for debugging payloads"
 		ot_kernel_lsms="bpf"
 		ot-kernel_set_configopt "CONFIG_LSM" "\"bpf\""
 
@@ -7448,6 +7449,7 @@ eerror "  1. Disable CONFIG_SECURITY"
 eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure"
 eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure-af"
 eerror "  4. OT_KERNEL_HARDENING_LEVEL=blue-team"
+eerror "  5. OT_KERNEL_HARDENING_LEVEL=red-team-homebase"
 eerror
 			die
 		fi
@@ -7464,6 +7466,7 @@ eerror "  2. OT_KERNEL_IMA=off"
 eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure"
 eerror "  4. OT_KERNEL_HARDENING_LEVEL=secure-af"
 eerror "  5. OT_KERNEL_HARDENING_LEVEL=blue-team"
+eerror "  6. OT_KERNEL_HARDENING_LEVEL=red-team-homebase"
 eerror
 			die
 		fi
@@ -7935,7 +7938,7 @@ ot-kernel_set_kconfig_module_signing() {
 
 	local lockdown_lsm=0
 	if [[ "${hardening_level}" =~ ("red-team-devlab"|"red-team-prey") ]] ; then
-einfo "Detected red-team forcing disabling signed modules"
+einfo "Detected ${hardening_level} forcing disabling signed modules"
 		sign_modules=0
 		lockdown_lsm=0
 	elif [[ "${OT_KERNEL_LSMS}" =~ "lockdown" || "${work_profile}" == "dss" ]] ; then
@@ -9168,8 +9171,8 @@ _ot-kernel_is_hardening_level_least_secure() {
 		|| "${hardening_level}" == "dangerous" \
 		|| "${hardening_level}" == "dangerous-af" \
 		|| "${hardening_level}" == "dangerous-as-fuck" \
-		|| "${hardening_level}" == "red-team-devlab" \
 		|| "${hardening_level}" == "red-team-prey" \
+		|| "${hardening_level}" == "red-team-devlab-baremetal" \
 	]] ; then
 		return 0
 	else
@@ -9186,6 +9189,7 @@ _ot-kernel_is_hardening_level_secure() {
 		|| "${hardening_level}" == "secure" \
 		|| "${hardening_level}" == "practical" \
 		|| "${hardening_level}" == "hard" \
+		|| "${hardening_level}" == "red-team-devlab-vm" \
 	]] ; then
 		return 0
 	else
@@ -9235,16 +9239,17 @@ eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  custom            - User defined setting"
-eerror "  default           - Upstream defaults, practically secure"
-eerror "  manual            - Alias for custom"
-eerror "  performance       - All mitigations disabled"
-eerror "  practical         - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
-eerror "  secure-af         - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
-eerror "  red-team-homebase - Optimize for stopping a counterattack"
-eerror "  red-team-devlab   - Optimize for debugging and development"
-eerror "  red-team-prey     - Optimize for stealth"
-eerror "  blue-team         - Same as secure-af"
+eerror "  custom                    - User defined setting"
+eerror "  default                   - Upstream defaults, practically secure"
+eerror "  manual                    - Alias for custom"
+eerror "  performance               - All mitigations disabled"
+eerror "  practical                 - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
+eerror "  secure-af                 - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
+eerror "  red-team-homebase         - Optimize for stopping a counterattack"
+eerror "  red-team-devlab-baremetal - Optimize for debugging and development outside the vm"
+eerror "  red-team-devlab-vm        - Optimize for debugging and development inside the vm"
+eerror "  red-team-prey             - Optimize for stealth"
+eerror "  blue-team                 - Same as secure-af"
 eerror
 eerror "Actual value:"
 eerror
@@ -14948,10 +14953,14 @@ ewarn "Generating a new default config:  ${path_config}"
 ot-kernel_set_red_team() {
 	if [[ "${hardening_level}" == "red-team-homebase" ]] ; then
 		_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=1
+	else
+		_OT_KERNEL_RED_TEAM_WARN_DANGER=1
 	fi
-	if [[ "${hardening_level}" == "red-team-devlab" ]] ; then
+	if [[ "${hardening_level}" =~ "red-team-devlab" ]] ; then
+		if [[ "${hardening_level}" == "red-team-devlab-baremetal" ]] ; then
 	# Support disposable virtual target machines
-		ot-kernel_y_configopt "CONFIG_KVM"
+			ot-kernel_y_configopt "CONFIG_KVM"
+		fi
 
 	# Support wireless/radio analysis
 		ot-kernel_y_configopt "CONFIG_NET_3G"
@@ -15005,8 +15014,15 @@ ot-kernel_set_red_team() {
 		ot-kernel_set_kconfig_kernel_cmdline "audit=0"
 		ot-kernel_set_kconfig_kernel_cmdline "mitigations=off"
 
-	# Performance tuning for network needs, see
-	# ot-kernel_postinst_red_team_optimizations()
+	# Increase stealth to avoid exposing payloads
+		ot-kernel_unset_configopt "CONFIG_KALLSYMS"
+	fi
+	if [[ "${hardening_level}" =~ ("red-team-devlab-vm") ]] ; then
+	# See ot-kernel_postinst_red_team_optimizations()
+		_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=1
+	fi
+	if [[ "${hardening_level}" =~ ("red-team-devlab-baremetal"|"red-team-prey") ]] ; then
+	# See ot-kernel_postinst_red_team_optimizations()
 		_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=1
 	fi
 }
@@ -18588,8 +18604,10 @@ ewarn
 	fi
 }
 
-ot-kernel_postinst_red_team_optimizations() {
-	if [[ "${_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG}" == "1" ]] ; then
+# @FUNCTION: _ot-kernel_postinst_gen_sysctl_optimizations
+# @DESCRIPTION:
+# Install red team optimizations.
+_ot-kernel_postinst_gen_sysctl_optimizations() {
 cat <<EOF > "${EROOT}/etc/sysctl.d/red-team-optimizations.conf"
 # Maximize port availability and speed up recycling
 net.ipv4.tcp_tw_reuse = 1
@@ -18621,11 +18639,25 @@ kernel.dmesg_restrict = 0
 # Allow to attach to port 80 for red teamer sites, security bypass
 # 0 = allow port 80 to be attached.
 # 1024 = deny port 80 to be attached.
-net.ipv4.ip_unprivileged_port_start=0
+net.ipv4.ip_unprivileged_port_start = 0
+
+# Remove fingerprinting to increase stealth
+net.ipv4.tcp_timestamps = 0
+
 EOF
+}
+
+# @FUNCTION: ot-kernel_postinst_red_team_optimizations
+# @DESCRIPTION:
+# Install red team sysctl optimizations and security warnings at the last minute.
+ot-kernel_postinst_red_team_optimizations() {
+	if [[ "${_OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG}" == "1" ]] ; then
+		_ot-kernel_postinst_gen_sysctl_optimizations
+
 		if ! has_version "sys-process/procps" ; then
 ewarn "sys-process/procps is needed to use red-team optimizations."
 		fi
+
 einfo
 einfo "To prevent freezing, you can bypass Netfilter's connection tracking by"
 einfo "doing:"
@@ -18633,24 +18665,34 @@ einfo
 einfo "iptables -t raw -A PREROUTING -p tcp --dport 1:65535 -j NOTRACK"
 einfo "iptables -t raw -A OUTPUT -p tcp --sport 1:65535 -j NOTRACK"
 einfo
+	fi
+
+	if [[ \
+		"${_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG}" == "1" \
+			&& \
+		-e "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" \
+	]] ; then
+		rm -f "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" || true
+	fi
+
+	if [[ "${_OT_KERNEL_RED_TEAM_WARN_DANGER}" == "1" ]] ; then
 ewarn
-ewarn "The red team hardening level is not safe for Internet use."
+ewarn "The red team hardening levels except homebase are not safe for Internet"
+ewarn "use."
 ewarn
-ewarn "The red team hardening level is not safe for security-critical activities."
+ewarn "The red team hardening levels except homebase are not safe for"
+ewarn "security-critical activities."
 ewarn
-ewarn "The red team hardening level is not safe for the dark web which state"
-ewarn "sponsored threat actors are known to be found and use documented browser"
-ewarn "exploits.  There is an AI slop infographic that says you can use TOR"
-ewarn "network + a red-team distro, probably created by a state sponsored"
-ewarn "threat actor."
+ewarn "The red team hardening levels except homebase are not safe for the dark"
+ewarn "web which state sponsored threat actors are known to be found and use"
+ewarn "documented browser exploits.  There is an AI slop infographic that says"
+ewarn "you can use TOR network + a red-team distro, it was probably created by"
+ewarn "a state sponsored threat actor."
 ewarn
-ewarn "ALL HARDENING HAS BEEN DISABLED."
+ewarn "HARDENING HAS BEEN DISABLED EITHER PARTIALLY OR COMPLETELY."
 ewarn
 ewarn "FAFO RED TEAMERS HAVE BEEN WARNED."
 ewarn
-	fi
-	if [[ "${_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG}" == "1" && -e "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" ]] ; then
-		rm -f "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" || true
 	fi
 }
 
