@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# This ebuild is partly created with AI text generation.
+# This ebuild is partly created with AI text generation and AI generated fixes.
 # A wrapper script and some patches are based on AI generated code.
 
 # TODO:  Test e-mail login.
@@ -1102,6 +1102,40 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 		sed -i -e "s|${S}|/opt/${MY_PN2}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 	fi
 
+	# Elasticsearch is an optional search provider
+	if use postgres ; then
+		epnpm exec esbuild "scripts/elasticsearchReindex/index.ts" \
+			--bundle \
+			--platform=node \
+			--format=cjs \
+			--outfile="${S}/fts-search-elasticsearch-reindex.cjs" \
+			--external:pg \
+			--external:drizzle-orm \
+			'--external:drizzle-orm/*'
+		epnpm exec esbuild "scripts/elasticsearchSync/cli.ts" \
+			--bundle \
+			--platform=node \
+			--format=cjs \
+			--outfile="${S}/fts-search-elasticsearch-sync.cjs" \
+			--external:pg \
+			--external:drizzle-orm \
+			'--external:drizzle-orm/*'
+		epnpm exec esbuild "scripts/elasticsearchCleanupIneligibleMessages/cli.ts" \
+			--bundle \
+			--platform=node \
+			--format=cjs \
+			--outfile="${S}/fts-search-ineligible-message-cleanup.cjs" \
+			--external:pg \
+			--external:drizzle-orm \
+			'--external:drizzle-orm/*'
+		epnpm exec esbuild "scripts/pgSearchCleanup/index.ts" \
+			--bundle \
+			--platform=node \
+			--format=cjs \
+			--outfile="${S}/fts-search-pg-search-cleanup.cjs" \
+			--external:pg
+	fi
+
 	if use electron ; then
 # Fixes:
 #$ pnpm scripts/ensureWorkspaceLinks.ts && tsdown
@@ -1109,11 +1143,11 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 #spawn scripts/ensureWorkspaceLinks.ts EACCES
 #[ELIFECYCLE] Command failed with exit code 1.
 
-		# Make the script executable
-		chmod +x "${S}/apps/cli/scripts/ensureWorkspaceLinks.ts" || die
-
-		# Also make sure the whole scripts dir is readable/executable if needed
-		chmod -R u+rx "${S}/apps/cli/scripts/" || die
+		# Prevent misinterpretation of TypeScript's import as imagemagick import because of lack of shebang (#!/usr/bin/env -S npx tsx) in ensureWorkspaceLinks.ts.
+		sed -i \
+			-e "s|pnpm scripts/ensureWorkspaceLinks.ts|pnpm exec tsx scripts/ensureWorkspaceLinks.ts|g" \
+			"${S}/apps/cli/package.json" \
+			|| die
 
 		edo npm run "desktop:build:all"
 
@@ -1156,6 +1190,12 @@ _install_pwa_webapp() {
 	insinto "${_PREFIX}/public/_spa"
 	doins -r "${S}/public/_spa/"*
 
+	insinto "${_PREFIX}/public/_spa-share"
+	doins -r "${S}/public/_spa-share/"*
+
+	insinto "${_PREFIX}/public/_spa-workbench"
+	doins -r "${S}/public/_spa-workbench/"*
+
 	if use postgres ; then
 		insinto "${_PREFIX}/packages/database/migrations"
 		doins -r "${S}/packages/database/migrations/"*
@@ -1163,6 +1203,10 @@ _install_pwa_webapp() {
 		insinto "${_PREFIX}"
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
+		doins "${S}/fts-search-elasticsearch-reindex.cjs"
+		doins "${S}/fts-search-elasticsearch-sync.cjs"
+		doins "${S}/fts-search-ineligible-message-cleanup.cjs"
+		doins "${S}/fts-search-pg-search-cleanup.cjs"
 	fi
 
 	sed -i \
@@ -1185,6 +1229,9 @@ _install_pwa_webapp() {
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.claude"
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.cline"
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/lobehub/.lobehub"
+
+	keepdir "${_PREFIX}/.elasticsearch-reindex"
+	fowners -R "${MY_PN2}:${MY_PN2}" "${_PREFIX}/.elasticsearch-reindex"
 
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
