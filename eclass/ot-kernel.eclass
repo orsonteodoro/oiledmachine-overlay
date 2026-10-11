@@ -4248,7 +4248,8 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 	# Optimize to prevent incast (50% throughput drop) for flooding.
 	# Flooding is not the most popular attack by red teamers.
 	# The use for bbr is for stealth.  Pacing + rq qdisc is required for
-	# stealth in bbrv1 against EDR suspicious behavior detection.
+	# proper implementation of stealth with bbrv1 as mitigation against
+	# EDR suspicious behavior detection.
 		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
