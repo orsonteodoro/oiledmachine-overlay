@@ -970,13 +970,13 @@ BANNED_NETWORKS="
 	!net-misc/httptunnel
 	!net-misc/iodine
 	!net-misc/rclone
-	!net-p2p/zeronet
 	!net-p2p/freenet
 	!net-p2p/gnunet
 	!net-p2p/loco-share
-	!net-p2p/quiet
 	!net-p2p/onionutils
+	!net-p2p/quiet
 	!net-p2p/ricochet
+	!net-p2p/zeronet
 	!net-proxy/dante
 	!net-proxy/privoxy
 	!net-proxy/proxychains
@@ -1008,14 +1008,15 @@ BANNED_NETWORKS="
 # Enterprise tools only qualify for conditional file-transfers exclusion.
 BANNED_FILE_TRANSFERS="
 	!net-analyzer/netcat
+	!net-fs/btfs
 	!net-ftp/filezilla-pro
 	!net-ftp/filezillapro
 	!net-ftp/ftp
 	!net-ftp/lftp
 	!net-ftp/tftp-hpa
 	!net-misc/aria2
-	!net-misc/ncftp
 	!net-misc/mulk
+	!net-misc/rclone-bin
 	!net-misc/socat
 	!net-misc/sshpass
 	!net-misc/wput
@@ -1038,6 +1039,7 @@ BANNED_FILE_TRANSFERS="
 	!net-p2p/transmission
 	!net-p2p/transmission-cli
 	!net-p2p/yggdrasil-go
+	!www-client/uget
 	!file-transfers? (
 		!app-backup/bareos
 		!app-backup/bacula
@@ -1051,15 +1053,17 @@ BANNED_FILE_TRANSFERS="
 		!compliant? (
 			!app-arch/rclone
 			!net-ftp/filezilla
-			!net-misc/wget2
 			!net-misc/dropbox-cli
+			!net-misc/ncftp
+			!net-misc/wget2
 		)
 	)
 	compliant? (
 		!app-arch/rclone
 		!net-ftp/filezilla
-		!net-misc/wget2
 		!net-misc/dropbox-cli
+		!net-misc/ncftp
+		!net-misc/wget2
 	)
 "
 
