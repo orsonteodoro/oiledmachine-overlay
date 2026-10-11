@@ -635,7 +635,7 @@ einfo "Unpacking live sources"
 einfo "Unpacking tarball sources"
 		unpack "${MY_P}.tar.gz"
 	fi
-	local expected_cargo_lock_fingerprint="c2db4d06f9a852bcd313af672c5a57909c0ce9fddb1ca228666b29308a1ae85fd0196fa0e7d205485c77c2007065c7d7bc257946a9761c08d47e421b81239ff3"
+	local expected_cargo_lock_fingerprint="0e8aae8a481ba6d0819fa3cf442e2de58358066dc6a87375466954a12fcdbc3502dfeb2e28f910c6c3d21cbbdf88e9f1d2dd5ea4a8ad5c15bb1dfb7b5d130780"
 	local actual_cargo_lock_fingerprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
 	if [[ "${actual_cargo_lock_fingerprint}" != "${expected_cargo_lock_fingerprint}" ]] ; then
 eerror "QA:  Update cargo lockfile and fingerprint for offline install."
