@@ -1,46 +1,81 @@
 --- a/scripts/serverLauncher/startServer.js.orig	2026-10-07 03:39:15.000000000 -0700
-+++ b/scripts/serverLauncher/startServer.js	2026-10-09 06:42:02.872289833 -0700
-@@ -10,6 +10,26 @@ const { existsSync } = require('node:fs'
- const localPath = path.join(__dirname, '..', '_shared', 'checkDeprecatedAuth.js');
- const dockerPath = '/app/scripts/_shared/checkDeprecatedAuth.js';
- const sharedModulePath = existsSync(localPath) ? localPath : dockerPath;
-+let sharedModulePath;
++++ b/scripts/serverLauncher/startServer.js	2026-10-11 07:37:39.831638825 -0700
+@@ -5,24 +5,58 @@ const { spawn } = require('node:child_pr
+ const { existsSync } = require('node:fs');
+ 
+ // Resolve shared module path for both local dev and Docker environments
+-// Local: scripts/serverLauncher/startServer.js -> scripts/_shared/...
+-// Docker: /app/startServer.js -> /app/scripts/_shared/...
+-const localPath = path.join(__dirname, '..', '_shared', 'checkDeprecatedAuth.js');
+-const dockerPath = '/app/scripts/_shared/checkDeprecatedAuth.js';
+-const sharedModulePath = existsSync(localPath) ? localPath : dockerPath;
+-
+-const { checkDeprecatedAuth } = require(sharedModulePath);
+-const gatewayCheckLocalPath = path.join(__dirname, '..', '_shared', 'checkGatewayConfig.js');
+-const gatewayCheckDockerPath = '/app/scripts/_shared/checkGatewayConfig.js';
+-const { checkGatewayConfig } = require(
+-  existsSync(gatewayCheckLocalPath) ? gatewayCheckLocalPath : gatewayCheckDockerPath,
+-);
++let sharedDeprecatedAuthModulePath;
 +
 +// 1. Try relative (local dev: scripts/serverLauncher/ -> scripts/_shared/)
-+const localRelative = path.join(__dirname, '..', '_shared', 'checkDeprecatedAuth.js');
-+if (existsSync(localRelative)) {
-+  sharedModulePath = localRelative;
++const relativeDeprecatedAuthPath = path.join(__dirname, '..', '_shared', 'checkDeprecatedAuth.js');
++if (existsSync(relativeDeprecatedAuthPath)) {
++  sharedDeprecatedAuthModulePath = relativeDeprecatedAuthPath;
 +}
 +// 2. Try Docker-style absolute (/app/...)
 +else if (existsSync('/app/scripts/_shared/checkDeprecatedAuth.js')) {
-+  sharedModulePath = '/app/scripts/_shared/checkDeprecatedAuth.js';
++  sharedDeprecatedAuthModulePath = '/app/scripts/_shared/checkDeprecatedAuth.js';
 +}
 +// 3. Try Gentoo /opt/lobehub/ install (scripts/_shared lives next to startServer.js)
 +else {
-+  const optPath = path.join(__dirname, 'scripts', '_shared', 'checkDeprecatedAuth.js');
-+  if (existsSync(optPath)) {
-+    sharedModulePath = optPath;
++  const optPathDeprecatedAuth = path.join(__dirname, 'scripts', '_shared', 'checkDeprecatedAuth.js');
++  if (existsSync(optPathDeprecatedAuth)) {
++    sharedDeprecatedAuthModulePath = optPathDeprecatedAuth;
 +  } else {
 +    throw new Error('Cannot locate checkDeprecatedAuth.js in any known path');
 +  }
 +}
- 
- const { checkDeprecatedAuth } = require(sharedModulePath);
- const gatewayCheckLocalPath = path.join(__dirname, '..', '_shared', 'checkGatewayConfig.js');
-@@ -19,9 +39,9 @@ const { checkGatewayConfig } = require(
- );
++const { checkDeprecatedAuth } = require(sharedDeprecatedAuthModulePath);
++
++// Resolve shared module path for both local dev and Docker environments
++let sharedGatewayConfigPath;
++
++// 1. Try relative (local dev: scripts/serverLauncher/ -> scripts/_shared/)
++const relativeGatewayConfigPath = path.join(__dirname, '..', '_shared', 'checkGatewayConfig.js');
++if (existsSync(relativeGatewayConfigPath)) {
++  sharedGatewayConfigPath = relativeGatewayConfigPath;
++}
++// 2. Try Docker-style absolute (/app/...)
++else if (existsSync('/app/scripts/_shared/checkGatewayConfig.js')) {
++  sharedGatewayConfigPath = '/app/scripts/_shared/checkGatewayConfig.js';
++}
++// 3. Try Gentoo /opt/lobehub/ install (scripts/_shared lives next to startServer.js)
++else {
++  const optPathGatewayConfig = path.join(__dirname, 'scripts', '_shared', 'checkGatewayConfig.js');
++  if (existsSync(optPathGatewayConfig)) {
++    sharedGatewayConfigPath = optPathGatewayConfig;
++  } else {
++    throw new Error('Cannot locate checkGatewayConfig.js in any known path');
++  }
++}
++const { checkGatewayConfig } = require(sharedGatewayConfigPath);
++
++
  
  // Set file paths
 -const DB_MIGRATION_SCRIPT_PATH = '/app/docker.cjs';
 -const ES_MIGRATION_SCRIPT_PATH = '/app/fts-search-elasticsearch-reindex.cjs';
 -const SERVER_SCRIPT_PATH = '/app/server.js';
+-const PROXYCHAINS_CONF_PATH = '/etc/proxychains4.conf';
 +const DB_MIGRATION_SCRIPT_PATH = '/opt/lobehub/docker.cjs';
 +const ES_MIGRATION_SCRIPT_PATH = '/opt/lobehub/fts-search-elasticsearch-reindex.cjs';
 +const SERVER_SCRIPT_PATH = '/opt/lobehub/server.js';
- const PROXYCHAINS_CONF_PATH = '/etc/proxychains4.conf';
++const PROXYCHAINS_CONF_PATH = '/etc/proxychains.conf';
  
  // Function to check if a string is a valid IP address
-@@ -122,8 +142,8 @@ ${protocol} ${ip} ${port} ${user} ${pass
+ const isValidIP = (ip, version = 4) => {
+@@ -122,8 +156,8 @@ ${protocol} ${ip} ${port} ${user} ${pass
  // Function to execute a script with child process spawn
  const runScript = (scriptPath, useProxy = false, args = []) => {
    const command = useProxy
