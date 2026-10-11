@@ -2765,7 +2765,8 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       secure
       secure-af
       red-team-homebase
-      red-team-devlab
+      red-team-devlab-baremetal
+      red-team-devlab-vm
       red-team-prey
       blue-team
       unset
@@ -2802,9 +2803,13 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
       red-team-homebase - This is the physical location of red team.  Just
       an alias for secure-af.
 
-      red-team-devlab - This is the development lab of red team cybersecurity.
-      It is optimized for debugging and is compatible with any performance
-      tuning.  It also has additional red-team networking optimizations.
+      red-team-devlab-baremetal - This is the development lab of red team
+      cybersecurity outside of the vm.  It is optimized for debugging and
+      network attack objectives.
+
+      red-team-devlab-vm - This is the development lab of red team inside
+      of the virtual machine.  It is optimized for debugging and to
+      simulate real world configurations.
 
       red-team-prey - This is the compromised target machine with a
       compromised kernel module.  It is optimized for stealth (disabled
