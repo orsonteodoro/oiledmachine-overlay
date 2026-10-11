@@ -142,7 +142,7 @@ ${PASSWORD_MANAGER_IUSE[@]}
 ${PROFILES_IUSE[@]}
 ${SANDBOX_IUSE[@]}
 ${SECURITY_ARCHITECTURE_ROLE[@]}
-audit +enforce
+audit +file-transfers +enforce
 ebuild_revision_72
 "
 REQUIRED_USE="
@@ -1003,14 +1003,93 @@ BANNED_NETWORKS="
 	!www-client/torbrowser-launcher
 "
 
+# Ban downloaders to mitigate drop zone creation
+# Ban uploaders to mitigate full exfiltration
+# Enterprise tools only qualify for conditional file-transfers exclusion.
+BANNED_FILE_TRANSFERS="
+	!net-analyzer/netcat
+	!net-ftp/filezilla-pro
+	!net-ftp/filezillapro
+	!net-ftp/ftp
+	!net-ftp/lftp
+	!net-ftp/tftp-hpa
+	!net-misc/aria2
+	!net-misc/ncftp
+	!net-misc/mulk
+	!net-misc/socat
+	!net-misc/sshpass
+	!net-misc/wput
+	!net-vpn/openvpn
+	!net-vpn/wireguard-tools
+	!net-p2p/amule
+	!net-p2p/aria2
+	!net-p2p/ctorrent
+	!net-p2p/deluge
+	!net-p2p/ktorrent
+	!net-p2p/mktorrent
+	!net-p2p/mldonkey
+	!net-p2p/opentracker
+	!net-p2p/rtorrent
+	!net-p2p/qbittorrrent
+	!net-p2p/qbittorrent-enhanced
+	!net-p2p/retroshare
+	!net-p2p/selene
+	!net-p2p/soulseek
+	!net-p2p/transmission
+	!net-p2p/transmission-cli
+	!net-p2p/yggdrasil-go
+	!file-transfers? (
+		!app-backup/bareos
+		!app-backup/bacula
+		!app-backup/borgbackup
+		!app-backup/restic
+		!app-backup/tsm
+		!net-ftp/vsftpd
+		!net-misc/curl
+		!net-misc/rsync
+		!net-misc/wget
+		!compliant? (
+			!app-arch/rclone
+			!net-ftp/filezilla
+			!net-misc/wget2
+			!net-misc/dropbox-cli
+		)
+	)
+	compliant? (
+		!app-arch/rclone
+		!net-ftp/filezilla
+		!net-misc/wget2
+		!net-misc/dropbox-cli
+	)
+"
+
+BANNED_REMOTE_ADMIN="
+	!net-misc/anydesk
+	!net-misc/chrome-remote-desktop
+	!net-misc/freerdp
+	!net-misc/krfb
+	!net-misc/rdesktop
+	!net-misc/teamviewer
+	!net-misc/tigervnc
+	!net-misc/tightvnc
+	!net-misc/turbovnc
+	!net-misc/ultravnc
+	!net-misc/vino
+	!net-misc/x11vnc
+	!net-misc/xrdp
+	!x11-wm/xpra
+"
+
 RDEPEND="
 	!virtual/dss
 	enforce? (
 		${BANNED_CIPHERS}
 		${BANNED_DEBUGGING_TOOLS}
+		${BANNED_FILE_TRANSFERS}
 		${BANNED_NETWORKS}
 		${BANNED_RECONNAISSANCE_TOOLS}
 		${BANNED_RED_TEAM_TOOLS}
+		${BANNED_REMOTE_ADMIN}
 		${BANNED_TERMS}
 		${BANNED_UNVALIDATED_FIPS}
 		${BANNED_X11}

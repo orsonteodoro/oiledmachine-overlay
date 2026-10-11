@@ -105,6 +105,10 @@
     <flag name="dm-crypt">
       Add dm-crypt for encrypting data.
     </flag>
+    <flag name="file-transfers">
+      Enable to allow upload/download packages for maintenance mode.
+      Disable to deny all upload/download packages during production.
+    </file>
     <flag name="dmz">
       Configure as part of the Demilitarized Zone, a section of the network that
       separates internal and external networks.
