@@ -823,7 +823,7 @@ SANDBOX_DEPENDS="
 
 # Reduce on device, lateral movement, social engineering, physical location recon.
 # Prevent leaking hardware vulnerabilties for unpatched systems.
-# Prevent leaking the kernel version for unpatched systems.
+# Prevent leaking the kernel version for unpatched or unsigned kernel module systems.
 # Reduce leaking via LotL.
 BANNED_RECONNAISSANCE_TOOLS="
 	!app-admin/facter
