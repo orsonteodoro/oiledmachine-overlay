@@ -45,7 +45,7 @@ inherit autotools cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot t
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_VERSION="10.09"
 	SOVER=$(ver_cut "1-2" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="f13745a17ff7af385d70d230c3d8594e501d6b6b"
+	FALLBACK_COMMIT="3346f1992e9ea5988d2dd15c4ef4d6b0db97ec8d"
 	EGIT_BRANCH="master"
 	#EGIT_REPO_URI="https://cgit.ghostscript.com/ghostpdl.git" # Stuck before downloading
 	EGIT_REPO_URI="https://github.com/ArtifexSoftware/ghostpdl.git"
@@ -69,7 +69,7 @@ SLOT="0/${SOVER}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 cups cpu_flags_arm_neon dbus gtk l10n_de openmp static-libs tesseract unicode X
-ebuild_revision_11
+ebuild_revision_13
 "
 
 LANGS="ja ko zh-CN zh-TW"
