@@ -138,7 +138,6 @@ _OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
 _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
 _OT_KERNEL_GENERATE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
 _OT_KERNEL_RED_TEAM_WARN_DANGER=0
-_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=0 # Variable not const
 unset _OT_KERNEL_O3_PROVIDER
 declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_EFIFB="" # Variable not const
@@ -15051,9 +15050,7 @@ ewarn "Generating a new default config:  ${path_config}"
 # @DESCRIPTION:
 # Tunes the kernel for red team typical use cases.
 ot-kernel_set_red_team() {
-	if [[ "${hardening_level}" == "red-team-homebase" ]] ; then
-		_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG=1
-	else
+	if [[ "${hardening_level}" =~ "red-team" ]] ; then
 		_OT_KERNEL_RED_TEAM_WARN_DANGER=1
 	fi
 	if [[ "${hardening_level}" =~ "red-team-devlab" ]] ; then
@@ -18716,6 +18713,9 @@ ewarn "If your active work profile not any of red-team-devlab, disable it by"
 ewarn "moving the file when not in use or completely comment out the conf"
 ewarn "file."
 ewarn
+ewarn "The red-team-optimizations.conf is for both red-team-devlab and"
+ewarn "for the red-team-prey machine."
+ewarn
 cat <<EOF > "${EROOT}/etc/sysctl.d/red-team-optimizations.conf"
 # Maximize port availability and speed up recycling
 net.ipv4.tcp_tw_reuse = 1
@@ -18781,14 +18781,6 @@ einfo
 einfo "iptables -t raw -A PREROUTING -p tcp --dport 1:65535 -j NOTRACK"
 einfo "iptables -t raw -A OUTPUT -p tcp --sport 1:65535 -j NOTRACK"
 einfo
-	fi
-
-	if [[ \
-		"${_OT_KERNEL_REMOVE_RED_TEAM_SYSCTL_CONFIG}" == "1" \
-			&& \
-		-e "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" \
-	]] ; then
-		rm -f "${EROOT}/etc/sysctl.d/red-team-optimizations.conf" || true
 	fi
 
 	if [[ "${_OT_KERNEL_RED_TEAM_WARN_DANGER}" == "1" ]] ; then
