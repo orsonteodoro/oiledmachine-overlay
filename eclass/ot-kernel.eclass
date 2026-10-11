@@ -18712,9 +18712,9 @@ ewarn
 ewarn "A ${EROOT}/etc/sysctl.d/red-team-optimizations.conf is being installed"
 ewarn "but may interfere if multiple kernels are installed."
 ewarn
-ewarn "If your active work profile not any of red-team-devlab then disable by"
-ewarn "moving the file when not in use or completely comment out the sysctl.d"
-ewarn "profile."
+ewarn "If your active work profile not any of red-team-devlab, disable it by"
+ewarn "moving the file when not in use or completely comment out the conf"
+ewarn "file."
 ewarn
 cat <<EOF > "${EROOT}/etc/sysctl.d/red-team-optimizations.conf"
 # Maximize port availability and speed up recycling
