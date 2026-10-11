@@ -1245,17 +1245,20 @@ _install_electron() {
 		local EXE_LIST=(
 "libffmpeg.so"
 "lobehub-desktop-dev"
-"libGLESv2.so"
 "libvk_swiftshader.so"
-"libEGL.so"
 "chrome-sandbox"
 "libvulkan.so.1"
+"resources/bin/auv"
 "resources/bin/lobe-cli.js"
 "chrome_crashpad_handler"
 		)
 
 		local x
 		for x in "${EXE_LIST[@]}" ; do
+			if [[ ! -e "${x}" ]] ; then
+ewarn "Skipping ${x}"
+				continue
+			fi
 			fperms 0755 "${_PREFIX}/${x}"
 		done
 		cat "${FILESDIR}/${MY_PN2}-electron" > "${T}/${MY_PN2}-electron" || die
