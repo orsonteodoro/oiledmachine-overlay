@@ -4587,13 +4587,6 @@ eerror "The value clear for OT_KERNEL_NET_QOS_SCHEDULERS has been changed to dis
 	local tcc="${OT_KERNEL_TCP_CONGESTION_CONTROLS}"
 
 	local bbr_default=0
-	local has_bbr1=0
-	if [[ "${tcc}" =~ ("bbr2"|"bbr3") ]] ; then
-	# Enable internal pacing fallback.
-		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-	elif [[ "${tcc}" =~ ("bbr") ]] ; then
-		has_bbr1=1
-	fi
 
 	if [[ "${tcc}" =~ "bbr" ]] ; then
 		local picked_alg=$(ot-kernel_get_net_qos_schedulers_default)
@@ -4603,19 +4596,29 @@ eerror "The value clear for OT_KERNEL_NET_QOS_SCHEDULERS has been changed to dis
 
 		local qdiscs="${OT_KERNEL_NET_QOS_SCHEDULERS}"
 
+		local need_hrtimers=0
 		local has_pacing=0
 		local x
 		for x in ${qdiscs} ; do
 			if [[ "${x}" == "fq" ]] ; then
 				has_pacing=1
-			fi
-			if [[ "${x}" == "fq_codel" && "${tcc}" =~ ("bbr2"|"bbr3") ]] ; then
+			elif [[ "${x}" == "fq_pie" ]] ; then
 				has_pacing=1
-			fi
-			if [[ "${x}" == "cake" && "${tcc}" =~ ("bbr2"|"bbr3") ]] ; then
+				need_hrtimers=1
+			elif [[ "${x}" == "fq_codel" ]] ; then
 				has_pacing=1
+				need_hrtimers=1
+			elif [[ "${x}" == "cake" ]] ; then
+				has_pacing=1
+				need_hrtimers=1
 			fi
 		done
+
+		if (( ${need_hrtimers} == 1 )) ; then
+	# Enable internal pacing fallback for alternative qdiscs.
+			ot-kernel_y_configopt "CONFIG_GENERIC_CLOCKEVENTS"
+			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
+		fi
 
 		if (( ${has_pacing} == 0 )) ; then
 			if (( ${bbr_default} == 1 )) ; then
