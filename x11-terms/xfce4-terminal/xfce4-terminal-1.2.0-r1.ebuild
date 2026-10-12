@@ -79,6 +79,12 @@ pkg_postinst() {
 	optfeature "additional color schemes" "x11-themes/gogh"
 	optfeature "additional color schemes" "x11-themes/tinted-terminal-xfce4"
 	optfeature "additional color schemes" "x11-themes/xfce4-terminal-catppuccin-theme"
+einfo
+einfo "To get sway or niri to respect settings.  Run as follows:"
+einfo
+einfo "dbus-run-session sway"
+einfo "dbus-run-session niri"
+einfo
 }
 
 pkg_postrm() {

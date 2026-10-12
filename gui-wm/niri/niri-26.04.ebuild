@@ -622,6 +622,11 @@ einfo "Mouse wheel up           - focus to bottom of workspace stack"
 einfo "Keyboard left            - focus on left column"
 einfo "Keyboard right           - focus on right column"
 einfo
+einfo
+einfo "To have niri load xfce-terminal settings properly, run as follows:"
+einfo
+einfo "dbus-run-session niri"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
