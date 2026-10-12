@@ -93,7 +93,7 @@ SLOT="0/${SOVER}"
 IUSE+=" ${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg fftw flatpak gstreamer gsettings"
 IUSE+=" ieee1394 jack-client jack-sdk libcamera loudness lv2 modemmanager pipewire-alsa readline roc selinux"
 IUSE+=" pulseaudio sound-server ssl system-service systemd test v4l X zeroconf"
-IUSE+=" ebuild_revision_10"
+IUSE+=" ebuild_revision_11"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
@@ -242,8 +242,8 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	local lib_sover=$(grep -E -e "^soversion =" | head -n 1 | grep -E -o -e "[0-9]+")
-	local pv_minor_version=$(grep -E -e "^version :" | head -n 1 | grep -E -o -e "[0-9]+.[0-9]+.[0-9]+" | cut -f 2 -d ".")
+	local lib_sover=$(grep -E -e "^soversion =" "${S}/meson.build" | head -n 1 | grep -E -o -e "[0-9]+")
+	local pv_minor_version=$(grep -E -e "^version :" "${S}/meson.build" | head -n 1 | grep -E -o -e "[0-9]+.[0-9]+.[0-9]+" | cut -f 2 -d ".")
 	local actual_sover="${lib_sover}.${pv_minor_version}"
 	local expected_sover="${SOVER}"
 	if "${actual_sover}" "-ne" "${expected_sover}" ; then
