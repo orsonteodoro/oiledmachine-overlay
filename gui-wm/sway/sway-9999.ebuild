@@ -27,7 +27,7 @@ DESCRIPTION="i3-compatible Wayland window manager"
 HOMEPAGE="https://swaywm.org"
 
 if [[ "${PV}" == "9999" ]]; then
-	FALLBACK_COMMIT="6959a78a8f0d52f79ad7465135b3295307a5146a"
+	FALLBACK_COMMIT="1652c54b73f67df17b7b4ab0b0f7048204aa8104"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/swaywm/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -45,7 +45,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE+="
 basu elogind +man +swaybar +swaynag systemd tray wallpapers X
-ebuild_revision_20
+ebuild_revision_22
 "
 REQUIRED_USE="
 	|| (
