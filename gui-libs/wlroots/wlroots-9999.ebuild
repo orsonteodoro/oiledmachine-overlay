@@ -114,8 +114,9 @@ src_unpack() {
 		fi
 		git-r3_fetch
 		git-r3_checkout
+	elif in_iuse verify-sig && use verify-sig ; then
+		verify-sig_src_unpack
 	else
-		# TODO:  add verify-sig
 		unpack ${A}
 	fi
 }
@@ -140,7 +141,7 @@ src_configure() {
 		$(meson_feature X xwayland)
 		-Dbackends=${meson_backends}
 		$(meson_feature session)
-		$(meson_feature lcms color-management)
+		$(meson_feature lcms icc-profile)
 		$(meson_feature liftoff libliftoff)
 	)
 
