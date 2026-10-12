@@ -176,7 +176,8 @@ einfo "https://github.com/swaywm/sway/wiki/Useful-add-ons-for-sway"
 einfo "Please note that some of them might not (yet) available on gentoo"
 einfo
 einfo
-einfo "To have sway load xfce-terminal settings properly, run as follows:"
+einfo "To have sway load xfce-terminal settings properly, start the"
+einfo "dbus init service.  Then, run as follows after logging in:"
 einfo
 einfo "dbus-run-session sway"
 einfo

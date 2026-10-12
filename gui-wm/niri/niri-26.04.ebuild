@@ -623,7 +623,8 @@ einfo "Keyboard left            - focus on left column"
 einfo "Keyboard right           - focus on right column"
 einfo
 einfo
-einfo "To have niri load xfce-terminal settings properly, run as follows:"
+einfo "To have niri load xfce-terminal settings properly, start the"
+einfo "dbus init service.  Then, run as follows after logging in:"
 einfo
 einfo "dbus-run-session niri"
 einfo
