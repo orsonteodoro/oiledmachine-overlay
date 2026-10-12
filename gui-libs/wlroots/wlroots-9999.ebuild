@@ -31,7 +31,7 @@ DESCRIPTION="Pluggable, composable, unopinionated modules for building a Wayland
 HOMEPAGE="https://gitlab.freedesktop.org/wlroots/wlroots"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="29fc556f4cd70896e464b3402b510d9759707cf8"
+	FALLBACK_COMMIT="2f08303d3c09850b1108077674c43f0721f6d772"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -48,7 +48,10 @@ else
 fi
 
 LICENSE="MIT"
-IUSE+=" liftoff +libinput +drm +session lcms vulkan x11-backend xcb-errors X"
+IUSE+="
+liftoff +libinput +drm +session lcms vulkan x11-backend xcb-errors X
+ebuild_revision_1
+"
 REQUIRED_USE="
 	drm? ( session )
 	libinput? ( session )
