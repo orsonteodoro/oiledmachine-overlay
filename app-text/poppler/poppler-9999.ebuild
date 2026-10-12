@@ -49,7 +49,7 @@ if [[ ${PV} == *9999* ]] ; then
 		IUSE+=" fallback-commit"
 	fi
 	inherit git-r3
-	SOVER="164"
+	SOVER="165"
 else
 	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/aacid.asc
 	inherit verify-sig
@@ -57,7 +57,7 @@ else
 	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-	SOVER="160"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SOVER="165"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 
@@ -136,6 +136,8 @@ src_unpack() {
 		fi
 	elif use verify-sig ; then
 		verify-sig_verify_detached "${DISTDIR}"/${P}.tar.xz{,.sig}
+	else
+		unpack ${A}
 	fi
 
 	default
