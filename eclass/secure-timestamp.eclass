@@ -457,12 +457,14 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jul 30, 2026 8:07 AM PDT"
 #
 # repo date  - security or release quality issue keywords:
 #
+# 2026-10-09 - bound
+# 2026-10-09 - stuck
 # 2026-08-14 - deadlock
-# 2026-05-16 - bound
 # 2026-03-25 - page fault [it is unknown if it is a hard/soft fault but it is assumed that all are hard faults or result in fatal errors]
 # 2026-03-23 - stability
 # 2026-03-03 - corrupt
 # 2026-02-25 - problem
+# 2026-01-09 - freeze
 # 2025-12-01 - hangs
 # 2025-10-09 (consumer), 2026-05-14 (enterprise) - secur
 # 2025-07-15 - unstable
@@ -495,7 +497,7 @@ SECURE_TIMESTAMP["sys_libs_pam_9999"]="Jul 30, 2026 8:07 AM PDT"
 # The minimal version is chosen to mitigate the costs or damages in testing in production, DoS, or bricking.
 #
 
-SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-08-14 02:46:57 +0000"
+SECURE_TIMESTAMP["sys_kernel_linux_firmware_99999999"]="2026-10-09 21:07:57 +0000"
 
 SECURE_TIMESTAMP["sys_process_numactl_9999"]="Jun 30, 2026 3:51 PM PST"
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
