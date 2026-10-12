@@ -4249,7 +4249,7 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 	# Flooding is not the most popular attack by red teamers.
 	# The use for bbr is for stealth.  Pacing + rq qdisc is required for
 	# proper implementation of stealth with bbrv1 as mitigation against
-	# EDR suspicious behavior detection.
+	# EDR suspicious behavior detection on both CPU and network.
 		if   in_iuse "bbrv3" && ot-kernel_use "bbrv3" ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif in_iuse "bbrv2" && ot-kernel_use "bbrv2" ; then
@@ -4367,7 +4367,6 @@ einfo "Adding ${alg}"
 				return
 			fi
 		fi
-		[[ "${alg}" == "pcc" ]] && return
 einfo "Using ${picked_alg} as the default TCP congestion control"
 		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg_canonical^^}"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg_canonical}\""
@@ -4429,7 +4428,7 @@ eerror
 
 # @FUNCTION: ot-kernel_get_net_qos_schedulers_default
 # @DESCRIPTION:
-# Get the default net QoS default
+# Get the default net QoS default which is the first one on the list
 ot-kernel_get_net_qos_schedulers_default() {
 	local picked_alg=$(echo "${OT_KERNEL_NET_QOS_SCHEDULERS}" \
 		| tr " " "\n" \
@@ -4570,11 +4569,12 @@ ot-kernel_set_kconfig_set_net_qos_schedulers() {
 		PLUG
 		ETS
 	)
+
+	# Reset
 	local alg
 	for alg in ${DEFAULT_ALGS[@]} ; do
 		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
 	done
-
 	for alg in ${ALGS[@]} ; do
 		ot-kernel_unset_configopt "CONFIG_NET_SCH_${alg^^}"
 	done
@@ -4584,12 +4584,69 @@ eerror "The value clear for OT_KERNEL_NET_QOS_SCHEDULERS has been changed to dis
 		die
 	fi
 
-	if [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" == "disable" ]] ; then
+	local tcc="${OT_KERNEL_TCP_CONGESTION_CONTROLS}"
+
+	local bbr_default=0
+	local has_bbr1=0
+	if [[ "${tcc}" =~ ("bbr2"|"bbr3") ]] ; then
+	# Enable internal pacing fallback.
+		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
+	elif [[ "${tcc}" =~ ("bbr") ]] ; then
+		has_bbr1=1
+	fi
+
+	if [[ "${tcc}" =~ "bbr" ]] ; then
+		local picked_alg=$(ot-kernel_get_net_qos_schedulers_default)
+		if [[ "${picked_alg}" =~ "bbr" ]] ; then
+			bbr_default=1
+		fi
+
+		local qdiscs="${OT_KERNEL_NET_QOS_SCHEDULERS}"
+
+		local has_pacing=0
+		local x
+		for x in ${qdiscs} ; do
+			if [[ "${x}" == "fq" ]] ; then
+				has_pacing=1
+			fi
+			if [[ "${x}" == "fq_codel" && "${tcc}" =~ ("bbr2"|"bbr3") ]] ; then
+				has_pacing=1
+			fi
+			if [[ "${x}" == "cake" && "${tcc}" =~ ("bbr2"|"bbr3") ]] ; then
+				has_pacing=1
+			fi
+		done
+
+		if (( ${has_pacing} == 0 )) ; then
+			if (( ${bbr_default} == 1 )) ; then
+einfo "Adding fq for bbr for pacing as init default"
+	# Force pacing because TCP congestion is reported in the news more than queue discipline.
+				OT_KERNEL_NET_QOS_SCHEDULERS="fq ${qdiscs}"
+			else
+einfo "Respecting choice of QoS schedulers.  You must manually switch to fq for BBR with one of the following:"
+einfo "\`sudo sysctl -w net.core.default_qdisc=fq\`"
+einfo "\`sudo tc qdisc replace dev <IFNAME> root fq\`, replacing <IFNAME> with eth0, wlan0, wlp0s18f2u2, etc."
+	# Respect the power user's choice for default.
+				OT_KERNEL_NET_QOS_SCHEDULERS="${qdiscs} fq"
+			fi
+		fi
+	fi
+
+
+	if [[ "${work_profile}" =~ ("red-team-devlab"|"red-team-prey") ]] ; then
+	# Avoid triggering EDR on both CPU and network.
+einfo "Detected ${work_profile}.  Forcing fq for bbr to improve stealth."
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_SCHED"
+		ot-kernel_y_configopt "CONFIG_NET_SCH_FQ"
+		ot-kernel_y_configopt "CONFIG_NET_SCH_DEFAULT"
+		ot-kernel_y_configopt "CONFIG_DEFAULT_FQ"
+	elif [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" == "disable" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_NET_SCHED"
 	else
 		for alg in ${OT_KERNEL_NET_QOS_SCHEDULERS} ; do
 			[[ "${alg,,}" == "pfifo_fast" ]] && continue
-			ot-kernel_y_configopt "CONFIG_${alg^^}"
+			ot-kernel_y_configopt "CONFIG_NET_SCH_${alg^^}"
 		done
 
 		ot-kernel_y_configopt "CONFIG_NET"
@@ -15198,7 +15255,7 @@ einfo
 	ot-kernel_set_kconfig_multigen_lru
 	ot-kernel_set_kconfig_compressors
 
-	# Place before ot-kernel_set_kconfig_work_profile \
+	# Place before ot-kernel_set_kconfig_work_profile and ot-kernel_set_kconfig_set_net_qos_schedulers \
 	ot-kernel_set_kconfig_set_tcp_congestion_controls
 
 	ot-kernel_set_kconfig_set_net_qos_schedulers

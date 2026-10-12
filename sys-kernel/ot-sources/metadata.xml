@@ -4243,6 +4243,28 @@ unset OT_KERNEL_PRIVATE_KEY
     scheduler but for sending, dropping, prioritizing network packets.  Each
     network device can have a different one.
 
+    Typical values for the redeemable or worthy of attention:
+
+    | algorithm  | fair/anti-starvation | Prioritizes RT/Low Latency   | Prevents bursting or rcv incast | BBR compatible |
+    |------------|----------------------|------------------------------|---------------------------------|----------------|
+    | cake [2]   | Y                    | Best (Watching, Gaming)      | Y                               | v2, v3         |
+    | cbs        | Y                    | Good                         | Y                               | N              |
+    | codel      | N                    | Good                         | N                               | N              |
+    | etf        | N                    | Best (Manufacturing)         | Y                               | N              |
+    | fq         | Y                    | Better (Broadcasting)        | Y                               | v1, v2, v3     |
+    | fq_codel   | Y                    | Best                         | Moderate                        | v2, v3         |
+    | fq_pie     | Y                    | Good                         | Moderate                        | N              |
+    | htb        | Y (Rate limiter)     | Bad                          | Moderate                        | N              |
+    | mqprio     | N                    | Best (Drone networks)        | N                               | N              |
+    | pfifo_fast | N                    | Manually with ToS bands [1]  | N                               | N              |
+    | sfq        | Y                    | Bad                          | N                               | N              |
+    | taprio     | N                    | Best (Manufacturing)         | N                               | N              |
+
+    [1] Set via iptables/nftables or in the code level with setsockopt's IP_TOS before sending data.
+    [2] Suitable for home routers
+    [3] Ebuild assist will either force cake, fq, fq_codel if a BBR was detected in the config.
+    [4] red-team-devlab or red-team-prey will force fq + BBR
+
     Acceptable values:
 
       For algorithms, see
@@ -4253,10 +4275,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
         https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L457
 
-    Notable values:
+    Other notable values:
 
-      pfifo_fast - the alternative kernel default when QoS is enabled
-      fq_codel   - the systemd default to combat bufferbloat
       disable    - Disable QoS (the vanilla kernel default)
       custom     - Do not make changes but rely on the kernel .config file setting.
 
