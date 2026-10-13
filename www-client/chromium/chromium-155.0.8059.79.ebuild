@@ -2783,7 +2783,7 @@ ewarn "Missing kernel .config file."
 
 pkg_setup() {
 ewarn "This ebuild is still under maintenance."
-	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" || "${GEN_ABOUT_CREDITS}" == "1" ]] && [[ "${OILEDMACHINE_OVERLAY_MAINTAINER:-0}" == "1" ]] ; then
+	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" || "${GEN_ABOUT_CREDITS}" == "1" ]] && [[ "${OILEDMACHINE_OVERLAY_MAINTAINER:-0}" == "0" ]] ; then
 eerror "The ebuild patch update is still incomplete"
 		die
 	fi
