@@ -7,14 +7,14 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO ID NPD OOBR OOBW"
 
 CHKL_TIMESTAMPS=(
-	"media-libs/libjpeg-turbo-9999;Wed, 3 Jun 2026 09:43:18 -0400"
-	"media-libs/tiff-9999;Sat, 6 Jun 2026 18:02:16 +0545"
+	"media-libs/libjpeg-turbo-9999"
+	"media-libs/tiff-9999"
 )
 
-inherit cflags-hardened meson-multilib
+inherit cflags-hardened secure-version meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ab329ad5ce09dbb1f3547b6c126031aca606eb42"
+	FALLBACK_COMMIT="15c24e7ded91184c38c46c096804fa7272765737"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/mm2/Little-CMS.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -37,16 +37,16 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE+="
 doc jpeg static-libs test tiff
-ebuild_revision_2
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	jpeg? (
-		>=media-libs/libjpeg-turbo-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=[${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-9999:=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-${TIFF_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="${RDEPEND}"
@@ -64,6 +64,7 @@ src_unpack() {
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	local emesonargs=(
 		-Ddefault_library=$(multilib_native_usex static-libs both shared)
