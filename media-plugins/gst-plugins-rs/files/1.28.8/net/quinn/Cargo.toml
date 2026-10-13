@@ -34,7 +34,7 @@ http = "1"
 [dev-dependencies]
 gst-check = { workspace = true, features = ["v1_20"] }
 ctrlc = "3.4"
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive"] }
 
 [lib]
 name = "gstquinn"

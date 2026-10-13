@@ -42,7 +42,7 @@ windows-sys = { version = ">=0.52, <=0.61", features = ["Win32_Foundation", "Win
 gst-check.workspace = true
 gst-app = { workspace = true, features = [ "v1_20" ] }
 # Used by examples
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive"] }
 gst-plugin-rtp.workspace = true
 
 [lib]

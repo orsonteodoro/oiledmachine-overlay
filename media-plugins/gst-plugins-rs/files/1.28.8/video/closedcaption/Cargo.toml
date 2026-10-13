@@ -35,7 +35,7 @@ itertools = "0.15"
 pretty_assertions = "1"
 rand = "0.10"
 gst-check.workspace = true
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive"] }
 glib = { workspace = true, features = ["v2_62"] }
 gst-app.workspace = true
 

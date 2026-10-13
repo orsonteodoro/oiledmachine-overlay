@@ -161,16 +161,12 @@ fetch+https://gitlab.freedesktop.org/gstreamer/gstreamer-rs/-/archive/${GSTREAME
 		:
 	else
 # QA:  Manually update all pinned aws* packages in net/aws/Cargo.toml
+# QA:  Manually update all pinned clap packages in $(grep -l -e "clap.*version" $(find . -name "Cargo.toml"))
 
 # To update packages manually:
-# cargo update -p rustls-webpki@0.103.13
+# cargo update -p rustls-webpki@0.103.15
 # cargo update -p rand@0.8.6
 # Do not use the `cargo-audit audit fix` because it doesn't do anything.
-# rustls-webpki@0.103.13	# GHSA-82j2-j2ch-gfr8; ZC, DoS; High
-#				# GHSA-pwjx-qhcg-rvj4; DT; Moderate
-#				# GHSA-xgp8-3hg3-c2mh; DT; Low
-#				# GHSA-965h-392x-2mh5; DT; Low
-# rand@0.8.6			# GHSA-cq8v-f236-94qc;;Low
 #
 CRATES="
 addr2line-0.24.2
@@ -184,13 +180,10 @@ aligned-vec-0.5.0
 aligned-vec-0.6.4
 allocator-api2-0.2.21
 android_system_properties-0.1.6
-anstream-0.3.2
 anstream-1.0.0
 anstyle-1.0.14
-anstyle-parse-0.2.7
 anstyle-parse-1.0.0
 anstyle-query-1.1.5
-anstyle-wincon-1.0.2
 anstyle-wincon-3.0.11
 anyhow-1.0.104
 anymap3-1.1.0
@@ -338,10 +331,10 @@ ciborium-ll-0.2.2
 cipher-0.4.4
 cipher-0.5.2
 clang-sys-1.9.1
-clap-4.3.24
-clap_builder-4.3.24
-clap_derive-4.3.12
-clap_lex-0.5.0
+clap-4.6.7
+clap_builder-4.6.7
+clap_derive-4.6.7
+clap_lex-1.1.1
 claxon-0.4.3
 cmake-0.1.58
 cmov-0.5.4
@@ -1018,7 +1011,6 @@ stable-vec-0.4.3
 static_assertions-1.1.0
 strength_reduce-0.2.4
 strip-ansi-escapes-0.2.1
-strsim-0.10.0
 strsim-0.11.1
 subtle-2.6.1
 symphonia-0.5.5
@@ -1409,7 +1401,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_64
+ebuild_revision_65
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1957,7 +1949,7 @@ src_unpack() {
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
 		|| die
-#	die # For manual lockfile update
+	die # For manual lockfile update
 
 	if [[ "${GENERATE_LOCKFILE}" =~ "1" && "${LOCKFILE_SOURCE}" == "upstream" ]] ; then
 		_lockfile_gen_unpack_upstream

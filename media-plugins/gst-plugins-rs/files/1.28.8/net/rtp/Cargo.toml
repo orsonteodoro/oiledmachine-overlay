@@ -39,7 +39,7 @@ tokio-util = "0.7.15"
 
 [dev-dependencies]
 # Used by examples
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive"] }
 env_logger = "0.11"
 gst-check = { workspace = true, features = ["v1_20"] }
 gst-app   = { workspace = true, features = ["v1_20"] }

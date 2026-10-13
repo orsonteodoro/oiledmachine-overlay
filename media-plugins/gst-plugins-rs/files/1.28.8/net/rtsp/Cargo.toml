@@ -44,7 +44,7 @@ x509-parser = { version = "0.18", default-features = false, features = ["verify-
 
 [dev-dependencies]
 ctrlc = "3.4"
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive"] }
 glib.workspace = true
 
 [lib]
