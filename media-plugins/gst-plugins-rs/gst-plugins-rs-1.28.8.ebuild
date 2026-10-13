@@ -40,8 +40,8 @@ GST_PV="${MY_PV}"
 LLVM_COMPAT=( 22 ) # For clang-sys ; slot must be updated when rust slot is changed
 LLVM_MAX_SLOT="22"
 PYTHON_COMPAT=( "python3_"{8..11} )
-RUST_MAX_VER="1.97.1"
-RUST_MIN_VER="1.97.1" # LLVM 22.1
+RUST_MAX_VER="1.98.1"
+RUST_MIN_VER="1.98.1" # LLVM 22.1
 RUST_PV="${RUST_MAX_VER}"
 
 GSTREAMER_RS_COMMIT="51554be833e228fb0ec3aa8b4dabaaa36dc8db3b" # The ID from GIT_CRATES variable below at the [gstreamer] row
@@ -160,6 +160,8 @@ fetch+https://gitlab.freedesktop.org/gstreamer/gstreamer-rs/-/archive/${GSTREAME
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		:
 	else
+# QA:  Manually update all pinned aws* packages in net/aws/Cargo.toml
+
 # To update packages manually:
 # cargo update -p rustls-webpki@0.103.13
 # cargo update -p rand@0.8.6
@@ -193,6 +195,7 @@ anstyle-wincon-3.0.11
 anyhow-1.0.104
 anymap3-1.1.0
 arbitrary-1.4.2
+arc-swap-1.9.2
 arg_enum_proc_macro-0.3.4
 array-init-2.1.0
 arrayvec-0.7.8
@@ -218,45 +221,49 @@ av1-grain-0.2.4
 av-data-0.4.4
 avif-serialize-0.8.4
 av-scenechange-0.14.1
-aws-config-1.8.11
-aws-credential-types-1.2.10
-aws-lc-rs-1.18.1
-aws-lc-sys-0.45.0
-aws-runtime-1.5.16
-aws-sdk-kinesisvideo-1.92.0
-aws-sdk-kinesisvideosignaling-1.90.0
-aws-sdk-polly-1.22.0
-aws-sdk-s3-1.24.0
-aws-sdk-sso-1.90.0
-aws-sdk-sts-1.94.0
-aws-sdk-transcribestreaming-1.21.0
-aws-sdk-translate-1.21.0
-aws-sigv4-1.3.6
-aws-smithy-async-1.2.14
-aws-smithy-checksums-0.60.13
-aws-smithy-eventstream-0.60.13
-aws-smithy-http-0.60.12
-aws-smithy-http-0.62.5
+aws-config-1.12.0
+aws-credential-types-1.3.0
+aws-lc-rs-1.18.2
+aws-lc-sys-0.46.0
+aws-runtime-1.10.0
+aws-sdk-kinesisvideo-1.105.0
+aws-sdk-kinesisvideosignaling-1.102.0
+aws-sdk-polly-1.122.0
+aws-sdk-s3-1.152.0
+aws-sdk-sso-1.114.0
+aws-sdk-sts-1.119.0
+aws-sdk-transcribestreaming-1.121.0
+aws-sdk-translate-1.115.0
+aws-sigv4-1.6.0
+aws-smithy-async-1.3.0
+aws-smithy-cbor-0.62.2
+aws-smithy-checksums-0.65.0
+aws-smithy-eventstream-0.61.4
 aws-smithy-http-0.63.6
-aws-smithy-http-client-1.1.4
-aws-smithy-json-0.60.7
-aws-smithy-json-0.61.7
-aws-smithy-observability-0.1.4
-aws-smithy-query-0.60.8
-aws-smithy-runtime-1.9.4
-aws-smithy-runtime-api-1.12.3
-aws-smithy-runtime-api-macros-1.0.0
-aws-smithy-types-1.5.0
-aws-smithy-xml-0.60.12
-aws-types-1.3.10
+aws-smithy-http-0.64.1
+aws-smithy-http-client-1.5.0
+aws-smithy-json-0.62.7
+aws-smithy-json-0.63.1
+aws-smithy-observability-0.2.6
+aws-smithy-observability-0.3.0
+aws-smithy-query-0.62.1
+aws-smithy-runtime-1.16.0
+aws-smithy-runtime-api-1.19.0
+aws-smithy-runtime-api-macros-1.1.0
+aws-smithy-schema-0.1.0
+aws-smithy-schema-0.2.1
+aws-smithy-types-1.8.1
+aws-smithy-xml-0.62.1
+aws-types-1.6.0
 backtrace-0.3.74
-base16ct-0.1.1
+base16ct-0.2.0
 base32-0.5.1
 base64-0.21.7
 base64-0.22.1
 base64-0.23.1
 base64ct-1.6.0
 base64-simd-0.8.0
+bigdecimal-0.4.11
 bincode-1.3.3
 bincode-2.0.1
 bindgen-0.70.1
@@ -367,14 +374,13 @@ core-foundation-sys-0.8.7
 cpubits-0.1.1
 cpufeatures-0.2.17
 cpufeatures-0.3.1
-crc32c-0.6.8
 crc32fast-1.5.2
+crc-fast-1.10.0
 critical-section-1.2.0
 crossbeam-deque-0.8.8
 crossbeam-epoch-0.9.21
 crossbeam-utils-0.8.23
 crunchy-0.2.4
-crypto-bigint-0.4.9
 crypto-bigint-0.5.5
 crypto-common-0.1.7
 crypto-common-0.2.2
@@ -444,9 +450,8 @@ deflate64-0.1.12
 defmt-1.1.1
 defmt-macros-1.1.1
 defmt-parser-1.0.0
-der-0.6.1
 der-0.7.10
-deranged-0.5.8
+deranged-0.5.9
 derive_builder-0.20.2
 derive_builder_core-0.20.2
 derive_builder_macro-0.20.2
@@ -475,11 +480,11 @@ ebml-iterable-0.7.1
 ebml-iterable-specification-0.4.0
 ebml-iterable-specification-derive-0.4.0
 ebur128-0.1.10
-ecdsa-0.14.8
+ecdsa-0.16.9
 ed25519-1.5.3
 edit-distance-2.2.2
 either-1.19.0
-elliptic-curve-0.12.3
+elliptic-curve-0.13.8
 embassy-futures-0.1.2
 embassy-time-0.5.1
 embassy-time-driver-0.2.2
@@ -507,7 +512,7 @@ fallible-iterator-0.3.0
 fastbloom-0.17.0
 fastrand-2.5.0
 fdeflate-0.3.7
-ff-0.12.1
+ff-0.13.1
 fiat-crypto-0.2.9
 field-offset-0.3.6
 filetime-0.2.27
@@ -558,7 +563,7 @@ governor-0.10.4
 gpu-allocator-0.28.0
 gpu-descriptor-0.3.2
 gpu-descriptor-types-0.2.0
-group-0.12.1
+group-0.13.0
 h2-0.3.27
 h2-0.4.20
 half-2.7.1
@@ -689,17 +694,16 @@ linux-raw-sys-0.12.1
 linux-raw-sys-0.4.15
 litemap-0.7.3
 litemap-0.8.3
-litrs-1.0.0
+litrs-1.0.1
 livekit-api-0.5.6
-livekit-common-0.1.4
+livekit-common-0.1.5
 livekit-protocol-0.7.13
-livekit-protocol-0.8.0
+livekit-protocol-0.8.1
 livekit-runtime-0.4.0
 lock_api-0.4.14
 log-0.4.34
 loom-0.7.2
 loop9-0.1.5
-lru-0.12.5
 lru-0.18.5
 lru-slab-0.1.3
 lzma-rust2-0.16.5
@@ -709,7 +713,6 @@ macerator-macros-0.2.0
 matchers-0.2.0
 matrixmultiply-0.3.10
 maybe-rayon-0.1.1
-md-5-0.10.6
 md-5-0.11.0
 md5-0.8.1
 memchr-2.8.3
@@ -717,6 +720,7 @@ memmap2-0.9.11
 memoffset-0.9.1
 mime-0.3.17
 mime_guess-2.0.5
+minicbor-2.3.0
 minimal-lexical-0.2.1
 miniz_oxide-0.8.9
 miniz_oxide-0.9.1
@@ -795,7 +799,7 @@ outref-0.5.2
 oxideav-core-0.1.39
 oxideav-pixfmt-0.1.10
 oxideav-subtitle-0.1.4
-p256-0.11.1
+p256-0.13.2
 parking-2.2.1
 parking_lot-0.12.5
 parking_lot_core-0.9.12
@@ -823,7 +827,6 @@ pin-project-lite-0.2.17
 pin-utils-0.1.1
 pkcs1-0.7.5
 pkcs8-0.10.2
-pkcs8-0.9.0
 pkg-config-0.3.34
 plain-0.2.3
 png-0.17.16
@@ -840,6 +843,7 @@ presser-0.3.1
 pretty_assertions-1.4.1
 prettyplease-0.2.37
 primal-check-0.3.4
+primeorder-0.13.6
 priority-queue-2.7.0
 proc-macro2-1.0.106
 proc-macro-crate-3.5.0
@@ -910,7 +914,7 @@ regex-syntax-0.8.11
 renderdoc-sys-1.1.0
 reqwest-0.12.28
 reqwest-0.13.3
-rfc6979-0.3.1
+rfc6979-0.4.0
 rgb-0.8.53
 ring-0.17.14
 rmp-0.8.14
@@ -933,10 +937,8 @@ rustix-1.1.5
 rustls-0.21.12
 rustls-0.22.4
 rustls-0.23.45
-rustls-native-certs-0.6.3
 rustls-native-certs-0.7.3
-rustls-native-certs-0.8.4
-rustls-pemfile-1.0.4
+rustls-native-certs-0.8.5
 rustls-pemfile-2.2.0
 rustls-pki-types-1.15.1
 rustls-platform-verifier-0.7.1
@@ -951,12 +953,12 @@ same-file-1.0.6
 sanitize-filename-0.6.0
 schannel-0.1.27
 schemars-0.9.0
-schemars-1.2.2
+schemars-1.2.3
 scoped-tls-1.0.1
 scopeguard-1.2.0
 sct-0.7.1
 sdp-types-0.1.8
-sec1-0.3.0
+sec1-0.7.3
 security-framework-2.11.1
 security-framework-3.6.0
 security-framework-sys-2.16.0
@@ -978,7 +980,7 @@ sfv-0.15.0
 sha1-0.10.7
 sha1-0.11.0
 sha2-0.10.9
-sha2-0.11.0
+sha2-0.11.1
 sha256-1.6.0
 shannon-0.2.0
 sharded-slab-0.1.7
@@ -1009,7 +1011,6 @@ spin-0.10.1
 spin-0.9.9
 spinning_top-0.3.0
 spirv-0.4.0+sdk-1.4.341.0
-spki-0.6.0
 spki-0.7.3
 sprintf-0.4.3
 stable_deref_trait-1.2.1
@@ -1030,7 +1031,7 @@ symphonia-metadata-0.5.5
 symphonia-utils-xiph-0.5.5
 syn-1.0.109
 syn-2.0.114
-syn-3.0.8
+syn-3.0.9
 sync_wrapper-1.0.2
 synstructure-0.13.2
 sysinfo-0.36.1
@@ -1952,6 +1953,11 @@ einfo "Copy Cargo.lock Cargo.toml to the files/${PV}"
 src_unpack() {
 	unpack "gst-plugins-rs-gstreamer-${MY_PV}.tar.gz"
 #	die # For manual lockfile update
+	cp -aT \
+		"${FILESDIR}/${PV}"* \
+		"${S}" \
+		|| die
+#	die # For manual lockfile update
 
 	if [[ "${GENERATE_LOCKFILE}" =~ "1" && "${LOCKFILE_SOURCE}" == "upstream" ]] ; then
 		_lockfile_gen_unpack_upstream
@@ -1964,6 +1970,7 @@ src_unpack() {
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
 		|| die
+#die
 }
 
 src_prepare() {
