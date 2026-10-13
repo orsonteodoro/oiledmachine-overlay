@@ -202,7 +202,7 @@ EAPI=8
 TC_COUNT_EXPECTED_CLANG=419
 TC_COUNT_EXPECTED_GN=1340
 TC_COUNT_EXPECTED_RUST=7258
-SOURCES_COUNT_EXPECTED=592146 # Update with DOWNLOAD_FLAVOR change
+SOURCES_COUNT_EXPECTED=592153 # Update with DOWNLOAD_FLAVOR change
 CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
 GEN_ABOUT_CREDITS=1
 
@@ -578,10 +578,49 @@ IUSE_CODECS=(
 	"+vpx"
 )
 
-MITIGATION_DATE="Sep 22, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1790035756 # From `date +%s -d "Mon, 21 Sep 2026 17:09:16 -0700"` From the GH chromium repo
-MITIGATION_URI="https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop_0856730748.html"
+MITIGATION_DATE="Oct 13, 2026" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1791874800 # From `date +%s -d "Oct 13, 2026"` From blog date
+MITIGATION_URI="https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_01668083673.html"
 VULNERABILITIES_FIXED=(
+	# 155.0.8059.79
+	"CVE-2026-110152;BO;"
+	"CVE-2026-110149;UAF;"
+	"CVE-2026-110136;UAF;"
+	"CVE-2026-110161;UAF;"
+	"CVE-2026-110165;UAF;"
+	"CVE-2026-110148;UAF;"
+	"CVE-2026-110151;UAF;"
+	"CVE-2026-110162;UAF;"
+	"CVE-2026-110170;UAF;"
+	"CVE-2026-110160;;"
+	"CVE-2026-110143;UVAR;"
+	"CVE-2026-110146;INFOLEAK, ID;"
+	"CVE-2026-110150;PE;"
+	"CVE-2026-110156;;"
+	"CVE-2026-110137;UAF;"
+	"CVE-2026-110140;TC;"
+	"CVE-2026-110158;UAF;"
+	"CVE-2026-110145;UAF;"
+	"CVE-2026-110159;;"
+	"CVE-2026-110144;;"
+	"CVE-2026-110153;UAF;"
+	"CVE-2026-110166;BO;"
+	"CVE-2026-110169;UAF;"
+	"CVE-2026-110168;UAF;"
+	"CVE-2026-110139;UAF;"
+	"CVE-2026-110172;UAF;"
+	"CVE-2026-110164;UAF;"
+	"CVE-2026-110163;UAF;"
+	"CVE-2026-110141;;"
+	"CVE-2026-110138;UAF;"
+	"CVE-2026-110157;UAF;"
+	"CVE-2026-110147;UAF;"
+	"CVE-2026-110154;UAF;"
+	"CVE-2026-110155;BO;"
+	"CVE-2026-110167;UAF;"
+	"CVE-2026-110171;UAF;"
+	"CVE-2026-110142;UAF;"
+
 	# 154.0.8037.57
 	"CVE-2026-95350;BO;"
 	"CVE-2026-95357;OOBW;"
@@ -2744,6 +2783,11 @@ ewarn "Missing kernel .config file."
 
 pkg_setup() {
 ewarn "This ebuild is still under maintenance."
+	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" || "${GEN_ABOUT_CREDITS}" == "1" ]] && [[ "${OILEDMACHINE_OVERLAY_MAINTAINER:-0}" == "1" ]] ; then
+eerror "The ebuild patch update is still incomplete"
+		die
+	fi
+
 	dhms_start
 	check-compiler-switch_start
 	# The emerge package system will over prune when it should not when it
