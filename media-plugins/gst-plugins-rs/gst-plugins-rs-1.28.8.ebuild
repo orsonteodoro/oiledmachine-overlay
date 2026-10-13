@@ -160,14 +160,8 @@ fetch+https://gitlab.freedesktop.org/gstreamer/gstreamer-rs/-/archive/${GSTREAME
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		:
 	else
-# QA:  Manually update all pinned aws* packages in net/aws/Cargo.toml
+# QA:  Manually update all pinned aws* packages in net/aws/Cargo.toml and in net/webrtc/Cargo.toml
 # QA:  Manually update all pinned clap packages in $(grep -l -e "clap.*version" $(find . -name "Cargo.toml"))
-
-# To update packages manually:
-# cargo update -p rustls-webpki@0.103.15
-# cargo update -p rand@0.8.6
-# Do not use the `cargo-audit audit fix` because it doesn't do anything.
-#
 CRATES="
 addr2line-0.24.2
 adler2-2.0.1
@@ -219,8 +213,8 @@ aws-credential-types-1.3.0
 aws-lc-rs-1.18.2
 aws-lc-sys-0.46.0
 aws-runtime-1.10.0
-aws-sdk-kinesisvideo-1.105.0
-aws-sdk-kinesisvideosignaling-1.102.0
+aws-sdk-kinesisvideo-1.117.0
+aws-sdk-kinesisvideosignaling-1.114.0
 aws-sdk-polly-1.122.0
 aws-sdk-s3-1.152.0
 aws-sdk-sso-1.114.0
@@ -232,18 +226,14 @@ aws-smithy-async-1.3.0
 aws-smithy-cbor-0.62.2
 aws-smithy-checksums-0.65.0
 aws-smithy-eventstream-0.61.4
-aws-smithy-http-0.63.6
 aws-smithy-http-0.64.1
 aws-smithy-http-client-1.5.0
-aws-smithy-json-0.62.7
 aws-smithy-json-0.63.1
-aws-smithy-observability-0.2.6
 aws-smithy-observability-0.3.0
 aws-smithy-query-0.62.1
 aws-smithy-runtime-1.16.0
 aws-smithy-runtime-api-1.19.0
 aws-smithy-runtime-api-macros-1.1.0
-aws-smithy-schema-0.1.0
 aws-smithy-schema-0.2.1
 aws-smithy-types-1.8.1
 aws-smithy-xml-0.62.1
@@ -1401,7 +1391,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_65
+ebuild_revision_66
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1949,7 +1939,7 @@ src_unpack() {
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
 		|| die
-	die # For manual lockfile update
+#	die # For manual lockfile update
 
 	if [[ "${GENERATE_LOCKFILE}" =~ "1" && "${LOCKFILE_SOURCE}" == "upstream" ]] ; then
 		_lockfile_gen_unpack_upstream
