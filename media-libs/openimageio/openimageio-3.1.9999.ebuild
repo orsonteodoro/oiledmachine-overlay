@@ -75,7 +75,7 @@ inherit libcxx-slot libstdcxx-slot llvm secure-version virtualx python-single-r1
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_VERSION="3.1.17.0"
 	SOVER=$(ver_cut "1-3" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="4af795cf1cce1670cb12453f58f046cf4ed3e3bc"
+	FALLBACK_COMMIT="6afe7ba033071df0d02e378387910315ab329000"
 	EGIT_BRANCH="dev-3.1"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenImageIO-${PV}"
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenImageIO.git"
@@ -138,7 +138,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
 gcc gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-ebuild_revision_46
+ebuild_revision_47
 "
 gen_llvm_required_use() {
 	local s
