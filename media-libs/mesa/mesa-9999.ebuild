@@ -145,7 +145,7 @@ done
 unset card
 
 if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="aed26d2b59e730e1d2e00829f07160b7d06762c3"
+	FALLBACK_COMMIT="76b9372c4e5d186f57d22d3a4f95dd1c5e04ece2"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -187,7 +187,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_47
+ebuild_revision_48
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -759,7 +759,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		vulkan_enable video_cards_vc4 broadcom
 		vulkan_enable video_cards_virgl virtio
 		emesonargs+=(
-			-Dvulkan-layers=anti-lag,device-select,overlay
+			-Dvulkan-layers=device-select,overlay
 		)
 	fi
 
