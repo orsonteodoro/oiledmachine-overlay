@@ -44,7 +44,7 @@ sys-apps/firejail suid
 # A guardrail for people who don't read or have rash tendencies
 llvm-runtimes/compiler-rt-sanitizers-logging production
 
-# Guardrails to prevent broken emerge/autotools/boot
+# Guardrails to prevent broken emerge/autotools/boot/emerge-downloader
 app-arch/bzip2 fallback-commit
 app-arch/zstd fallback-commit
 dev-libs/expat fallback-commit
@@ -58,6 +58,7 @@ sys-apps/systemd fallback-commit
 sys-apps/util-linux fallback-commit
 sys-libs/pam fallback-commit
 sys-libs/readline fallback-commit
+net-libs/gnutls fallback-commit
 net-misc/wget fallback-commit
 net-misc/wget2 fallback-commit
 

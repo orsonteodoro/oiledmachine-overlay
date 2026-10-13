@@ -16,19 +16,41 @@ CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data system-set u
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO MC NPD UAF"
 
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/gnutls.asc
-inherit cflags-hardened check-compiler-switch libtool multilib-minimal verify-sig
+
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+	"dev-libs/nettle-9999"
+	"app-arch/zstd-9999"
+)
+
+inherit autotools cflags-hardened check-compiler-switch chkl libtool multilib-minimal sandbox-changes secure-version verify-sig
 
 DESCRIPTION="Secure communications library implementing the SSL, TLS and DTLS protocols"
 HOMEPAGE="https://www.gnutls.org/"
-SRC_URI="mirror://gnupg/gnutls/v$(ver_cut 1-2)/${P}.tar.xz"
-SRC_URI+=" verify-sig? ( mirror://gnupg/gnutls/v$(ver_cut 1-2)/${P}.tar.xz.sig )"
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_PV="3.8.13"
+	FALLBACK_COMMIT="4e84948a5e89689edbab2c5920db7fc32f31a985"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://gitlab.com/gnutls/gnutls.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="mirror://gnupg/gnutls/v$(ver_cut 1-2)/${P}.tar.xz"
+	SRC_URI+=" verify-sig? ( mirror://gnupg/gnutls/v$(ver_cut 1-2)/${P}.tar.xz.sig )"
+fi
 
 LICENSE="GPL-3 LGPL-2.1+"
 # As of 3.8.0, the C++ library is header-only, but we won't drop the subslot
 # component for it until libgnutls.so breaks ABI, to avoid pointless rebuilds.
 # Subslot format:
 # <libgnutls.so number>.<libgnutlsxx.so number>
-SLOT="0/30.30"
+LIBGNUTLS_SOVER="30"
+LIBGNUTLSXX_SOVER="30"
+SOVER="${LIBGNUTLS_SOVER}.${LIBGNUTLSXX_SOVER}"
+SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE="brotli +cxx dane doc examples +idn nls +openssl pkcs11 +post-quantum sslv2 sslv3"
 IUSE+=" systemtap static-libs test test-full +tls-heartbeat tools zlib zstd"
@@ -39,21 +61,21 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	>=dev-libs/libtasn1-4.9:=[${MULTILIB_USEDEP}]
 	dev-libs/libunistring:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nettle-3.10:=[gmp,${MULTILIB_USEDEP}]
-	>=dev-libs/gmp-5.1.3-r1:=[${MULTILIB_USEDEP}]
-	brotli? ( >=app-arch/brotli-1.0.0:=[${MULTILIB_USEDEP}] )
+	>=dev-libs/nettle-${NETTLE_PV}:=[gmp,${MULTILIB_USEDEP}]
+	>=dev-libs/gmp-${GMP_PV}:=[${MULTILIB_USEDEP}]
+	brotli? ( >=app-arch/brotli-${BROTLI_PV}:=[${MULTILIB_USEDEP}] )
 	dane? ( >=net-dns/unbound-1.4.20:=[${MULTILIB_USEDEP}] )
-	nls? ( >=virtual/libintl-0-r1:=[${MULTILIB_USEDEP}] )
+	nls? ( >=virtual/libintl-0-r1:*[${MULTILIB_USEDEP}] )
 	pkcs11? ( >=app-crypt/p11-kit-0.23.1[${MULTILIB_USEDEP}] )
 	post-quantum? ( >=dev-libs/leancrypto-1.2.0:=[${MULTILIB_USEDEP}] )
-	idn? ( >=net-dns/libidn2-0.16-r1:=[${MULTILIB_USEDEP}] )
-	zlib? ( virtual/zlib:=[${MULTILIB_USEDEP}] )
-	zstd? ( >=app-arch/zstd-1.3.0:=[${MULTILIB_USEDEP}] )
+	idn? ( >=net-dns/libidn2-${LIBIDN2_PV}:=[${MULTILIB_USEDEP}] )
+	zlib? ( >=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}] )
+	zstd? ( >=app-arch/zstd-${ZSTD_PV}:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="
 	${RDEPEND}
-	test-full? ( sys-libs/libseccomp )
-	systemtap? ( dev-debug/systemtap )
+	test-full? ( >=sys-libs/libseccomp-${LIBSECCOMP_PV}:= )
+	systemtap? ( dev-debug/systemtap:= )
 "
 BDEPEND="
 	dev-build/gtk-doc-am
@@ -83,10 +105,74 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 
 pkg_setup() {
 	check-compiler-switch_start
+	use nls && sandbox-changes_no_network_sandbox "To download/update .po translation files for USE=nls"
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		verify-sig_src_unpack
+	fi
+
+	local c_c=$(grep -e "LT_CURRENT" "${S}/m4/hooks.m4" | head -n 1 | grep -E -o -e "[0-9]+")
+	local c_a=$(grep -e "LT_AGE" "${S}/m4/hooks.m4" | head -n 1 | grep -E -o -e "[0-9]+")
+	local cxx_c=$(grep -e "CXX_LT_CURRENT" "${S}/m4/hooks.m4" | head -n 1 | grep -E -o -e "[0-9]+")
+	local cxx_a=$(grep -e "CXX_LT_AGE" "${S}/m4/hooks.m4" | head -n 1 | grep -E -o -e "[0-9]+")
+#einfo "libgnutls.so current:  ${c_c}"
+#einfo "libgnutls.so age:  ${c_a}"
+#einfo "libgnutlsxx.so current:  ${cxx_c}"
+#einfo "libgnutlsxx.so age:  ${cxx_a}"
+	local actual_libgnutls_sover=$((${c_c} - ${c_a}))
+	local actual_libgnutlsxx_sover=$((${cxx_c} - ${cxx_a}))
+	local actual_sover="${actual_libgnutls_sover}.${actual_libgnutlsxx_sover}"
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Bump LIBGNUTLS_SOVER, LIBGNUTLSXX_SOVER in ebuild"
+eerror "Actual sover:  ${actual_sover}"
+eerror "Expected sover:  ${expected_sover}"
+		die
+	fi
+
+	if [[ "${PV}" =~ "9999" ]] ; then
+		local actual_pv=$(grep -e "^AC_INIT" "${S}/configure.ac" | grep -E -o -e "[0-9.]+")
+#einfo "Actual pv: ${actual_pv}"
+		local expected_pv="${INTERNAL_PV}"
+		local actual_slot=$(ver_cut "1-2" "${actual_pv}")
+		local expected_slot=$(ver_cut "1-2" "${PV}")
+		if ver_test "${actual_slot}" "-ne" "${expected_slot}" ; then
+eerror "Update PV, INTERNAL_PV"
+eerror "Actual PV:  ${actual_slot}.9999"
+eerror "Expected PV:  ${PV}"
+			die
+		fi
+	fi
 }
 
 src_prepare() {
 	default
+
+	if [[ -n "${EVCS_OFFLINE}" ]] && use nls ; then
+eerror "The nls USE flag must be disabled for EVCS_OFFLINE=1 to work properly for ${CATEGORY}/${P}."
+		die
+	fi
+
+	local bootstrap_opts=(
+		--gnulib-srcdir="${S}/gnulib"
+		--no-bootstrap-sync
+		--copy
+		--no-git
+		$(usex nls '' '--skip-po')
+	)
+
+	if [[ "${PV}" =~ "9999" ]] ; then
+		cd "${S}" || die
+		./bootstrap "${bootstrap_opts[@]}" || die
+	fi
 
 	# bug #520818
 	export TZ=UTC
