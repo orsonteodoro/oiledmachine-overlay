@@ -1,0 +1,75 @@
+--- a/third_party/webrtc/webrtc.gni.orig	2026-10-05 17:06:58.000000000 -0700
++++ b/third_party/webrtc/webrtc.gni	2026-10-12 21:37:51.684149657 -0700
+@@ -366,7 +366,7 @@ if (is_mac || is_ios) {
+ }
+ 
+ if (build_with_chromium) {
+-  rtc_use_perfetto = true
++  rtc_use_perfetto = false
+ }
+ 
+ if (rtc_rust) {
+--- a/content/browser/BUILD.gn.orig	2026-10-05 17:06:58.000000000 -0700
++++ b/content/browser/BUILD.gn	2026-10-12 21:37:51.694725872 -0700
+@@ -28,6 +28,10 @@ import("//testing/libfuzzer/fuzzer_test.
+ import("//third_party/blink/public/public_features.gni")
+ import("//tools/ipc_fuzzer/ipc_fuzzer.gni")
+ 
++declare_args() {
++  content_browser_rtc_use_perfetto = true
++}
++
+ if (is_mac) {
+   import("//content/public/app/mac_helpers.gni")
+ }
+@@ -2592,6 +2596,10 @@ source_set("browser") {
+     public_deps += [ "//ash/webui/common/resources" ]
+   }
+ 
++  if (content_browser_rtc_use_perfetto) {
++    defines += [ "RTC_USE_PERFETTO" ]
++  }
++
+   if (is_castos) {
+     sources += [
+       "tracing/cast_tracing_agent.cc",
+--- a/third_party/webrtc_overrides/init_webrtc.h.orig	2026-10-05 17:06:58.000000000 -0700
++++ b/third_party/webrtc_overrides/init_webrtc.h	2026-10-12 21:37:51.747414105 -0700
+@@ -16,7 +16,9 @@ RTC_EXPORT bool InitializeWebRtcModuleBe
+ // run after tracing is initialized, otherwise WebRTC traces won't work.
+ RTC_EXPORT void InitializeWebRtcModule();
+ 
++#if defined(RTC_USE_PERFETTO)
+ RTC_EXPORT const perfetto::internal::TrackEventCategoryRegistry&
+ GetWebRtcTrackEventCategoryRegistry();
++#endif
+ 
+ #endif  // THIRD_PARTY_WEBRTC_OVERRIDES_INIT_WEBRTC_H_
+--- a/v8/gni/v8.gni.orig	2026-10-12 19:48:10.019385003 -0700
++++ b/v8/gni/v8.gni	2026-10-12 21:37:51.820145656 -0700
+@@ -92,7 +92,7 @@ declare_args() {
+   # Implement tracing using Perfetto (https://perfetto.dev).
+   # Chromium is configured to use the perfetto client library, v8 should also
+   # use perfetto for tracing.
+-  v8_use_perfetto = build_with_chromium && !use_fuzzing_engine
++  v8_use_perfetto = false
+ 
+   # Use Perfetto JSON Export.
+   v8_use_perfetto_json_export = ""
+--- a/third_party/webrtc_overrides/init_webrtc.cc.orig	2026-10-05 17:06:58.000000000 -0700
++++ b/third_party/webrtc_overrides/init_webrtc.cc	2026-10-12 21:37:51.829773044 -0700
+@@ -17,10 +17,14 @@ bool InitializeWebRtcModuleBeforeSandbox
+ }
+ 
+ void InitializeWebRtcModule() {
++#if defined(RTC_USE_PERFETTO)
+   webrtc::RegisterPerfettoTrackEvents();
++#endif
+ }
+ 
++#if defined(RTC_USE_PERFETTO)
+ const perfetto::internal::TrackEventCategoryRegistry&
+ GetWebRtcTrackEventCategoryRegistry() {
+   return webrtc::perfetto_track_event::internal::kCategoryRegistry;
+ }
++#endif

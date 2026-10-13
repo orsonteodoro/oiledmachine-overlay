@@ -551,7 +551,7 @@ ${PATENT_STATUS[@]}
 ${PULSEAUDIO_IMPL[@]/+}
 ${WIFI_IMPL[@]/+}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
--hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
+-hwaccel jack +jemalloc +jit libcanberra libnotify libproxy
 libsecret mold +pgo +pulseaudio
 selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
@@ -1709,6 +1709,7 @@ eerror "Failed to copy '${_src_file}' to '${_lp_dir}'!"
 	done
 }
 
+# FIXME, it is missing
 verify_license_fingerprint() {
 einfo "Verifying about:license fingerprint"
 	local actual_fp=$(sha512sum "${S}/toolkit/content/license.html" \
@@ -1814,10 +1815,6 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 }
 
 src_prepare() {
-	if is-flagq '-flto*' ; then
-		rm -fv "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
-	fi
-
 	# Workaround for bgo#915651 and bmo#1988166 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
@@ -2017,7 +2014,7 @@ ewarn
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}/api-location.key" || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}/api-mozilla.key" || die
 
-	verify_license_fingerprint
+	#verify_license_fingerprint # FIXME
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
 
@@ -2489,7 +2486,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable "dbus"
 	mozconfig_use_enable "libproxy"
-	mozconfig_use_enable "cups" "printing"
+	#mozconfig_use_enable "cups" "printing"
 	multilib_is_native_abi && mozconfig_use_enable "speech" "synth-speechd"
 	mozconfig_use_enable "webrtc"
 	mozconfig_use_enable "webspeech"
@@ -2574,8 +2571,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		LTO_TYPE=""
 	fi
-
-	use jpegxl || mozconfig_add_options_ac "-jpegxl" "--disable-jxl"
 
 	# Upstream only supports lld or mold when using clang.
 	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
@@ -3175,12 +3170,6 @@ EOF
 			-e "s/firefox.desktop/${desktop_filename}/g" \
 			"${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
 			|| die "Failed to sed search-provider file."
-	fi
-
-	if use jpegxl ; then
-		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable jpegxl via pref"
-		pref("image.jxl.enabled", true);
-		EOF
 	fi
 
 	# Install wrapper script
