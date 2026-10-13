@@ -8,23 +8,39 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO PE SO UAF"
 
 SUBSLOT="18"
 JAVA_PKG_OPT_USE="jdbc"
+MARIADB_GENTOO_PATCH_VERSION="12.3.3-0"
 
 CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-arch/libarchive-999"
+	"app-arch/lz4-9999"
+	"app-arch/snappy-9999"
+	"app-arch/xz-utils-9999"
+	"dev-libs/jemalloc-9999"
+	"dev-libs/libfmt-9999"
+	"dev-libs/libxml2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
+	"dev-libs/libpcre2-9999"
 	"net-misc/curl-9999"
+	"sys-apps/systemd-9999"
+	"sys-libs/binutils-libs-9999"
+	"sys-libs/pam-9999"
+	"sys-libs/readline-9999"
+	"sys-process/numactl-9999"
+	"sys-process/procps-9999"
 )
 
-inherit cflags-hardened check-compiler-switch chkl systemd flag-o-matic prefix toolchain-funcs \
+inherit cflags-hardened check-compiler-switch chkl systemd flag-o-matic prefix secure-version toolchain-funcs \
 	multiprocessing java-pkg-opt-2 cmake pam
 
 DESCRIPTION="An enhanced, drop-in replacement for MySQL"
 HOMEPAGE="https://mariadb.org/"
 SRC_URI="
 	mirror://mariadb/${P}/source/${P}.tar.gz
-	https://dev.gentoo.org/~arkamar/distfiles/${PN}-11.4.8-patches-01.tar.xz
+	https://gitweb.gentoo.org/proj/mariadb-patches.git/snapshot/${PN}-patches-${MARIADB_GENTOO_PATCH_VERSION}.tar.bz2
 "
 # Shorten the path because the socket path length must be shorter than 107 chars
 # and we will run a mysql server during test phase
@@ -33,13 +49,11 @@ S="${WORKDIR}/mysql"
 LICENSE="GPL-2 LGPL-2.1+"
 SLOT="$(ver_cut 1-2)/${SUBSLOT:-0}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~x86"
-IUSE+=" aws-km +backup bindist columnstore cracklib debug extraengine galera innodb-lz4
+IUSE="aws-km +backup bindist columnstore cracklib debug extraengine galera innodb-lz4
 	innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga
 	numa odbc oqgraph pam +perl profiling rocksdb selinux +server sphinx
 	sst-rsync sst-mariabackup static systemd systemtap s3 tcmalloc
-	test xml yassl
-ebuild_revision_1
-"
+	test xml yassl"
 
 RESTRICT="!bindist? ( bindist ) !test? ( test )"
 
@@ -51,58 +65,59 @@ REQUIRED_USE="jdbc? ( extraengine server !static )
 # Be warned, *DEPEND are version-dependant
 # These are used for both runtime and compiletime
 COMMON_DEPEND="
-	dev-libs/libfmt:=
-	dev-libs/lzo:2=
-	>=dev-libs/libpcre2-10.34:=
+	>=dev-libs/libfmt-${LIBFMT_PV}:=
+	>=dev-libs/lzo-${LZO_PV}:=
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
 	>=sys-apps/texinfo-4.7-r1:=
-	sys-libs/ncurses:0=
-	>=virtual/zlib-1.2.3:=
+	>=sys-libs/ncurses-${NCURSES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	virtual/libcrypt:=
 	aws-km? ( dev-cpp/aws-sdk-cpp:= )
 	!bindist? (
-		sys-libs/binutils-libs:0=
-		>=sys-libs/readline-4.1:0=
+		>=sys-libs/binutils-libs-${BINUTILS_PV}:=
+		>=sys-libs/readline-${READLINE_PV}:=
 	)
-	jemalloc? ( dev-libs/jemalloc:0= )
+	jemalloc? ( >=dev-libs/jemalloc-${JEMALLOC_PV}:= )
 	kerberos? ( virtual/krb5:* )
 	kernel_linux? (
-		dev-libs/libaio:0=
+		dev-libs/libaio:=
 		sys-libs/liburing:=
-		sys-process/procps:0=
+		>=sys-process/procps-${PROCPS_PV}:=
+		virtual/secure-kernel:*
 	)
 	server? (
-		app-arch/bzip2:=
-		app-arch/xz-utils:=
-		backup? ( app-arch/libarchive:0= )
+		>=app-arch/bzip2-${BZIP2_PV}:=
+		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
+		backup? ( >=app-arch/libarchive-${LIBARCHIVE_PV}:= )
 		columnstore? (
-			app-arch/snappy:=
+			>=app-arch/snappy-${SNAPPY_PV}:=
 			dev-libs/boost:=
-			dev-libs/libxml2:2=
+			>=dev-libs/libxml2-${LIBXML2_PV}:=
 			dev-libs/thrift:=
 		)
-		cracklib? ( sys-libs/cracklib:0= )
+		cracklib? ( sys-libs/cracklib:= )
 		extraengine? (
-			odbc? ( dev-db/unixODBC:0= )
-			xml? ( dev-libs/libxml2:2= )
+			odbc? ( dev-db/unixODBC:= )
+			xml? ( >=dev-libs/libxml2-${LIBXML2_PV}:= )
 		)
-		innodb-lz4? ( app-arch/lz4:= )
-		innodb-lzo? ( dev-libs/lzo:= )
-		innodb-snappy? ( app-arch/snappy:= )
+		innodb-lz4? ( >=app-arch/lz4-${LZ4_PV}:= )
+		innodb-lzo? ( >=dev-libs/lzo-${LZO_PV}:= )
+		innodb-snappy? ( >=app-arch/snappy-${SNAPPY_PV}:= )
 		mroonga? ( app-text/groonga-normalizer-mysql:= >=app-text/groonga-7.0.4:= )
-		numa? ( sys-process/numactl:= )
+		numa? ( >=sys-process/numactl-${NUMACTL_PV}:= )
 		oqgraph? (
 			dev-libs/boost:=
 			dev-libs/judy:0=
 		)
-		pam? ( sys-libs/pam:0= )
-		s3? ( >=net-misc/curl-9999:= )
-		systemd? ( sys-apps/systemd:= )
+		pam? ( >=sys-libs/pam-${PAM_PV}:= )
+		s3? ( >=net-misc/curl-${CURL_PV}:= )
+		systemd? ( >=sys-apps/systemd-${SYSTEMD_PV}:= )
 	)
-	systemtap? ( >=dev-debug/systemtap-1.3:0= )
-	tcmalloc? ( dev-util/google-perftools:0= )
-	yassl? ( net-libs/gnutls:0= )
+	systemtap? ( >=dev-debug/systemtap-1.3:= )
+	tcmalloc? ( >=dev-util/google-perftools-${GOOGLE_PERFTOOLS_PV}:= )
+	yassl? ( >=net-libs/gnutls-${GNUTLS_PV}:= )
 	!yassl? (
-		>=dev-libs/openssl-1.0.0:0=
+		$(secure-version_gen_openssl_depends)
 	)
 "
 BDEPEND="
@@ -117,23 +132,12 @@ DEPEND="${COMMON_DEPEND}
 	server? (
 		extraengine? ( jdbc? ( >=virtual/jdk-1.8:= ) )
 	)
-	static? ( sys-libs/ncurses:=[static-libs] )
+	static? ( >=sys-libs/ncurses-${NCURSES_PV}:=[static-libs] )
 "
-RDEPEND="${COMMON_DEPEND}
-	!dev-db/mysql !dev-db/percona-server
-	!dev-db/mariadb:10.3
-	!dev-db/mariadb:10.4
-	!dev-db/mariadb:10.5
-	!dev-db/mariadb:10.6
-	!dev-db/mariadb:10.7
-	!dev-db/mariadb:10.8
-	!dev-db/mariadb:10.9
-	!dev-db/mariadb:10.10
-	!dev-db/mariadb:10.11
-	!dev-db/mariadb:11.0
-	!dev-db/mariadb:11.1
-	!dev-db/mariadb:11.2
-	!dev-db/mariadb:11.3
+RDEPEND="
+	${COMMON_DEPEND}
+	!<dev-db/mariadb-$(ver_cut 1-2)
+	!dev-db/mysql
 	selinux? ( sec-policy/selinux-mysql:* )
 	server? (
 		columnstore? ( dev-db/mariadb-connector-c:= )
@@ -235,9 +239,11 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply "${WORKDIR}"/mariadb-patches
+	eapply "${WORKDIR}"/${PN}-patches-${MARIADB_GENTOO_PATCH_VERSION}
+
 	eapply "${FILESDIR}"/${PN}-10.6.12-gcc-13.patch
 	eapply "${FILESDIR}"/${PN}-wsrep-gcc-15.patch
+	eapply "${FILESDIR}"/${PN}-11.8.9-no-sandbox-options.patch
 
 	eapply_user
 
@@ -299,6 +305,11 @@ src_prepare() {
 
 	sed -i -e 's~ \$basedir/lib/\*/mariadb19/plugin~~' \
 		"${S}"/scripts/mysql_install_db.sh || die
+
+	# Apply duckdb patch and remove git apply call
+	eapply -d storage/duckdb/third_parties/duckdb -- storage/duckdb/patches/*.diff
+	sed -i -e 's/PATCH_COMMAND.*/PATCH_COMMAND echo/g' \
+		storage/duckdb/cmake/duckdb.cmake || die
 
 	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
@@ -385,6 +396,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-DCLIENT_PLUGIN_CLIENT_ED25519=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_DIALOG=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC
+		-DCLIENT_PLUGIN_PARSEC=OFF
 		-DCLIENT_PLUGIN_ZSTD=OFF
 	)
 	if use test ; then
@@ -473,7 +485,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		elif ! use latin1 ; then
 			mycmakeargs+=(
 				-DDEFAULT_CHARSET=utf8mb4
-				-DDEFAULT_COLLATION=utf8mb4_unicode_520_ci
+				-DDEFAULT_COLLATION=utf8mb4_uca1400_ai_ci
 			)
 		else
 			mycmakeargs+=(
@@ -607,26 +619,17 @@ src_test() {
 		"innodb_gis.gis;MDEV-25095;Known rounding error with latest AMD processors"
 		"main.gis;MDEV-25095;Known rounding error with latest AMD processors"
 
-		# Test which fail in network-sandbox because hostname is set to "localhost"
-		"main.explain_non_select;0;Fails in network-sandbox"
-		"main.mysql_upgrade;MDEV-27044;Fails in network-sandbox"
-		"main.selectivity_no_engine;MDEV-26320;Fails in network-sandbox"
-		"main.stat_tables;0;Fails in network-sandbox"
-		"main.stat_tables_innodb;0;Fails in network-sandbox"
-		"main.upgrade_MDEV-19650;MDEV-25096;Fails in network-sandbox"
-		"perfschema.privilege_table_io;MDEV-27045;Fails in network-sandbox"
-		"roles.acl_statistics;0;Fails in network-sandbox"
-		"sysschema.v_privileges_by_table_by_level;MDEV-36030;Fails with network sandbox"
-
 		# Fails in network-sandbox which contains only "lo" interface
-		"main.func_json;MDEV-38057;Fails in network-sandbox"
+		"main.mysql_client_test;0;Fails in network-sandbox"
+		"main.mysql_client_test_comp;0;Fails in network-sandbox"
 
 		# Some tests are unable to retrieve HW address
 		"spider.*;MDEV-37098;Fails with network sandbox"
 
-		# This issue will be fixed in next release
-		# see also https://github.com/MariaDB/server/pull/4429
-		"main.func_regexp_pcre;MDEV-38046;Fails with PCRE2 10.47"
+		# issue introduced in 11.8.2
+		"main.mysqld--help-aria;MDEV-36668;broken test regex"
+
+		"sys_vars.session_track_system_variables_basic;0;Requires example engine"
 	)
 
 	use latin1 || disabled_tests+=(
