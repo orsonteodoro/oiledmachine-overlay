@@ -290,3 +290,7 @@ sci-ml/ollama ollama_llms_xploiter-bugbounty-ai # GR
 sci-ml/ollama ollama_llms_xploiter-pentester # GR
 sci-ml/ollama ollama_llms_xploiter-the-xploiter # GR
 sci-ml/ollama unrestrict
+
+# Vulnerable
+media-plugins/gst-plugins-rs spotify # DoS:High, DT:High
+media-plugins/gst-plugins-rs webrtc-aws # DoS:High, DT:High

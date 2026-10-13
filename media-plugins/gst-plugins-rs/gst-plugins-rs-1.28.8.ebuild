@@ -162,6 +162,14 @@ fetch+https://gitlab.freedesktop.org/gstreamer/gstreamer-rs/-/archive/${GSTREAME
 	else
 # QA:  Manually update all pinned aws* packages in net/aws/Cargo.toml and in net/webrtc/Cargo.toml
 # QA:  Manually update all pinned clap packages in $(grep -l -e "clap.*version" $(find . -name "Cargo.toml"))
+
+#
+# Unpatched:
+#
+# aws-smithy-http-client 1.5.0 -> rustls 0.21.12 -> rustls-webpki 0.101.7 (vulnerable, DoS:High, DT:High)
+# librespot-core 0.8.0 -> hyper-proxy2 -> hyper-rustls 0.26.0 -> rustls 0.22.4 -> rustls-webpki 0.102.8 (vulnerable, DoS:High, DT:High)
+#
+
 CRATES="
 addr2line-0.24.2
 adler2-2.0.1
@@ -1391,7 +1399,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_66
+ebuild_revision_67
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
