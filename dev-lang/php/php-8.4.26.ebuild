@@ -26,16 +26,21 @@ LLVM_COMPAT=(
 
 CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
+	"app-arch/xz-utils-9999"
 	"dev-db/sqlite-9999"
+	"dev-libs/icu-79.1.9999"
 	"dev-libs/libffi-9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/libsodium-9999"
 	"dev-libs/libxml2-9999"
+	"dev-libs/libxslt-9999"
 	"dev-libs/libzip-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
+	"media-libs/freetype-9999"
+	"media-libs/gd-9999"
 	"net-misc/curl-9999"
 	"net-nds/openldap-9999"
 	"sys-apps/systemd-9999"
@@ -80,7 +85,9 @@ IUSE="${IUSE} acl apparmor argon2 avif bcmath berkdb bzip2 calendar
 	qdbm readline selinux +session session-mm sharedmem
 	+simplexml snmp soap sockets sodium spell sqlite ssl sysvipc
 	systemd test test-full tidy tinycdb +tokenizer tokyocabinet truetype
-	unicode valgrind webp +xml xmlreader xmlwriter xpm xslt zip zlib"
+	unicode valgrind webp +xml xmlreader xmlwriter xpm xslt zip zlib
+	ebuild_revision_1
+"
 
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 REQUIRED_USE="
@@ -136,7 +143,7 @@ COMMON_DEPEND="
 	enchant? ( app-text/enchant:= )
 	ffi? ( >=dev-libs/libffi-${LIBFFI_PV}:= )
 	gd? (
-		>=media-libs/gd-2.3.3-r4:=[avif?,jpeg?,png?,truetype?,webp?,xpm?]
+		>=media-libs/gd-${GD_PV}:=[avif?,jpeg?,png?,truetype?,webp?,xpm?]
 	)
 	gdbm? ( sys-libs/gdbm:= )
 	gmp? ( >=dev-libs/gmp-${GMP_PV}:= )
@@ -181,8 +188,9 @@ RDEPEND="${COMMON_DEPEND}
 # However, the configure script will warn if it's absent or if you
 # have an incompatible version installed. See bug 593278.
 DEPEND="${COMMON_DEPEND}
-	app-arch/xz-utils
-	sys-devel/bison"
+	>=app-arch/xz-utils-${XZ_UTILS_PV}:=
+	sys-devel/bison
+"
 
 BDEPEND="virtual/pkgconfig"
 
