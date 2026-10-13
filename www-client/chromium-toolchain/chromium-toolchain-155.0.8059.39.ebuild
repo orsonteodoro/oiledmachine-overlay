@@ -9,7 +9,7 @@ EAPI=8
 # guardrail.
 
 # To obtain expected file count numbers, use
-# `USE="-system-clang -system-rust" ebuild chromium-toolchain-155.0.8059.39.ebuild digest clean unpack prepare compile install merge`
+# `USE="-system-clang -system-rust" ebuild chromium-toolchain-155.0.8059.79.ebuild digest clean unpack prepare compile install merge`
 
 inherit dhms
 
@@ -23,7 +23,7 @@ inherit dhms
 # llvm = c++17
 CXX_STANDARD=23 # Same as libcxx and chromium.
 # For commit history, see https://gn.googlesource.com/gn/+log
-# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/155.0.8059.39/DEPS#L571
+# For the pinned gn version associated with a specific Chromium release, see https://github.com/chromium/chromium/blob/155.0.8059.79/DEPS#L571
 GN_COMMIT="cfcd774b98f3433e18b722f9a7ff06119825b8eb"
 GN_PV="0.2562" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
@@ -39,14 +39,14 @@ LLVM_SYSTEM_SLOT_LIVE="1"
 # all sanitizers passed to mitigate multiple miscompilation bugs/vulnerabilities.
 LLVM_SYSTEM_TIMESTAMP_LIVE="Sep 20, 2026 4:35 PM PDT"
 
-# Vendored LLVM commit reference:  https://github.com/chromium/chromium/blob/155.0.8059.39/DEPS#L1074 \
-# Vendored LLVM commit reference (CLANG_SUB_REVISION):  https://github.com/chromium/chromium/blob/155.0.8059.39/tools/clang/scripts/update.py
+# Vendored LLVM commit reference:  https://github.com/chromium/chromium/blob/155.0.8059.79/DEPS#L1074 \
+# Vendored LLVM commit reference (CLANG_SUB_REVISION):  https://github.com/chromium/chromium/blob/155.0.8059.79/tools/clang/scripts/update.py
 # Vendored is before -rc release before -rc1 miscompile fixes.
 LLVM_VENDORED_COMMIT="62397f8b" # Without the g prefix; See also https://github.com/llvm/llvm-project/blob/20e97c4b/cmake/Modules/LLVMVersion.cmake
 LLVM_VENDORED_N_COMMITS="7747" # The number to the right of -init- in llvmorg-24-init-7747-g62397f8b.  The exact number of commits after llvmorg-24-init.
 LLVM_VENDORED_SLOT="24" # Cr official slot
 LLVM_VENDORED_SUB_REV="27" # Same as CLANG_SUB_REVISION
-# Vendored Rust commit reference:  https://github.com/chromium/chromium/blob/155.0.8059.39/tools/rust/update_rust.py#L37 \
+# Vendored Rust commit reference:  https://github.com/chromium/chromium/blob/155.0.8059.79/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_SYSTEM_LIVE_TIMESTAMP="Fri, 25 Sep 2026 08:14:22 -0400" # Same as Rust 1.101.0 timestamp
 RUST_SYSTEM_LIVE_VER="1.101.0"
