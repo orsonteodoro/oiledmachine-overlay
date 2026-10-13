@@ -43,7 +43,7 @@ CHKL_TIMESTAMPS=(
 	"sys-libs/readline-9999"
 )
 
-inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib postgres secure-version systemd
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib postgres secure-version systemd toolchain-funcs
 
 DESCRIPTION="The PHP language runtime engine"
 HOMEPAGE="https://www.php.net/"
@@ -107,11 +107,14 @@ RESTRICT="!test? ( test )"
 # The supported (that is, autodetected) versions of BDB are listed in
 # the ./configure script. Other versions *work*, but we need to stick to
 # the ones that can be detected to avoid a repeat of bug #564824.
+#
+# Require at least libcrypt-2-r1 so that on musl systems we pull in
+# sys-libs/libxcrypt (i.e. cannot use the musl crypt implementation).
 COMMON_DEPEND="
 	app-eselect/eselect-php:*[apache2?,fpm?]
 	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=[jit?,unicode]
 	dev-libs/uriparser:=
-	virtual/libcrypt:=
+	>=virtual/libcrypt-2-r1:=
 	fpm? (
 		acl? ( >=sys-apps/acl-${ACL_PV}:= )
 		apparmor? (
@@ -145,7 +148,7 @@ COMMON_DEPEND="
 	libedit? ( >=dev-libs/libedit-${LIBEDIT_PV}:= )
 	lmdb? ( dev-db/lmdb:= )
 	mssql? ( dev-db/freetds:=[mssql] )
-	nls? ( sys-devel/gettext:= )
+	nls? ( virtual/libintl:* )
 	odbc? ( iodbc? ( dev-db/libiodbc:= ) !iodbc? ( dev-db/unixODBC:= ) )
 	postgres? ( ${POSTGRES_DEP} )
 	qdbm? ( dev-db/qdbm:= )
@@ -185,12 +188,9 @@ DEPEND="${COMMON_DEPEND}
 BDEPEND="virtual/pkgconfig"
 
 PATCHES=(
+	"${FILESDIR}/php-set-fpm-test-executable.patch"
 	"${FILESDIR}/php-8.3.31-ipv6-printing-test-fix.patch"
-	"${FILESDIR}/php-8.4-libgd-test-fixes.patch"
-	"${FILESDIR}/php-8.3-iconv-testfix-01.patch"
-	"${FILESDIR}/php-8.3-iconv-testfix-02.patch"
-	"${FILESDIR}/php-8.3-iconv-testfix-03.patch"
-	"${FILESDIR}/php-8.3-iconv-testfix-04.patch"
+	"${FILESDIR}/php-8.5-musl-pathconf.patch"
 )
 
 PHP_MV="$(ver_cut 1)"
@@ -278,6 +278,12 @@ src_prepare() {
 	sed -i "s~^include=.*$~include=${PHP_INI_DIR}/fpm.d/*.conf~" \
 		sapi/fpm/php-fpm.conf.in \
 		|| die 'failed to move the include directory in php-fpm.conf'
+
+	# The ./configure script creates this symlink, but we run the tests
+	# in ${S} rather than in a SAPI-specicific copy where ./configure
+	# was run. Easiest thing to do is recreate it under ${S}. Only
+	# relevant for USE=nls on musl.
+	ln -s en_US.UTF-8 ext/gettext/tests/locale/en_US || die
 
 	# fails in a network sandbox,
 	#
@@ -452,8 +458,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_with valgrind)
 	)
 
-	# Override autoconf cache variables for libcrypt algorithms.These
-	# otherwise cannot be detected when cross-compiling. Bug 931884.
+	# Override autoconf cache variables for libcrypt. The algorithms
+	# otherwise cannot be detected when cross-compiling (bug 931884),
+	# and on musl systems, AC_SEARCH_LIBS misses that -lcrypt is needed
+	# to use the intended libcrypt (rather than the built in musl crypt
+	# functions whose headers have been deleted -- this is a Gentooism).
 	our_conf+=(
 		ac_cv_crypt_blowfish=yes
 		ac_cv_crypt_des=yes
@@ -461,7 +470,20 @@ einfo "Detected compiler switch.  Disabling LTO."
 		ac_cv_crypt_md5=yes
 		ac_cv_crypt_sha512=yes
 		ac_cv_crypt_sha256=yes
+		ac_cv_search_crypt='-lcrypt'
+		ac_cv_search_crypt_r='-lcrypt'
 	)
+
+	if use posix; then
+		# Avoid needing to patch/eautoreconf to enable these functions
+		# on musl. They are perfectly POSIX-compliant, and of course
+		# glibc has them too. Obsolete when
+		#
+		#   https://github.com/php/php-src/pull/22717
+		#
+		# is merged.
+		append-cppflags -DHAVE_PATHCONF=1 -DHAVE_FPATHCONF=1
+	fi
 
 	# DBA support
 	if use cdb || use berkdb || use flatfile || use gdbm || use inifile \
@@ -522,8 +544,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		# ./configure script checks for the headers using "test -f" and
 		# ignores your CFLAGS... and pdo_odbc_def_libdir prevents the
 		# build system from appending a nonsense -L flag.
-		local iodbc_ldflags=$(pkg-config --libs libiodbc)
-		local iodbc_cflags=$(pkg-config --cflags libiodbc)
+		local iodbc_ldflags=$($(tc-getPKG_CONFIG) --libs libiodbc)
+		local iodbc_cflags=$($(tc-getPKG_CONFIG) --cflags libiodbc)
 		our_conf+=(
 			pdo_odbc_def_libdir="${EPREFIX}/usr/$(get_libdir)"
 			pdo_odbc_def_incdir="${EPREFIX}/usr/include/iodbc"
@@ -778,13 +800,13 @@ src_install() {
 
 	# Delete empty /var/run and /var/log directories.
 	# See bug #977105
-	if use fpm ; then
+	if use fpm || use phpdbg ; then
 		rmdir "${D}/var/log" "${D}/var/run" || die
 	fi
 }
 
 src_test() {
-	export TEST_PHP_EXECUTABLE="${WORKDIR}/sapis-build/cli/sapi/cli/php"
+	local TEST_PHP_EXECUTABLE="${WORKDIR}/sapis-build/cli/sapi/cli/php"
 
 	# Sometimes when the sub-php launches a sub-sub-php, it uses these.
 	# Without an "-n" in all instances, the *live* php.ini can be loaded,
@@ -793,11 +815,18 @@ src_test() {
 	export TEST_PHP_EXTRA_ARGS="-n"
 
 	if [[ -x "${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi" ]] ; then
-		export TEST_PHP_CGI_EXECUTABLE="${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi"
+		local TEST_PHP_CGI_EXECUTABLE="${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi"
+		export TEST_PHP_CGI_EXECUTABLE
+	fi
+
+	if [[ -x "${WORKDIR}/sapis-build/fpm/sapi/fpm/php-fpm" ]] ; then
+		local TEST_PHP_FPM_EXECUTABLE="${WORKDIR}/sapis-build/fpm/sapi/fpm/php-fpm"
+		export TEST_PHP_FPM_EXECUTABLE
 	fi
 
 	if [[ -x "${WORKDIR}/sapis-build/phpdbg/sapi/phpdbg/phpdbg" ]] ; then
-		export TEST_PHPDBG_EXECUTABLE="${WORKDIR}/sapis-build/phpdbg/sapi/phpdbg/phpdbg"
+		local TEST_PHPDBG_EXECUTABLE="${WORKDIR}/sapis-build/phpdbg/sapi/phpdbg/phpdbg"
+		export TEST_PHPDBG_EXECUTABLE
 	fi
 
 	# The IO capture tests need to be disabled because they fail when
@@ -810,7 +839,7 @@ src_test() {
 	# for e.g. bug 977243.
 	SKIP_SLOW_TESTS=$(usex test-full 0 1) SKIP_IO_CAPTURE_TESTS=1 SKIP_PERF_SENSITIVE=1 REPORT_EXIT_STATUS=1 \
 		"${TEST_PHP_EXECUTABLE}" -n \
-		"${WORKDIR}/sapis-build/cli/run-tests.php" --offline -n -q \
+		"${WORKDIR}/sapis-build/cli/run-tests.php" --offline -n -q --show-diff \
 		$(usex test-full "--set-timeout 300" "") \
 		-d "session.save_path=${T}" \
 		|| die "tests failed"
