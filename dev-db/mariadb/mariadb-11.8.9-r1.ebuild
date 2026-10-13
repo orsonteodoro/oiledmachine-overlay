@@ -53,7 +53,9 @@ IUSE="aws-km +backup bindist columnstore cracklib debug extraengine galera innod
 	innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga
 	numa odbc oqgraph pam +perl profiling rocksdb selinux +server sphinx
 	sst-rsync sst-mariabackup static systemd systemtap s3 tcmalloc
-	test xml yassl"
+	test xml yassl
+	ebuild_revision_3
+"
 
 RESTRICT="!bindist? ( bindist ) !test? ( test )"
 

@@ -23,7 +23,17 @@ LLVM_COMPAT=(
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
-inherit cflags-hardened check-compiler-switch check-reqs cmake dot-a edo flag-o-matic libcxx-slot libstdcxx-slot linux-info multiprocessing prefix toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"app-arch/lz4-9999"
+	"app-arch/zstd-9999"
+	"dev-libs/icu-79.1.9999"
+	"dev-libs/jemalloc-9999"
+	"dev-libs/libevent-9999"
+	"sys-process/numactl-9999"
+	"sys-process/procps-9999"
+)
+
+inherit cflags-hardened check-compiler-switch check-reqs chkl cmake dot-a edo flag-o-matic libcxx-slot libstdcxx-slot linux-info multiprocessing secure-version prefix toolchain-funcs
 
 # Patch version
 PATCH_SET=( https://github.com/parona-source/mysql-server/releases/download/mysql-8.0.43-patches-01/mysql-8.0.43-patches-01.tar.xz )
@@ -43,7 +53,10 @@ LICENSE="GPL-2"
 SLOT="8.0"
 # -ppc for bug #761715
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos ~x64-solaris"
-IUSE="cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server tcmalloc test test-install"
+IUSE+="
+cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server tcmalloc test test-install
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 REQUIRED_USE="
@@ -61,23 +74,23 @@ REQUIRED_USE="
 # Be warned, *DEPEND are version-dependent
 # These are used for both runtime and compiletime
 COMMON_DEPEND="
-	>=app-arch/lz4-1.9.4:=
-	>=app-arch/zstd-1.2.0:=
-	>=dev-libs/openssl-1.0.0:=
+	>=app-arch/lz4-${LZ4_PV}:=
+	>=app-arch/zstd-${ZSTD_PV}:=
+	$(secure-version_gen_openssl_depends)
 	net-libs/libtirpc:=
-	sys-libs/ncurses:=
-	>=virtual/zlib-1.2.13:=
+	>=sys-libs/ncurses-${NCURSES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 	server? (
-		dev-libs/icu:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/libevent:=[ssl,threads(+)]
+		>=dev-libs/icu-${ICU_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-libs/libevent-${LIBEVENT_PV}:=[ssl,threads(+)]
 		cjk? ( app-text/mecab )
-		jemalloc? ( dev-libs/jemalloc:= )
+		jemalloc? ( >=dev-libs/jemalloc-${JEMALLOC_PV}:= )
 		kernel_linux? (
-			dev-libs/libaio
-			sys-process/procps
+			dev-libs/libaio:=
+			>=sys-process/procps-${PROCPS_PV}:=
 		)
-		numa? ( sys-process/numactl )
-		tcmalloc? ( dev-util/google-perftools:= )
+		numa? ( >=sys-process/numactl-${NUMACTL_PV}:= )
+		tcmalloc? ( >=dev-util/google-perftools-${GOOGLE_PERFTOOLS_PV}:= )
 	)
 "
 
@@ -93,18 +106,18 @@ RDEPEND="
 	!dev-db/mysql-cluster
 	!dev-db/mysql:0
 	!dev-db/mysql:5.7
-	selinux? ( sec-policy/selinux-mysql )
+	selinux? ( sec-policy/selinux-mysql:* )
 	!prefix? (
-		acct-group/mysql
-		acct-user/mysql
-		dev-db/mysql-init-scripts
+		acct-group/mysql:*
+		acct-user/mysql:*
+		dev-db/mysql-init-scripts:=
 	)
 	test-install? (
-		app-arch/zip
-		dev-lang/perl
-		dev-perl/Expect
-		dev-perl/JSON
-		sys-libs/timezone-data
+		app-arch/zip:=
+		>=dev-lang/perl-${PERL_PV}:=
+		dev-perl/Expect:=
+		dev-perl/JSON:=
+		sys-libs/timezone-data:=
 	)
 "
 # For other stuff to bring us in
@@ -120,7 +133,7 @@ BDEPEND="
 		acct-group/mysql
 		acct-user/mysql
 		app-arch/zip
-		dev-lang/perl
+		>=dev-lang/perl-${PERL_PV}
 		dev-perl/Expect
 		dev-perl/JSON
 		sys-libs/timezone-data
@@ -249,6 +262,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."

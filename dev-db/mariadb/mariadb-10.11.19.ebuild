@@ -54,7 +54,7 @@ IUSE+=" +backup bindist columnstore cracklib debug extraengine galera innodb-lz4
 	numa odbc oqgraph pam +perl profiling rocksdb selinux +server sphinx
 	sst-rsync sst-mariabackup static systemd systemtap s3 tcmalloc
 	test xml yassl
-ebuild_revision_1
+	ebuild_revision_3
 "
 
 RESTRICT="!bindist? ( bindist ) !test? ( test )"
