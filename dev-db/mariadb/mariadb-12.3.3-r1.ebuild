@@ -24,6 +24,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/libpcre2-9999"
+	"net-libs/gnutls-3.8.9999"
 	"net-misc/curl-9999"
 	"sys-apps/systemd-9999"
 	"sys-libs/binutils-libs-9999"

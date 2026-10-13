@@ -14,8 +14,9 @@ QA_CONFIG_IMPL_DECL_SKIP=( "unreachable" "MIN" "alignof" "static_assert" "fpurge
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/wget.asc"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/libpcre2-9999"
 	"app-arch/xz-utils-9999"
+	"dev-libs/libpcre2-9999"
+	"net-libs/gnutls-3.8.9999"
 )
 
 inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic python-any-r1 secure-version toolchain-funcs unpacker verify-sig

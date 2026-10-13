@@ -165,6 +165,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/freetype-9999"
 	"media-libs/harfbuzz-9999"
 	"media-libs/mesa-9999"
+	"net-libs/gnutls-3.8.9999"
 	"net-libs/libssh2-9999"
 	"net-libs/nghttp2-9999"
 	"net-misc/wget-9999"

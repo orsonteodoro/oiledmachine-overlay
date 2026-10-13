@@ -25,6 +25,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/danielstenberg.asc
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"app-arch/zstd-9999"
+	"net-libs/gnutls-3.8.9999"
 	"net-libs/libssh2-9999"
 	"net-libs/nghttp2-9999"
 	"net-libs/rustls-ffi-9999"

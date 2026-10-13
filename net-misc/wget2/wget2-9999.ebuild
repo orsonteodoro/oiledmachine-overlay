@@ -15,6 +15,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
+	"net-libs/gnutls-3.8.9999"
 	"net-libs/nghttp2-9999"
 )
 

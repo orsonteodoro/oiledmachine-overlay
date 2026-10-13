@@ -10,6 +10,7 @@ CFLAGS_HARDENED_USE_CASES="network"
 CHKL_TIMESTAMPS=(
 	"dev-libs/cJSON-9999"
 	"dev-libs/nettle-9999"
+	"net-libs/gnutls-3.8.9999"
 )
 
 inherit cflags-hardened chkl meson-multilib secure-version

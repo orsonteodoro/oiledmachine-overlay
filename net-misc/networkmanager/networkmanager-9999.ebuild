@@ -19,6 +19,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/newt-9999"
 	"net-firewall/iptables-9999"
 	"net-firewall/nftables-9999"
+	"net-libs/gnutls-3.8.9999"
 	"net-misc/curl-9999"
 	"net-misc/dhcpcd-9999"
 	"net-misc/iputils-99999999"

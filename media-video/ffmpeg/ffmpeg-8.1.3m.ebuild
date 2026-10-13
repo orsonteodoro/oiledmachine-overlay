@@ -492,6 +492,7 @@ CHKL_TIMESTAMPS=(
 	"media-video/rav1e-9999"
 	"media-video/rtmpdump-9999"
 	"net-fs/samba-9999"
+	"net-libs/gnutls-3.8.9999"
 	"net-libs/librist-9999"
 	"net-libs/libssh-9999"
 	"net-libs/srt-9999"

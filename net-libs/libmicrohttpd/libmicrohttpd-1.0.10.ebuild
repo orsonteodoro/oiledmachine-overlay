@@ -6,6 +6,7 @@ EAPI="8"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
+	"net-libs/gnutls-3.8.9999"
 	"net-misc/curl-9999"
 )
 
@@ -41,7 +42,7 @@ RESTRICT="!test? ( test )"
 
 KEYRING_VER=201906
 
-RDEPEND="ssl? ( >net-libs/gnutls-2.12.20-r0:=[${MULTILIB_USEDEP}] )"
+RDEPEND="ssl? ( >=net-libs/gnutls-${GNUTLS_PV}:=[${MULTILIB_USEDEP}] )"
 # libcurl and the curl binary are used during tests on CHOST
 DEPEND="${RDEPEND}
 	test? ( >=net-misc/curl-${CURL_PV}:=[ssl?] )"
