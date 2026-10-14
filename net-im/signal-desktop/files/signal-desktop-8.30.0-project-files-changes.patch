@@ -245,7 +245,7 @@ diff '--color=auto' -urp Signal-Desktop-8.30.0.orig/pnpm-workspace.yaml Signal-D
    '@signalapp/sqlcipher@4.1.0': true
    '@signalapp/windows-ucv@1.0.1': true
 -  '@swc/core@1.10.16': true
-+  '@swc/core@1.16.13': true
++  '@swc/core@1.16.18': true
    '@tailwindcss/oxide@4.3.0': true
 -  'electron@44.4.5': true
 +  'electron@@NODE_24_ELECTRON_PV@': true
