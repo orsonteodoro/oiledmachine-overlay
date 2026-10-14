@@ -27,7 +27,7 @@ RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 ELECTRON_BUILDER_PV="26.15.7" # 24.13.3 used upstream.  Old pinned version required
-SECURE_VERSION_NODE_EBUILD_UPDATE=1791575863
+SECURE_VERSION_NODE_EBUILD_UPDATE=1791990656
 
 inherit secure-version secure-version-node
 
