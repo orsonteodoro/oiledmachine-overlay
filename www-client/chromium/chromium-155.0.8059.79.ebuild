@@ -292,7 +292,7 @@ TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="4633d93cbe061ed993cb6f4bc31338344aea1add42945d600c3e44a86bea63b4fd3dc8399d3cb187879c2f8d091086556334148aed5343291578ad83596ea9f5"
-LICENSE_FINGERPRINT_VANILLA="106f9bd7fe947694e08510adb586760c2a026f97e1cc01725380429236146758010bab5869ade4914934aea20ebf474311c403e59bf712999757dbd044c2cf75"
+LICENSE_FINGERPRINT_VANILLA="b50fb8698e5576b6655740bf69151d5a54652adffea05edd7e011a6dd9f93e312a24fcaedbce7d739af077a8d648d002c00f5240af9e0a525fccf88d94c380b2"
 
 # Mitigate flood the zone vulnerability.
 # If there is a live ebuild, it needs a check.
@@ -3563,6 +3563,7 @@ einfo "Removing SupportedLaneCount"
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/chromium-155-crubit.patch"
+		"${FILESDIR}/extra-patches/chromium-155-remove-private_verification_tokens.patch"
 	)
 }
 
