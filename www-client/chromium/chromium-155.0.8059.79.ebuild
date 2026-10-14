@@ -272,7 +272,7 @@ inherit multilib-build secure-version
 GCC_PV="10.2.1" # Minimum
 CROMITE_PV="153.0.8010.37"
 GN_PV="0.2562"
-ESBUILD_PV="0.25.1"
+ESBUILD_PV="0.28.2"
 ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
 UNGOOGLED_CHROMIUM_PV="155.0.8059.39-1"
@@ -3562,7 +3562,8 @@ einfo "Removing SupportedLaneCount"
 		|| die
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/chromium-153-crubit.patch"
+		"${FILESDIR}/extra-patches/chromium-155-crubit.patch"
+		"${FILESDIR}/extra-patches/chromium-155-use-system-esbuild.patch"
 	)
 }
 
@@ -3977,19 +3978,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		fi
 	fi
 
-	# Sanity check esbuild version before we start removing files.
-	# We _could_ patch the version check out - in theory esbuild upstream
-	# are being super conservative after arch(AUR) packaged an `esbuild`
-	# binary and set ESBUILD_BINARY_PATH=/usr/bin/esbuild, causing much
-	# breakage, but this is fine too and exactly matches what upstream are
-	# expecting.
-	# https://github.com/evanw/esbuild/issues/2894
-	local esbuild_js="${S}/third_party/devtools-frontend/src/node_modules/esbuild/lib/main.js"
-	local found
-	found=$(awk -F'"' '/if \(binaryVersion !==/ {print $2}' "${esbuild_js}")
-	if [[ "${found}" != "${ESBUILD_PV}" ]]; then
-		die "esbuild version mismatch: expected ${ESBUILD_VER}, found ${found}"
-	fi
+	# oiledmachine-overlay:  Removed esbuild version check.
 
 	# And now we restore any that we actually need, from the host system
 	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
