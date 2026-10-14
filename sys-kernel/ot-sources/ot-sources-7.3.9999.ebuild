@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="24a19b953e2a3d0ea5a8c4951a0ab8f32720c907" # 2026-10-11 20:04:55 -0700 @ Linux 7.3-rc7
+LINUX_SOURCES_FALLBACK_COMMIT="0fcb05b72344f40806cbe810de8872f1698bf053" # 2026-10-14 08:23:37 -0700 @ Merge tag 'libcrypto-fixes-for-linus' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_56"
+EBUILD_REV="ebuild_revision_57"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.2-r1"
 PATCH_RT_VER="7.3-rc4-rt1"

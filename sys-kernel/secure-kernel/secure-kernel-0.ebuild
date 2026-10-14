@@ -111,7 +111,7 @@ VIDEO_CARDS=(
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
-ebuild_revision_5
+ebuild_revision_6
 "
 
 RDEPEND="
