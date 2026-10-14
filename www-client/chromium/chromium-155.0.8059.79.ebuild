@@ -4207,7 +4207,7 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/hunspell"
 		"third_party/hyphenation-patterns" # Required to build ungoogled-chromium
 		"third_party/iamf_tools"
-		$(use system-icu '' 'third_party/icu')
+		$(usex system-icu '' 'third_party/icu')
 		"third_party/ink/src/ink/brush"
 		"third_party/ink/src/ink/color"
 		"third_party/ink/src/ink/geometry"
@@ -4386,7 +4386,7 @@ elog "Removing bundled binaries from source tree ..."
 		#$(usex system-zlib '' 'third_party/zlib') # Already kept
 		"third_party/zlib/google"
 
-		$(use system-zstd '' 'third_party/zstd')
+		$(usex system-zstd '' 'third_party/zstd')
 		"third_party/zxcvbn-cpp"
 		"url/third_party/mozilla"
 	#	"v8/third_party/glibc"
