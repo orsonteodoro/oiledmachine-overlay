@@ -288,9 +288,8 @@ gen_clang_bdepend() {
 if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FALLBACK_COMMIT="13bb0f4eb64502f451fd40a45cf24444bc205d99"
-#	FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025 # working
-#	FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024 # working
+	FALLBACK_COMMIT="9cb0def5269881665db41954da431dbdc5e61c82"
+	#FALLBACK_COMMIT="13bb0f4eb64502f451fd40a45cf24444bc205d99" # working
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -315,7 +314,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -private-lib -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xcsecurity xvfb
-ebuild_revision_146
+ebuild_revision_147
 "
 REQUIRED_USE+="
 	!test
