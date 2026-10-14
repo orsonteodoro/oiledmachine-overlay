@@ -3996,7 +3996,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	local actual_pv=$(grep "version" "${S}/third_party/devtools-frontend/src/node_modules/esbuild/package.json" | cut -f 4 -d '"')
 	local expected_pv="${ESBUILD_PV}"
 	if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
-eerror "QA:  Bump dev-util/esbuild ebuild to ${actual_pv}"
+eerror "QA:  Bump dev-util/esbuild ebuild and ESBUILD_PV to ${actual_pv}"
 eerror "Actual esbuild PV:  ${actual_pv}"
 eerror "Expected ebuild PV:  ${expected_pv}"
 		die
