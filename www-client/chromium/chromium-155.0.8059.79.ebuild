@@ -3563,7 +3563,6 @@ einfo "Removing SupportedLaneCount"
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/chromium-155-crubit.patch"
-		"${FILESDIR}/extra-patches/chromium-155-use-system-esbuild.patch"
 	)
 }
 
@@ -3978,7 +3977,19 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		fi
 	fi
 
-	# oiledmachine-overlay:  Removed esbuild version check.
+	# Sanity check esbuild version before we start removing files.
+	# We _could_ patch the version check out - in theory esbuild upstream are being super conservative after
+	# arch(AUR) packaged an `esbuild` binary and set ESBUILD_BINARY_PATH=/usr/bin/esbuild, causing much breakage,
+	# but this is fine too and exactly matches what upstream are expecting.
+	# https://github.com/evanw/esbuild/issues/2894
+	local actual_pv=$(grep "version" "${S}/third_party/devtools-frontend/src/node_modules/esbuild/package.json" | cut -f 4 -d '"')
+	local expected_pv="${ESBUILD_PV}"
+	if ver_test "${actual_pv}" "-ne" "${expected_pv}" ; then
+eerror "QA:  Bump dev-util/esbuild ebuild to ${actual_pv}"
+eerror "Actual esbuild PV:  ${actual_pv}"
+eerror "Expected ebuild PV:  ${expected_pv}"
+		die
+	fi
 
 	# And now we restore any that we actually need, from the host system
 	local esbuild_path="${S}/third_party/devtools-frontend/src/third_party/esbuild"
