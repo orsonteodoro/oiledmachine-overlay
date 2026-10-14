@@ -10,7 +10,7 @@ overrides:
   react-dom: 19.2.7
   vitest: 5.0.3
   zod@^4: 4.6.5
-  electron@<44.7.0: 44.7.0
+  electron@<44.7.2: 44.7.2
   '@auv-js/sdk@0.0.28>@grpc/grpc-js': 1.14.5
   '@grpc/grpc-js': 1.14.5
   '@vanilla-extract/vite-plugin@5.2.6>vite': 8.3.0
@@ -51,7 +51,7 @@ importers:
         version: 5.4.4
       electron-sparkle-updater:
         specifier: 0.5.2
-        version: 0.5.2(patch_hash=6f583444e425a99e21e374a9afab303612eb8255ee21194afdb77f347c6cc045)(electron@44.7.0(supports-color@9.4.0))
+        version: 0.5.2(patch_hash=6f583444e425a99e21e374a9afab303612eb8255ee21194afdb77f347c6cc045)(electron@44.7.2(supports-color@9.4.0))
       font-list:
         specifier: ^2.1.0
         version: 2.1.0
@@ -79,13 +79,13 @@ importers:
         version: 4.0.0(eslint@10.11.0(jiti@2.7.0)(supports-color@9.4.0))(supports-color@9.4.0)(typescript@6.0.3)
       '@electron-toolkit/preload':
         specifier: ^3.0.2
-        version: 3.0.2(electron@44.7.0(supports-color@9.4.0))
+        version: 3.0.2(electron@44.7.2(supports-color@9.4.0))
       '@electron-toolkit/tsconfig':
         specifier: ^2.0.0
         version: 2.0.0(@types/node@24.19.1)
       '@electron-toolkit/utils':
         specifier: ^4.0.0
-        version: 4.0.0(electron@44.7.0(supports-color@9.4.0))
+        version: 4.0.0(electron@44.7.2(supports-color@9.4.0))
       '@lobechat/chat-adapter-imessage':
         specifier: workspace:*
         version: link:../../packages/chat-adapter-imessage
@@ -183,8 +183,8 @@ importers:
         specifier: ^0.45.3
         version: 0.45.3(@opentelemetry/api@1.9.1)
       electron:
-        specifier: 44.7.0
-        version: 44.7.0(supports-color@9.4.0)
+        specifier: 44.7.2
+        version: 44.7.2(supports-color@9.4.0)
       electron-builder:
         specifier: 26.16.1
         version: 26.16.1(electron-builder-squirrel-windows@26.16.1)
@@ -436,8 +436,8 @@ importers:
         version: 2.2.0
     devDependencies:
       electron:
-        specifier: 44.7.0
-        version: 44.7.0
+        specifier: 44.7.2
+        version: 44.7.2
 
   ../../packages/electron-mac-notifications:
     dependencies:
@@ -1295,7 +1295,7 @@ packages:
   '@electron-toolkit/preload@3.0.2':
     resolution: {integrity: sha512-TWWPToXd8qPRfSXwzf5KVhpXMfONaUuRAZJHsKthKgZR/+LqX1dZVSSClQ8OTAEduvLGdecljCsoT2jSshfoUg==}
     peerDependencies:
-      electron: 44.7.0
+      electron: 44.7.2
 
   '@electron-toolkit/tsconfig@2.0.0':
     resolution: {integrity: sha512-AdPsP770WhW7b260h13SHMdmjEEHJL6xFtgi3jwgdsSQbJOkJLeNnnpZW9qxTPCvmRI6vmdzWz5K3gibFS6SNg==}
@@ -1305,7 +1305,7 @@ packages:
   '@electron-toolkit/utils@4.0.0':
     resolution: {integrity: sha512-qXSntwEzluSzKl4z5yFNBknmPGjPa3zFhE4mp9+h0cgokY5ornAeP+CJQDBhKsL1S58aOQfcwkD3NwLZCl+64g==}
     peerDependencies:
-      electron: 44.7.0
+      electron: 44.7.2
 
   '@electron/asar@3.4.1':
     resolution: {integrity: sha512-i4/rNPRS84t0vSRa2HorerGRXWyF4vThfHesw0dmcWHp+cspK743UanA0suA5Q5y8kzY2y6YKrvbIUn69BCAiA==}
@@ -4467,7 +4467,7 @@ packages:
     engines: {node: '>=20.19'}
     hasBin: true
     peerDependencies:
-      electron: 44.7.0
+      electron: 44.7.2
     peerDependenciesMeta:
       electron:
         optional: true
@@ -4490,8 +4490,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@44.7.0:
-    resolution: {integrity: sha512-aUq9/zLAAFYc+a9gy6cd0C3Y/N/RmovLCD8TV8LhIzNhuND6HEgsu96jJz9cbAxvckSPv+Trf2PKEjktoZgFkw==}
+  electron@44.7.2:
+    resolution: {integrity: sha512-u3Pbz0Hi1sSSwBMz2v8LiagsfUG4QURPUe/qphM+g4THKP8o4BYdnuboyhlLO8HIC/KfV5rvltyacbP4jEq9yw==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -8764,17 +8764,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electron-toolkit/preload@3.0.2(electron@44.7.0(supports-color@9.4.0))':
+  '@electron-toolkit/preload@3.0.2(electron@44.7.2(supports-color@9.4.0))':
     dependencies:
-      electron: 44.7.0(supports-color@9.4.0)
+      electron: 44.7.2(supports-color@9.4.0)
 
   '@electron-toolkit/tsconfig@2.0.0(@types/node@24.19.1)':
     dependencies:
       '@types/node': 24.19.1
 
-  '@electron-toolkit/utils@4.0.0(electron@44.7.0(supports-color@9.4.0))':
+  '@electron-toolkit/utils@4.0.0(electron@44.7.2(supports-color@9.4.0))':
     dependencies:
-      electron: 44.7.0(supports-color@9.4.0)
+      electron: 44.7.2(supports-color@9.4.0)
 
   '@electron/asar@3.4.1':
     dependencies:
@@ -12094,12 +12094,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron-sparkle-updater@0.5.2(patch_hash=6f583444e425a99e21e374a9afab303612eb8255ee21194afdb77f347c6cc045)(electron@44.7.0(supports-color@9.4.0)):
+  electron-sparkle-updater@0.5.2(patch_hash=6f583444e425a99e21e374a9afab303612eb8255ee21194afdb77f347c6cc045)(electron@44.7.2(supports-color@9.4.0)):
     dependencies:
       node-addon-api: 8.9.2
       node-gyp: 12.4.0
     optionalDependencies:
-      electron: 44.7.0(supports-color@9.4.0)
+      electron: 44.7.2(supports-color@9.4.0)
 
   electron-store@11.0.2:
     dependencies:
@@ -12138,7 +12138,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@44.7.0:
+  electron@44.7.2:
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0
@@ -12146,7 +12146,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@44.7.0(supports-color@9.4.0):
+  electron@44.7.2(supports-color@9.4.0):
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0(supports-color@9.4.0)
