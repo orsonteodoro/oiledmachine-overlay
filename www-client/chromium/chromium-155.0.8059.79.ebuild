@@ -4073,9 +4073,7 @@ elog "Removing bundled binaries from source tree ..."
 	# This set is mostly unconditional by distro ebuild except for the ones
 	# with the use which were modified in this ebuild fork.
 		"base/third_party/cityhash"
-		$(use !system-double-conversion && echo \
-			"base/third_party/double_conversion" \
-		)
+		$(usex system-double-conversion '' 'base/third_party/double_conversion')
 		"base/third_party/icu"
 		"base/third_party/nspr"
 		"base/third_party/superfasthash"
@@ -4083,25 +4081,26 @@ elog "Removing bundled binaries from source tree ..."
 		"base/third_party/xdg_user_dirs"
 		"buildtools/third_party/libc++"
 		"buildtools/third_party/libc++abi"
+		$(in_iuse "cromite" && usex cromite 'cromite_flags/third_party' '')
 		"net/third_party/mozilla_security_manager"
 		"net/third_party/quic"
 		"net/third_party/uri_template"
+		$(usex system-abseil-cpp '' 'third_party/abseil-cpp')
 		"third_party/angle"
 		"third_party/angle/src/common/third_party/xxhash"
 		"third_party/angle/src/third_party/ceval"
-		$(use !system-libxnvctrl && echo \
-			"third_party/angle/src/third_party/libXNVCtrl" \
-		)
+		$(usex system-libxnvctrl '' 'third_party/angle/src/third_party/libXNVCtrl')
 		"third_party/angle/src/third_party/volk"
 		"third_party/anonymous_tokens"
 		"third_party/apple_apsl"
 		"third_party/axe-core"
-		"third_party/chromium-bidi"
 		"third_party/blink"
 		"third_party/boringssl"
 		"third_party/boringssl/src/third_party/fiat"
 		"third_party/breakpad"
 		"third_party/breakpad/breakpad/src/third_party/curl"
+		$(usex test 'third_party/breakpad/breakpad/src/processor' '')
+		$(usex system-brotli '' 'third_party/brotli')
 		"third_party/catapult"
 		"third_party/catapult/common/py_vulcanize/third_party/rcssmin"
 		"third_party/catapult/common/py_vulcanize/third_party/rjsmin"
@@ -4118,10 +4117,10 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/catapult/tracing/third_party/oboe"
 		"third_party/catapult/tracing/third_party/pako"
 		"third_party/ced"
+		"third_party/chromium-bidi"
 		"third_party/cld_3"
 		"third_party/closure_compiler"
-	# Since M137 atomic is required; we could probably unbundle this as a target of opportunity. \
-		"third_party/compiler-rt"
+		"third_party/compiler-rt" # M137 requires atomic
 		"third_party/content_analysis_sdk"
 		"third_party/cpuinfo"
 		"third_party/crabbyavif"
@@ -4131,6 +4130,7 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/crc32c"
 		"third_party/cros_system_api"
 		"third_party/d3"
+		$(usex system-dav1d '' 'third_party/dav1d')
 		"third_party/dawn"
 		"third_party/dawn/third_party/gn/webgpu-cts"
 		"third_party/dawn/third_party/OpenGL-Registry"
@@ -4164,9 +4164,7 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/devtools-frontend/src/front_end/third_party/wasmparser"
 		"third_party/devtools-frontend/src/front_end/third_party/web-vitals"
 		"third_party/devtools-frontend/src/third_party"
-		$(in_iuse "ungoogled-chromium" && use ungoogled-chromium && echo \
-			"third_party/devtools-frontend/src/third_party/esbuild" \
-		)
+		$(in_iuse "ungoogled-chromium" && usex ungoogled-chromium 'third_party/devtools-frontend/src/third_party/esbuild' '')
 		"third_party/dom_distiller_js"
 		"third_party/dragonbox"
 		"third_party/eigen3"
@@ -4175,23 +4173,41 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/fast_float"
 		"third_party/fdlibm"
 		"third_party/federated_compute/chromium/fcp/confidentialcompute"
+		"third_party/federated_compute/chromium/fcp/protos"
+		"third_party/federated_compute/chromium/fcp/secagg"
+		"third_party/federated_compute/chromium/fcp/client"
 		"third_party/federated_compute/src/fcp/base"
 		"third_party/federated_compute/src/fcp/confidentialcompute"
-		"third_party/federated_compute/src/fcp/protos/confidentialcompute"
-		"third_party/federated_compute/src/fcp/protos/federatedcompute"
+		"third_party/federated_compute/src/fcp/protos"
+		"third_party/federated_compute/src/fcp/client"
+		"third_party/federated_compute/src/fcp/secagg"
+		"third_party/federated_compute/third_party/googleapis/src/google"
+		"third_party/federated_compute/third_party/tensorflow-federated"
+		"third_party/federated_compute/third_party/protodatastore-cpp"
+		$(usex system-ffmpeg '' 'third_party/ffmpeg')
 		"third_party/fft2d"
+		$(usex system-flatbuffers '' 'third_party/flatbuffers')
+		$(usex system-flac '' 'third_party/flac')
+		$(usex system-fontconfig '' 'third_party/fontconfig')
 		"third_party/fp16"
+		$(usex system-freetype '' 'third_party/freetype')
 		"third_party/fusejs"
+		$(usex test 'third_party/fuzztest')
 		"third_party/fxdiv"
 		"third_party/gemmlowp"
+		$(usex test 'third_party/google_benchmark/src/include/benchmark')
+		$(usex test 'third_party/google_benchmark/src/src')
 		"third_party/google_input_tools"
 		"third_party/google_input_tools/third_party/closure_library"
 		"third_party/google_input_tools/third_party/closure_library/third_party/closure"
 		"third_party/googletest"
 		"third_party/gperf" # We symlink system gperf, but this will purge the symlink since we tidy up afterwards.
+		$(usex system-harfbuzz '' 'third_party/harfbuzz')
+		$(usex system-highway '' 'third_party/highway')
 		"third_party/hunspell"
 		"third_party/hyphenation-patterns" # Required to build ungoogled-chromium
 		"third_party/iamf_tools"
+		$(use system-icu '' 'third_party/icu')
 		"third_party/ink/src/ink/brush"
 		"third_party/ink/src/ink/color"
 		"third_party/ink/src/ink/geometry"
@@ -4204,27 +4220,41 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/inspector_protocol"
 		"third_party/ipcz"
 		"third_party/jinja2"
+		$(usex system-jsoncpp '' 'third_party/jsoncpp')
 		"third_party/khronos"
 		"third_party/lens_server_proto"
 		"third_party/leveldatabase"
 		"third_party/libaddressinput"
+		$(usex system-libaom '' 'third_party/libaom')
+		$(usex system-libaom '' 'third_party/libaom/source/libaom/third_party/fastfeat')
+		$(usex system-libaom '' 'third_party/libaom/source/libaom/third_party/vector')
+		$(usex system-libaom '' 'third_party/libaom/source/libaom/third_party/x86inc')
 		"third_party/libc++"
 		"third_party/libdrm"
 		"third_party/libgav1"
 		"third_party/libjingle"
+		$(usex system-libjpeg-turbo '' 'third_party/libjpeg_turbo')
 		"third_party/libpfm4"
 		"third_party/libphonenumber"
+		$(usex system-libpng '' 'third_party/libpng')
+		$(usex system-libsecret '' 'third_party/libsecret')
 		"third_party/libsrtp"
 		"third_party/libsync"
 		"third_party/libtess2/libtess2"
 		"third_party/libtess2/src/Include"
 		"third_party/libtess2/src/Source"
 		"third_party/liburlpattern"
+		$(usex system-libusb '' 'third_party/libusb')
 		"third_party/libva_protected_content"
+		$(usex system-libvpx '' 'third_party/libvpx')
+		$(usex system-libvpx '' 'third_party/libvpx/source/libvpx/third_party/x86inc')
+		$(usex system-libxslt '' 'third_party/libxslt')
 		"third_party/libwebm"
 		"third_party/libx11"
+		$(usex system-libxml '' 'third_party/libxml')
 		"third_party/libxcb-keysyms"
 		"third_party/libxml/chromium"
+		$(usex system-libyuv '' 'third_party/libyuv')
 		"third_party/libzip"
 		"third_party/lit"
 		"third_party/llvm-libc"
@@ -4236,9 +4266,7 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/markupsafe"
 		"third_party/material_color_utilities"
 		"third_party/metrics_proto"
-		$(use !system-minigbm && echo \
-			"third_party/minigbm" \
-		)
+		$(usex system-minigbm '' 'third_party/minigbm')
 		"third_party/ml_dtypes"
 		"third_party/modp_b64"
 		"third_party/nasm"
@@ -4252,23 +4280,17 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/openscreen"
 		"third_party/openscreen/src/third_party/"
 		"third_party/openscreen/src/third_party/tinycbor/src/src"
+		$(usex system-openh264 '' 'third_party/openh264')
 		"third_party/openxr"
+		$(usex system-opus '' 'third_party/opus')
 		"third_party/ots"
 		"third_party/pdfium"
 		"third_party/pdfium/third_party/agg23"
 		"third_party/pdfium/third_party/bigint"
-		$(use !system-freetype && echo \
-			"third_party/pdfium/third_party/freetype" \
-		)
-		$(use !system-lcms && echo \
-			"third_party/pdfium/third_party/lcms" \
-		)
-		$(use !system-libopenjpeg && echo \
-			"third_party/pdfium/third_party/libopenjpeg" \
-		)
-		$(use !system-libtiff && echo \
-			"third_party/pdfium/third_party/libtiff" \
-		)
+		$(usex system-freetype '' 'third_party/pdfium/third_party/freetype')
+		$(usex system-lcms '' 'third_party/pdfium/third_party/lcms')
+		$(usex system-libopenjpeg '' 'third_party/pdfium/third_party/libopenjpeg')
+		$(usex system-libtiff '' 'third_party/pdfium/third_party/libtiff')
 		"third_party/perfetto"
 		"third_party/perfetto/protos/third_party/android"
 		"third_party/perfetto/protos/third_party/chromium"
@@ -4280,15 +4302,14 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/polymer"
 		"third_party/private_membership"
 		"third_party/private-join-and-compute"
-		$(use !system-protobuf && echo \
-			"third_party/protobuf" \
-			"third_party/protobuf/third_party/utf8_range" \
-		)
+		$(usex system-protobuf '' 'third_party/protobuf')
+		$(usex system-protobuf '' 'third_party/protobuf/third_party/utf8_range')
 		"third_party/pthreadpool"
 		"third_party/puffin"
 		"third_party/pyjson5"
 		"third_party/pyyaml"
 		"third_party/rapidhash"
+		$(usex system-re2 '' 'third_party/re2')
 		"third_party/readability"
 		"third_party/rnnoise"
 		"third_party/rust"
@@ -4300,57 +4321,38 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/sentencepiece"
 		"third_party/sentencepiece/src/third_party/darts_clone"
 		"third_party/shell-encryption"
+		$(usex system-simdutf '' 'third_party/simdutf')
 		"third_party/simplejson"
 		"third_party/six"
 		"third_party/skia"
 		"third_party/skia/include/third_party/vulkan"
-
-	# Missing externals folder
-	#	$(use !system-harfbuzz && echo \
-			"third_party/skia/third_party/harfbuzz"
-	#	)
-	#	$(use !system-harfbuzz && echo \
-			"third_party/skia/third_party/expat"
-	#	)
-	#	$(use !system-icu && echo \
-			"third_party/skia/third_party/icu"
-	#	)
-	#	$(use !system-freetype && echo \
-			"third_party/skia/third_party/freetype2"
-	#	)
-	#	$(use !system-libpng && echo \
-			"third_party/skia/third_party/libpng"
-	#	)
-	#	$(use !system-libwebp && echo \
-			"third_party/skia/third_party/libwebp"
-	#	)
-	#	$(use !system-libjpeg-turbo && echo \
-			"third_party/skia/third_party/libjpeg-turbo"
-	#	)
-	#	$(use !system-lua && echo \
-			"third_party/skia/third_party/lua"
-	#	)
-	#	$(use !system-zlib && echo \
-			"third_party/skia/third_party/zlib"
-	#	)
-
+	#	$(usex system-harfbuzz '' 'third_party/skia/third_party/harfbuzz')
+	#	$(usex system-harfbuzz '' 'third_party/skia/third_party/expat')
+	#	$(usex system-icu '' 'third_party/skia/third_party/icu')
+	#	$(usex system-freetype '' 'third_party/skia/third_party/freetype2')
+	#	$(usex system-libpng '' 'third_party/skia/third_party/libpng')
+	#	$(usex system-libwebp '' 'third_party/skia/third_party/libwebp')
+	#	$(usex system-libjpeg-turbo '' 'third_party/skia/third_party/libjpeg-turbo')
+	#	$(usex system-lua '' 'third_party/skia/third_party/lua')
+	#	$(usex system-zlib '' 'third_party/skia/third_party/zlib'
 		"third_party/smhasher"
-		$(use !system-sqlite && echo \
-			"third_party/sqlite" \
-		)
+		$(usex system-snappy '' 'third_party/snappy')
+		$(usex system-spirv-headers '' 'third_party/spirv-headers')
+		$(usex system-spirv-tools '' 'third_party/spirv-tools')
+		$(usex system-sqlite '' 'third_party/sqlite')
 		"third_party/swiftshader"
 		"third_party/swiftshader/third_party/astc-encoder"
 		"third_party/swiftshader/third_party/llvm-subzero"
 		"third_party/swiftshader/third_party/marl"
-		$(use !system-spirv-headers && echo \
-			"third_party/swiftshader/third_party/SPIRV-Headers/include/spirv" \
-		)
-		$(use !system-spirv-tools && echo \
-			"third_party/swiftshader/third_party/SPIRV-Tools" \
-		)
+		$(usex system-spirv-headers '' 'third_party/swiftshader/third_party/SPIRV-Headers/include/spirv')
+		$(usex system-spirv-tools '' 'third_party/swiftshader/third_party/SPIRV-Tools')
+		$((use arm64 || use ppc64) && echo "third_party/swiftshader/third_party/llvm-10.0")
 		"third_party/swiftshader/third_party/subzero"
 		"third_party/tensorflow_models"
 		"third_party/tensorflow-text"
+		$(usex test 'third_party/test_fonts')
+		$(usex test 'third_party/test_fonts/fontconfig')
+		$(usex test 'third_party/test_fonts/test_fonts')
 		"third_party/tflite"
 		"third_party/tflite/src/third_party/fft2d"
 		"third_party/tflite/src/third_party/xla/third_party/tsl"
@@ -4360,11 +4362,15 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/tflite/src/third_party/xla/xla/tsl/protobuf"
 		"third_party/tflite/src/third_party/xla/xla/tsl/util"
 		"third_party/ukey2"
+		$(in_iuse "cromite" && usex cromite 'third_party/ungoogled' '')
+		$(usex rar 'third_party/unrar' '')
 		"third_party/utf"
 		"third_party/vulkan"
+		$(usex system-vulkan-memory-allocator '' 'third_party/vulkan_memory_allocator')
 		"third_party/wayland"
 		"third_party/webdriver"
 		"third_party/webgpu-cts"
+		$(usex system-libwebp '' 'third_party/libwebp')
 		"third_party/webrtc"
 		"third_party/webrtc/common_audio/third_party/ooura"
 		"third_party/webrtc/common_audio/third_party/spl_sqrt_floor"
@@ -4376,6 +4382,11 @@ elog "Removing bundled binaries from source tree ..."
 		"third_party/x11proto"
 		"third_party/xcbproto"
 		"third_party/xnnpack"
+
+		#$(usex system-zlib '' 'third_party/zlib') # Already kept
+		"third_party/zlib/google"
+
+		$(use system-zstd '' 'third_party/zstd')
 		"third_party/zxcvbn-cpp"
 		"url/third_party/mozilla"
 	#	"v8/third_party/glibc"
@@ -4385,162 +4396,11 @@ elog "Removing bundled binaries from source tree ..."
 		"v8/third_party/utf8-decoder"
 		"v8/third_party/v8"
 		"v8/third_party/valgrind"
+		$(usex system-woff2 '' 'third_party/woff2')
 
 	# gyp -> gn leftovers
 		"third_party/speech-dispatcher"
 		"third_party/usb_ids"
-
-	# This set is being retested.
-	# This set may be required unconditionally to keep by disabling system-<pkg>.
-		$(use !system-abseil-cpp && echo \
-			"third_party/abseil-cpp" \
-		)
-		$(use !system-dav1d && echo \
-			"third_party/dav1d" \
-		)
-		$(use !system-brotli && echo \
-			"third_party/brotli" \
-		)
-		$(use !system-flatbuffers && echo \
-			"third_party/flatbuffers" \
-		)
-		$(use !system-ffmpeg && echo \
-			"third_party/ffmpeg" \
-		)
-		$(use !system-freetype && echo \
-			"third_party/freetype" \
-		)
-		$(use !system-highway && echo \
-			"third_party/highway" \
-		)
-		$(use !system-jsoncpp && echo \
-			"third_party/jsoncpp" \
-		)
-		$(use !system-libaom && echo \
-			"third_party/libaom" \
-			"third_party/libaom/source/libaom/third_party/fastfeat" \
-			"third_party/libaom/source/libaom/third_party/vector" \
-			"third_party/libaom/source/libaom/third_party/x86inc" \
-		)
-		$(use !system-libpng && echo \
-			"third_party/libpng" \
-		)
-		$(use !system-libsecret && echo \
-			"third_party/libsecret" \
-		)
-
-		$(use !system-libvpx && echo \
-			"third_party/libvpx" \
-			"third_party/libvpx/source/libvpx/third_party/x86inc" \
-		)
-		$(use !system-opus && echo \
-			"third_party/opus" \
-		)
-		$(use !system-simdutf && echo \
-			"third_party/simdutf" \
-		)
-		$(use !system-snappy && echo \
-			"third_party/snappy" \
-		)
-		$(use !system-re2 && echo \
-			"third_party/re2" \
-		)
-		$(use !system-spirv-headers && echo \
-			"third_party/spirv-headers" \
-		)
-		$(use !system-spirv-tools && echo \
-			"third_party/spirv-tools" \
-		)
-		$(use !system-woff2 && echo \
-			"third_party/woff2" \
-		)
-
-	#
-	# Partial unconditional to keep
-	#
-	# Do not remove the third_party/zlib below. \
-	#
-	# Error:  ninja: error: '../../third_party/zlib/adler32_simd.c', \
-	# needed by 'obj/third_party/zlib/zlib_adler32_simd/adler32_simd.o', \
-	# missing and no known rule to make it
-	#
-	# third_party/zlib is already kept but may use system no need split \
-	# conditional for CFI or official builds.
-	#
-	# Skia with system-zlib require it present
-		#$(use !system-zlib && echo \
-			"third_party/zlib" \
-			"third_party/zlib/google" \
-		#)
-
-		$(use !system-libxml && echo \
-			"third_party/libxml" \
-		)
-		$(use !system-libyuv && echo \
-			"third_party/libyuv" \
-		)
-
-	# Not listed in distro ebuild
-	# These imply removal and preference for the system package.
-		$(use !system-flac && echo \
-			"third_party/flac" \
-		)
-		$(use !system-fontconfig && echo \
-			"third_party/fontconfig" \
-		)
-		$(use !system-libjpeg-turbo && echo \
-			"third_party/libjpeg_turbo" \
-		)
-		$(use !system-libusb && echo \
-			"third_party/libusb" \
-		)
-		$(use !system-libwebp && echo \
-			"third_party/libwebp" \
-		)
-		$(use !system-libxslt && echo \
-			"third_party/libxslt" \
-		)
-		$(use !system-openh264 && echo \
-			"third_party/openh264" \
-		)
-		$(use !system-vulkan-memory-allocator && echo \
-			"third_party/vulkan_memory_allocator" \
-		)
-
-	# Allowed conditional to keep or remove
-		$(use rar && echo \
-			"third_party/unrar" \
-		)
-		$(use !system-harfbuzz && echo \
-			"third_party/harfbuzz" \
-		)
-		$(use !system-icu && echo \
-			"third_party/icu" \
-		)
-		$(use !system-zstd && echo \
-			"third_party/zstd" \
-		)
-
-	# Arch-specific to keep
-		$((use arm64 || use ppc64) && echo \
-			"third_party/swiftshader/third_party/llvm-10.0" \
-		)
-
-		$(use test && echo \
-			"third_party/breakpad/breakpad/src/processor" \
-			"third_party/fuzztest" \
-			"third_party/google_benchmark/src/include/benchmark" \
-			"third_party/google_benchmark/src/src" \
-			"third_party/test_fonts" \
-			"third_party/test_fonts/fontconfig" \
-			"third_party/test_fonts/test_fonts" \
-		)
-
-	# "third_party/ungoogled" was not listed for cromite in other ebuild so omitted.
-		$(in_iuse "cromite" && use cromite && echo \
-			"cromite_flags/third_party" \
-			"third_party/ungoogled"
-		)
 	)
 
 	# We need to generate ppc64 stuff because upstream does not ship it yet
