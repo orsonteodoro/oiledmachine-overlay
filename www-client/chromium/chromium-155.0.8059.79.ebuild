@@ -203,8 +203,8 @@ TC_COUNT_EXPECTED_CLANG=419
 TC_COUNT_EXPECTED_GN=1340
 TC_COUNT_EXPECTED_RUST=7258
 SOURCES_COUNT_EXPECTED=592153 # Update with DOWNLOAD_FLAVOR change
-CHROMIUM_EBUILD_MAINTAINER=1 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=1
+CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
+GEN_ABOUT_CREDITS=0
 
 DISTRO_PATCHSET=${DISTRO_PATCHSET:-0}
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
@@ -335,15 +335,15 @@ CHKL_TIMESTAMPS=(
 	"dev-util/spirv-headers-9999"
 	"dev-util/spirv-tools-9999"
 	"llvm-core/clang-9999"
-	"llvm-core/clang-23.0.0.9999"
+	"llvm-core/clang-24.0.0.9999"
 	"llvm-core/lld-9999"
-	"llvm-core/lld-23.0.0.9999"
+	"llvm-core/lld-24.0.0.9999"
 	"llvm-core/llvm-9999"
-	"llvm-core/llvm-23.0.0.9999"
+	"llvm-core/llvm-24.0.0.9999"
 	"llvm-runtimes/compiler-rt-9999"
-	"llvm-runtimes/compiler-rt-23.0.0.9999"
+	"llvm-runtimes/compiler-rt-24.0.0.9999"
 	"llvm-runtimes/compiler-rt-sanitizers-9999"
-	"llvm-runtimes/compiler-rt-sanitizers-23.0.0.9999"
+	"llvm-runtimes/compiler-rt-sanitizers-24.0.0.9999"
 	"llvm-runtimes/libcxx-9999"
 	"llvm-runtimes/libcxx-24.0.0.9999"
 	"llvm-runtimes/libcxxabi-9999"
