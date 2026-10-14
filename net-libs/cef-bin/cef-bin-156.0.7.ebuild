@@ -17,7 +17,7 @@ EAPI=8
 #
 
 inherit secure-version
-FLAVOR="" # "_beta" or ""
+FLAVOR="_beta" # "_beta" or ""
 #cef_binary_<PV>+g<CEF_BIN_PV_REV>+chromium-<CEF_BIN_PV_CHROMIUM>_linux64<FLAVOR>.tar.bz2
 
 #CEF_BIN_PV_CHROMIUM="154.0.8037.17"
