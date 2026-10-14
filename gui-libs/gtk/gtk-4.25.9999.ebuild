@@ -20,7 +20,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="fd12169a45b795fb63bd23c2b81136f5c2aabdc2"
+FALLBACK_COMMIT="04adb2a44e5b0a2e3ef3503257c6b6c60d4cc907"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
@@ -58,7 +58,7 @@ REQUIRED_USE="
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE+="
 aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_16
+ebuild_revision_17
 "
 
 # librsvg for svg icons and "!8541 Use librsvg for symbolics that we
