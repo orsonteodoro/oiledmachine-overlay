@@ -457,7 +457,7 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Oct 10, 2026" # Advisory date
+MITIGATION_DATE="Oct 14, 2026" # Advisory date
 MITIGATION_LAST_UPDATE=1791725270 # From `date --date="Sun Oct 11, 2026 15:27:50 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
@@ -480,6 +480,53 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 # For the current month
+
+	"CVE-2026-98414;;"
+	"CVE-2026-98413;;"
+	"CVE-2026-98412;NPD, DoS;"
+	"CVE-2026-98411;NPD, DoS;"
+	"CVE-2026-98410;;"
+	"CVE-2026-98409;DbZ, DoS;"
+	"CVE-2026-98408;DbZ, DoS;"
+	"CVE-2026-98431;;"
+	"CVE-2026-98430;;"
+	"CVE-2026-98429;;"
+	"CVE-2026-98428;;"
+	"CVE-2026-98427;;"
+	"CVE-2026-98426;LEAK;"
+	"CVE-2026-98425;WARN, DoS;"
+	"CVE-2026-98407;OOBW;"
+	"CVE-2026-98424;;"
+	"CVE-2026-98423;;"
+	"CVE-2026-98422;;"
+	"CVE-2026-98421;;"
+	"CVE-2026-98420;;"
+	"CVE-2026-98419;OOBW;"
+	"CVE-2026-98418;WARN, DoS;"
+	"CVE-2026-98417;IV;"
+	"CVE-2026-98416;NPD, DoS;"
+	"CVE-2026-98415;UAF;"
+	"CVE-2026-98405;OOB, IBC;"
+	"CVE-2026-98406;WARN, DoS;"
+	"CVE-2026-98395;;"
+	"CVE-2026-98394;OOB;"
+	"CVE-2026-98393;OF;"
+	"CVE-2026-98392;Ob1;"
+	"CVE-2026-98391;;"
+	"CVE-2026-98390;DbZ, DoS;"
+	"CVE-2026-98389;;"
+	"CVE-2026-98388;;"
+	"CVE-2026-98404;;"
+	"CVE-2026-98403;;"
+	"CVE-2026-98402;RC;"
+	"CVE-2026-98401;;"
+	"CVE-2026-98400;NPD, DoS;"
+	"CVE-2026-98399;NPD, DoS;"
+	"CVE-2026-98398;IV;"
+	"CVE-2026-98397;;"
+	"CVE-2026-98396;;"
+	"CVE-2026-98386;;"
+	"CVE-2026-98387;;"
 
 	"CVE-2026-93275;;"
 	"CVE-2026-98385;UAF;"
