@@ -171,7 +171,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_29"
+IUSE+=" ebuild_revision_30"
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
