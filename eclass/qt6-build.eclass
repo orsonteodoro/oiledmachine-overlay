@@ -88,7 +88,7 @@ fi
 HOMEPAGE="https://www.qt.io/"
 LICENSE="|| ( GPL-2 GPL-3 LGPL-3 ) FDL-1.3"
 SLOT="6/${PV%%_*}"
-IUSE="custom-cflags"
+IUSE+=" custom-cflags"
 
 if [[ ${QT6_RESTRICT_TESTS} ]]; then
 	RESTRICT="test"
@@ -113,7 +113,9 @@ BDEPEND="
 # e.g. patchsets in live ebuilds.
 qt6-build_src_unpack() {
 	if [[ ${QT6_BUILD_TYPE} == live ]] ; then
-		in_iuse fallback-commit && use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 	fi
 

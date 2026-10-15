@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened eapi9-ver multilib meson-multilib python-any-r1 readme.gentoo-r1 secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="44d723faee5c2a8b19bcadd6d1cfe1fbe47bc8bc"
+	FALLBACK_COMMIT="129ddf32994886b52b1ca91fdde305b426b5d526"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/fontconfig/fontconfig.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -42,7 +42,7 @@ if ! [[ $(ver_cut 3) -ge 90 ]] ; then
 fi
 IUSE+="
 doc nls test
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
@@ -105,7 +105,7 @@ delete the directory ${EROOT}/etc/fonts/conf.d/ and re-emerge fontconfig."
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		if in_iuse fallback-commit ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
 		fi
 		git-r3_fetch

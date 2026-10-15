@@ -294,3 +294,6 @@ sci-ml/ollama unrestrict
 # Vulnerable
 media-plugins/gst-plugins-rs spotify # DoS:High, DT:High
 media-plugins/gst-plugins-rs webrtc-aws # DoS:High, DT:High
+
+# Pinned version to avoid flicker, half redraw/paint, issues on X11 on major web browsers.
+media-libs/mesa fallback-commit

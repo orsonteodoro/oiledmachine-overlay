@@ -4,7 +4,7 @@
 EAPI=8
 
 if [[ ${PV} = *9999* ]]; then
-	FALLBACK_COMMIT="25bf90b72056ba32429d50c10dacdac3742bad1c"
+	FALLBACK_COMMIT="53b3dc1b6aa672f4d1cfa0d5d8fafef2d9b4e54f"
 	GIT_ECLASS="git-r3"
 	EGIT_REPO_URI="https://github.com/xkbcommon/${PN}"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -34,7 +34,7 @@ SLOT="0"
 
 IUSE+="
 doc static-libs test tools wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 

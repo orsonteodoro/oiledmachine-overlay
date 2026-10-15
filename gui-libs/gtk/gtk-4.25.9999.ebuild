@@ -18,9 +18,9 @@ CFLAGS_HARDENED_SANITIZERS_DISABLE=1 # Disabled because introspection needs revi
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 
-PYTHON_COMPAT=( python3_{10..14} )
+PYTHON_COMPAT=( python3_{11..14} )
 
-FALLBACK_COMMIT="04adb2a44e5b0a2e3ef3503257c6b6c60d4cc907"
+FALLBACK_COMMIT="0fa3673fc419d80cc8957a946be0b062deeba0df"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
@@ -58,7 +58,7 @@ REQUIRED_USE="
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE+="
 aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_17
+ebuild_revision_20
 "
 
 # librsvg for svg icons and "!8541 Use librsvg for symbolics that we

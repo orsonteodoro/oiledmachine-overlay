@@ -71,7 +71,6 @@ hashbrown-0.14.1
 indexmap-2.2.6
 libc-0.2.185
 log-0.4.27
-mach2-0.7.0
 once_cell-1.8.0
 paste-1.0.14
 pest-2.8.0
@@ -144,8 +143,24 @@ for card in ${VIDEO_CARDS[@]} ; do
 done
 unset card
 
-if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="76b9372c4e5d186f57d22d3a4f95dd1c5e04ece2"
+CARGO_EXPECTED_FINGERPRINT=""
+if [[ "${PV}" == "26.9999" ]] ; then
+	FALLBACK_COMMIT="a995eaeda4339adb0278b06dcc98136011feac36" # It works only on 26.2 branch but not main
+	EGIT_BRANCH="26.2"
+	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+elif [[ "${PV}" == "9999" ]] ; then
+# TODO git bisect
+#	CARGO_EXPECTED_FINGERPRINT="dbde9ad7162745f7ff66b42b6af28b91178fb6555c000f479a05f6bb76619b60ee6a10a5251cb841ec70683fad43328827844003fe9559e9ace456cd78deb59d" # pass, Jul 31, 2026
+	CARGO_EXPECTED_FINGERPRINT="d40549d9af08a015c00cc4677adc5ae33cb847b690cd29af969bab07f328f8ca2a4afb0e8fa6e8f599d71c0be3aaa98195cd0d423648fc44a5605979fb55e233" # pass, Aug 31, 2026
+#	CARGO_EXPECTED_FINGERPRINT="b534cf1204007a41bd8db96b85da22dfb143570c9c0983d4e4aee7f8fad0ca9846a5d1804b544c6ebef0a70dd60b044047d36eb5432a04d19450ccb52ba5ff3e" # fail, Sep 30, 2026
+#	FALLBACK_COMMIT="3e3631d98d0a0a3ba3f6ea71ea398bde2002c8e8" # For main branch, Jul 31, 2026, pass
+	FALLBACK_COMMIT="c8a05106a19e3873064fea9986df9fd34ec7d0c4" # For main branch, Aug 31, 2026, pass
+#	FALLBACK_COMMIT="9ac80d5c43c46e85700a75ca34bd1036ee15467e" # For main branch, Sep 30, 2026, fail
+#	FALLBACK_COMMIT="bfe063f723d436e5cdef8a98f058d4e44a64810c" # For main branch, Oct 6, 2026, fail
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -187,7 +202,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_48
+ebuild_revision_49
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -571,7 +586,7 @@ einfo "PATH=${PATH} (after)"
 }
 
 src_unpack() {
-	if [[ "${PV}" == "9999" ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		if in_iuse fallback-commit && use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
 		fi
@@ -580,7 +595,7 @@ src_unpack() {
 		unpack "${MY_P}.tar.xz"
 	fi
 
-	local expected_fingerprint="b534cf1204007a41bd8db96b85da22dfb143570c9c0983d4e4aee7f8fad0ca9846a5d1804b544c6ebef0a70dd60b044047d36eb5432a04d19450ccb52ba5ff3e"
+	local expected_fingerprint="${CARGO_EXPECTED_FINGERPRINT}"
 	local actual_fingerprint
 	pushd "${S}/subprojects/" >/dev/null 2>&1 || die
 		actual_fingerprint=$(sha512sum $(grep -l -r -e ".crates.io") | cut -f 1 -d " " | sort | sha512sum | cut -f 1 -d " ")

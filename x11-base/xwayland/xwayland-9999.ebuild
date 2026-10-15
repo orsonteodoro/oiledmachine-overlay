@@ -23,7 +23,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl meson secure-version
 
 if [[ ${PV} == "9999" ]] ; then
-	FALLBACK_COMMIT="ad26c26bf795e6464f74c8ef5bb1d41403d877ab"
+	FALLBACK_COMMIT="98aed9ddba7b42d2a46fcc1f343f4b392967b838"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/xorg/xserver.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -43,7 +43,7 @@ SLOT="0"
 
 IUSE+="
 libei selinux systemd test unwind xcsecurity
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
@@ -113,7 +113,7 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags_hardened_append
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_use selinux xselinux)
 		$(meson_use systemd systemd_notify)

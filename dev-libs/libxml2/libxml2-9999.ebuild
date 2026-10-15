@@ -47,7 +47,7 @@ SOVER=$(( ${PV_MAJOR} + ${MINOR_COMPAT} ))
 SLOT="${PV_MAJOR}/${SOVER}"
 IUSE+="
 doc icu python readline static-libs test
-ebuild_revision_6
+ebuild_revision_8
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"

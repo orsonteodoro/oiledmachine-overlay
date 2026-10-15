@@ -24,7 +24,7 @@ DESCRIPTION="X.Org Xfont library"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos ~x64-solaris"
 IUSE+="
 bzip2 truetype
-ebuild_revision_1
+ebuild_revision_3
 "
 REQUIRED_USE="
 "
