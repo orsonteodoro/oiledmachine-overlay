@@ -241,6 +241,10 @@ ewarn "1. Use pure Wayland for full remediation"
 ewarn "2. Use Wayland + Xwayland for partial remediation"
 ewarn "3. Use Firejail + Xephyr"
 ewarn
+ewarn
+ewarn "If you are using the \`emerge -O\` or similar shortcut, you need to"
+ewarn "rebuild the xf86-video-* package."
+ewarn
 }
 
 pkg_postrm() {
