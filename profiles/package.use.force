@@ -79,4 +79,5 @@ net-misc/curl psl
 dev-lang/php argon2
 
 # Pinned version to avoid flicker, half redraw/paint, issues on X11 on major web browsers.
+# It avoids DoS like behavior.
 media-libs/mesa fallback-commit
