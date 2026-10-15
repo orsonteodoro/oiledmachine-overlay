@@ -46,15 +46,21 @@ bitflags-2.13.2
 bytemuck-1.25.2
 bytemuck_derive-1.12.1
 font-types-0.12.6
-harfrust-0.13.3
+harfrust-0.14.0
 once_cell-1.21.4
 proc-macro2-1.0.107
 quote-1.0.47
-read-fonts-0.43.3
-skrifa-0.46.2
+read-fonts-0.45.0
+skrifa-0.48.0
 smallvec-1.16.3
+stable_deref_trait-1.2.1
 syn-3.0.9
+synstructure-0.14.0
 unicode-ident-1.0.27
+yoke-0.8.3
+yoke-derive-0.8.4
+zerofrom-0.1.8
+zerofrom-derive-0.1.8
 "
 
 inherit libstdcxx-compat
@@ -114,7 +120,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_13
+ebuild_revision_14
 "
 RESTRICT="
 	mirror
