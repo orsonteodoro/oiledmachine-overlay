@@ -19,7 +19,7 @@ EAPI=8
 #   - On-premise server for enterprise
 #   - With or without VMs, but independent VMs are used for true high availability
 #
-# wazuh-agent (FIM monitoring) for the endpoints
+# wazuh-agent (FIM monitoring, HIDS) for the endpoints
 # - Deployment choices
 #   - Cloud VMs
 #   - Containers and hosts
@@ -31,6 +31,9 @@ EAPI=8
 #
 # Assets - Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
 # FIM - File Integrity Monitoring
+# IDS - Intrustion Detection System [alert of signature/policy violations on system or network]
+#   HIDS - Host-based IDS
+#   NIDS - Network-based IDS
 # SEIM - Security Information and Event Management [the software in SOC]
 # SOC - Security Operations Center [monitoring center]
 # XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
