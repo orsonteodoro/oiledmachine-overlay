@@ -8,7 +8,7 @@ EAPI=8
 #
 # Security architecture:
 #
-# wazuh-docker for the Security Operation Center (SOC)
+# wazuh-docker (SEIM, XDR, FIM analysis) for the Security Operation Center (SOC)
 # - Single node deployment choices
 #   - Cloud VM
 #   - Mini PC
@@ -19,7 +19,7 @@ EAPI=8
 #   - On-premise server for enterprise
 #   - With or without VMs, but independent VMs are used for true high availability
 #
-# wazuh-agent for the endpoints
+# wazuh-agent (FIM monitoring) for the endpoints
 # - Deployment choices
 #   - Cloud VMs
 #   - Containers and hosts
