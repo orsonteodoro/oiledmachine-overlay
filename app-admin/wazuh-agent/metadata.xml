@@ -13,6 +13,14 @@
     </longdescription>
     <!--
 
+    The Wazah Agent requirements:
+
+    35-60 MB RAM
+    50-100 MB install
+    1514/TCP - Port for agent communication / event logs
+    1515/TCP - Port for agent enrollment
+
+
     Environment variables:
 
     WAZUH_MANGEMENT_SERVER_IP - The IP address or FQDN of the central Wazah manager/server.

@@ -40,6 +40,7 @@ EAPI=8
 # SOC - Security Operations Center [monitoring center]
 # XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 
+CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{11..14} )
 
 # Soft checks: warn, do not die (agent still works without realtime/whodata)
@@ -57,6 +58,16 @@ WARNING_BPF="CONFIG_BPF is required for who-data eBPF provider (kernel ≥ 5.8 r
 WARNING_BPF_SYSCALL="CONFIG_BPF_SYSCALL is required for who-data eBPF provider."
 WARNING_DEBUG_INFO_BTF="CONFIG_DEBUG_INFO_BTF (BTF) is required for modern eBPF who-data; without it the agent falls back or skips eBPF."
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
 CHKL_TIMESTAMPS=(
 	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
@@ -65,7 +76,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 )
 
-inherit chkl linux-info python-single-r1 secure-version systemd
+inherit chkl libcxx-slot libstdcxx-slot linux-info python-single-r1 secure-version systemd
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/wazuh-${PV}"
@@ -94,7 +105,7 @@ RDEPEND="
 "
 BDEPEND="
 	$(secure-version_gen_python_depends '3.11-3.14')
-	dev-build/cmake
+	>=dev-build/cmake-3.12.4
 	sys-devel/gcc
 	sys-devel/make
 	virtual/pkgconfig
@@ -109,6 +120,8 @@ eerror "The WAZUH_MANGEMENT_SERVER_IP per-package environment variable must be s
 eerror "It points to the IP address or FQDN of the central Wazah manager/server."
 		die
 	fi
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_configure() {
