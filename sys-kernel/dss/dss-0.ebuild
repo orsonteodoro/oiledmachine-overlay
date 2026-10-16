@@ -14,20 +14,23 @@ EAPI=8
 # For the compliant, only certified components (e.g. FIPS) should be listed.
 
 #
-# Differences between open-source EDRs
+# The differences and capabilities between open-source EDRs to evaluate
+# capabilities coverage required by different data security policies.
 #
-# ossec
-#   logging
-#   fim
-#   policy enforcement
-#   older implementation
+# OSSEC
 #
-# wazuh
-#   secure config (check tampering)
-#   secure sys (deps -> cve mapping)
-#   track & monitor (log)
-#   regular test (fim)
-#   recent implementation
+#   Logging
+#   FIM
+#   Policy enforcement
+#   Older implementation
+#
+# Wazuh
+#
+#   Secure config (check tampering)
+#   Secure system (deps -> CVE mapping)
+#   Track & monitor (log)
+#   Regular test (FIM)
+#   Recent implementation, a fork of OSSEC
 #
 
 #HOST_TYPE_IUSE:
@@ -37,7 +40,7 @@ EAPI=8
 # Assets - Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
 # EDR - Endpoint Detection and Response [behavioral analysis, remediation, active containment]
 # Endpoint - User facing devices (laptops, mobile phones, workstations)
-# FIM - File Integrity Monitoring
+# FIM - File Integrity Monitoring.  In OSSEC, FIM is a feature/module of HIDS.
 # DMZ - Demilitarized Zone [network Segment in the middle between internal and external network]
 # IC - Internal Chokepoint [between critical network segments and VLANs to detect lateral movement]
 # IE - Internet Edge [inside or outside the perimeter of the firewall]
