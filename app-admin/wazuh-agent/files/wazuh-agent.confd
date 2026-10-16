@@ -1,0 +1,11 @@
+# /etc/conf.d/wazuh-agent
+# Configuration for the wazuh-agent OpenRC service
+
+# This file is AI generated.
+
+# Install prefix (must match where the agent was installed)
+#WAZUH_HOME="/var/ossec"
+
+# Extra arguments are not used by the stock init; wazuh-control manages daemons.
+# Left here for local overrides if you extend the init script.
+#WAZUH_OPTS=""

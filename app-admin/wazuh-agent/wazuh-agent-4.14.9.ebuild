@@ -271,8 +271,8 @@ libwazuhshared.so
 	# Fix and unpollute RPATHs
 	local L
 	L=(
-		$(find "/var/ossec/bin" -type f)
-		$(find "/var/ossec/lib" -type f)
+		$(find "${ED}/var/ossec/bin" -type f)
+		$(find "${ED}/var/ossec/lib" -type f)
 	)
 	patchelf --remove-rpath "${L[@]}" || die
 	local x
