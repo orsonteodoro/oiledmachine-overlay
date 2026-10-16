@@ -12,7 +12,12 @@ S="${WORKDIR}/wazuh-docker-${PV}"
 SRC_URI="https://github.com/wazuh/wazuh-docker/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 DESCRIPTION="Wazuh central components (manager + indexer + dashboard) via official Docker Compose"
-HOMEPAGE="https://documentation.wazuh.com/current/deployment-options/docker/"
+HOMEPAGE="
+	https://wazuh.com/
+	https://documentation.wazuh.com/current/deployment-options/docker/
+	https://github.com/wazuh/wazuh
+	https://github.com/wazuh/wazuh-docker
+"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="multi-node"

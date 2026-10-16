@@ -30,35 +30,39 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 )
 
-inherit linux-info python-single-r1 secure-version systemd
+inherit chkl linux-info python-single-r1 secure-version systemd
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/wazuh-${PV}"
 SRC_URI="https://github.com/wazuh/wazuh/archive/v${PV}.tar.gz -> wazuh-${PV}.tar.gz"
 
 DESCRIPTION="Wazuh agent – endpoint security monitoring"
-HOMEPAGE="https://wazuh.com/ https://documentation.wazuh.com/"
-
+HOMEPAGE="
+	https://wazuh.com/
+	https://documentation.wazuh.com/
+	https://github.com/wazuh/wazuh
+	https://github.com/wazuh/wazuh-agent
+"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE=""
 DEPEND="
 	$(secure-version_gen_openssl_depends)
+	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
 	>=sys-libs/zlib-${ZLIB_PV}:=
 	net-libs/libpcap:=
-	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
 "
 RDEPEND="
 	${DEPEND}
-	acct-user/wazuh:*
 	acct-group/wazuh:*
+	acct-user/wazuh:*
 "
 BDEPEND="
 	$(secure-version_gen_python_depends '3.11-3.14')
 	dev-build/cmake
-	virtual/pkgconfig
 	sys-devel/gcc
 	sys-devel/make
+	virtual/pkgconfig
 "
 
 pkg_setup() {
