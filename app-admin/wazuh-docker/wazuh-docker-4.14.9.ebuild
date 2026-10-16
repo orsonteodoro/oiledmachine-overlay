@@ -77,7 +77,8 @@ src_install() {
 
 pkg_postinst() {
 elog
-elog "The Wazuh Docker stack was installed to /opt/wazuh-docker"
+elog "The Wazuh Docker stack was installed to \`/opt/wazuh-docker\`."
+elog "There are things that you still need to manually do."
 elog
 elog "1. Increase vm.max_map_count (required by the indexer):"
 elog
