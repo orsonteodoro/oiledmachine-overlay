@@ -13,7 +13,7 @@
     </longdescription>
     <use>
         <flag name="multi-node">
-          Install as an High Availability (HA) multi-node instead of single-node.
+          Install as a high availability multi-node instead of single-node.
 
           Single node (default):
 
@@ -38,7 +38,7 @@
           - Multiple indexer redundunancy
           - Can distribute the load to workers to prevent single node overload.
           - Dashboard included
-          - Multiple independent VMs are recommended for True High Availability
+          - Multiple independent VMs are recommended for true high availability
             and for resiliency to prevent SEIM going totally offline
         </flag>
     </use>

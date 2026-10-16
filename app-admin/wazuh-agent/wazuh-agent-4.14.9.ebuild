@@ -8,7 +8,7 @@ EAPI=8
 #
 # Security architecture:
 #
-# wazuh-docker for security operation center
+# wazuh-docker for the Security Operation Center (SOC)
 # - Single node deployment choices
 #   - Cloud VM
 #   - Mini PC
@@ -19,7 +19,7 @@ EAPI=8
 #   - On-premise server for enterprise
 #   - With or without VMs, but independent VMs are used for true high availability
 #
-# wazuh-agent for endpoints
+# wazuh-agent for the endpoints
 # - Deployment choices
 #   - Cloud VMs
 #   - Containers and hosts
@@ -27,7 +27,7 @@ EAPI=8
 #   - Physical/virtual servers
 #   - Workstations
 #   - Not the Wazuh server
-#   - Not firewalls/routers)
+#   - Not for firewalls/routers
 #
 
 PYTHON_COMPAT=( "python3_"{11..14} )
