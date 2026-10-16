@@ -94,7 +94,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 openrc systemd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -136,7 +136,7 @@ pkg_setup() {
 ewarn "${PN} is under construction"
 	python-single-r1_pkg_setup
 	linux-info_pkg_setup
-	if [[ -n "${WAZUH_MANGEMENT_SERVER_IP}" ]] ; then
+	if [[ -z "${WAZUH_MANGEMENT_SERVER_IP}" ]] ; then
 eerror "The WAZUH_MANGEMENT_SERVER_IP per-package environment variable must be set before emerging."
 eerror "It points to the IP address or FQDN of the central Wazah manager/server."
 		die
