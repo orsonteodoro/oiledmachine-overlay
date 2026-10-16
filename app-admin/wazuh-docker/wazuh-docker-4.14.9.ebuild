@@ -6,7 +6,7 @@ EAPI=8
 # This ebuild is AI generated and edited by ebuild maintainer.
 
 #
-# Security architecture:
+# EDR security architecture:
 #
 # wazuh-docker (SEIM, XDR, FIM analysis) management server for the Security Operation Center (SOC)
 # - Single node deployment choices
@@ -30,6 +30,7 @@ EAPI=8
 #   - Not for firewalls/routers
 #
 # Assets - Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
+# EDR - Endpoint Detection and Response [behavioral analysis, remediation, active containment]
 # FIM - File Integrity Monitoring
 # IDS - Intrustion Detection System [alert of signature/policy violations on system or network]
 #   HIDS - Host-based IDS
