@@ -183,11 +183,16 @@ src_install() {
 pkg_postinst() {
 elog
 elog "The Wazuh agent was installed under \`/var/ossec\`."
+elog
 elog "Manual maintenance tasks still need to be completed."
 elog
-elog "1. Edit /var/ossec/etc/ossec.conf and set the manager address:"
+elog "1. Set the manager address in /var/ossec/etc/ossec.conf:"
 elog
-elog "     <address>YOUR_MANAGER_IP</address>"
+elog "     <client>"
+elog "       <server>"
+elog "         <address>YOUR_MANAGER_IP</address>"
+elog "       </server>"
+elog "     </client>"
 elog
 elog "2. (Optional) Enroll the agent:"
 elog
@@ -195,8 +200,33 @@ elog "     /var/ossec/bin/agent-auth -m YOUR_MANAGER_IP"
 elog
 elog "3. Start the agent:"
 elog
-elog "     rc-service wazuh-agent start"
+
+    if use systemd || [[ -d /run/systemd/system ]]; then
+elog "     systemctl daemon-reload"
+elog "     systemctl enable --now wazuh-agent"
+elog
+elog "   Status / logs:"
+elog
+elog "     systemctl status wazuh-agent"
+elog "     journalctl -u wazuh-agent -f"
+    else
 elog "     rc-update add wazuh-agent default"
+elog "     rc-service wazuh-agent start"
+elog
+elog "   Status:"
+elog
+elog "     rc-service wazuh-agent status"
+elog "     /var/ossec/bin/wazuh-control status"
+    fi
+
+elog
+elog "Config test (any init):"
+elog
+elog "  /var/ossec/bin/wazuh-agentd -t"
+elog
+elog "If start fails after a crash, remove a stale lock:"
+elog
+elog "  rm -rf /var/ossec/var/start-script-lock"
 elog
 elog
 elog "Kernel features used by the agent:"
@@ -206,7 +236,7 @@ elog "  - CONFIG_AUDIT        : who-data (audit) + loginuid"
 elog "  - CONFIG_BPF + BTF    : who-data (eBPF), kernel ≥ 5.8 preferred"
 elog
 elog
-elog "Tune inotify watches if you monitor many files:"
+elog "Tune inotify watches if you monitor too many files:"
 elog
 elog "  fs.inotify.max_user_watches = 1048576"
 elog

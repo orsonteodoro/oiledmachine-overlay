@@ -108,34 +108,62 @@ src_install() {
 }
 
 pkg_postinst() {
+    local stack_dir="/opt/wazuh-docker/single-node"
+    use multi-node && stack_dir="/opt/wazuh-docker/multi-node"
+
 elog
-elog "The Wazuh Docker stack was installed to \`/opt/wazuh-docker\`."
+elog "Wazuh Docker stack files installed under /opt/wazuh-docker"
+elog "Active stack directory: ${stack_dir}"
+elog
 elog "There are things that you still need to manually do."
 elog
-elog "1. Increase vm.max_map_count (required by the indexer):"
+elog "1. Raise vm.max_map_count (required by the indexer):"
 elog
-elog "     echo 'vm.max_map_count=262144' >> /etc/sysctl.d/99-wazuh.conf"
+elog "     echo 'vm.max_map_count = 262144' > /etc/sysctl.d/99-wazuh.conf"
 elog "     sysctl -p /etc/sysctl.d/99-wazuh.conf"
 elog
-elog "2. Generate certificates (once):"
+elog "2. Generate TLS certificates (once, before first start):"
 elog
-	if use multi-node; then
-elog "     cd /opt/wazuh-docker/multi-node"
-	else
-elog "     cd /opt/wazuh-docker/single-node"
-	fi
+elog "     cd ${stack_dir}"
 elog "     docker compose -f generate-indexer-certs.yml run --rm generator"
 elog
 elog "3. Start the stack:"
 elog
+
+    if use systemd || [[ -d /run/systemd/system ]]; then
+elog "     systemctl daemon-reload"
+elog "     systemctl enable --now wazuh-docker"
+elog
+elog "   If you use multi-node or a custom path, override WorkingDirectory:"
+elog
+elog "     systemctl edit wazuh-docker"
+elog
+elog "       [Service]"
+elog "       WorkingDirectory=${stack_dir}"
+elog
+elog "   Status / logs:"
+elog
+elog "     systemctl status wazuh-docker"
+elog "     journalctl -u wazuh-docker -u docker -f"
+elog "     docker compose -f ${stack_dir}/docker-compose.yml ps"
+    else
+elog "     # ensure /etc/conf.d/wazuh-docker points at the right dir"
+elog "     rc-update add wazuh-docker default"
 elog "     rc-service wazuh-docker start"
 elog
-elog "   or manually:"
+elog "   Status:"
 elog
-elog "     docker compose up -d"
+elog "     rc-service wazuh-docker status"
+elog "     docker compose -f ${stack_dir}/docker-compose.yml ps"
+    fi
+
 elog
+elog "Dashboard (default credentials — change them):"
 elog
-elog "Dashboard default credentials: admin / SecretPassword"
+elog "  URL:  https://<host-ip>  (or host:443 mapped to dashboard)"
+elog "  User: admin"
+elog "  Pass: SecretPassword"
+elog
 elog "Docs: https://documentation.wazuh.com/current/deployment-options/docker/"
 elog
 elog
@@ -146,7 +174,7 @@ elog "  - CONFIG_AUDIT        : who-data (audit) + loginuid"
 elog "  - CONFIG_BPF + BTF    : who-data (eBPF), kernel ≥ 5.8 preferred"
 elog
 elog
-elog "Tune inotify watches if you monitor many files:"
+elog "Tune inotify watches if you monitor too many files:"
 elog
 elog "  fs.inotify.max_user_watches = 1048576"
 elog
