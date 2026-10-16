@@ -182,7 +182,8 @@ src_install() {
 
 pkg_postinst() {
 elog
-elog "The Wazuh agent was installed under /var/ossec"
+elog "The Wazuh agent was installed under \`/var/ossec\`."
+elog "Manual maintenance tasks still need to be completed."
 elog
 elog "1. Edit /var/ossec/etc/ossec.conf and set the manager address:"
 elog
