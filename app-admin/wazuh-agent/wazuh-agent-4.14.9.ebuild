@@ -217,7 +217,7 @@ src_install() {
 	doexe "${syscheck_bin}"
 
 	# Shared libs used at runtime (rpath often points at ../lib)
-	insinto "${ossec}/lib"
+	exeinto "${ossec}/lib"
 
 	local L=(
 # find /var/tmp/portage/app-admin/wazuh-agent-4.14.9/work/wazuh-4.14.9/src/ -name "*.so*" | cut -f 10- -d "/"
@@ -253,7 +253,7 @@ libwazuhshared.so
 	)
 
 	# Adjust to whatever actually exists in your tree:
-	dolib.so "${L[@]}" 2>/dev/null || true
+	doexe "${L[@]}" 2>/dev/null || true
 
 	# Config templates
 	insinto "${ossec}/"
