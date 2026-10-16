@@ -220,7 +220,7 @@ src_install() {
 	exeinto "${ossec}/lib"
 
 	local L=(
-# find /var/tmp/portage/app-admin/wazuh-agent-4.14.9/work/wazuh-4.14.9/src/ -name "*.so*" | cut -f 10- -d "/"
+# find /var/tmp/portage/app-admin/wazuh-agent-4.14.9/work/wazuh-4.14.9/src/ -name "*.so*" | cut -f 10- -d "/" | sed -e "/Makefile.soname/d" -e "/fips.module.sources/d"
 shared_modules/rsync/build/lib/librsync.so
 shared_modules/dbsync/build/lib/libdbsync.so
 libstdc++.so.6
@@ -237,11 +237,9 @@ external/rocksdb/build/librocksdb.so
 external/rocksdb/build/librocksdb.so.8
 external/rocksdb/build/librocksdb.so.8.3.2
 external/libbpf-bootstrap/build/libbpf/libbpf.so
-external/curl/lib/Makefile.soname
 external/curl/lib/.libs/libcurl.so.4.8.0
 external/curl/lib/.libs/libcurl.so
 external/curl/lib/.libs/libcurl.so.4
-external/openssl/providers/fips.module.sources
 external/audit-userspace/lib/.libs/libaudit.so
 external/audit-userspace/lib/.libs/libaudit.so.1.0.0
 external/audit-userspace/lib/.libs/libaudit.so.1
