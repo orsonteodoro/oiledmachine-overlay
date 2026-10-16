@@ -40,6 +40,7 @@ EAPI=8
 # SOC - Security Operations Center [monitoring center]
 # XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{11..14} )
 
@@ -91,7 +92,9 @@ HOMEPAGE="
 "
 LICENSE="GPL-2"
 SLOT="0"
-IUSE=""
+IUSE="
+ebuild_revision_1
+"
 DEPEND="
 	$(secure-version_gen_openssl_depends)
 	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
