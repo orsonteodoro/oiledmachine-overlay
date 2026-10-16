@@ -12,7 +12,27 @@
         and compliance.
     </longdescription>
     <use>
-        <flag name="multi-node">Install the multi-node (HA) Docker Compose stack instead of single-node</flag>
+        <flag name="multi-node">
+          Install the multi-node (HA) Docker Compose stack instead of single-node.
+
+          Single node (default):
+
+          - 6-8 GB RAM minimum
+          - For Lab / small orgs / PoC use
+          - low availability
+          - Easy to setup
+          - Single indexer data lost risk
+          - Overloaded manager possible
+
+          Multi node:
+
+          - 16 GB RAM recommended
+          - For production use, large orgs
+          - More resilient and high availability
+          - Medium or high setup difficulty
+          - Multiple indexer redundunancy
+          - Can distribute the load to workers to prevent single node overload.
+        </flag>
     </use>
     <upstream>
         <remote-id type="github">wazuh/wazuh-docker</remote-id>

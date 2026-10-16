@@ -17,6 +17,8 @@ HOMEPAGE="
 	https://documentation.wazuh.com/current/deployment-options/docker/
 	https://github.com/wazuh/wazuh
 	https://github.com/wazuh/wazuh-docker
+	https://github.com/wazuh/wazuh-indexer
+	https://github.com/wazuh/wazuh-dashboard
 "
 LICENSE="GPL-2"
 SLOT="0"
