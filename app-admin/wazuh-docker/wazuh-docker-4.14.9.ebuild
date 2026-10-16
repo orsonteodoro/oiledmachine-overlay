@@ -6,9 +6,9 @@ EAPI=8
 # This ebuild is AI generated and edited by ebuild maintainer.
 
 #
-# EDR security architecture:
+# EDR security architecture and capabilities:
 #
-# wazuh-docker (SEIM, XDR, FIM analysis) management server for the Security Operation Center (SOC)
+# wazuh-docker (SEIM, XDR, FIM analysis, HIDS analysis/management) management server for the Security Operation Center (SOC)
 # - Single node deployment choices
 #   - Cloud VM
 #   - Mini PC
@@ -19,7 +19,7 @@ EAPI=8
 #   - On-premise server for enterprise
 #   - With or without VMs, but independent VMs are used for true high availability
 #
-# wazuh-agent (FIM monitoring, HIDS) for the endpoints
+# wazuh-agent (FIM monitoring, HIDS collection/monitoring) for the endpoints
 # - Deployment choices
 #   - Cloud VMs
 #   - Containers and hosts
