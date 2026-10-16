@@ -93,7 +93,14 @@ HOMEPAGE="
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="
+openrc systemd
 ebuild_revision_1
+"
+REQUIRED_USE="
+	^^ (
+		openrc
+		systemd
+	)
 "
 DEPEND="
 	$(secure-version_gen_openssl_depends)
@@ -105,6 +112,12 @@ RDEPEND="
 	${DEPEND}
 	acct-group/wazuh:*
 	acct-user/wazuh:*
+	openrc? (
+		>=sys-apps/openrc-${OPENRC_PV}:*
+	)
+	systemd? (
+		>=sys-apps/systemd-${SYSTEMD_PV}:*
+	)
 "
 BDEPEND="
 	$(secure-version_gen_python_depends '3.11-3.14')
@@ -263,11 +276,15 @@ libwazuhshared.so
 	fowners -R wazuh:wazuh "${ossec}"/{logs,queue,var,tmp}
 
 	# OpenRC service
-	newinitd "${FILESDIR}"/wazuh-agent.initd wazuh-agent
-	newconfd "${FILESDIR}"/wazuh-agent.confd wazuh-agent
+	if use openrc ; then
+		newinitd "${FILESDIR}"/wazuh-agent.initd wazuh-agent
+		newconfd "${FILESDIR}"/wazuh-agent.confd wazuh-agent
+	fi
 
 	# systemd unit if you want (optional)
-	systemd_dounit "${FILESDIR}"/wazuh-agent.service
+	if use systemd ; then
+		systemd_dounit "${FILESDIR}"/wazuh-agent.service
+	fi
 
 	# Fix and unpollute RPATHs
 	local L
