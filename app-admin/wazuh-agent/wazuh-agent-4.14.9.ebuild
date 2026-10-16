@@ -76,7 +76,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.4.9999"
 )
 
-inherit chkl libcxx-slot libstdcxx-slot linux-info python-single-r1 secure-version systemd
+inherit cflags-hardened chkl libcxx-slot libstdcxx-slot linux-info python-single-r1 sandbox-changes secure-version systemd
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/wazuh-${PV}"
@@ -106,8 +106,13 @@ RDEPEND="
 BDEPEND="
 	$(secure-version_gen_python_depends '3.11-3.14')
 	>=dev-build/cmake-3.12.4
+	>=net-misc/curl-${CURL_PV}
+	app-alternatives/tar
+	app-alternatives/gzip
+	dev-util/patchelf
 	sys-devel/gcc
 	sys-devel/make
+	sys-apps/findutils
 	virtual/pkgconfig
 "
 
@@ -122,10 +127,12 @@ eerror "It points to the IP address or FQDN of the central Wazah manager/server.
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+	sandbox-changes_no_network_sandbox "For downloading vendored dependencies"
 }
 
 src_configure() {
 	chkl_check_many_timestamps
+	cflags-hardened_append
 }
 
 # Wazuh install.sh is interactive; we drive it non-interactively
@@ -139,6 +146,10 @@ src_install() {
 	# Non-interactive install into a temporary prefix, then move
 	# The official install.sh expects to run as root and writes to /var/ossec
 	# We use a DESTDIR-like approach via environment variables where possible.
+
+	# The /var/ossec is the historical location.  Wazuh is fork of OSSEC.
+	# The install location is still being used in other distros.
+	# The lib is mostly hardcoded.  Do not change to $(get_libdir).
 
 	# Create the expected user/group early
 	# (acct-* packages already did this)
@@ -177,23 +188,73 @@ src_install() {
 	dodir "${ossec}"/{bin,etc,logs,queue,var,active-response,wodles,ruleset,tmp,agentless}
 
 	# Copy the compiled agent binaries
-	cd src || die
+	local ossec="/var/ossec"
+	cd "${S}/src" || die
+
+	# Classic Make binaries (top of src/)
+	local bins=(
+		wazuh-agentd
+		wazuh-execd
+		wazuh-logcollector
+		wazuh-modulesd
+		agent-auth
+		manage_agents
+	)
+
 	exeinto "${ossec}/bin"
-	doexe wazuh-agentd
-	doexe wazuh-execd
-	doexe wazuh-logcollector
-	doexe wazuh-modulesd
-	doexe wazuh-syscheckd
-	doexe manage_agents
-	doexe agent-auth
-	# add any other binaries produced
+	local b
+	for b in "${bins[@]}"; do
+		[[ -x ${b} ]] || die "missing binary: ${b}"
+		doexe "${b}"
+	done
+
+	# FIM: CMake output
+	local syscheck_bin="syscheckd/build/bin/wazuh-syscheckd"
+	[[ -x ${syscheck_bin} ]] || die "missing ${syscheck_bin} (syscheckd CMake build failed?)"
+	doexe "${syscheck_bin}"
+
+	# Shared libs used at runtime (rpath often points at ../lib)
+	insinto "${ossec}/lib"
+
+	local L=(
+# find /var/tmp/portage/app-admin/wazuh-agent-4.14.9/work/wazuh-4.14.9/src/ -name "*.so*" | cut -f 10- -d "/"
+shared_modules/rsync/build/lib/librsync.so
+shared_modules/dbsync/build/lib/libdbsync.so
+libstdc++.so.6
+libwazuhext.so
+data_provider/build/lib/libsysinfo.so
+syscheckd/build/lib/libfimebpf.so
+syscheckd/build/lib/libfimdb.so
+libgcc_s.so.1
+external/libdb/build_unix/.libs/libdb-18.1.so
+external/libffi/server/.libs/libffi.so.6
+external/libffi/server/.libs/libffi.so.6.0.4
+external/libffi/server/.libs/libffi.so
+external/rocksdb/build/librocksdb.so
+external/rocksdb/build/librocksdb.so.8
+external/rocksdb/build/librocksdb.so.8.3.2
+external/libbpf-bootstrap/build/libbpf/libbpf.so
+external/curl/lib/Makefile.soname
+external/curl/lib/.libs/libcurl.so.4.8.0
+external/curl/lib/.libs/libcurl.so
+external/curl/lib/.libs/libcurl.so.4
+external/openssl/providers/fips.module.sources
+external/audit-userspace/lib/.libs/libaudit.so
+external/audit-userspace/lib/.libs/libaudit.so.1.0.0
+external/audit-userspace/lib/.libs/libaudit.so.1
+external/libarchive/.libs/libarchive.so.13
+external/libarchive/.libs/libarchive.so
+external/libarchive/.libs/libarchive.so.13.8.1
+wazuh_modules/syscollector/build/lib/libsyscollector.so
+libwazuhshared.so
+	)
+
+	# Adjust to whatever actually exists in your tree:
+	dolib.so "${L[@]}" 2>/dev/null || true
 
 	# Config templates
-	insinto "${ossec}/etc"
-	doins ../etc/ossec.conf
-	doins ../etc/internal_options.conf
-	doins ../etc/local_internal_options.conf
-	# ... (copy the rest of the etc/ tree as needed)
+	insinto "${ossec}/"
+	doins -r ../etc
 
 	# Create runtime dirs with correct ownership
 	keepdir "${ossec}"/{logs,queue,var,tmp}
@@ -206,6 +267,18 @@ src_install() {
 
 	# systemd unit if you want (optional)
 	systemd_dounit "${FILESDIR}"/wazuh-agent.service
+
+	# Fix and unpollute RPATHs
+	local L
+	L=(
+		$(find "/var/ossec/bin" -type f)
+		$(find "/var/ossec/lib" -type f)
+	)
+	patchelf --remove-rpath "${L[@]}" || die
+	local x
+	for x in "${L[@]}" ; do
+		patchelf --add-rpath "/var/ossec/lib" "${x}" || die
+	done
 }
 
 pkg_postinst() {
