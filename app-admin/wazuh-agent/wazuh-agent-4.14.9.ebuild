@@ -29,6 +29,11 @@ EAPI=8
 #   - Not the Wazuh server
 #   - Not for firewalls/routers
 #
+# Assets - Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
+# FIM - File Integrity Monitoring
+# SEIM - Security Information and Event Management [the software in SOC]
+# SOC - Security Operations Center [monitoring center]
+# XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 
 PYTHON_COMPAT=( "python3_"{11..14} )
 

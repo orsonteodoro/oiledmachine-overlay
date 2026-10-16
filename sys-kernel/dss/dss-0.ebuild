@@ -13,19 +13,40 @@ EAPI=8
 
 # For the compliant, only certified components (e.g. FIPS) should be listed.
 
+#
+# Differences between open-source EDRs
+#
 # ossec
 #   logging
 #   fim
 #   policy enforcement
+#   older implementation
+#
 # wazuh
 #   secure config (check tampering)
 #   secure sys (deps -> cve mapping)
 #   track & monitor (log)
 #   regular test (fim)
+#   recent implementation
+#
 
 #HOST_TYPE_IUSE:
 #	"audit"		# Computer #1
 #	"+production"	# Computer #2, same as !audit
+
+# Assets - Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
+# EDR - Endpoint Detection and Response [behavioral analysis, remediation, active containment]
+# Endpoint - User facing devices (laptops, mobile phones, workstations)
+# FIM - File Integrity Monitoring
+# DMZ - Demilitarized Zone [network Segment in the middle between internal and external network]
+# IC - Internal Chokepoint [between critical network segments and VLANs to detect lateral movement]
+# IE - Internet Edge [inside or outside the perimeter of the firewall]
+# IDS - Intrustion Detection System [alert of signature/policy violations on system or network]
+#   HIDS - Host-based IDS
+#   NIDS - Network-based IDS
+# SEIM - Security Information and Event Management [the software in SOC]
+# SOC - Security Operations Center [monitoring center]
+# XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 
 inherit secure-version
 
@@ -48,7 +69,6 @@ DATA_ENCRYPTION_IUSE=(
 	"veracrypt"
 )
 
-# File Integrity Monitoring
 FIM_IUSE=(
 	"aide"
 	"ossec"
@@ -637,18 +657,6 @@ DATA_ENCRYPTION_DEPENDS="
 	)
 "
 
-# Assets = Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
-# EDR = Endpoint Detection and Response [behavioral analysis, remediation, active containment]
-# Endpoint = User facing devices (laptops, mobile phones, workstations)
-# DMZ = Demilitarized Zone [network Segment in the middle between internal and external network]
-# IC = Internal Chokepoint [between critical network segments and VLANs to detect lateral movement]
-# IE = Internet Edge [inside or outside the perimeter of the firewall]
-# IDS = Intrustion Detection System [alert of signature/policy violations on system or network]
-#   HIDS - Host-based IDS
-#   NIDS - Network-based IDS
-# SEIM = Security Information and Event Management [the software in SOC]
-# SOC = Security Operations Center [monitoring center]
-# XDR = Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 HIDS_DEPENDS="
 	!ossec? (
 		!net-analyzer/ossec-hids
