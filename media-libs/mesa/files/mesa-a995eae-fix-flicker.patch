@@ -1,5 +1,6 @@
-# This patch disables modifiers on GFX8 because it is still buggy and it causes
-# flickering in Chrome and refresh/repainting issue with with Firefox in X11.
+# This patch disables modifiers on GFX8 because it is still buggy with 7.3 live
+# kernel and it causes flickering in Chrome and refresh/repainting issue with
+# with Firefox in X11.
 # AI inference was used for analysis.
 --- a/src/gallium/drivers/radeonsi/si_texture.c.orig	2026-10-15 20:42:34.788224969 -0700
 +++ b/src/gallium/drivers/radeonsi/si_texture.c	2026-10-15 20:43:35.462664477 -0700
