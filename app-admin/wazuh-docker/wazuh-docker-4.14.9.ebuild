@@ -31,6 +31,7 @@ EAPI=8
 #
 # Assets - Hardware, servers, endpoints, cloud workloads, network devices under SOC protection
 # EDR - Endpoint Detection and Response [behavioral analysis, remediation, active containment]
+# Endpoint - User facing devices (laptops, mobile phones, workstations)
 # FIM - File Integrity Monitoring
 # IDS - Intrustion Detection System [alert of signature/policy violations on system or network]
 #   HIDS - Host-based IDS
