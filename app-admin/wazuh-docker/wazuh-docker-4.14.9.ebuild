@@ -5,13 +5,38 @@ EAPI=8
 
 # This ebuild is AI generated and edited by ebuild maintainer.
 
+#
+# Security architecture:
+#
+# wazuh-docker for security operation center
+# - Single node deployment choices
+#   - Cloud VM
+#   - Mini PC
+#   - Home lab server
+#   - High end single board computer (e.g. RPi)
+# - Multi node deployment choices
+#   - Cloud VM
+#   - On-premise server for enterprise
+#   - With or without VMs, but independent VMs are used for true high availability
+#
+# wazuh-agent for endpoints
+# - Deployment choices
+#   - Cloud VMs
+#   - Containers and hosts
+#   - Laptops
+#   - Physical/virtual servers
+#   - Workstations
+#   - Not the Wazuh server
+#   - Not firewalls/routers)
+#
+
 inherit secure-version systemd
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/wazuh-docker-${PV}"
 SRC_URI="https://github.com/wazuh/wazuh-docker/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
-DESCRIPTION="Wazuh central components (manager + indexer + dashboard) via official Docker Compose"
+DESCRIPTION="Wazuh central components (manager + indexer + dashboard) via the official Docker Compose for SOC (Security Operations Center)"
 HOMEPAGE="
 	https://wazuh.com/
 	https://documentation.wazuh.com/current/deployment-options/docker/

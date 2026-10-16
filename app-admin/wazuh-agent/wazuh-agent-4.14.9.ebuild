@@ -5,6 +5,31 @@ EAPI=8
 
 # This file is AI generated but ebuild maintainer edited.
 
+#
+# Security architecture:
+#
+# wazuh-docker for security operation center
+# - Single node deployment choices
+#   - Cloud VM
+#   - Mini PC
+#   - Home lab server
+#   - High end single board computer (e.g. RPi)
+# - Multi node deployment choices
+#   - Cloud VM
+#   - On-premise server for enterprise
+#   - With or without VMs, but independent VMs are used for true high availability
+#
+# wazuh-agent for endpoints
+# - Deployment choices
+#   - Cloud VMs
+#   - Containers and hosts
+#   - Laptops
+#   - Physical/virtual servers
+#   - Workstations
+#   - Not the Wazuh server
+#   - Not firewalls/routers)
+#
+
 PYTHON_COMPAT=( "python3_"{11..14} )
 
 # Soft checks: warn, do not die (agent still works without realtime/whodata)

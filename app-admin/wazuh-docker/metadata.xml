@@ -13,25 +13,33 @@
     </longdescription>
     <use>
         <flag name="multi-node">
-          Install the multi-node (HA) Docker Compose stack instead of single-node.
+          Install as an High Availability (HA) multi-node instead of single-node.
 
           Single node (default):
 
-          - 6-8 GB RAM minimum
-          - For Lab / small orgs / PoC use
+          - 6-8 GB RAM
+          - 2-4 cores
+          - 50 GB SSD for real time indexer
+          - For the lab, small orgs, or PoC (Proof of Concept) use
           - low availability
           - Easy to setup
           - Single indexer data lost risk
           - Overloaded manager possible
+          - Dashboard included
 
           Multi node:
 
-          - 16 GB RAM recommended
+          - 16-32 GB RAM
+          - 8 cores
+          - NVMe SSD for real time indexer
           - For production use, large orgs
           - More resilient and high availability
           - Medium or high setup difficulty
           - Multiple indexer redundunancy
           - Can distribute the load to workers to prevent single node overload.
+          - Dashboard included
+          - Multiple independent VMs are recommended for True High Availability
+            and for resiliency to prevent SEIM going totally offline
         </flag>
     </use>
     <upstream>
