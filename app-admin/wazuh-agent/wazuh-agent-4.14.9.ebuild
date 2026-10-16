@@ -110,9 +110,9 @@ BDEPEND="
 	app-alternatives/tar
 	app-alternatives/gzip
 	dev-util/patchelf
-	sys-devel/gcc
-	sys-devel/make
+	dev-build/make
 	sys-apps/findutils
+	sys-devel/gcc:=
 	virtual/pkgconfig
 "
 
