@@ -18,10 +18,7 @@
     WAZUH_MANGEMENT_SERVER_IP - The IP address or FQDN of the central Wazah manager/server.
 
     -->
-    <use>
-        <flag name="multi-node">Install the multi-node (HA) Docker Compose stack instead of single-node</flag>
-    </use>
     <upstream>
-        <remote-id type="github">wazuh/wazuh-docker</remote-id>
+        <remote-id type="github">wazuh/wazuh</remote-id>
     </upstream>
 </pkgmetadata>
