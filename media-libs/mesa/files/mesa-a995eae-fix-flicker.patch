@@ -1,0 +1,14 @@
+# This patch disables modifiers on GFX8 because it is still buggy and it causes
+# flickering in Chrome and refresh/repainting issue with with Firefox in X11.
+# AI inference was used for analysis.
+--- a/src/gallium/drivers/radeonsi/si_texture.c.orig	2026-10-15 20:42:34.788224969 -0700
++++ b/src/gallium/drivers/radeonsi/si_texture.c	2026-10-15 20:43:35.462664477 -0700
+@@ -2553,7 +2553,7 @@ void si_init_screen_texture_functions(st
+     * which works around some applications using modifiers that are not
+     * allowed in combination with lack of error reporting in
+     * gbm_dri_surface_create */
+-   if (sscreen->info.kernel_has_modifiers) {
++   if (sscreen->info.gfx_level >= GFX9 && sscreen->info.kernel_has_modifiers) {
+       sscreen->b.resource_create_with_modifiers = si_texture_create_with_modifiers;
+       sscreen->b.query_dmabuf_modifiers = si_query_dmabuf_modifiers;
+       sscreen->b.is_dmabuf_modifier_supported = si_is_dmabuf_modifier_supported;

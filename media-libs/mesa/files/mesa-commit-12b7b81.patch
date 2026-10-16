@@ -1,0 +1,66 @@
+From 12b7b819edb4ddd3580e7e5ffe384610ae726c90 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Timur=20Krist=C3=B3f?= <timur.kristof@gmail.com>
+Date: Tue, 5 May 2026 22:58:10 +0200
+Subject: [PATCH] radeonsi: Support DRM format modifiers on GFX6-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Now that ac_surface supports GFX6-8 modifiers,
+enable them in RadeonSI too.
+
+Signed-off-by: Timur Kristóf <timur.kristof@gmail.com>
+Tested-by: Link Mauve <linkmauve@linkmauve.fr>
+Tested-by: Nikola Medić <nmedic89@gmail.com>
+Tested-by: Dieter Nützel <Dieter@nuetzel-hh.de>
+Reviewed-by: Marek Olšák <maraeo@gmail.com>
+Acked-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/41557>
+---
+ src/gallium/drivers/radeonsi/si_texture.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/src/gallium/drivers/radeonsi/si_texture.c b/src/gallium/drivers/radeonsi/si_texture.c
+index da43a907222e..07b387876103 100644
+--- a/src/gallium/drivers/radeonsi/si_texture.c
++++ b/src/gallium/drivers/radeonsi/si_texture.c
+@@ -1696,15 +1696,24 @@ si_get_dmabuf_modifier_planes(struct pipe_screen *pscreen, uint64_t modifier,
+ {
+    unsigned planes = util_format_get_num_planes(format);
+ 
++   if (!IS_AMD_FMT_MOD(modifier))
++      return planes;
++
+    if (AMD_FMT_MOD_GET(TILE_VERSION, modifier) < AMD_FMT_MOD_TILE_VER_GFX12) {
+-      if (IS_AMD_FMT_MOD(modifier) && planes == 1) {
+-         if (AMD_FMT_MOD_GET(DCC_RETILE, modifier))
++      if (planes == 1) {
++         if (ac_modifier_has_dcc_retile(modifier))
+             return 3;
+-         else if (AMD_FMT_MOD_GET(DCC, modifier))
++         else if (ac_modifier_has_dcc(modifier))
+             return 2;
+          else
+             return 1;
+       }
++
++      /* Disallow multi-plane formats with macrotiling, for now. */
++      if (AMD_FMT_MOD_GET(TILE_VERSION, modifier) == AMD_FMT_MOD_TILE_VER_GFX6 &&
++          AMD_FMT_MOD_GET(TILE, modifier) >= AMD_FMT_MOD_TILE_GFX6_2D_TILED_THIN1) {
++         return 1;
++      }
+    }
+ 
+    return planes;
+@@ -2544,7 +2553,7 @@ void si_init_screen_texture_functions(struct si_screen *sscreen)
+     * which works around some applications using modifiers that are not
+     * allowed in combination with lack of error reporting in
+     * gbm_dri_surface_create */
+-   if (sscreen->info.gfx_level >= GFX9 && sscreen->info.kernel_has_modifiers) {
++   if (sscreen->info.kernel_has_modifiers) {
+       sscreen->b.resource_create_with_modifiers = si_texture_create_with_modifiers;
+       sscreen->b.query_dmabuf_modifiers = si_query_dmabuf_modifiers;
+       sscreen->b.is_dmabuf_modifier_supported = si_is_dmabuf_modifier_supported;
+-- 
+GitLab
+
