@@ -1,0 +1,25 @@
+# This file is AI generated.
+[Unit]
+Description=Wazuh agent
+Documentation=https://documentation.wazuh.com/
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=forking
+TimeoutSec=45
+
+ExecStart=/usr/bin/env /var/ossec/bin/wazuh-control start
+ExecStop=/usr/bin/env /var/ossec/bin/wazuh-control stop
+ExecReload=/usr/bin/env /var/ossec/bin/wazuh-control reload
+
+# wazuh-control manages its own child daemons; do not kill the whole cgroup
+KillMode=process
+
+# Optional hardening (safe defaults for Gentoo overlays)
+LimitNOFILE=65536
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

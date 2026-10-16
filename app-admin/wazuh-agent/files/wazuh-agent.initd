@@ -1,0 +1,28 @@
+#!/sbin/openrc-run
+
+# This file is AI generated
+
+name="Wazuh Agent"
+command="/var/ossec/bin/wazuh-control"
+command_args="start"
+pidfile="/var/ossec/var/run/wazuh-agentd.pid"
+
+depend() {
+    need net
+}
+
+start() {
+    ebegin "Starting ${name}"
+    /var/ossec/bin/wazuh-control start
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping ${name}"
+    /var/ossec/bin/wazuh-control stop
+    eend $?
+}
+
+status() {
+    /var/ossec/bin/wazuh-control status
+}

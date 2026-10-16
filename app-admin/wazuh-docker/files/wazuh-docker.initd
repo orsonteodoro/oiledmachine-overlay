@@ -1,0 +1,45 @@
+#!/sbin/openrc-run
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# This file is AI generated.
+
+name="Wazuh Docker"
+description="Wazuh central components (Docker Compose)"
+
+: ${WAZUH_DOCKER_DIR:=/opt/wazuh-docker/single-node}
+: ${DOCKER_COMPOSE:=docker compose}
+
+depend() {
+    need docker
+    after docker
+}
+
+start_pre() {
+    # Prefer multi-node if the directory exists and single-node does not
+    if [[ ! -d ${WAZUH_DOCKER_DIR} ]]; then
+        if [[ -d /opt/wazuh-docker/multi-node ]]; then
+            WAZUH_DOCKER_DIR=/opt/wazuh-docker/multi-node
+        fi
+    fi
+    checkpath -d "${WAZUH_DOCKER_DIR}"
+}
+
+start() {
+    ebegin "Starting ${name}"
+    cd "${WAZUH_DOCKER_DIR}" || return 1
+    ${DOCKER_COMPOSE} up -d
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping ${name}"
+    cd "${WAZUH_DOCKER_DIR}" || return 1
+    ${DOCKER_COMPOSE} down
+    eend $?
+}
+
+status() {
+    cd "${WAZUH_DOCKER_DIR}" || return 1
+    ${DOCKER_COMPOSE} ps
+}

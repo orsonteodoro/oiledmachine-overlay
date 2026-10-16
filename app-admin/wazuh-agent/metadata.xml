@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<!-- This file is partly AI generated -->
+<pkgmetadata>
+    <maintainer type="person">
+        <email>orsonteodoro@hotmail.com</email>
+        <name>Orson Teodoro</name>
+    </maintainer>
+    <longdescription>
+        Wazuh is a free, open source and enterprise-ready security monitoring
+        solution for threat detection, integrity monitoring, incident response
+        and compliance.
+    </longdescription>
+    <use>
+        <flag name="multi-node">Install the multi-node (HA) Docker Compose stack instead of single-node</flag>
+    </use>
+    <upstream>
+        <remote-id type="github">wazuh/wazuh-docker</remote-id>
+    </upstream>
+</pkgmetadata>

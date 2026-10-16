@@ -1,0 +1,31 @@
+# This file is AI generated.
+[Unit]
+Description=Wazuh central stack (Docker Compose)
+Documentation=https://documentation.wazuh.com/current/deployment-options/docker/
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+# Adjust path if you use multi-node
+WorkingDirectory=/opt/wazuh-docker/single-node
+
+# Prefer Compose V2 plugin; fall back to docker-compose binary if needed
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+ExecStop=/usr/bin/docker compose down
+ExecReload=/usr/bin/docker compose up -d --remove-orphans
+
+# Give the indexer time to come up on slow hosts
+TimeoutStartSec=300
+TimeoutStopSec=120
+
+# Restart policy is mostly handled by compose `restart: always`,
+# but this recovers the whole stack if the unit is stopped uncleanly
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

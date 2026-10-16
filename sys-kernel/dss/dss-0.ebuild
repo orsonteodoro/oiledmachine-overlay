@@ -9,8 +9,6 @@ EAPI=8
 # This package is WIP
 
 # TODO package:
-# app-admin/wazuh-agent
-# app-admin/wazuh-docker
 # prowler
 
 # For the compliant, only certified components (e.g. FIPS) should be listed.
@@ -664,10 +662,10 @@ HIDS_DEPENDS="
 	)
 	wazuh? (
 		endpoint? (
-			app-admin/wazuh-agent
+			>=app-admin/wazuh-agent-${WAZUH_PV}
 		)
 		soc? (
-			app-admin/wazuh-docker
+			>=app-admin/wazuh-docker-${WAZUH_PV}
 		)
 	)
 "
