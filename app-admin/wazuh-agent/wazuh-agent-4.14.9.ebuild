@@ -96,7 +96,7 @@ ewarn "${PN} is under construction"
 	linux-info_pkg_setup
 }
 
-pkg_configure() {
+src_configure() {
 	chkl_check_many_timestamps
 }
 
