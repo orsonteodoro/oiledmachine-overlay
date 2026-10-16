@@ -137,8 +137,20 @@ ewarn "${PN} is under construction"
 	python-single-r1_pkg_setup
 	linux-info_pkg_setup
 	if [[ -z "${WAZUH_MANGEMENT_SERVER_IP}" ]] ; then
-eerror "The WAZUH_MANGEMENT_SERVER_IP per-package environment variable must be set before emerging."
-eerror "It points to the IP address or FQDN of the central Wazah manager/server."
+eerror
+eerror "The WAZUH_MANGEMENT_SERVER_IP per-package environment variable must be"
+eerror "set before emerging.  It points to the IP address or FQDN of the"
+eerror "central Wazah manager/server."
+eerror
+eerror "Example contents of /etc/portage/env/${PN}.conf:"
+eerror
+eerror "WAZUH_MANGEMENT_SERVER_IP=\"192.168.1.5\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror
+eerror "${CATEGORY}/${PN} ${PN}.conf"
+eerror
+eerror
 		die
 	fi
 	libcxx-slot_verify
