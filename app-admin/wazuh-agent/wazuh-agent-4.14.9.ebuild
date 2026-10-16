@@ -94,6 +94,11 @@ pkg_setup() {
 ewarn "${PN} is under construction"
 	python-single-r1_pkg_setup
 	linux-info_pkg_setup
+	if [[ -n "${WAZUH_MANGEMENT_SERVER_IP}" ]] ; then
+eerror "The WAZUH_MANGEMENT_SERVER_IP per-package environment variable must be set before emerging."
+eerror "It points to the IP address or FQDN of the central Wazah manager/server."
+		die
+	fi
 }
 
 src_configure() {
@@ -129,7 +134,7 @@ src_install() {
 	export USER_ENABLE_CISCAT="n"
 	export USER_ENABLE_SYSCOLLECTOR="y"
 	export USER_UPDATE="y"
-	export USER_AGENT_SERVER_IP="MANAGER_IP"   # user must change later
+	export USER_AGENT_SERVER_IP="${WAZUH_MANGEMENT_SERVER_IP}"
 	export USER_AGENT_CONFIG_PROFILE="generic"
 	export DOWNLOAD_CONTENT="y"
 
@@ -190,13 +195,13 @@ elog "1. Set the manager address in /var/ossec/etc/ossec.conf:"
 elog
 elog "     <client>"
 elog "       <server>"
-elog "         <address>YOUR_MANAGER_IP</address>"
+elog "         <address>${WAZUH_MANGEMENT_SERVER_IP}</address>"
 elog "       </server>"
 elog "     </client>"
 elog
 elog "2. (Optional) Enroll the agent:"
 elog
-elog "     /var/ossec/bin/agent-auth -m YOUR_MANAGER_IP"
+elog "     /var/ossec/bin/agent-auth -m ${WAZUH_MANGEMENT_SERVER_IP}"
 elog
 elog "3. Start the agent:"
 elog

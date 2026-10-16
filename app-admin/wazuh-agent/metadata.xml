@@ -11,6 +11,13 @@
         solution for threat detection, integrity monitoring, incident response
         and compliance.
     </longdescription>
+    <!--
+
+    Environment variables:
+
+    WAZUH_MANGEMENT_SERVER_IP - The IP address or FQDN of the central Wazah manager/server.
+
+    -->
     <use>
         <flag name="multi-node">Install the multi-node (HA) Docker Compose stack instead of single-node</flag>
     </use>
