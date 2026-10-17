@@ -40,6 +40,8 @@ EAPI=8
 # SOC - Security Operations Center [monitoring center]
 # XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 
+# Dependency versions:  https://github.com/wazuh/wazuh/blob/v4.14.9/README.md#software-and-libraries-used
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{11..14} )
@@ -134,30 +136,30 @@ RDEPEND="
 		$(secure-version_gen_openssl_depends)
 		>=app-arch/bzip2-${BZIP2_PV}:=
 		>=app-arch/libarchive-${LIBARCHIVE_PV}:=
+		>=app-arch/rpm-4.20.1:=[lua_single_target_lua5-4,sqlite]
+			>=dev-db/sqlite-${SQLITE_PV}:=
+			>=dev-lang/lua-5.4.8:5.4=
+			>=dev-libs/popt-1.16:=
+			>=virtual/zlib-${ZLIB_PV}:=
 		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
+		>=app-pda/libplist-2.2.1:=
+		>=dev-cpp/benchmark-1.6.1:=
 		>=dev-cpp/cpp-httplib-${CPP_HTTPLIB_PV}:=
+		>=dev-cpp/gtest-1.11.0:=
 		>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
 		>=dev-libs/cJSON-${CJSON_PV}:=
 		>=dev-libs/libffi-${LIBFFI_PV}:=
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+		>=dev-libs/libyaml-0.1.7:=
+		>=dev-libs/msgpack-3.1.1:=
+		>=dev-libs/rocksdb-8.3.2:=
 		>=net-misc/curl-${CURL_PV}:=
 		>=sys-apps/dbus-${DBUS_PV}:=
+		>=sys-apps/pacman-5.2.2:=
+		>=sys-libs/db-18.1.40:=
+		>=sys-process/audit-2.8.4:=
 		>=sys-process/procps-${PROCPS_PV}:=
-		app-arch/rpm:=[sqlite]
-			>=dev-db/sqlite-${SQLITE_PV}:=
-			>=virtual/zlib-${ZLIB_PV}:=
-			dev-lang/lua:=
-			dev-libs/popt:=
-		app-pda/libplist:=
-		dev-cpp/benchmark:=
-		dev-cpp/gtest:=
                 dev-libs/libbpf-bootstrap:=
-		dev-libs/libyaml:=
-		dev-libs/msgpack:=
-		dev-libs/rocksdb:=
-		sys-apps/pacman:=
-		sys-libs/db:=
-		sys-process/audit:=
 	)
 "
 BDEPEND="
@@ -203,36 +205,82 @@ eerror
 	libstdcxx-slot_verify
 
 	L=(
+		"audit-userspace"
+		"benchmark"
+		"bzip2"
 		"cJSON"
+		"cpp-httplib"
 		"curl"
+		"dbus"
+		"googletest"
+		"libarchive"
+		"libbpf-bootstrap"
 		"libdb"
 		"libffi"
-		"libyaml"
-		"openssl"
-		"procps"
-		"sqlite"
-		"zlib"
-		"audit-userspace"
-		"msgpack"
-		"bzip2"
-		"nlohmann"
-		"googletest"
 		"libpcre2"
 		"libplist"
-		"pacman"
-		"libarchive"
-		"popt"
-		"lua"
-		"rpm"
-		"rocksdb"
+		"libyaml"
 		"lzma"
-		"cpp-httplib"
-		"benchmark"
-		"libbpf-bootstrap"
-		"dbus"
+		"lua"
+		"msgpack"
+		"nlohmann"
+		"openssl"
+		"pacman"
+		"popt"
+		"procps"
+		"rocksdb"
+		"rpm"
+		"sqlite"
+		"zlib"
 	)
 
 	use system-libs || sandbox-changes_no_network_sandbox "For downloading prebuilt vendored dependencies (${L[@]})"
+	if use system-libs ; then
+ewarn "Upstream uses static-libs linking for isolation (e.g removal of libs or major version breakage)."
+		if ! has_version "app-arch/rpm[lua_single_target_lua5-4]" ; then
+ewarn "Upstream uses app-arch/rpm[lua_single_target_lua5-4] instead."
+		fi
+		if ! has_version "=dev-db/sqlite-3.50*" ; then
+ewarn "Upstream uses =dev-db/sqlite-3.50* instead."
+		fi
+		if ! has_version "=dev-libs/openssl-3.5*" ; then
+ewarn "Upstream uses =dev-libs/openssl-3.5* instead."
+		fi
+		if ! has_version "=dev-libs/rocksdb-8*" ; then
+ewarn "Upstream uses =dev-libs/rocksdb-8* instead."
+		fi
+		if ! has_version "=sys-libs/db-18*" ; then
+# Upstream 18 is used because of rpm and license compatibility.
+# U26, F45 use libdb 5.3 because of the license issue.
+# AGPL is more restrictive than LGPL.
+ewarn "Upstream uses =sys-libs/db-18* instead."
+		fi
+	else
+ewarn "You are using vendored libs from ${PN} which may contain vulnerabilities or older versions."
+	fi
+}
+
+src_unpack() {
+	default
+	if ! use system-libs ; then
+		cd "${S}/src" || die
+einfo "Downloading prebuilt libs"
+		emake \
+			V=1 \
+			TARGET=agent \
+			DISABLE_SYSC=$(usex sysc '0' '1') \
+			DISABLE_SYSCAT=$(usex syscat '0' '1') \
+			USE_BIG_ENDIAN=$(usex big-endian '1' '') \
+			USE_GEOIP=$(usex geoip '1' '') \
+			USE_INOTIFY=$(usex inotify '1' '0') \
+			USE_SELINUX=$(usex selinux '1' '') \
+			deps
+	fi
+}
+
+src_prepare() {
+	default
+	use system-libs && eapply "${FILESDIR}/${PN}-4.14.9-use-system-libs.patch"
 }
 
 src_configure() {
@@ -259,34 +307,26 @@ einfo "OSSEC_CFLAGS:  ${all_cflags}"
 einfo "OSSEC_CXXFLAGS:  ${all_cxxflags}"
 einfo "OSSEC_LDFLAGS:  ${all_ldflags}"
 
-	emake \
-		V=1 \
-		TARGET=agent \
-		DISABLE_SYSC=$(usex sysc '0' '1') \
-		DISABLE_SYSCAT=$(usex syscat '0' '1') \
-		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
-		USE_BIG_ENDIAN=$(usex big-endian '1' '') \
-		USE_GEOIP=$(usex geoip '1' '') \
-		USE_INOTIFY=$(usex inotify '1' '0') \
-		USE_SELINUX=$(usex selinux '1' '') \
-		deps
-
-	emake \
-		V=1 \
-		TARGET=agent \
-		DISABLE_SYSC=$(usex sysc '0' '1') \
-		DISABLE_SYSCAT=$(usex syscat '0' '1') \
-		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
-		USE_BIG_ENDIAN=$(usex big-endian '1' '') \
-		USE_GEOIP=$(usex geoip '1' '') \
-		USE_INOTIFY=$(usex inotify '1' '0') \
-		USE_SELINUX=$(usex selinux '1' '') \
-		CC="$(tc-getCC)" \
-		CXX="$(tc-getCXX)" \
-		OSSEC_CFLAGS="${all_cflags}" \
-		OSSEC_LDFLAGS="${all_ldflags}" \
-		AR_LDFLAGS="${all_ldflags}" \
+	local myconf=(
+		V=1
+		TARGET=agent
+		DISABLE_SYSC=$(usex sysc '0' '1')
+		DISABLE_SYSCAT=$(usex syscat '0' '1')
+		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1')
+		USE_BIG_ENDIAN=$(usex big-endian '1' '')
+		USE_GEOIP=$(usex geoip '1' '')
+		USE_INOTIFY=$(usex inotify '1' '0')
+		USE_SELINUX=$(usex selinux '1' '')
+		CC="$(tc-getCC)"
+		CXX="$(tc-getCXX)"
+		OSSEC_CFLAGS="${all_cflags}"
+		OSSEC_LDFLAGS="${all_ldflags}"
+		AR_LDFLAGS="${all_ldflags}"
 		CMAKE_OPTS="-DCMAKE_C_FLAGS=${all_cflags} -DCMAKE_CXX_FLAGS=${all_cxxflags} -DCMAKE_EXE_LINKER_FLAGS=${all_ldflags} -DCMAKE_SHARED_LINKER_FLAGS=${all_ldflags} -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+	)
+
+	emake "${myconf[@]}" settings
+	emake "${myconf[@]}" build
 }
 
 src_install() {

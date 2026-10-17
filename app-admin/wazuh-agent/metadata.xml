@@ -51,5 +51,9 @@
       Build the deprecated CIS-CAT module used for audit/evaluate compliants
       against CIS benchmarks.
     </flag>
+    <flag name="system-libs">
+      Use the prebuilt static libs instead of the system-libs.
+      They contain vulnerabilities or older versions.
+    </flag>
   </use>
 </pkgmetadata>

@@ -1,0 +1,2257 @@
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/addagent/manage_agents.c wazuh-4.14.9/src/addagent/manage_agents.c
+--- wazuh-4.14.9.orig/src/addagent/manage_agents.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/addagent/manage_agents.c	2026-10-16 22:13:19.535046870 -0700
+@@ -16,7 +16,7 @@
+ #include "debug_op.h"
+ #include "defs.h"
+ #include "os_crypto/md5/md5_op.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "os_err.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/addagent/manage_agents.h wazuh-4.14.9/src/addagent/manage_agents.h
+--- wazuh-4.14.9.orig/src/addagent/manage_agents.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/addagent/manage_agents.h	2026-10-16 22:13:19.535286754 -0700
+@@ -13,7 +13,7 @@
+ 
+ #include "shared.h"
+ #include "sec.h"
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #ifndef ARGV0
+ #define ARGV0 "manage_agents"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/addagent/manage_keys.c wazuh-4.14.9/src/addagent/manage_keys.c
+--- wazuh-4.14.9.orig/src/addagent/manage_keys.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/addagent/manage_keys.c	2026-10-16 22:13:19.535439011 -0700
+@@ -10,7 +10,7 @@
+ 
+ #include "manage_agents.h"
+ #include "os_crypto/md5/md5_op.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include <stdlib.h>
+ #include "config/authd-config.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/addagent/validate.c wazuh-4.14.9/src/addagent/validate.c
+--- wazuh-4.14.9.orig/src/addagent/validate.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/addagent/validate.c	2026-10-16 22:13:19.535639025 -0700
+@@ -8,7 +8,7 @@
+  * Foundation
+  */
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "manage_agents.h"
+ #include "os_crypto/md5/md5_op.h"
+ #include "os_err.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/decoders/ciscat.c wazuh-4.14.9/src/analysisd/decoders/ciscat.c
+--- wazuh-4.14.9.orig/src/analysisd/decoders/ciscat.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/decoders/ciscat.c	2026-10-16 22:13:19.535954501 -0700
+@@ -12,7 +12,7 @@
+ 
+ #include "eventinfo.h"
+ #include "decoder.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "plugin_decoders.h"
+ #include "wazuh_modules/wmodules.h"
+ #include "string_op.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/decoders/plugins/json_decoder.c wazuh-4.14.9/src/analysisd/decoders/plugins/json_decoder.c
+--- wazuh-4.14.9.orig/src/analysisd/decoders/plugins/json_decoder.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/decoders/plugins/json_decoder.c	2026-10-16 22:13:19.536121756 -0700
+@@ -13,7 +13,7 @@
+ #include "shared.h"
+ #include "eventinfo.h"
+ #include "../../config.h"
+-#include "../../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ void fillData(Eventinfo *lf, const char *key, const char *value)
+ {
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/decoders/security_configuration_assessment.c wazuh-4.14.9/src/analysisd/decoders/security_configuration_assessment.c
+--- wazuh-4.14.9.orig/src/analysisd/decoders/security_configuration_assessment.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/decoders/security_configuration_assessment.c	2026-10-16 22:13:19.536397459 -0700
+@@ -14,7 +14,7 @@
+ #include "eventinfo.h"
+ #include "alerts/alerts.h"
+ #include "decoder.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "plugin_decoders.h"
+ #include "wazuh_modules/wmodules.h"
+ #include "os_net/os_net.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/decoders/syscollector.c wazuh-4.14.9/src/analysisd/decoders/syscollector.c
+--- wazuh-4.14.9.orig/src/analysisd/decoders/syscollector.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/decoders/syscollector.c	2026-10-16 22:13:19.536817220 -0700
+@@ -14,7 +14,7 @@
+ #include "eventinfo.h"
+ #include "alerts/alerts.h"
+ #include "decoder.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "plugin_decoders.h"
+ #include "os_net/os_net.h"
+ #include "string_op.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/decoders/winevtchannel.c wazuh-4.14.9/src/analysisd/decoders/winevtchannel.c
+--- wazuh-4.14.9.orig/src/analysisd/decoders/winevtchannel.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/decoders/winevtchannel.c	2026-10-16 22:13:19.537228868 -0700
+@@ -14,7 +14,7 @@
+ #include "eventinfo.h"
+ #include "alerts/alerts.h"
+ #include "decoder.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "plugin_decoders.h"
+ #include "wazuh_modules/wmodules.h"
+ #include "os_net/os_net.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/format/json_extended.h wazuh-4.14.9/src/analysisd/format/json_extended.h
+--- wazuh-4.14.9.orig/src/analysisd/format/json_extended.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/format/json_extended.h	2026-10-16 22:13:19.537471528 -0700
+@@ -7,7 +7,7 @@
+ #define JSON_EXTENDED_H
+ 
+ #include "eventinfo.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include <regex.h>
+ 
+ #define MAX_MATCHES 10
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/analysisd/format/to_json.c wazuh-4.14.9/src/analysisd/format/to_json.c
+--- wazuh-4.14.9.orig/src/analysisd/format/to_json.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/analysisd/format/to_json.c	2026-10-16 22:13:19.537620736 -0700
+@@ -14,7 +14,7 @@
+ #include "syscheck_op.h"
+ #include "rules.h"
+ #include "mitre.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "config.h"
+ #include "wazuh_modules/wmodules.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/config/indexer-config.c wazuh-4.14.9/src/config/indexer-config.c
+--- wazuh-4.14.9.orig/src/config/indexer-config.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/config/indexer-config.c	2026-10-16 22:13:19.537800457 -0700
+@@ -13,7 +13,7 @@
+ #ifndef WIN32
+ 
+ #include "shared.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ /* Global variables */
+ static const char * special_array_keys[] = {
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/config/syscheck-config.h wazuh-4.14.9/src/config/syscheck-config.h
+--- wazuh-4.14.9.orig/src/config/syscheck-config.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/config/syscheck-config.h	2026-10-16 22:13:19.537969727 -0700
+@@ -145,7 +145,7 @@ typedef enum fdb_stmt {
+ 
+ #include "../os_crypto/md5_sha1_sha256/md5_sha1_sha256_op.h"
+ #include "integrity_op.h"
+-#include "../external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ #include "../headers/list_op.h"
+ 
+ #ifdef WIN32
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/data_provider/include/sysInfo.h wazuh-4.14.9/src/data_provider/include/sysInfo.h
+--- wazuh-4.14.9.orig/src/data_provider/include/sysInfo.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/data_provider/include/sysInfo.h	2026-10-16 22:13:19.538157848 -0700
+@@ -33,7 +33,7 @@
+ #endif
+ #endif
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/agent_op.h wazuh-4.14.9/src/headers/agent_op.h
+--- wazuh-4.14.9.orig/src/headers/agent_op.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/agent_op.h	2026-10-16 22:13:19.538297475 -0700
+@@ -11,7 +11,7 @@
+ #ifndef AGENT_OP_H
+ #define AGENT_OP_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include "../config/authd-config.h"
+ 
+ /* Attempts to send a message through the cluster */
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/debug_op.h wazuh-4.14.9/src/headers/debug_op.h
+--- wazuh-4.14.9.orig/src/headers/debug_op.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/debug_op.h	2026-10-16 22:13:19.538452727 -0700
+@@ -24,7 +24,7 @@
+ #endif
+ 
+ #include <stdarg.h>
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ /* For internal logs */
+ #ifndef LOGFILE
+ #ifndef WIN32
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/expression.h wazuh-4.14.9/src/headers/expression.h
+--- wazuh-4.14.9.orig/src/headers/expression.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/expression.h	2026-10-16 22:13:19.538610456 -0700
+@@ -12,7 +12,7 @@
+ #define EXPRESSION_H_
+ #define PCRE2_CODE_UNIT_WIDTH 8
+ 
+-#include "../external/libpcre2/include/pcre2.h"
++#include <pcre2.h>
+ #include "../os_regex/os_regex.h"
+ #include "os_ip.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/file_op.h wazuh-4.14.9/src/headers/file_op.h
+--- wazuh-4.14.9.orig/src/headers/file_op.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/file_op.h	2026-10-16 22:13:19.538792278 -0700
+@@ -17,9 +17,9 @@
+ #include <time.h>
+ #include <stdbool.h>
+ #include <sys/stat.h>
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include <dirent.h>
+-#include "../external/zlib/zlib.h"
++#include <zlib.h>
+ 
+ #ifdef WIN32
+ #include <winsock2.h>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/json_op.h wazuh-4.14.9/src/headers/json_op.h
+--- wazuh-4.14.9.orig/src/headers/json_op.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/json_op.h	2026-10-16 22:13:19.538966686 -0700
+@@ -14,7 +14,7 @@
+ 
+ #define JSON_MAX_FSIZE 2147483648
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ /**
+  * @brief It temporarily saves in memory the content of the file located in path.
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/json-queue.h wazuh-4.14.9/src/headers/json-queue.h
+--- wazuh-4.14.9.orig/src/headers/json-queue.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/json-queue.h	2026-10-16 22:13:19.539079005 -0700
+@@ -10,7 +10,7 @@
+ #ifndef JSON_QUEUE_H
+ #define JSON_QUEUE_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include "file-queue.h"
+ 
+ // Initializes queue. Equivalent to initialize every field to 0.
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/read-agents.h wazuh-4.14.9/src/headers/read-agents.h
+--- wazuh-4.14.9.orig/src/headers/read-agents.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/read-agents.h	2026-10-16 22:13:19.539304439 -0700
+@@ -11,7 +11,7 @@
+ #ifndef CRAGENT_H
+ #define CRAGENT_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ /* Status */
+ typedef enum agent_status_t {
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/regex_op.h wazuh-4.14.9/src/headers/regex_op.h
+--- wazuh-4.14.9.orig/src/headers/regex_op.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/regex_op.h	2026-10-16 22:13:19.539436323 -0700
+@@ -13,7 +13,7 @@
+ 
+ #ifndef WIN32
+ #include <regex.h>
+-#include "../external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ 
+ /**
+  * @brief Compare a string with a regular expression.
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/string_op.h wazuh-4.14.9/src/headers/string_op.h
+--- wazuh-4.14.9.orig/src/headers/string_op.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/string_op.h	2026-10-16 22:13:19.539584837 -0700
+@@ -11,7 +11,7 @@
+ #ifndef H_STRINGOP_OS
+ #define H_STRINGOP_OS
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include <stdbool.h>
+ 
+ #ifdef WIN32
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/url.h wazuh-4.14.9/src/headers/url.h
+--- wazuh-4.14.9.orig/src/headers/url.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/url.h	2026-10-16 22:13:19.539756381 -0700
+@@ -12,7 +12,7 @@
+ #ifndef URL_GET_H_
+ #define URL_GET_H_
+ 
+-#include "../external/curl/include/curl/curl.h"
++#include <curl/curl.h>
+ 
+ #define WURL_WRITE_FILE_ERROR "Cannot open file '%s'"
+ #define WURL_DOWNLOAD_FILE_ERROR "Cannot download file '%s' from URL: '%s'"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/headers/yaml2json.h wazuh-4.14.9/src/headers/yaml2json.h
+--- wazuh-4.14.9.orig/src/headers/yaml2json.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/headers/yaml2json.h	2026-10-16 22:13:19.539872306 -0700
+@@ -11,8 +11,8 @@
+ #ifndef YAML2JSON_H
+ #define YAML2JSON_H
+ 
+-#include "../external/libyaml/include/yaml.h"
+-#include <cJSON.h>
++#include <yaml.h>
++#include <cjson/cJSON.h>
+ 
+ int yaml_parse_stdin(yaml_document_t * document);
+ int yaml_parse_file(const char * path, yaml_document_t * document);
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/logcollector/journal_log.h wazuh-4.14.9/src/logcollector/journal_log.h
+--- wazuh-4.14.9.orig/src/logcollector/journal_log.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/logcollector/journal_log.h	2026-10-16 22:13:19.540034942 -0700
+@@ -4,7 +4,7 @@
+ #include <shared.h>
+ #include "../config/localfile-config.h"
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "expression.h"
+ 
+ /*******************************************************************************
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/Makefile wazuh-4.14.9/src/Makefile
+--- wazuh-4.14.9.orig/src/Makefile	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/Makefile	2026-10-16 22:27:29.252436560 -0700
+@@ -448,7 +448,7 @@ endif
+ 
+ OSSEC_CFLAGS+=${DEFINES}
+ OSSEC_CFLAGS+=-pipe -Wall -Wextra -std=gnu99
+-OSSEC_CFLAGS+=-I./ -I./headers/ -I${EXTERNAL_OPENSSL}include -I$(EXTERNAL_JSON) -I${EXTERNAL_LIBYAML}include -I${EXTERNAL_CURL}include -I${EXTERNAL_MSGPACK}include -I${EXTERNAL_BZIP2} -I${SHARED_MODULES}common -I${DBSYNC}include -I${RSYNC}include -I${SYSCOLLECTOR}include  -I${SYSINFO}include  -I${EXTERNAL_LIBPCRE2}include -I${EXTERNAL_RPM}/builddir/output/include -I${SYSCHECK}include -I${ROUTER}include -I${CONTENT_MANAGER}include -I${VULNERABILITY_SCANNER}include -I${INVENTORY_HARVESTER}include -I./shared_modules/
++OSSEC_CFLAGS+=-I./ -I./headers/ -I${SHARED_MODULES}common -I${DBSYNC}include -I${RSYNC}include -I${SYSCOLLECTOR}include  -I${SYSINFO}include  -I${SYSCHECK}include -I${ROUTER}include -I${CONTENT_MANAGER}include -I${VULNERABILITY_SCANNER}include -I${INVENTORY_HARVESTER}include -I./shared_modules/
+ 
+ OSSEC_CFLAGS += ${CFLAGS}
+ OSSEC_LDFLAGS += ${LDFLAGS}
+@@ -849,34 +849,34 @@ win32/libwinpthreadpatched.a: ${WIN_PTHR
+ #### External ######
+ ####################
+ 
+-ZLIB_LIB    = $(EXTERNAL_ZLIB)/libz.a
+-MINIZIP_LIB = $(EXTERNAL_ZLIB)/contrib/minizip/libminizip.a
+-OPENSSL_LIB = $(EXTERNAL_OPENSSL)libssl.a
+-CRYPTO_LIB 	= $(EXTERNAL_OPENSSL)libcrypto.a
+-LIBPLIST_LIB = $(EXTERNAL_LIBPLIST)/bin/lib/libplist-2.0.a
+-SQLITE_LIB  = $(EXTERNAL_SQLITE)libsqlite3.a
+-JSON_LIB    = $(EXTERNAL_JSON)libcjson.a
+-PROCPS_LIB  = $(EXTERNAL_PROCPS)/libproc.a
+-DB_LIB      = $(EXTERNAL_LIBDB).libs/libdb-18.1.a
+-LIBALPM_LIB  = $(EXTERNAL_PACMAN)lib/libalpm/libalpm.a
+-LIBARCHIVE_LIB  = $(EXTERNAL_LIBARCHIVE).libs/libarchive.a
+-LIBYAML_LIB = $(EXTERNAL_LIBYAML)src/.libs/libyaml.a
+-LIBCURL_LIB = $(EXTERNAL_CURL)lib/.libs/libcurl.a
+-AUDIT_LIB 	= $(EXTERNAL_AUDIT)lib/.libs/libaudit.a
+-LIBFFI_LIB 	= $(EXTERNAL_LIBFFI)$(TARGET)/.libs/libffi.a
+-MSGPACK_LIB = $(EXTERNAL_MSGPACK)libmsgpack.a
+-BZIP2_LIB   = $(EXTERNAL_BZIP2)libbz2.a
+-LIBPCRE2_LIB = $(EXTERNAL_LIBPCRE2).libs/libpcre2-8.a
+-POPT_LIB = $(EXTERNAL_POPT)build/output/src/.libs/libpopt.a
+-RPM_LIB = $(EXTERNAL_RPM)builddir/librpm.a
+-JEMALLOC_LIB = $(EXTERNAL_JEMALLOC)lib/libjemalloc.so.2
+-ROCKSDB_LIB = $(EXTERNAL_ROCKSDB)build/librocksdb.so
+-SIMDJSON_LIB = $(EXTERNAL_SIMDJSON)build/libsimdjson.a
+-FLATBUFFERS_LIB = $(EXTERNAL_FLATBUFFERS)build/libflatbuffers.a
+-LZMA_LIB = $(EXTERNAL_LZMA)build/liblzma.a
+-LUA_LIB = ${EXTERNAL_LUA}liblua.a
++ZLIB_LIB    = -lz
++MINIZIP_LIB = -lminizip
++OPENSSL_LIB = -lssl
++CRYPTO_LIB	= -lcrypto
++LIBPLIST_LIB = -lplist-2.0
++SQLITE_LIB  = -lsqlite3
++JSON_LIB    = -lcjson
++PROCPS_LIB  = -lproc2
++DB_LIB      = -ldb
++LIBALPM_LIB  = -lalpm
++LIBARCHIVE_LIB  = -larchive
++LIBYAML_LIB = -lyaml
++LIBCURL_LIB = -lcurl
++AUDIT_LIB	= -laudit
++LIBFFI_LIB	= -lffi
++MSGPACK_LIB = -lmsgpack-c
++BZIP2_LIB   = -lbz2
++LIBPCRE2_LIB = -lpcre2-8
++POPT_LIB = -lpopt
++RPM_LIB = -lrpm
++JEMALLOC_LIB = -ljemalloc
++ROCKSDB_LIB = -lrocksdb
++SIMDJSON_LIB = -lsimdjson
++FLATBUFFERS_LIB = -lflatbuffers
++LZMA_LIB = -llzma
++LUA_LIB = -llua5.4
+ LIBBPF_LIB = $(EXTERNAL_LIBBPF)build/modern.bpf.o
+-DBUS_LIB = $(EXTERNAL_DBUS)lib/libdbus-1.a
++DBUS_LIB = -ldbus-1
+ 
+ EXTERNAL_LIBS := $(JSON_LIB) $(ZLIB_LIB) $(OPENSSL_LIB) $(CRYPTO_LIB) $(SQLITE_LIB) $(LIBYAML_LIB) $(LIBPCRE2_LIB)
+ 
+@@ -920,25 +920,7 @@ ifeq (${uname_S},Darwin)
+ EXTERNAL_LIBS += ${LIBPLIST_LIB}
+ endif
+ 
+-
+-.PHONY: external test_external
+-external: test_external $(EXTERNAL_LIBS) $(JEMALLOC_LIB)
+-
+-ifneq (,$(filter ${TEST},YES yes y Y 1))
+-external: build_gtest build_benchmark
+-endif
+-
+-ifeq (${TARGET},server)
+-external: $(ROCKSDB_LIB) $(SIMDJSON_LIB)
+-endif
+-
+-ifeq (${uname_S},Linux)
+-ifneq ($(CHECK_CENTOS5),YES)
+-ifneq (${TARGET},winagent)
+-external: ${LIBBPF_LIB}
+-endif
+-endif
+-endif
++.PHONY: external
+ 
+ ifneq (${TARGET},winagent)
+ ifneq (${TARGET},agent)
+@@ -948,11 +930,6 @@ endif
+ endif
+ endif
+ 
+-test_external:
+-ifeq ($(wildcard external/*/*),)
+-	$(error No external directory found. Run "${MAKE} deps" before compiling external libraries)
+-endif
+-
+ #### OpenSSL ##########
+ 
+ OPENSSL_FLAGS = enable-weak-ssl-ciphers no-shared
+@@ -964,345 +941,6 @@ endif
+ endif
+ 
+ 
+-${CRYPTO_LIB}: ${OPENSSL_LIB}
+-
+-${OPENSSL_LIB}:
+-ifeq (${TARGET},winagent)
+-	cd ${EXTERNAL_OPENSSL} && CC=${MING_BASE}${CC} RC=${MING_BASE}windres ./Configure $(OPENSSL_FLAGS) mingw && ${MAKE} build_libs
+-else
+-ifeq (${uname_S},Darwin)
+-ifeq (${uname_M},arm64)
+-	cd ${EXTERNAL_OPENSSL} && ./Configure $(OPENSSL_FLAGS) darwin64-arm64-cc && ${MAKE} build_libs
+-else
+-	cd ${EXTERNAL_OPENSSL} && ./Configure $(OPENSSL_FLAGS) darwin64-x86_64-cc && ${MAKE} build_libs
+-endif
+-else
+-ifeq (${uname_S},HP-UX)
+-	cd ${EXTERNAL_OPENSSL} && MAKE=gmake ./Configure $(OPENSSL_FLAGS) hpux-ia64-gcc && ${MAKE} build_libs
+-else
+-ifeq (${uname_S},AIX)
+-	cd ${EXTERNAL_OPENSSL} && ./config aix-gcc $(OPENSSL_FLAGS) && ${MAKE} build_libs
+-else
+-ifeq (${uname_S},SunOS)
+-ifeq ($(uname_M),i86pc)
+-	cd ${EXTERNAL_OPENSSL} && ./Configure $(OPENSSL_FLAGS) solaris-x86-gcc && ${MAKE} build_libs
+-else
+-	cd ${EXTERNAL_OPENSSL} && ./Configure $(OPENSSL_FLAGS) solaris-sparcv9-gcc && ${MAKE} build_libs
+-endif
+-else
+-	cd ${EXTERNAL_OPENSSL} && ./config $(OPENSSL_FLAGS) && ${MAKE} build_libs
+-endif
+-endif
+-endif
+-endif
+-endif
+-
+-#### libbpf-bootstrap #########
+-
+-$(LIBBPF_LIB):
+-	cd $(EXTERNAL_LIBBPF) && mkdir -p build && cd build && cmake .. && ${MAKE}
+-
+-### rocks db ###
+-
+-${ROCKSDB_LIB}:
+-	cd $(EXTERNAL_ROCKSDB) && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_GFLAGS=0 -DWITH_TESTS=0 -DWITH_BENCHMARK_TOOLS=0 -DWITH_TOOLS=0 -DUSE_RTTI=1 -DROCKSDB_BUILD_SHARED=1 -DWITH_BZ2=1 -DBZIP2_INCLUDE_DIR=$(realpath $(EXTERNAL_BZIP2)) -DBZIP2_LIBRARIES=$(realpath $(BZIP2_LIB)) -DCMAKE_POSITION_INDEPENDENT_CODE=1 -DWITH_ALL_TESTS=0 -DWITH_RUNTIME_DEBUG=0 -DWITH_TRACE_TOOLS=0 -DPORTABLE=1 && ${MAKE}
+-
+-### simdjson ###
+-${SIMDJSON_LIB}:
+-	cd $(EXTERNAL_SIMDJSON) && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DSIMDJSON_DEVELOPER_MODE=OFF -DSIMDJSON_AVX512_ALLOWED=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=1 && ${MAKE}
+-
+-### flatbuffers ###
+-${FLATBUFFERS_LIB}:
+-	cd $(EXTERNAL_FLATBUFFERS) && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DFLATBUFFERS_BUILD_TESTS=0 -DFLATBUFFERS_INSTALL=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 && ${MAKE}
+-
+-### lzma ###
+-${LZMA_LIB}:
+-	cd $(EXTERNAL_LZMA) && mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=0 -DCMAKE_POSITION_INDEPENDENT_CODE=1 && ${MAKE}
+-
+-#### libplist ##########
+-
+-${LIBPLIST_LIB}:
+-	cd ${EXTERNAL_LIBPLIST} && ./autogen.sh --prefix=${ROUTE_PATH}/${EXTERNAL_LIBPLIST}bin && ${MAKE} && ${MAKE} install
+-
+-#### libffi ##########
+-
+-LIBFFI_FLAGS = "CFLAGS=-fPIC"
+-
+-${LIBFFI_LIB}:
+-	cd ${EXTERNAL_LIBFFI} && test -e server || (./configure $(LIBFFI_FLAGS) && ${MAKE})
+-ifneq (${TARGET},server)
+-	cd ${EXTERNAL_LIBFFI} && test -e server && mv server $(TARGET) || true
+-endif
+-
+-#### zlib ##########
+-
+-$(ZLIB_LIB):
+-ifeq (${TARGET},winagent)
+-	cd ${EXTERNAL_ZLIB} && cp zconf.h.in zconf.h && ${MAKE} -f win32/Makefile.gcc PREFIX=${MING_BASE} libz.a
+-else
+-	cd ${EXTERNAL_ZLIB} && CFLAGS=-fPIC ./configure && ${MAKE} libz.a
+-endif
+-
+-ZLIB_INCLUDE=-I./${EXTERNAL_ZLIB}
+-
+-os_zlib_c := os_zlib/os_zlib.c
+-os_zlib_o := $(os_zlib_c:.c=.o)
+-
+-os_zlib/%.o: os_zlib/%.c
+-	${OSSEC_CC} ${OSSEC_CFLAGS} -c $< -o $@
+-
+-#### minizip ##########
+-
+-$(MINIZIP_LIB): $(ZLIB_LIB)
+-	cd ${EXTERNAL_ZLIB}/contrib/minizip && ${OSSEC_CC} -fPIC -c unzip.c ioapi.c -I../../ && ar rcs libminizip.a unzip.o ioapi.o
+-
+-#### bzip2 ##########
+-
+-$(BZIP2_LIB):
+-	cd ${EXTERNAL_BZIP2} && ${MAKE} CFLAGS="-fpic -Wall -O2 -D_FILE_OFFSET_BITS=64" libbz2.a
+-
+-#### SQLite #########
+-
+-sqlite_c = ${EXTERNAL_SQLITE}sqlite3.c
+-sqlite_o = ${EXTERNAL_SQLITE}sqlite3.o
+-SQLITE_CFLAGS = -DSQLITE_ENABLE_DBSTAT_VTAB=1
+-
+-$(SQLITE_LIB): $(sqlite_o)
+-	${OSSEC_LINK} $@ $^
+-	${OSSEC_RANLIB} $@
+-
+-$(sqlite_o): $(sqlite_c)
+-	${OSSEC_CC} ${OSSEC_CFLAGS} -w -fPIC ${SQLITE_CFLAGS} -c $^ -o $@ -fPIC
+-
+-#### cJSON #########
+-
+-ifeq (${uname_S},Darwin)
+-JSON_SHFLAGS=-install_name @rpath/libcjson.$(SHARED)
+-endif
+-
+-cjson_c := ${EXTERNAL_JSON}cJSON.c
+-cjson_o := $(cjson_c:.c=.o)
+-
+-$(JSON_LIB): ${cjson_o}
+-	${OSSEC_LINK} $@ $^
+-	${OSSEC_RANLIB} $@
+-
+-${EXTERNAL_JSON}%.o: ${EXTERNAL_JSON}%.c
+-	${OSSEC_CC} ${OSSEC_CFLAGS} -fPIC -c $^ -o $@
+-
+-#### libyaml ##########
+-
+-${LIBYAML_LIB}: $(EXTERNAL_LIBYAML)Makefile
+-	$(MAKE) -C $(EXTERNAL_LIBYAML)
+-
+-$(EXTERNAL_LIBYAML)Makefile:
+-ifeq (${TARGET},winagent)
+-	cd $(EXTERNAL_LIBYAML) && CC=${MING_BASE}${CC} && CFLAGS=-fPIC ./configure --host=${MINGW_HOST} --enable-static=yes
+-else
+-	cd $(EXTERNAL_LIBYAML) && CFLAGS=-fPIC ./configure --enable-static=yes --enable-shared=no
+-endif
+-
+-#### curl ##########
+-
+-${LIBCURL_LIB}: $(EXTERNAL_CURL)Makefile
+-	${MAKE} -C $(EXTERNAL_CURL)lib
+-
+-ifeq (${TARGET},winagent)
+-$(EXTERNAL_CURL)Makefile:
+-	cd $(EXTERNAL_CURL) && CFLAGS=-fPIC CC=${MING_BASE}${CC} ./configure --host=${MINGW_HOST} PREFIX=${MING_BASE} --enable-static=yes --disable-shared --with-schannel --disable-ldap --without-libidn2 --without-zstd && ${MAKE}
+-else
+-$(EXTERNAL_CURL)Makefile: $(OPENSSL_LIB)
+-ifeq (${uname_S},Linux)
+-ifneq (,$(filter ${uname_M},aarch64 ppc64le))
+-	cd $(EXTERNAL_CURL) && CPPFLAGS="-fPIC -I${ROUTE_PATH}/${EXTERNAL_OPENSSL}include" LDFLAGS="-L${ROUTE_PATH}/${EXTERNAL_OPENSSL}" LIBS="-ldl -lpthread" ./configure --build=${uname_M}-unknown-linux-gnu --with-openssl="${ROUTE_PATH}/${EXTERNAL_OPENSSL}" --disable-ldap --without-libidn2 --without-libpsl --without-brotli --without-nghttp2 --without-zstd
+-else
+-	cd $(EXTERNAL_CURL) && CPPFLAGS="-fPIC -I${ROUTE_PATH}/${EXTERNAL_OPENSSL}include" LDFLAGS="-L${ROUTE_PATH}/${EXTERNAL_OPENSSL}" LIBS="-ldl -lpthread" ./configure --with-openssl="${ROUTE_PATH}/${EXTERNAL_OPENSSL}" --disable-ldap --without-libidn2 --without-libpsl --without-brotli --without-nghttp2 --without-zstd
+-endif
+-else
+-	cd $(EXTERNAL_CURL) && CPPFLAGS="-fPIC -I${ROUTE_PATH}/${EXTERNAL_OPENSSL}include" LDFLAGS="-L${ROUTE_PATH}/${EXTERNAL_OPENSSL}" LIBS="-lpthread" ./configure --with-openssl="${ROUTE_PATH}/${EXTERNAL_OPENSSL}" --disable-ldap --without-libidn2 --without-brotli --without-nghttp2 --without-librtmp --without-zstd --without-libpsl
+-endif
+-endif
+-
+-
+-#### procps #########
+-
+-PROCPS_INCLUDE=-I./${EXTERNAL_PROCPS}
+-
+-procps_c := $(wildcard ${EXTERNAL_PROCPS}*.c)
+-procps_o := $(procps_c:.c=.o)
+-ifeq (${CHECK_ALPINE},YES)
+-ALPINE_DEBUG := "-DPATH_MAX=4096"
+-endif
+-
+-${EXTERNAL_PROCPS}%.o: ${EXTERNAL_PROCPS}%.c
+-	${OSSEC_CC} ${OSSEC_CFLAGS} ${ALPINE_DEBUG} -fPIC -c $^ -o $@
+-
+-$(PROCPS_LIB): ${procps_o}
+-	${OSSEC_LINK} $@ $^
+-	${OSSEC_RANLIB} $@
+-
+-#### Berkeley DB ######
+-
+-ifeq (${uname_S},Linux)
+-${DB_LIB}: $(EXTERNAL_LIBDB)Makefile
+-	 ${MAKE} -C $(EXTERNAL_LIBDB) libdb.a
+-
+-$(EXTERNAL_LIBDB)Makefile:
+-	cd ${EXTERNAL_LIBDB} && CPPFLAGS=-fPIC ../dist/configure --with-cryptography=no --disable-queue --disable-heap --disable-partition --disable-mutexsupport --disable-replication --disable-verify --disable-statistics ac_cv_func_pthread_yield=no
+-endif
+-
+-#### libarchive ######
+-
+-ifneq (${TARGET},winagent)
+-ifeq (${uname_S},Linux)
+-${LIBARCHIVE_LIB}: $(EXTERNAL_LIBARCHIVE)Makefile
+-	 ${MAKE} -C $(EXTERNAL_LIBARCHIVE) libarchive.la
+-
+-$(EXTERNAL_LIBARCHIVE)Makefile:
+-	cd ${EXTERNAL_LIBARCHIVE} && CPPFLAGS=-fPIC ./configure --disable-acl --without-expat --without-iconv --without-xml2 --without-lz4 --without-lzma --without-zstd --without-bz2lib --without-openssl --without-libb2
+-endif
+-endif
+-
+-#### libalpm ######
+-
+-ifeq (${uname_S},Linux)
+-
+-# we compile libalpm manually because pacman has a lot of dependencies and we only want to compile a few files
+-LIBALPM_LDCONFIG=`which ldconfig`
+-LIBALPM_CFLAGS=-DSYSHOOKDIR=\"/usr/share/libalpm/hooks\" \
+-			    -DLDCONFIG=\"${LIBALPM_LDCONFIG}\" \
+-			    -DFSSTATSTYPE="struct statvfs" \
+-			    -DSCRIPTLET_SHELL=\"/bin/sh\" \
+-			    -DHAVE_SYS_STATVFS_H \
+-			    -DLIB_VERSION=\"\" \
+-			    -DPATH_MAX=4096 \
+-			    -DHAVE_STRNLEN \
+-			    -DHAVE_LIBSSL \
+-			    -I${ROUTE_PATH}/${EXTERNAL_LIBARCHIVE}libarchive \
+-				-I${ROUTE_PATH}/${EXTERNAL_OPENSSL}include \
+-			    -I. \
+-			    -fPIC
+-${LIBALPM_LIB}: $(EXTERNAL_PACMAN)configure
+-	cd ${EXTERNAL_PACMAN}lib/libalpm && \
+-	$(CC) -c *.c ${LIBALPM_CFLAGS} && \
+-	ar rcs libalpm.a *.o
+-endif
+-
+-#### Audit lib ####
+-
+-${AUDIT_LIB}: $(EXTERNAL_AUDIT)Makefile
+-	${MAKE} -C $(EXTERNAL_AUDIT)lib CC=$(CC)
+-
+-$(EXTERNAL_AUDIT)Makefile:
+-	cd $(EXTERNAL_AUDIT) && ./autogen.sh && ./configure CFLAGS=-fPIC --with-libcap-ng=no
+-
+-#### msgpack #########
+-
+-ifeq (,$(filter ${USE_MSGPACK_OPT},YES yes y Y 1))
+-        MSGPACK_ARCH=-march=i486
+-endif
+-
+-ifneq (${TARGET},winagent)
+-msgpack_c := $(wildcard ${EXTERNAL_MSGPACK}src/*.c)
+-msgpack_o := $(msgpack_c:.c=.o)
+-
+-${EXTERNAL_MSGPACK}src/%.o: ${EXTERNAL_MSGPACK}src/%.c
+-	${OSSEC_CC} ${OSSEC_CFLAGS} ${MSGPACK_ARCH} -fPIC -c $^ -o $@
+-
+-$(MSGPACK_LIB): ${msgpack_o}
+-	${OSSEC_LINK} $@ $^
+-	${OSSEC_RANLIB} $@
+-endif
+-
+-#### PCRE2 lib #########
+-
+-
+-
+-$(LIBPCRE2_LIB):
+-ifeq (${TARGET},winagent)
+-	cd $(EXTERNAL_LIBPCRE2) && CFLAGS=-fPIC CC=${MING_BASE}${CC} ./configure --enable-jit=no --host=${MINGW_HOST} --disable-shared && mkdir -p include && cp src/pcre2.h include/pcre2.h && ${MAKE}
+-else
+-ifeq (${uname_S},SunOS)
+-ifeq (${uname_R},5.10)
+-	cd $(EXTERNAL_LIBPCRE2) && CFLAGS=-fPIC ./configure --enable-jit=no --disable-shared && mkdir -p include && cp src/pcre2.h include/pcre2.h && ${MAKE}
+-else
+-	cd $(EXTERNAL_LIBPCRE2) && CFLAGS=-fPIC ./configure --enable-jit=auto --disable-shared && mkdir -p include && cp src/pcre2.h include/pcre2.h && ${MAKE}
+-endif
+-else
+-ifeq (${CHECK_CENTOS5},YES)
+-	cd $(EXTERNAL_LIBPCRE2) && CFLAGS=-fPIC ./configure --enable-jit=no --disable-shared && mkdir -p include && cp src/pcre2.h include/pcre2.h && ${MAKE}
+-else
+-	cd $(EXTERNAL_LIBPCRE2) && CFLAGS=-fPIC ./configure --enable-jit=auto --disable-shared && mkdir -p include && cp src/pcre2.h include/pcre2.h && ${MAKE}
+-endif
+-endif
+-endif
+-
+-### popt lib ###
+-
+-POPT_BUILD_DIR = $(EXTERNAL_POPT)build/
+-
+-$(POPT_LIB): $(POPT_BUILD_DIR)Makefile
+-	 $(MAKE) -C $(POPT_BUILD_DIR)
+-$(POPT_BUILD_DIR)Makefile:
+-	mkdir -p $(POPT_BUILD_DIR) && cd $(POPT_BUILD_DIR) && cmake ..
+-
+-### lua lib ###
+-
+-$(LUA_LIB):
+-	cd ${EXTERNAL_LUA} && ${MAKE} all MYCFLAGS='-fPIC -DLUA_USE_LINUX' MYLIBS='-lm -ldl'
+-
+-### rpm lib ###
+-
+-RPM_BUILD_DIR = ${EXTERNAL_RPM}/builddir
+-
+-RPM_INC_PATHS = -I${ROUTE_PATH}/${EXTERNAL_OPENSSL}include \
+-				-I${ROUTE_PATH}/${EXTERNAL_ZLIB} \
+-				-I${ROUTE_PATH}/${EXTERNAL_POPT}/src \
+-				-I${ROUTE_PATH}/${EXTERNAL_SQLITE} \
+-				-I${ROUTE_PATH}/${EXTERNAL_LUA} \
+-
+-RPM_LIB_PATHS = -L${ROUTE_PATH}/${EXTERNAL_OPENSSL} \
+-				-L${ROUTE_PATH}/${EXTERNAL_ZLIB} \
+-				-L${ROUTE_PATH}/${EXTERNAL_POPT}/build/output/src/.libs/ \
+-				-L${ROUTE_PATH}/${EXTERNAL_SQLITE} \
+-				-L${ROUTE_PATH}/${EXTERNAL_LUA} \
+-
+-RPM_CFLAGS = -fPIC ${RPM_INC_PATHS} ${RPM_LIB_PATHS}
+-RPM_CC = gcc
+-
+-${RPM_LIB}: ${RPM_BUILD_DIR}/Makefile
+-	cd ${RPM_BUILD_DIR} && ${MAKE}
+-
+-${RPM_BUILD_DIR}/Makefile: ${OPENSSL_LIB} ${ZLIB_LIB} ${POPT_LIB} ${SQLITE_LIB} $(LUA_LIB)
+-	mkdir -p ${RPM_BUILD_DIR} && cd ${RPM_BUILD_DIR} && cmake -E env CFLAGS="${RPM_CFLAGS}" CC=${RPM_CC} cmake ..
+-
+-#### jemalloc ##########
+-
+-$(JEMALLOC_LIB):
+-ifeq (${TARGET},server)
+-ifneq ($(wildcard external/jemalloc/configure),)
+-	cd ${EXTERNAL_JEMALLOC} && LDFLAGS=-s ./configure --disable-static --disable-cxx && ${MAKE}
+-else
+-	cd ${EXTERNAL_JEMALLOC} && LDFLAGS=-s ./autogen.sh --disable-static --disable-cxx && ${MAKE}
+-endif
+-endif
+-
+-### dbus lib ###
+-
+-DBUS_CONFIG_OPTS = --enable-static \
+-					--disable-shared \
+-					--disable-doxygen-docs \
+-					--disable-xml-docs \
+-					--disable-dependency-tracking \
+-					--disable-systemd \
+-					--prefix=${ROUTE_PATH}/${EXTERNAL_DBUS} \
+-					--includedir=${ROUTE_PATH}/${EXTERNAL_DBUS}include \
+-					--libdir=${ROUTE_PATH}/${EXTERNAL_DBUS}lib \
+-					--with-system-socket=/run/dbus/system_bus_socket
+-
+-$(DBUS_LIB):
+-	cd ${EXTERNAL_DBUS} && CFLAGS=-fPIC CXXFLAGS=-fPIC LDFLAGS=-fPIC ./configure ${DBUS_CONFIG_OPTS} && ${MAKE} && ${MAKE} install
+-
+ ################################
+ #### External dependencies  ####
+ ################################
+@@ -1915,15 +1553,15 @@ libwazuh.a: ${config_o} ${wmodules_dep}
+ ifeq (${uname_S},Darwin)
+ WAZUH_SHFLAGS=-install_name @rpath/libwazuhext.$(SHARED)
+ 
+-$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) $(WAZUH_SHFLAGS) -o $@ -Wl,-all_load $^ $(OSSEC_LIBS)
++$(WAZUHEXT_LIB):
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) $(WAZUH_SHFLAGS) -o $@ -Wl,-all_load $(EXTERNAL_LIBS) $(OSSEC_LIBS)
+ else
+ ifeq (${TARGET}, winagent)
+ $(WAZUHEXT_LIB): $(WAZUHEXT_DLL) $(WAZUHEXT_LIB_DEF)
+ 	$(DLLTOOL) -D $(WAZUHEXT_DLL) --def $(WAZUHEXT_LIB_DEF) --output-delaylib $@
+ 
+-$(WAZUHEXT_DLL) $(WAZUHEXT_LIB_DEF): $(EXTERNAL_LIBS) win32/version-dll.o
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -o $(WAZUHEXT_DLL) -static-libgcc -Wl,--export-all-symbols -Wl,--add-stdcall-alias -Wl,--whole-archive $^ -Wl,--no-whole-archive -Wl,--output-def,$(WAZUHEXT_LIB_DEF) ${OSSEC_LIBS}
++$(WAZUHEXT_DLL) $(WAZUHEXT_LIB_DEF): win32/version-dll.o
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -o $(WAZUHEXT_DLL) -static-libgcc -Wl,--export-all-symbols -Wl,--add-stdcall-alias -Wl,--whole-archive $^ -Wl,--no-whole-archive -Wl,--output-def,$(WAZUHEXT_LIB_DEF) $(EXTERNAL_LIBS) ${OSSEC_LIBS}
+ 
+ 
+ else
+@@ -1934,35 +1572,27 @@ else
+ LIBGCC_FLAGS := -Wl,-rpath,\$$ORIGIN
+ endif
+ ifeq (${uname_P},sparc)
+-$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -mimpure-text -o $@ $(LIBGCC_FLAGS) -Wl,--whole-archive $^ -Wl,--no-whole-archive ${OSSEC_LIBS}
++$(WAZUHEXT_LIB):
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -mimpure-text -o $@ $(LIBGCC_FLAGS) $(EXTERNAL_LIBS) ${OSSEC_LIBS}
+ else
+-$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -o $@ $(LIBGCC_FLAGS) -Wl,--whole-archive $^ -Wl,--no-whole-archive ${OSSEC_LIBS}
++$(WAZUHEXT_LIB):
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -o $@ $(LIBGCC_FLAGS) $(EXTERNAL_LIBS) ${OSSEC_LIBS}
+ endif
+ else
+ ifeq (${uname_S},AIX)
+-$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)
++$(WAZUHEXT_LIB):
+ 	mkdir -p libwazuhext;
+ 	find external/ -name \*.a -exec cp {} libwazuhext/ \;
+-	for lib in libcjson.a libz.a libmsgpack.a libssl.a libcrypto.a libsqlite3.a libyaml.a libpcre2-8.a ; do \
+-		ar -x libwazuhext/$$lib; \
+-		mv *.o libwazuhext/; \
+-	done
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -latomic -lm
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -latomic -lm $()
+ else
+ ifeq (${uname_S},HP-UX)
+-$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)
++$(WAZUHEXT_LIB):
+ 	mkdir -p libwazuhext;
+ 	find external/ -name \*.a -exec cp {} libwazuhext/ \;
+-	for lib in libcjson.a libz.a libmsgpack.a libssl.a libcrypto.a libsqlite3.a libyaml.a libpcre2-8.a ; do \
+-		ar -x libwazuhext/$$lib; \
+-		mv *.o libwazuhext/; \
+-	done
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -lm
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -lm $(EXTERNAL_LIBS)
+ else
+-$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)
+-	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -o $@ -Wl,--whole-archive $^ -Wl,--no-whole-archive $(HARDENING_LDFLAGS) ${OSSEC_LIBS}
++$(WAZUHEXT_LIB):
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) -o $@ -Wl,--whole-archive $^ -Wl,--no-whole-archive $(HARDENING_LDFLAGS) $(EXTERNAL_LIBS) ${OSSEC_LIBS}
+ endif
+ endif
+ endif
+@@ -2385,16 +2015,6 @@ endif
+ wazuh-modulesd: ${wmodulesd_o}
+ 	${OSSEC_CCBIN} ${OSSEC_LDFLAGS} $^ ${OSSEC_LIBS} ${MODULESD_LDFLAGS} -o $@
+ 
+-### wazuh-gtest-gmock ###
+-
+-build_gtest:
+-	cd $(EXTERNAL_GOOGLE_TEST) && mkdir -p build && cd build && cmake .. ${CMAKE_OPTS} ${GTEST_RELEASE_TYPE}  -DBUILD_GMOCK=ON -DBUILD_SHARED_LIBS=0 && ${MAKE} && cp -r lib ..
+-
+-### wazuh-google-benchmark ###
+-
+-build_benchmark:
+-	cd $(EXTERNAL_GOOGLE_BENCHMARK) && mkdir -p build && cd build && cmake .. -DBENCHMARK_ENABLE_TESTING=0 ${CMAKE_OPTS} && ${MAKE}
+-
+ ### wazuh-python ###
+ 
+ WPYTHON_DIR := ${INSTALLDIR}/framework/python
+@@ -2414,7 +2034,7 @@ ifeq (,${INSTALLDIR})
+ endif
+ 
+ ifeq (,$(wildcard ${EXTERNAL_CPYTHON}/python))
+-	export WPATH_LIB="'\$$\$$ORIGIN/../../../lib'" && export SOURCE_PATH=${ROUTE_PATH} && export WAZUH_FFI_PATH=${EXTERNAL_LIBFFI} && export LD_LIBRARY_PATH=${ROUTE_PATH} && export ac_cv_header_crypt_h=no && export ac_cv_search_crypt=no && export ac_cv_search_crypt_r=no && cd ${EXTERNAL_CPYTHON} && ./configure --prefix="${WPYTHON_DIR}" --libdir="${WPYTHON_DIR}/lib" --enable-shared --with-openssl="${ROUTE_PATH}/${EXTERNAL_OPENSSL}" LDFLAGS="${ARCH_FLAGS} -L${ROUTE_PATH} -L${ROUTE_PATH}/${EXTERNAL_SQLITE} -L${ROUTE_PATH}/${EXTERNAL_LIBFFI}${TARGET}/.libs -Wl,-rpath,'\$$\$$ORIGIN/../../../lib',--disable-new-dtags" CPPFLAGS="-I${ROUTE_PATH}/${EXTERNAL_OPENSSL}include -I${ROUTE_PATH}/${EXTERNAL_SQLITE} -I${ROUTE_PATH}/${EXTERNAL_LIBFFI}include" LIBS="-lwazuhext" $(CPYTHON_FLAGS) && ${MAKE}
++	export WPATH_LIB="'\$$\$$ORIGIN/../../../lib'" && export SOURCE_PATH=${ROUTE_PATH} && export WAZUH_FFI_PATH=${EXTERNAL_LIBFFI} && export LD_LIBRARY_PATH=${ROUTE_PATH} && export ac_cv_header_crypt_h=no && export ac_cv_search_crypt=no && export ac_cv_search_crypt_r=no && cd ${EXTERNAL_CPYTHON} && ./configure --prefix="${WPYTHON_DIR}" --libdir="${WPYTHON_DIR}/lib" --enable-shared --with-openssl LDFLAGS="${ARCH_FLAGS} -L${ROUTE_PATH} -Wl,-rpath,'\$$\$$ORIGIN/../../../lib',--disable-new-dtags" LIBS="-lwazuhext" $(CPYTHON_FLAGS) && ${MAKE}
+ endif
+ 
+ build_python: $(WAZUHEXT_LIB)
+@@ -2660,51 +2280,6 @@ clean-test:
+ 	find . -name "*.gcda" -exec rm {} \;
+ 
+ clean-external: clean-wpython
+-ifneq ($(wildcard external/*/*),)
+-	rm -f ${cjson_o} $(EXTERNAL_JSON)libcjson.*
+-	-cd ${EXTERNAL_ZLIB} && ${MAKE} -f Makefile.in distclean
+-	-cd ${EXTERNAL_ZLIB} && ${MAKE} -f win32/Makefile.gcc clean
+-	rm -f ${EXTERNAL_ZLIB}/Makefile ${EXTERNAL_ZLIB}/zconf.h
+-	-cd ${EXTERNAL_OPENSSL} && ${MAKE} distclean
+-	-cd ${EXTERNAL_LIBYAML} && ${MAKE} distclean
+-	-cd ${EXTERNAL_CURL} && ${MAKE} distclean
+-	rm -f ${procps_o} $(PROCPS_LIB)
+-	rm -f $(sqlite_o) $(EXTERNAL_SQLITE)/libsqlite3.*
+-	-cd ${EXTERNAL_AUDIT} && ${MAKE} distclean
+-	-cd ${EXTERNAL_LIBFFI} && ${MAKE} clean
+-	rm -f $(msgpack_o) $(EXTERNAL_MSGPACK)libmsgpack.a
+-	-${MAKE} -C $(EXTERNAL_BZIP2) clean
+-	rm -rf $(EXTERNAL_GOOGLE_TEST)lib
+-	rm -rf $(EXTERNAL_GOOGLE_TEST)build
+-	rm -rf $(EXTERNAL_GOOGLE_BENCHMARK)build
+-	rm -rf $(EXTERNAL_ROCKSDB)build
+-	rm -rf $(EXTERNAL_SIMDJSON)build
+-	rm -rf $(EXTERNAL_FLATBUFFERS)build
+-	rm -rf $(EXTERNAL_LZMA)build
+-	-cd ${EXTERNAL_LIBPLIST} && ${MAKE} clean && rm -rf bin/*
+-	-cd ${EXTERNAL_LIBPCRE2} && ${MAKE} distclean && rm -rf include/*
+-	rm -rf ${POPT_BUILD_DIR}
+-	rm -rf ${RPM_BUILD_DIR}
+-	-cd ${EXTERNAL_LUA} && ${MAKE} clean && rm -rf install/*
+-	rm -rf $(EXTERNAL_DBUS)lib $(EXTERNAL_DBUS)include
+-
+-ifneq ($(wildcard external/libdb/build_unix/*),)
+-	cd ${EXTERNAL_LIBDB} && ${MAKE} realclean
+-endif
+-
+-ifneq ($(wildcard external/libarchive/Makefile),)
+-	cd ${EXTERNAL_LIBARCHIVE} && ${MAKE} clean
+-endif
+-
+-ifneq ($(wildcard external/jemalloc/Makefile),)
+-	cd ${EXTERNAL_JEMALLOC} && ${MAKE} clean
+-endif
+-
+-ifneq ($(wildcard external/pacman/lib/libalpm/*),)
+-	rm -f $(EXTERNAL_PACMAN)lib/libalpm/libalpm.a
+-	rm -f $(EXTERNAL_PACMAN)lib/libalpm/*.o
+-endif
+-endif
+ 
+ clean-wpython:
+ ifneq ($(wildcard external/cpython/*),)
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/monitord/compress_log.c wazuh-4.14.9/src/monitord/compress_log.c
+--- wazuh-4.14.9.orig/src/monitord/compress_log.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/monitord/compress_log.c	2026-10-16 22:13:19.540873952 -0700
+@@ -10,7 +10,7 @@
+ 
+ #include "shared.h"
+ #include "monitord.h"
+-#include "../external/zlib/zlib.h"
++#include <zlib.h>
+ 
+ 
+ /* gzip a log file */
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/monitord/monitord.c wazuh-4.14.9/src/monitord/monitord.c
+--- wazuh-4.14.9.orig/src/monitord/monitord.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/monitord/monitord.c	2026-10-16 22:13:19.541010607 -0700
+@@ -8,7 +8,7 @@
+  * Foundation
+  */
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "debug_op.h"
+ #include "hash_op.h"
+ #include "os_err.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_auth/local-server.c wazuh-4.14.9/src/os_auth/local-server.c
+--- wazuh-4.14.9.orig/src/os_auth/local-server.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_auth/local-server.c	2026-10-16 22:13:19.541193385 -0700
+@@ -9,7 +9,7 @@
+  * Foundation.
+  */
+ 
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ #include <pthread.h>
+ #include <sys/wait.h>
+ #include "auth.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_csyslogd/alert.c wazuh-4.14.9/src/os_csyslogd/alert.c
+--- wazuh-4.14.9.orig/src/os_csyslogd/alert.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_csyslogd/alert.c	2026-10-16 22:13:19.541390016 -0700
+@@ -10,7 +10,7 @@
+ 
+ #include "csyslogd.h"
+ #include "shared.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "config/config.h"
+ #include "os_net/os_net.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_csyslogd/csyslogd.h wazuh-4.14.9/src/os_csyslogd/csyslogd.h
+--- wazuh-4.14.9.orig/src/os_csyslogd/csyslogd.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_csyslogd/csyslogd.h	2026-10-16 22:13:19.541558385 -0700
+@@ -12,7 +12,7 @@
+ #define CSYSLOGD_H
+ 
+ #include "../config/csyslogd-config.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ #define OS_CSYSLOGD_MAX_TRIES 10
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_execd/execd.c wazuh-4.14.9/src/os_execd/execd.c
+--- wazuh-4.14.9.orig/src/os_execd/execd.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_execd/execd.c	2026-10-16 22:13:19.541705189 -0700
+@@ -13,7 +13,7 @@
+ #include "os_regex/os_regex.h"
+ #include "os_net/os_net.h"
+ #include "wazuh_modules/wmodules.h"
+-#include "../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "execd.h"
+ #include "active-response/active_responses.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_execd/wcom.c wazuh-4.14.9/src/os_execd/wcom.c
+--- wazuh-4.14.9.orig/src/os_execd/wcom.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_execd/wcom.c	2026-10-16 22:13:19.541880145 -0700
+@@ -15,7 +15,7 @@
+ #include "os_crypto/sha1/sha1_op.h"
+ #include "os_crypto/signature/signature.h"
+ #include "wazuh_modules/wmodules.h"
+-#include "external/zlib/zlib.h"
++#include <zlib.h>
+ #include "client-agent/agentd.h"
+ #include "logcollector/logcollector.h"
+ #include "rootcheck/rootcheck.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_integrator/integrator.c wazuh-4.14.9/src/os_integrator/integrator.c
+--- wazuh-4.14.9.orig/src/os_integrator/integrator.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_integrator/integrator.c	2026-10-16 22:13:19.542061248 -0700
+@@ -10,7 +10,7 @@
+  */
+ #include "shared.h"
+ #include "integrator.h"
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ #include "os_net/os_net.h"
+ 
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_maild/os_maild_client.c wazuh-4.14.9/src/os_maild/os_maild_client.c
+--- wazuh-4.14.9.orig/src/os_maild/os_maild_client.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_maild/os_maild_client.c	2026-10-16 22:13:19.542304697 -0700
+@@ -10,7 +10,7 @@
+ 
+ #include "shared.h"
+ #include "maild.h"
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ #ifdef LIBGEOIP_ENABLED
+ #include "config/config.h"
+ #endif
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/os_zlib/os_zlib.c wazuh-4.14.9/src/os_zlib/os_zlib.c
+--- wazuh-4.14.9.orig/src/os_zlib/os_zlib.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/os_zlib/os_zlib.c	2026-10-16 22:13:19.542521848 -0700
+@@ -10,7 +10,7 @@
+ 
+ #include "os_zlib.h"
+ 
+-#include "../external/zlib/zlib.h"
++#include <zlib.h>
+ 
+ unsigned long int os_zlib_compress(const char *src, char *dst,
+                                    unsigned long int src_size,
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/remoted/shared_download.h wazuh-4.14.9/src/remoted/shared_download.h
+--- wazuh-4.14.9.orig/src/remoted/shared_download.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/remoted/shared_download.h	2026-10-16 22:13:19.542646593 -0700
+@@ -12,7 +12,7 @@
+ #ifndef SHARED_DOWNLOAD_H
+ #define SHARED_DOWNLOAD_H
+ 
+-#include "../external/libyaml/include/yaml.h"
++#include <yaml.h>
+ 
+ #define W_PARSER_ERROR -1
+ #define W_SHARED_YAML_FILE "files.yml"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/rootcheck/config.c wazuh-4.14.9/src/rootcheck/config.c
+--- wazuh-4.14.9.orig/src/rootcheck/config.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/rootcheck/config.c	2026-10-16 22:13:19.542769955 -0700
+@@ -12,7 +12,7 @@
+ #include "shared.h"
+ #include "rootcheck.h"
+ #include "config/config.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ 
+ /* Read the rootcheck config */
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/rootcheck/rootcheck.h wazuh-4.14.9/src/rootcheck/rootcheck.h
+--- wazuh-4.14.9.orig/src/rootcheck/rootcheck.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/rootcheck/rootcheck.h	2026-10-16 22:13:19.542906485 -0700
+@@ -13,7 +13,7 @@
+ 
+ #include "list_op.h"
+ #include "../config/rootcheck-config.h"
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #ifdef WIN32
+ #define PATH_SEP '\\'
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared/agent_messages_adapter.c wazuh-4.14.9/src/shared/agent_messages_adapter.c
+--- wazuh-4.14.9.orig/src/shared/agent_messages_adapter.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared/agent_messages_adapter.c	2026-10-16 22:13:19.543047558 -0700
+@@ -10,7 +10,7 @@
+  */
+ 
+ #include "agent_messages_adapter.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "defs.h"
+ #include <string.h>
+ #include <stdbool.h>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared/agent_op.c wazuh-4.14.9/src/shared/agent_op.c
+--- wazuh-4.14.9.orig/src/shared/agent_op.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared/agent_op.c	2026-10-16 22:13:19.543222748 -0700
+@@ -8,7 +8,7 @@
+  * Foundation
+  */
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "shared.h"
+ #include "os_crypto/sha256/sha256_op.h"
+ #include "../os_net/os_net.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared/auth_client.c wazuh-4.14.9/src/shared/auth_client.c
+--- wazuh-4.14.9.orig/src/shared/auth_client.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared/auth_client.c	2026-10-16 22:13:19.543408608 -0700
+@@ -13,7 +13,7 @@
+ 
+ #include "shared.h"
+ #include <os_net/os_net.h>
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ #include "wazuhdb_op.h"
+ 
+ // Remove agent. Returns 0 on success or -1 on error.
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared/debug_op.c wazuh-4.14.9/src/shared/debug_op.c
+--- wazuh-4.14.9.orig/src/shared/debug_op.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared/debug_op.c	2026-10-16 22:13:19.543552192 -0700
+@@ -9,7 +9,7 @@
+  */
+ 
+ #include "headers/shared.h"
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #ifdef WIN32
+ #define localtime_r(x, y) localtime_s(y, x)
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared/file_op.c wazuh-4.14.9/src/shared/file_op.c
+--- wazuh-4.14.9.orig/src/shared/file_op.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared/file_op.c	2026-10-16 22:13:19.544019789 -0700
+@@ -14,7 +14,7 @@
+ #include "shared.h"
+ #include "version_op.h"
+ 
+-#include "../external/zlib/zlib.h"
++#include <zlib.h>
+ 
+ #ifdef WAZUH_UNIT_TESTING
+ #ifdef WIN32
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/common/commonDefs.h wazuh-4.14.9/src/shared_modules/common/commonDefs.h
+--- wazuh-4.14.9.orig/src/shared_modules/common/commonDefs.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/common/commonDefs.h	2026-10-16 22:13:19.544430471 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _COMMON_DEFS_H_
+ #define _COMMON_DEFS_H_
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include <stdarg.h>
+ 
+ /**
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/include/contentRegister.hpp wazuh-4.14.9/src/shared_modules/content_manager/include/contentRegister.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/include/contentRegister.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/include/contentRegister.hpp	2026-10-16 22:13:19.544571994 -0700
+@@ -13,7 +13,7 @@
+ #define _CONTENT_REGISTER_HPP
+ 
+ #include "sharedDefs.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <memory>
+ #include <shared_mutex>
+ #include <string_view>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/src/action.hpp wazuh-4.14.9/src/shared_modules/content_manager/src/action.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/src/action.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/src/action.hpp	2026-10-16 22:13:19.544728042 -0700
+@@ -18,7 +18,7 @@
+ #include "updaterContext.hpp"
+ #include <atomic>
+ #include <chrono>
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <thread>
+ #include <utility>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/src/components/updaterContext.hpp wazuh-4.14.9/src/shared_modules/content_manager/src/components/updaterContext.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/src/components/updaterContext.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/src/components/updaterContext.hpp	2026-10-16 22:13:19.544875253 -0700
+@@ -16,7 +16,7 @@
+ #include "json.hpp"
+ #include "sharedDefs.hpp"
+ #include "utils/rocksDBWrapper.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/src/contentProvider.hpp wazuh-4.14.9/src/shared_modules/content_manager/src/contentProvider.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/src/contentProvider.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/src/contentProvider.hpp	2026-10-16 22:13:19.545010637 -0700
+@@ -13,7 +13,7 @@
+ #define _CONTENT_PROVIDER_HPP
+ 
+ #include "action.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/src/onDemandManager.cpp wazuh-4.14.9/src/shared_modules/content_manager/src/onDemandManager.cpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/src/onDemandManager.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/src/onDemandManager.cpp	2026-10-16 22:13:19.545152827 -0700
+@@ -12,7 +12,7 @@
+ #include "onDemandManager.hpp"
+ #include "actionOrchestrator.hpp"
+ #include "contentManager.hpp"
+-#include "external/nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "sharedDefs.hpp"
+ #include <filesystem>
+ #include <utility>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/src/onDemandManager.hpp wazuh-4.14.9/src/shared_modules/content_manager/src/onDemandManager.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/src/onDemandManager.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/src/onDemandManager.hpp	2026-10-16 22:13:19.545302863 -0700
+@@ -19,7 +19,7 @@
+ 
+ #include "actionOrchestrator.hpp"
+ #include "singleton.hpp"
+-#include <external/cpp-httplib/httplib.h>
++#include <httplib.h>
+ #include <functional>
+ #include <map>
+ #include <shared_mutex>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/actionOrchestrator_test.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/component/actionOrchestrator_test.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/actionOrchestrator_test.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/component/actionOrchestrator_test.hpp	2026-10-16 22:13:19.545432691 -0700
+@@ -15,7 +15,7 @@
+ #include "conditionSync.hpp"
+ #include "fakes/fakeServer.hpp"
+ #include "gtest/gtest.h"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/action_test.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/component/action_test.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/action_test.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/component/action_test.hpp	2026-10-16 22:13:19.545581072 -0700
+@@ -14,7 +14,7 @@
+ 
+ #include "fakes/fakeServer.hpp"
+ #include "gtest/gtest.h"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/contentModuleFacade_test.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/component/contentModuleFacade_test.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/contentModuleFacade_test.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/component/contentModuleFacade_test.hpp	2026-10-16 22:13:19.545721691 -0700
+@@ -14,7 +14,7 @@
+ 
+ #include "fakes/fakeServer.hpp"
+ #include "gtest/gtest.h"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/contentProvider_test.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/component/contentProvider_test.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/contentProvider_test.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/component/contentProvider_test.hpp	2026-10-16 22:13:19.545850647 -0700
+@@ -14,7 +14,7 @@
+ 
+ #include "fakes/fakeServer.hpp"
+ #include "gtest/gtest.h"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/contentRegister_test.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/component/contentRegister_test.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/contentRegister_test.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/component/contentRegister_test.hpp	2026-10-16 22:13:19.545985221 -0700
+@@ -14,7 +14,7 @@
+ 
+ #include "fakes/fakeServer.hpp"
+ #include "gtest/gtest.h"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <memory>
+ 
+ /**
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/fakes/fakeServer.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/component/fakes/fakeServer.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/component/fakes/fakeServer.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/component/fakes/fakeServer.hpp	2026-10-16 22:13:19.546139605 -0700
+@@ -12,8 +12,8 @@
+ #ifndef _FAKE_SERVER_HPP
+ #define _FAKE_SERVER_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
+-#include "external/nlohmann/json.hpp"
++#include <httplib.h>
++#include <nlohmann/json.hpp>
+ #include <filesystem>
+ #include <fstream>
+ #include <sstream>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/unit/fakes/fakeServer.hpp wazuh-4.14.9/src/shared_modules/content_manager/tests/unit/fakes/fakeServer.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/content_manager/tests/unit/fakes/fakeServer.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/content_manager/tests/unit/fakes/fakeServer.hpp	2026-10-16 22:13:19.546320273 -0700
+@@ -12,8 +12,8 @@
+ #ifndef _FAKE_SERVER_HPP
+ #define _FAKE_SERVER_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
+-#include "external/nlohmann/json.hpp"
++#include <httplib.h>
++#include <nlohmann/json.hpp>
+ #include <algorithm>
+ #include <chrono>
+ #include <filesystem>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/indexer_connector/tests/component/fakeIndexer.hpp wazuh-4.14.9/src/shared_modules/indexer_connector/tests/component/fakeIndexer.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/indexer_connector/tests/component/fakeIndexer.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/indexer_connector/tests/component/fakeIndexer.hpp	2026-10-16 22:13:19.546513123 -0700
+@@ -13,7 +13,7 @@
+ #define _FAKE_INDEXER_HPP
+ 
+ #include "json.hpp"
+-#include <external/cpp-httplib/httplib.h>
++#include <httplib.h>
+ #include <functional>
+ #include <sstream>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/indexer_connector/tests/unit/fakeOpenSearchServer.hpp wazuh-4.14.9/src/shared_modules/indexer_connector/tests/unit/fakeOpenSearchServer.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/indexer_connector/tests/unit/fakeOpenSearchServer.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/indexer_connector/tests/unit/fakeOpenSearchServer.hpp	2026-10-16 22:13:19.546673059 -0700
+@@ -12,8 +12,8 @@
+ #ifndef _FAKE_OPEN_SEARCH_SERVER_HPP
+ #define _FAKE_OPEN_SEARCH_SERVER_HPP
+ 
+-#include <external/cpp-httplib/httplib.h>
+-#include <external/nlohmann/json.hpp>
++#include <httplib.h>
++#include <nlohmann/json.hpp>
+ #include <sstream>
+ #include <string>
+ #include <thread>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/publisher.hpp wazuh-4.14.9/src/shared_modules/router/src/publisher.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/publisher.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/publisher.hpp	2026-10-16 22:13:19.546821163 -0700
+@@ -16,7 +16,7 @@
+ #include "provider.hpp"
+ #include "socketServer.hpp"
+ #include "subscriber.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <memory>
+ #include <vector>
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/remoteProvider.hpp wazuh-4.14.9/src/shared_modules/router/src/remoteProvider.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/remoteProvider.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/remoteProvider.hpp	2026-10-16 22:13:19.546958632 -0700
+@@ -17,7 +17,7 @@
+ #include "remoteSubscriptionManager.hpp"
+ #include "routerProvider.hpp"
+ #include "socketClient.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <functional>
+ 
+ /**
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/remoteSubscriber.hpp wazuh-4.14.9/src/shared_modules/router/src/remoteSubscriber.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/remoteSubscriber.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/remoteSubscriber.hpp	2026-10-16 22:13:19.547086813 -0700
+@@ -17,7 +17,7 @@
+ #include "remoteSubscriptionManager.hpp"
+ #include "routerProvider.hpp"
+ #include "socketClient.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <functional>
+ 
+ /**
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/remoteSubscriptionManager.hpp wazuh-4.14.9/src/shared_modules/router/src/remoteSubscriptionManager.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/remoteSubscriptionManager.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/remoteSubscriptionManager.hpp	2026-10-16 22:13:19.547211278 -0700
+@@ -13,7 +13,7 @@
+ #define _REMOTE_STATE_HELPER_HPP
+ 
+ #include "socketClient.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <future>
+ #include <iostream>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/router.cpp wazuh-4.14.9/src/shared_modules/router/src/router.cpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/router.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/router.cpp	2026-10-16 22:13:19.547369433 -0700
+@@ -23,7 +23,7 @@ void logMessage(const modules_log_level_
+     }
+ }
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "flatbuffers/idl.h"
+ #include "router.h"
+ #include "routerFacade.hpp"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/routerFacade.cpp wazuh-4.14.9/src/shared_modules/router/src/routerFacade.cpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/routerFacade.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/routerFacade.cpp	2026-10-16 22:13:19.547534578 -0700
+@@ -13,7 +13,7 @@
+ #include "observer.hpp"
+ #include "socketServer.hpp"
+ #include "subscriber.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ 
+ constexpr auto DEFAULT_SOCKET_PATH = "queue/router/";
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/routerModuleGateway.hpp wazuh-4.14.9/src/shared_modules/router/src/routerModuleGateway.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/routerModuleGateway.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/routerModuleGateway.hpp	2026-10-16 22:13:19.547660861 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ROUTER_MODULE_GATEWAY_HPP
+ #define _ROUTER_MODULE_GATEWAY_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "wazuh-db/gateway.hpp"
+ #include <string_view>
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroups.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroups.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroups.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroups.hpp	2026-10-16 22:13:19.547856245 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ENDPOINT_GET_V1_AGENTS_IDS_GROUPS_HPP
+ #define _ENDPOINT_GET_V1_AGENTS_IDS_GROUPS_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "logging_helper.h"
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroupsParam.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroupsParam.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroupsParam.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIdsGroupsParam.hpp	2026-10-16 22:13:19.547989744 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ENDPOINT_GET_V1_AGENTS_IDS_GROUPS_PARAM_HPP
+ #define _ENDPOINT_GET_V1_AGENTS_IDS_GROUPS_PARAM_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "logging_helper.h"
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIds.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIds.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIds.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsIds.hpp	2026-10-16 22:13:19.548121614 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ENDPOINT_GET_V1_AGENT_IDS_HPP
+ #define _ENDPOINT_GET_V1_AGENT_IDS_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsParamGroups.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsParamGroups.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsParamGroups.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsParamGroups.hpp	2026-10-16 22:13:19.548246792 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ENDPOINT_GET_V1_AGENTS_PARAM_GROUPS_HPP
+ #define _ENDPOINT_GET_V1_AGENTS_PARAM_GROUPS_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "logging_helper.h"
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsSync.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsSync.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsSync.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointGetV1AgentsSync.hpp	2026-10-16 22:13:19.548382910 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ENDPOINT_GET_V1_AGENTS_SYNC_HPP
+ #define _ENDPOINT_GET_V1_AGENTS_SYNC_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsRestartInfo.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsRestartInfo.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsRestartInfo.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsRestartInfo.hpp	2026-10-16 22:13:19.548532486 -0700
+@@ -12,8 +12,8 @@
+ #ifndef _ENDPOINT_POST_V1_AGENTS_RESTART_INFO_HPP
+ #define _ENDPOINT_POST_V1_AGENTS_RESTART_INFO_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
+-#include "external/nlohmann/json.hpp"
++#include <httplib.h>
++#include <nlohmann/json.hpp>
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSummary.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSummary.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSummary.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSummary.hpp	2026-10-16 22:13:19.548666029 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _ENDPOINT_POST_V1_AGENTS_SUMMARY_HPP
+ #define _ENDPOINT_POST_V1_AGENTS_SUMMARY_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
++#include <httplib.h>
+ #include "logging_helper.h"
+ #include "reflectiveJson.hpp"
+ #include "sqlite3Wrapper.hpp"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSync.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSync.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSync.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/endpointPostV1AgentsSync.hpp	2026-10-16 22:13:19.548814106 -0700
+@@ -12,8 +12,8 @@
+ #ifndef _ENDPOINT_POST_V1_AGENTS_SYNC_HPP
+ #define _ENDPOINT_POST_V1_AGENTS_SYNC_HPP
+ 
+-#include "external/cpp-httplib/httplib.h"
+-#include "external/nlohmann/json.hpp"
++#include <httplib.h>
++#include <nlohmann/json.hpp>
+ #include "logging_helper.h"
+ #include "sqlite3Wrapper.hpp"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/gateway.hpp wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/gateway.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/src/wazuh-db/gateway.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/src/wazuh-db/gateway.hpp	2026-10-16 22:13:19.548954032 -0700
+@@ -20,8 +20,8 @@
+ #include "endpointPostV1AgentsRestartInfo.hpp"
+ #include "endpointPostV1AgentsSummary.hpp"
+ #include "endpointPostV1AgentsSync.hpp"
+-#include "external/cpp-httplib/httplib.h"
+-#include "external/sqlite/sqlite3.h"
++#include <httplib.h>
++#include <sqlite3.h>
+ #include "sqlite3Wrapper.hpp"
+ #include <defer.hpp>
+ #include <string_view>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/tests/component/remoteSubscriptionManager_test.cpp wazuh-4.14.9/src/shared_modules/router/tests/component/remoteSubscriptionManager_test.cpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/tests/component/remoteSubscriptionManager_test.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/tests/component/remoteSubscriptionManager_test.cpp	2026-10-16 22:13:19.549102254 -0700
+@@ -11,7 +11,7 @@
+ 
+ #include "remoteSubscriptionManager_test.hpp"
+ #include "src/remoteSubscriptionManager.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ 
+ /**
+  * @brief Tests sendInitProviderMessage method.
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/router/tests/unit/endpointPostV1AgentsSync_test.cpp wazuh-4.14.9/src/shared_modules/router/tests/unit/endpointPostV1AgentsSync_test.cpp
+--- wazuh-4.14.9.orig/src/shared_modules/router/tests/unit/endpointPostV1AgentsSync_test.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/router/tests/unit/endpointPostV1AgentsSync_test.cpp	2026-10-16 22:13:19.549263643 -0700
+@@ -12,7 +12,7 @@
+ #include "shared_modules/router/src/wazuh-db/endpointPostV1AgentsSync.hpp"
+ #include "shared_modules/utils/mocks/sqlite3WrapperMock.hpp"
+ 
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <gmock/gmock.h>
+ #include <gtest/gtest.h>
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/utils/cjsonSmartDeleter.hpp wazuh-4.14.9/src/shared_modules/utils/cjsonSmartDeleter.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/utils/cjsonSmartDeleter.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/utils/cjsonSmartDeleter.hpp	2026-10-16 22:13:19.549408496 -0700
+@@ -13,7 +13,7 @@
+ #define _CJSON_SMART_DELETER_HPP
+ 
+ #include "customDeleter.hpp"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ struct CJsonSmartFree final : CustomDeleter<decltype(&cJSON_free), cJSON_free> {};
+ struct CJsonSmartDeleter final : CustomDeleter<decltype(&cJSON_Delete), cJSON_Delete> {};
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/shared_modules/utils/sqlite3Wrapper.hpp wazuh-4.14.9/src/shared_modules/utils/sqlite3Wrapper.hpp
+--- wazuh-4.14.9.orig/src/shared_modules/utils/sqlite3Wrapper.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/shared_modules/utils/sqlite3Wrapper.hpp	2026-10-16 22:13:19.549551446 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _SQLITE3_WRAPPER_HPP
+ #define _SQLITE3_WRAPPER_HPP
+ 
+-#include "external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ #include <iostream>
+ #include <map>
+ #include <memory>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/syscheckd/include/syscheck.h wazuh-4.14.9/src/syscheckd/include/syscheck.h
+--- wazuh-4.14.9.orig/src/syscheckd/include/syscheck.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/syscheckd/include/syscheck.h	2026-10-16 22:13:19.549834645 -0700
+@@ -14,7 +14,7 @@
+ #include "commonDefs.h"
+ #include "../../config/syscheck-config.h"
+ #include "syscheck_op.h"
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #define MAX_LINE PATH_MAX+256
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/syscheckd/src/registry/registry.c wazuh-4.14.9/src/syscheckd/src/registry/registry.c
+--- wazuh-4.14.9.orig/src/syscheckd/src/registry/registry.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/syscheckd/src/registry/registry.c	2026-10-16 22:13:19.550115462 -0700
+@@ -10,7 +10,7 @@
+ 
+ #ifdef WIN32
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include "registry.h"
+ #include "shared.h"
+ #include "../../include/syscheck.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/syscheckd/src/whodata/syscheck_audit.c wazuh-4.14.9/src/syscheckd/src/whodata/syscheck_audit.c
+--- wazuh-4.14.9.orig/src/syscheckd/src/whodata/syscheck_audit.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/syscheckd/src/whodata/syscheck_audit.c	2026-10-16 22:13:19.550389902 -0700
+@@ -9,7 +9,7 @@
+  */
+ #ifdef __linux__
+ #include "syscheck_audit.h"
+-#include "../external/procps/readproc.h"
++#include <procps/readproc.h>
+ 
+ #include <sys/socket.h>
+ #include <sys/un.h>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/client-agent/test_agcom.c wazuh-4.14.9/src/unit_tests/client-agent/test_agcom.c
+--- wazuh-4.14.9.orig/src/unit_tests/client-agent/test_agcom.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/client-agent/test_agcom.c	2026-10-16 22:13:19.550595295 -0700
+@@ -14,7 +14,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #include "../../client-agent/agentd.h"
+ 
+@@ -278,4 +278,4 @@ int main(void)
+     };
+ 
+     return cmocka_run_group_tests(tests, NULL, NULL);
+-}
+\ No newline at end of file
++}
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/monitord/test_monitord.c wazuh-4.14.9/src/unit_tests/monitord/test_monitord.c
+--- wazuh-4.14.9.orig/src/unit_tests/monitord/test_monitord.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/monitord/test_monitord.c	2026-10-16 22:13:19.550755463 -0700
+@@ -21,7 +21,7 @@
+ #include "../wrappers/wazuh/shared/mq_op_wrappers.h"
+ #include "../wrappers/wazuh/shared/validate_op_wrappers.h"
+ 
+-#include "../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "../headers/store_op.h"
+ #include "../monitord/monitord.h"
+ #include "../headers/defs.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/os_csyslogd/test_csyslogd.c wazuh-4.14.9/src/unit_tests/os_csyslogd/test_csyslogd.c
+--- wazuh-4.14.9.orig/src/unit_tests/os_csyslogd/test_csyslogd.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/os_csyslogd/test_csyslogd.c	2026-10-16 22:13:19.550966516 -0700
+@@ -16,7 +16,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ 
+-#include "../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ #include "../headers/shared.h"
+ #include "../headers/read-alert.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/os_execd/test_execd.c wazuh-4.14.9/src/unit_tests/os_execd/test_execd.c
+--- wazuh-4.14.9.orig/src/unit_tests/os_execd/test_execd.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/os_execd/test_execd.c	2026-10-16 22:13:19.551198508 -0700
+@@ -19,7 +19,7 @@
+ #include "../os_regex/os_regex.h"
+ #include "../os_net/os_net.h"
+ #include "../wazuh_modules/wmodules.h"
+-#include "../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "../os_execd/execd.h"
+ 
+ #include "../wrappers/common.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/os_regex/test_os_regex_execute.c wazuh-4.14.9/src/unit_tests/os_regex/test_os_regex_execute.c
+--- wazuh-4.14.9.orig/src/unit_tests/os_regex/test_os_regex_execute.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/os_regex/test_os_regex_execute.c	2026-10-16 22:13:19.551526616 -0700
+@@ -6,7 +6,7 @@
+ #include <string.h>
+ #include <stdbool.h>
+ 
+-#include "../../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "../../os_regex/os_regex.h"
+ #include "../../os_regex/os_regex_internal.h"
+ #include "../wrappers/common.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/remoted/test_remote-config.c wazuh-4.14.9/src/unit_tests/remoted/test_remote-config.c
+--- wazuh-4.14.9.orig/src/unit_tests/remoted/test_remote-config.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/remoted/test_remote-config.c	2026-10-16 22:13:19.551713189 -0700
+@@ -20,7 +20,7 @@
+ #include "../wrappers/wazuh/shared/debug_op_wrappers.h"
+ #include "../wrappers/wazuh/shared/validate_op_wrappers.h"
+ #include "../wrappers/wazuh/shared/cluster_utils_wrappers.h"
+-#include "../../external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ int w_remoted_get_net_protocol(const char * content);
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/shared/test_agent_op.c wazuh-4.14.9/src/unit_tests/shared/test_agent_op.c
+--- wazuh-4.14.9.orig/src/unit_tests/shared/test_agent_op.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/shared/test_agent_op.c	2026-10-16 22:13:19.551901157 -0700
+@@ -26,7 +26,7 @@
+ #include "../wrappers/wazuh/os_net/os_net_wrappers.h"
+ #include "../wrappers/libc/string_wrappers.h"
+ #include "../wrappers/posix/unistd_wrappers.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ /* redefinitons/wrapping */
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/syscheckd/whodata/test_syscheck_audit.c wazuh-4.14.9/src/unit_tests/syscheckd/whodata/test_syscheck_audit.c
+--- wazuh-4.14.9.orig/src/unit_tests/syscheckd/whodata/test_syscheck_audit.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/syscheckd/whodata/test_syscheck_audit.c	2026-10-16 22:13:19.552168606 -0700
+@@ -29,7 +29,7 @@
+ #include "wrappers/wazuh/syscheckd/audit_parse_wrappers.h"
+ #include "wrappers/wazuh/syscheckd/audit_rule_handling_wrappers.h"
+ 
+-#include "../../../external/procps/readproc.h"
++#include <procps/readproc.h>
+ 
+ extern atomic_int_t audit_health_check_creation;
+ extern atomic_int_t hc_thread_active;
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wazuh_db/test_wdb_integrity.c wazuh-4.14.9/src/unit_tests/wazuh_db/test_wdb_integrity.c
+--- wazuh-4.14.9.orig/src/unit_tests/wazuh_db/test_wdb_integrity.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wazuh_db/test_wdb_integrity.c	2026-10-16 22:13:19.552645845 -0700
+@@ -17,14 +17,14 @@
+ #include "../wazuh_db/wdb.h"
+ #include "../headers/shared.h"
+ #include "../os_crypto/sha1/sha1_op.h"
+-#include "../external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ #include "utils/flatbuffers/include/syscollector_deltas_schema.h"
+ 
+ #include "../wrappers/externals/openssl/digest_wrappers.h"
+ #include "../wrappers/externals/sqlite/sqlite3_wrappers.h"
+ #include "../wrappers/wazuh/shared/debug_op_wrappers.h"
+ #include "../wrappers/wazuh/wazuh_db/wdb_wrappers.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "os_err.h"
+ 
+ int wdb_calculate_stmt_checksum(wdb_t * wdb, sqlite3_stmt * stmt, wdb_component_t component, os_sha1 hexdigest, const char * pk_value);
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wazuh_db/test_wdb_syscollector.c wazuh-4.14.9/src/unit_tests/wazuh_db/test_wdb_syscollector.c
+--- wazuh-4.14.9.orig/src/unit_tests/wazuh_db/test_wdb_syscollector.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wazuh_db/test_wdb_syscollector.c	2026-10-16 22:13:19.553529977 -0700
+@@ -18,7 +18,7 @@
+ #include <string.h>
+ 
+ #include "../wazuh_db/wdb.h"
+-#include "../external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ #include "../wrappers/wazuh/wazuh_db/wdb_wrappers.h"
+ #include "../wrappers/wazuh/shared/debug_op_wrappers.h"
+ #include "../wrappers/externals/sqlite/sqlite3_wrappers.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/cJSON/cJSON_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/externals/cJSON/cJSON_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/cJSON/cJSON_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/externals/cJSON/cJSON_wrappers.h	2026-10-16 22:13:19.554408959 -0700
+@@ -10,7 +10,7 @@
+ #ifndef CJSON_WRAPPERS_H
+ #define CJSON_WRAPPERS_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include <stdbool.h>
+ 
+ #ifdef WIN32
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/procpc/readproc_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/externals/procpc/readproc_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/procpc/readproc_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/externals/procpc/readproc_wrappers.h	2026-10-16 22:13:19.554549217 -0700
+@@ -11,7 +11,7 @@
+ #ifndef READPROC_WRAPPERS_H
+ #define READPROC_WRAPPERS_H
+ 
+-#include "../external/procps/readproc.h"
++#include <procps/readproc.h>
+ 
+ void __wrap_closeproc(PROCTAB* PT);
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/sqlite/sqlite3_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/externals/sqlite/sqlite3_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/sqlite/sqlite3_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/externals/sqlite/sqlite3_wrappers.h	2026-10-16 22:13:19.554669152 -0700
+@@ -11,7 +11,7 @@
+ #ifndef SQLITE3_WRAPPERS_H
+ #define SQLITE3_WRAPPERS_H
+ 
+-#include "../external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ 
+ int __wrap_sqlite3_bind_int(sqlite3_stmt *stmt,
+                             int index,
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/zlib/zlib_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/externals/zlib/zlib_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/zlib/zlib_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/externals/zlib/zlib_wrappers.h	2026-10-16 22:13:19.554781349 -0700
+@@ -11,7 +11,7 @@
+ #ifndef ZLIB_WRAPPERS_H
+ #define ZLIB_WRAPPERS_H
+ 
+-#include "../../../../external/zlib/zlib.h"
++#include <zlib.h>
+ 
+ int __wrap_gzread(gzFile gz_fd,
+                   void* buf,
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/macos/libplist_wrappers.c wazuh-4.14.9/src/unit_tests/wrappers/macos/libplist_wrappers.c
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/macos/libplist_wrappers.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/macos/libplist_wrappers.c	2026-10-16 22:13:19.554905013 -0700
+@@ -12,7 +12,7 @@
+ #include <stdarg.h>
+ #include <setjmp.h>
+ #include <cmocka.h>
+-#include "external/libplist/include/plist/plist.h"
++#include <plist/plist.h>
+ #include "../common.h"
+ #include "../headers/shared.h"
+ 
+@@ -45,4 +45,4 @@ void wrap_plist_free(plist_t node) {
+     }
+     
+     plist_free(node);
+-}
+\ No newline at end of file
++}
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/macos/libplist_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/macos/libplist_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/macos/libplist_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/macos/libplist_wrappers.h	2026-10-16 22:13:19.555020736 -0700
+@@ -10,7 +10,7 @@
+ #ifndef STDIO_WRAPPERS_LIBPLIST_H
+ #define STDIO_WRAPPERS_LIBPLIST_H
+ 
+-#include "external/libplist/include/plist/plist.h"
++#include <plist/plist.h>
+ 
+ #undef plist_from_bin
+ #define plist_from_bin wrap_plist_from_bin
+@@ -23,4 +23,4 @@ void wrap_plist_from_bin (char * bin, si
+ void wrap_plist_to_xml (plist_t *node, char ** xml, uint32_t *size);
+ void wrap_plist_free(plist_t node);
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/analysisd/config_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/analysisd/config_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/analysisd/config_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/analysisd/config_wrappers.h	2026-10-16 22:13:19.555135012 -0700
+@@ -12,7 +12,7 @@
+ #ifndef ASYS_CONFIG_WRAPPERS_H
+ #define ASYS_CONFIG_WRAPPERS_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ cJSON *__wrap_getGlobalConfig();
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/analysisd/state_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/analysisd/state_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/analysisd/state_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/analysisd/state_wrappers.h	2026-10-16 22:13:19.555241422 -0700
+@@ -12,7 +12,7 @@
+ #ifndef ASYS_STATE_WRAPPERS_H
+ #define ASYS_STATE_WRAPPERS_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ cJSON* __wrap_asys_create_state_json();
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/data_provider/sysInfo_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/data_provider/sysInfo_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/data_provider/sysInfo_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/data_provider/sysInfo_wrappers.h	2026-10-16 22:13:19.555351125 -0700
+@@ -11,7 +11,7 @@
+ #ifndef SYSINFO_WRAPPERS_H
+ #define SYSINFO_WRAPPERS_H
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ int __wrap_sysinfo_hardware(cJSON** js_result);
+ int __wrap_sysinfo_packages(cJSON** js_result);
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/os_auth/os_auth_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/os_auth/os_auth_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/os_auth/os_auth_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/os_auth/os_auth_wrappers.h	2026-10-16 22:13:19.555464673 -0700
+@@ -14,7 +14,7 @@
+ #include <openssl/ssl.h>
+ #include "../headers/shared.h"
+ #include "../headers/sec.h"
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ SSL_CTX *__wrap_os_ssl_keys(int is_server, const char *os_dir, const char *ciphers, const char *cert, const char *key,
+                             const char *ca_cert, int auto_method);
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/remoted/config_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/remoted/config_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/remoted/config_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/remoted/config_wrappers.h	2026-10-16 22:13:19.555576267 -0700
+@@ -12,7 +12,7 @@
+ #ifndef REM_CONFIG_WRAPPERS_H
+ #define REM_CONFIG_WRAPPERS_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ cJSON *__wrap_getRemoteConfig();
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/remoted/manager_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/remoted/manager_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/remoted/manager_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/remoted/manager_wrappers.h	2026-10-16 22:13:19.555687742 -0700
+@@ -12,7 +12,7 @@
+ #ifndef REM_MANAGER_WRAPPERS_H
+ #define REM_MANAGER_WRAPPERS_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ #include "shared.h"
+ 
+ cJSON *__wrap_assign_group_to_agent(const char *agent_id, const char *md5);
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/remoted/state_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/remoted/state_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/remoted/state_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/remoted/state_wrappers.h	2026-10-16 22:13:19.555919664 -0700
+@@ -12,7 +12,7 @@
+ #ifndef REM_STATE_WRAPPERS_H
+ #define REM_STATE_WRAPPERS_H
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ void __wrap_rem_add_recv(unsigned long bytes);
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/shared/agent_op_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/shared/agent_op_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/shared/agent_op_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/shared/agent_op_wrappers.h	2026-10-16 22:13:19.556093569 -0700
+@@ -12,7 +12,7 @@
+ #define AGENT_OP_WRAPPERS_H
+ 
+ #include "stddef.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ int __wrap_auth_connect();
+ char* __wrap_get_agent_id_from_name(__attribute__((unused)) char *agent_name);
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/shared/syscheck_op_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/shared/syscheck_op_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/shared/syscheck_op_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/shared/syscheck_op_wrappers.h	2026-10-16 22:13:19.556230596 -0700
+@@ -16,7 +16,7 @@
+ #include <windows.h>
+ #endif // WIN32
+ 
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ char *__wrap_decode_win_permissions(char *raw_perm);
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/config_wrappers.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/config_wrappers.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/config_wrappers.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/config_wrappers.h	2026-10-16 22:13:19.556355245 -0700
+@@ -12,7 +12,7 @@
+ #define SYSCHECKD_CONFIG_WRAPPERS_H
+ 
+ #include "../syscheckd/include/syscheck.h"
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ void __wrap_free_whodata_event(whodata_evt *w_evt);
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/registry.c wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/registry.c
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/registry.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/registry.c	2026-10-16 22:13:19.556466199 -0700
+@@ -12,7 +12,7 @@
+ #include <stdarg.h>
+ #include <setjmp.h>
+ #include <cmocka.h>
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ void __wrap_fim_registry_scan() {
+     return;
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/registry.h wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/registry.h
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/registry.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/registry.h	2026-10-16 22:13:19.556571654 -0700
+@@ -6,7 +6,7 @@
+  * License (version 2) as published by the FSF - Free Software
+  * Foundation
+  */
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #ifndef WIN_REGISTRY_WRAPPERS_H
+ #define WIN_REGISTRY_WRAPPERS_H
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/run_check_wrappers.c wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/run_check_wrappers.c
+--- wazuh-4.14.9.orig/src/unit_tests/wrappers/wazuh/syscheckd/run_check_wrappers.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/unit_tests/wrappers/wazuh/syscheckd/run_check_wrappers.c	2026-10-16 22:13:19.556678256 -0700
+@@ -12,7 +12,7 @@
+ #include <stdarg.h>
+ #include <setjmp.h>
+ #include <cmocka.h>
+-#include <cJSON.h>
++#include <cjson/cJSON.h>
+ void __wrap_fim_send_scan_info(__attribute__ ((__unused__)) fim_scan_event event) {
+     return;
+ }
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/util/agent_control.c wazuh-4.14.9/src/util/agent_control.c
+--- wazuh-4.14.9.orig/src/util/agent_control.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/util/agent_control.c	2026-10-16 22:13:19.556821946 -0700
+@@ -10,7 +10,7 @@
+ 
+ #include "addagent/manage_agents.h"
+ #include "sec.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ #undef ARGV0
+ #define ARGV0 "agent_control"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_db/wdb_agents.c wazuh-4.14.9/src/wazuh_db/wdb_agents.c
+--- wazuh-4.14.9.orig/src/wazuh_db/wdb_agents.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_db/wdb_agents.c	2026-10-16 22:13:19.556989917 -0700
+@@ -10,7 +10,7 @@
+  */
+ 
+ #include "wdb_agents.h"
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "os_err.h"
+ #include "wazuh_db/wdb.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_db/wdb.h wazuh-4.14.9/src/wazuh_db/wdb.h
+--- wazuh-4.14.9.orig/src/wazuh_db/wdb.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_db/wdb.h	2026-10-16 22:13:19.557306878 -0700
+@@ -15,7 +15,7 @@
+ #include <shared.h>
+ #include <pthread.h>
+ #include <openssl/evp.h>
+-#include "../external/sqlite/sqlite3.h"
++#include <sqlite3.h>
+ #include "syscheck_op.h"
+ #include "rootcheck_op.h"
+ #include "wazuhdb_op.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_db/wdb_integrity.c wazuh-4.14.9/src/wazuh_db/wdb_integrity.c
+--- wazuh-4.14.9.orig/src/wazuh_db/wdb_integrity.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_db/wdb_integrity.c	2026-10-16 22:13:19.557786122 -0700
+@@ -13,7 +13,7 @@
+  * Foundation.
+  */
+ 
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ #include "debug_op.h"
+ #include "os_err.h"
+ #include "wdb.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_db/wdb_parser.c wazuh-4.14.9/src/wazuh_db/wdb_parser.c
+--- wazuh-4.14.9.orig/src/wazuh_db/wdb_parser.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_db/wdb_parser.c	2026-10-16 22:13:19.558511304 -0700
+@@ -12,7 +12,7 @@
+ #include "wazuhdb_op.h"
+ #include "wdb.h"
+ #include "wdb_agents.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "wdb_state.h"
+ 
+ #define HOTFIXES_FIELD_COUNT 3
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/agent_upgrade/agent/wm_agent_upgrade_com.c wazuh-4.14.9/src/wazuh_modules/agent_upgrade/agent/wm_agent_upgrade_com.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/agent_upgrade/agent/wm_agent_upgrade_com.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/agent_upgrade/agent/wm_agent_upgrade_com.c	2026-10-16 22:13:19.559308441 -0700
+@@ -21,7 +21,7 @@
+ #endif
+ 
+ #include <shared.h>
+-#include "external/zlib/zlib.h"
++#include <zlib.h>
+ #include "os_crypto/sha1/sha1_op.h"
+ #include "os_crypto/signature/signature.h"
+ #include "wazuh_modules/wmodules.h"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/inventory_harvester/include/inventory_harvester.h wazuh-4.14.9/src/wazuh_modules/inventory_harvester/include/inventory_harvester.h
+--- wazuh-4.14.9.orig/src/wazuh_modules/inventory_harvester/include/inventory_harvester.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/inventory_harvester/include/inventory_harvester.h	2026-10-16 22:13:19.559511522 -0700
+@@ -20,7 +20,7 @@
+ #define EXPORTED
+ #endif
+ 
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #ifdef __cplusplus
+ extern "C"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/include/vulnerability_scanner.h wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/include/vulnerability_scanner.h
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/include/vulnerability_scanner.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/include/vulnerability_scanner.h	2026-10-16 22:13:19.559641160 -0700
+@@ -20,7 +20,7 @@
+ #define EXPORTED
+ #endif
+ 
+-#include <external/cJSON/cJSON.h>
++#include <cjson/cJSON.h>
+ 
+ #ifdef __cplusplus
+ extern "C"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/include/vulnerabilityScanner.hpp wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/include/vulnerabilityScanner.hpp
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/include/vulnerabilityScanner.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/include/vulnerabilityScanner.hpp	2026-10-16 22:13:19.559779524 -0700
+@@ -21,7 +21,7 @@
+ #include "logging_helper.h"
+ #include "singleton.hpp"
+ #include "vulnerabilityScannerDefs.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <functional>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/src/databaseFeedManager/databaseFeedManager.hpp wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/src/databaseFeedManager/databaseFeedManager.hpp
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/src/databaseFeedManager/databaseFeedManager.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/src/databaseFeedManager/databaseFeedManager.hpp	2026-10-16 22:13:19.560005910 -0700
+@@ -27,7 +27,7 @@
+ #include "vulnerabilityDescription_generated.h"
+ #include "vulnerabilityRemediations_generated.h"
+ #include "vulnerabilityScanner.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <fstream>
+ #include <functional>
+ #include <memory>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/src/policyManager/policyManager.hpp wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/src/policyManager/policyManager.hpp
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/src/policyManager/policyManager.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/src/policyManager/policyManager.hpp	2026-10-16 22:13:19.560250579 -0700
+@@ -18,7 +18,7 @@
+ #include "singleton.hpp"
+ #include "stringHelper.h"
+ #include "vulnerabilityScanner.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <functional>
+ #include <memory>
+ #include <string>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/src/scanOrchestrator/scanContext.hpp wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/src/scanOrchestrator/scanContext.hpp
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/src/scanOrchestrator/scanContext.hpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/src/scanOrchestrator/scanContext.hpp	2026-10-16 22:13:19.560631667 -0700
+@@ -12,7 +12,7 @@
+ #ifndef _SCAN_CONTEXT_HPP
+ #define _SCAN_CONTEXT_HPP
+ 
+-#include "external/nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "flatbuffers/include/rsync_generated.h"
+ #include "flatbuffers/include/syscollector_deltas_generated.h"
+ #include "globalData.hpp"
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/tests/component/databaseFeedManager_test.cpp wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/tests/component/databaseFeedManager_test.cpp
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/tests/component/databaseFeedManager_test.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/tests/component/databaseFeedManager_test.cpp	2026-10-16 22:13:19.560904555 -0700
+@@ -11,7 +11,7 @@
+ 
+ #include "databaseFeedManager_test.hpp"
+ #include "databaseFeedManager/databaseFeedManager.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <memory>
+ 
+ /*
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/tests/component/vulnerabilityScannerFacade_test.cpp wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/tests/component/vulnerabilityScannerFacade_test.cpp
+--- wazuh-4.14.9.orig/src/wazuh_modules/vulnerability_scanner/tests/component/vulnerabilityScannerFacade_test.cpp	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/vulnerability_scanner/tests/component/vulnerabilityScannerFacade_test.cpp	2026-10-16 22:13:19.561057202 -0700
+@@ -11,7 +11,7 @@
+ 
+ #include "vulnerabilityScannerFacade_test.hpp"
+ #include "vulnerabilityScannerFacade.hpp"
+-#include <external/nlohmann/json.hpp>
++#include <nlohmann/json.hpp>
+ #include <memory>
+ 
+ auto constexpr DELAY {1};
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wm_content_manager.c wazuh-4.14.9/src/wazuh_modules/wm_content_manager.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/wm_content_manager.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wm_content_manager.c	2026-10-16 22:13:19.561204223 -0700
+@@ -11,7 +11,7 @@
+ 
+ #include "wm_content_manager.h"
+ #include "content_manager.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "logging_helper.h"
+ #include "sym_load.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wm_control.c wazuh-4.14.9/src/wazuh_modules/wm_control.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/wm_control.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wm_control.c	2026-10-16 22:13:19.561355645 -0700
+@@ -20,7 +20,7 @@
+ #include "wm_control.h"
+ #include "sysInfo.h"
+ #include "sym_load.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "file_op.h"
+ #include "../os_net/os_net.h"
+ static void *wm_control_main();
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wm_database.c wazuh-4.14.9/src/wazuh_modules/wm_database.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/wm_database.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wm_database.c	2026-10-16 22:13:19.561537187 -0700
+@@ -14,7 +14,7 @@
+ #include "remoted_op.h"
+ #include "wazuh_db/helpers/wdb_global_helpers.h"
+ #include "addagent/manage_agents.h" // FILE_SIZE
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ #ifndef CLIENT
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wm_harvester.c wazuh-4.14.9/src/wazuh_modules/wm_harvester.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/wm_harvester.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wm_harvester.c	2026-10-16 22:13:19.561745505 -0700
+@@ -11,7 +11,7 @@
+ 
+ #include "wm_harvester.h"
+ #include "config/indexer-config.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "inventory_harvester.h"
+ #include "sym_load.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wmodules_def.h wazuh-4.14.9/src/wazuh_modules/wmodules_def.h
+--- wazuh-4.14.9.orig/src/wazuh_modules/wmodules_def.h	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wmodules_def.h	2026-10-16 22:13:19.561872249 -0700
+@@ -13,7 +13,7 @@
+ #define W_MODULES_DEFS
+ 
+ #include <pthread.h>
+-#include "cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ #ifdef WIN32
+ #include <winsock2.h>
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wm_router.c wazuh-4.14.9/src/wazuh_modules/wm_router.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/wm_router.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wm_router.c	2026-10-16 22:13:19.562000897 -0700
+@@ -10,7 +10,7 @@
+  */
+ 
+ #include "wm_router.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "router.h"
+ #include "sym_load.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/wazuh_modules/wm_vulnerability_scanner.c wazuh-4.14.9/src/wazuh_modules/wm_vulnerability_scanner.c
+--- wazuh-4.14.9.orig/src/wazuh_modules/wm_vulnerability_scanner.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/wazuh_modules/wm_vulnerability_scanner.c	2026-10-16 22:13:19.562145898 -0700
+@@ -11,7 +11,7 @@
+ 
+ #include "wm_vulnerability_scanner.h"
+ #include "config/indexer-config.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ #include "sym_load.h"
+ #include "vulnerability_scanner.h"
+ 
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/win32/win_agent.c wazuh-4.14.9/src/win32/win_agent.c
+--- wazuh-4.14.9.orig/src/win32/win_agent.c	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/win32/win_agent.c	2026-10-16 22:13:19.562298290 -0700
+@@ -19,7 +19,7 @@
+ #include "os_net/os_net.h"
+ #include "os_execd/execd.h"
+ #include "os_crypto/md5/md5_op.h"
+-#include "external/cJSON/cJSON.h"
++#include <cjson/cJSON.h>
+ 
+ #ifndef ARGV0
+ #define ARGV0 "wazuh-agent"
