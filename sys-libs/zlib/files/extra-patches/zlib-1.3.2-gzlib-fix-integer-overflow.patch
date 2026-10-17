@@ -1,0 +1,110 @@
+From https://github.com/madler/zlib/commit/6995c67bd443bc982771b043ef3be3591cc522d0
+diff '--color=auto' -urp zlib-1.3.2.orig/gzguts.h zlib-1.3.2/gzguts.h
+--- zlib-1.3.2.orig/gzguts.h	2026-02-17 04:47:06.000000000 -0800
++++ zlib-1.3.2/gzguts.h	2026-10-16 23:03:56.207458079 -0700
+@@ -214,3 +214,10 @@ char ZLIB_INTERNAL *gz_strwinerror(DWORD
+    (possible z_off64_t types off_t, off64_t, and long are all signed) */
+ unsigned ZLIB_INTERNAL gz_intmax(void);
+ #define GT_OFF(x) (sizeof(int) == sizeof(z_off64_t) && (x) > gz_intmax())
++
++/* largest value representable in z_off64_t */
++#ifndef CHAR_BIT
++#  define CHAR_BIT 8
++#endif
++#define GZ_OFF_MAX \
++    ((((z_off64_t)1 << (sizeof(z_off64_t) * CHAR_BIT - 2)) - 1) * 2 + 1)
+Only in zlib-1.3.2: gzguts.h.orig
+diff '--color=auto' -urp zlib-1.3.2.orig/gzlib.c zlib-1.3.2/gzlib.c
+--- zlib-1.3.2.orig/gzlib.c	2026-02-17 04:47:06.000000000 -0800
++++ zlib-1.3.2/gzlib.c	2026-10-16 23:03:56.207600038 -0700
+@@ -366,7 +366,7 @@ int ZEXPORT gzrewind(gzFile file) {
+ /* -- see zlib.h -- */
+ z_off64_t ZEXPORT gzseek64(gzFile file, z_off64_t offset, int whence) {
+     unsigned n;
+-    z_off64_t ret;
++    z_off64_t ret, pos;
+     gz_statep state;
+ 
+     /* get internal structure and check integrity */
+@@ -384,18 +384,21 @@ z_off64_t ZEXPORT gzseek64(gzFile file,
+     if (whence != SEEK_SET && whence != SEEK_CUR)
+         return -1;
+ 
+-    /* normalize offset to a SEEK_CUR specification */
+-    if (whence == SEEK_SET)
+-        offset -= state->x.pos;
+-    else {
+-        offset += state->past ? 0 : state->skip;
++    /* compute the absolute position */
++    pos = whence == SEEK_SET ? 0 :
++          state->x.pos + (state->past ? 0 : state->skip);
++    if (offset > GZ_OFF_MAX - pos)
++        return -1;                          /* would overflow z_off64_t */
++    if (whence != SEEK_SET)
+         state->skip = 0;
+-    }
++    if (offset < -pos)
++        return -1;                          /* before start of file */
++    pos += offset;
+ 
+     /* if within raw area while reading, just go there */
+-    if (state->mode == GZ_READ && state->how == COPY &&
+-            state->x.pos + offset >= 0) {
+-        ret = LSEEK(state->fd, offset - (z_off64_t)state->x.have, SEEK_CUR);
++    if (state->mode == GZ_READ && state->how == COPY) {
++        ret = LSEEK(state->fd, pos - state->x.pos - (z_off64_t)state->x.have,
++                    SEEK_CUR);
+         if (ret == -1)
+             return -1;
+         state->x.have = 0;
+@@ -404,20 +407,18 @@ z_off64_t ZEXPORT gzseek64(gzFile file,
+         state->skip = 0;
+         gz_error(state, Z_OK, NULL);
+         state->strm.avail_in = 0;
+-        state->x.pos += offset;
+-        return state->x.pos;
++        state->x.pos = pos;
++        return pos;
+     }
+ 
+-    /* calculate skip amount, rewinding if needed for back seek when reading */
+-    if (offset < 0) {
++    /* rewind if needed for back seek when reading */
++    if (pos < state->x.pos) {
+         if (state->mode != GZ_READ)         /* writing -- can't go backwards */
+             return -1;
+-        offset += state->x.pos;
+-        if (offset < 0)                     /* before start of file! */
+-            return -1;
+-        if (gzrewind(file) == -1)           /* rewind, then skip to offset */
++        if (gzrewind(file) == -1)           /* rewind, then skip to pos */
+             return -1;
+     }
++    offset = pos - state->x.pos;
+ 
+     /* if reading, skip what's in output buffer (one less gzgetc() check) */
+     if (state->mode == GZ_READ) {
+@@ -431,7 +432,7 @@ z_off64_t ZEXPORT gzseek64(gzFile file,
+ 
+     /* request skip (if not zero) */
+     state->skip = offset;
+-    return state->x.pos + offset;
++    return pos;
+ }
+ 
+ /* -- see zlib.h -- */
+Only in zlib-1.3.2: t.patch
+Only in zlib-1.3.2.orig: zlib-1.3.2
+diff '--color=auto' -urp zlib-1.3.2.orig/zlib.h zlib-1.3.2/zlib.h
+--- zlib-1.3.2.orig/zlib.h	2026-02-17 04:47:06.000000000 -0800
++++ zlib-1.3.2/zlib.h	2026-10-16 23:03:56.207891182 -0700
+@@ -1677,7 +1677,8 @@ ZEXTERN z_off_t ZEXPORT gzseek(gzFile fi
+      gzseek returns the resulting offset location as measured in bytes from
+    the beginning of the uncompressed stream, or -1 in case of error, in
+    particular if the file is opened for writing and the new starting position
+-   would be before the current position.
++   would be before the current position, or if the resulting position would
++   not be representable in the offset type.
+ */
+ 
+ ZEXTERN int ZEXPORT gzrewind(gzFile file);

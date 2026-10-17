@@ -1,0 +1,19 @@
+Fixes a heap buffer overflow.
+From https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148
+Discussed in https://nvd.nist.gov/vuln/detail/cve-2026-85091
+diff '--color=auto' -urp zlib-1.3.2.orig/gzwrite.c zlib-1.3.2/gzwrite.c
+--- zlib-1.3.2.orig/gzwrite.c	2026-02-17 04:47:06.000000000 -0800
++++ zlib-1.3.2/gzwrite.c	2026-10-16 23:00:12.122575878 -0700
+@@ -242,8 +242,11 @@ local z_size_t gz_write(gz_statep state,
+             n -= state->strm.avail_in;
+             state->x.pos += n;
+             len -= n;
+-            if (ret == -1)
++            if (ret == -1) {
++                state->strm.avail_in = 0;
++                state->strm.next_in = state->in;
+                 return state->again ? put - len : 0;
++            }
+         } while (len);
+     }
+ 

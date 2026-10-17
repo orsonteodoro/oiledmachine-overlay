@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# -r100 is oiledmachine-overlay patchset
+
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
 # This is a security-critical package.  This means if it breaks, then all applications will break.
@@ -75,7 +77,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${_TRAINERS[@]}
 minizip minizip-utils pgo static-libs
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	pgo? (
@@ -210,6 +212,11 @@ PATCHES=(
 
 	# https://github.com/madler/zlib/issues/1200
 	"${FILESDIR}/${PN}-1.3.2-s390.patch"
+
+	# oiledmachine-overlay backports:
+	"${FILESDIR}/extra-patches/${PN}-1.3.2-gzwrite-fix-ub.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.3.2-gzwrite-fix-buffer-overflow.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.3.2-gzlib-fix-integer-overflow.patch"
 )
 
 _seq() {

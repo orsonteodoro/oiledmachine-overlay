@@ -1,0 +1,14 @@
+From https://github.com/madler/zlib/commit/e3dc0a85b7032e98380dec011bc8f2c2ee0d8fca
+diff '--color=auto' -urp zlib-1.3.2.orig/gzwrite.c zlib-1.3.2/gzwrite.c
+--- zlib-1.3.2.orig/gzwrite.c	2026-02-17 04:47:06.000000000 -0800
++++ zlib-1.3.2/gzwrite.c	2026-10-16 22:56:17.937469356 -0700
+@@ -383,7 +383,8 @@ local int gz_vacate(gz_statep state) {
+     z_streamp strm;
+ 
+     strm = &(state->strm);
+-    if (strm->next_in + strm->avail_in <= state->in + state->size)
++    if (strm->next_in == NULL ||
++        strm->next_in + strm->avail_in <= state->in + state->size)
+         return 0;
+     (void)gz_comp(state, Z_NO_FLUSH);
+     if (strm->avail_in == 0) {
