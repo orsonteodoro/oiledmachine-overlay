@@ -256,7 +256,7 @@ ewarn "Upstream uses =dev-libs/rocksdb-8* instead."
 ewarn "Upstream uses =sys-libs/db-18* instead."
 		fi
 	else
-ewarn "You are using vendored libs from ${PN} which may contain vulnerabilities or older versions."
+ewarn "You are using prebuilt vendored libs from ${PN} which may contain vulnerabilities or older versions."
 	fi
 }
 
