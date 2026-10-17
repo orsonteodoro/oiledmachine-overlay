@@ -105,7 +105,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 -big-endian -geoip -inotify openrc selinux +sysc +syscat -system-libs systemd
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
@@ -128,6 +128,9 @@ RDEPEND="
 	)
 	openrc? (
 		>=sys-apps/openrc-${OPENRC_PV}:*
+	)
+	selinux? (
+		>=sec-policy/selinux-wazuh-${PV}:*
 	)
 	systemd? (
 		>=sys-apps/systemd-${SYSTEMD_PV}:*
@@ -175,6 +178,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
+	"${FILESDIR}/wazuh-agent-4.14.9-append-custom-flags.patch"
 )
 
 pkg_setup() {
@@ -267,7 +271,7 @@ src_unpack() {
 einfo "Downloading prebuilt libs"
 		emake \
 			V=1 \
-			TARGET=agent \
+			TARGET="agent" \
 			DISABLE_SYSC=$(usex sysc '0' '1') \
 			DISABLE_SYSCAT=$(usex syscat '0' '1') \
 			USE_BIG_ENDIAN=$(usex big-endian '1' '') \
@@ -285,45 +289,37 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
 }
 
 # Wazuh install.sh is interactive; we drive it non-interactively
 src_compile() {
 	cd src || die
 
-	local hardening_cflags hardening_ldflags
-	# Mirror upstream intent, or drop if you prefer pure Portage
-	hardening_cflags="-fstack-protector-strong -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC"
-	hardening_ldflags="-Wl,-z,relro -Wl,-z,now -Wl,-pie"
-
-	local all_cflags="${hardening_cflags} ${CFLAGS}"
-	local all_cxxflags="${hardening_cflags} ${CXXFLAGS}"
-	local all_ldflags="${hardening_ldflags} ${LDFLAGS}"
+	cflags-hardened_append
 
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
-einfo "OSSEC_CFLAGS:  ${all_cflags}"
-einfo "OSSEC_CXXFLAGS:  ${all_cxxflags}"
-einfo "OSSEC_LDFLAGS:  ${all_ldflags}"
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
 
-	emake \
-		V=1 \
-		TARGET=agent \
-		DISABLE_SYSC=$(usex sysc '0' '1') \
-		DISABLE_SYSCAT=$(usex syscat '0' '1') \
-		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
-		USE_BIG_ENDIAN=$(usex big-endian '1' '') \
-		USE_GEOIP=$(usex geoip '1' '') \
-		USE_INOTIFY=$(usex inotify '1' '0') \
-		USE_SELINUX=$(usex selinux '1' '') \
-		CC="$(tc-getCC)" \
-		CXX="$(tc-getCXX)" \
-		OSSEC_CFLAGS="${all_cflags}" \
-		OSSEC_LDFLAGS="${all_ldflags}" \
-		AR_LDFLAGS="${all_ldflags}" \
-		CMAKE_OPTS="-DCMAKE_C_FLAGS=\"${all_cflags}\" -DCMAKE_CXX_FLAGS=\"${all_cxxflags}\" -DCMAKE_EXE_LINKER_FLAGS=\"${all_ldflags}\" -DCMAKE_SHARED_LINKER_FLAGS=\"${all_ldflags}\" -DCMAKE_POSITION_INDEPENDENT_CODE=ON" \
-		build
+	local myconf=(
+		V=1
+		TARGET="agent"
+		DISABLE_SYSC=$(usex sysc '0' '1')
+		DISABLE_SYSCAT=$(usex syscat '0' '1')
+		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1')
+		EXTRA_CFLAGS="${CFLAGS_HARDENED_CFLAGS}"
+		EXTRA_LDFLAGS="${CFLAGS_HARDENED_LDFLAGS}"
+		USE_BIG_ENDIAN=$(usex big-endian '1' '')
+		USE_GEOIP=$(usex geoip '1' '')
+		USE_INOTIFY=$(usex inotify '1' '0')
+		USE_SELINUX=$(usex selinux '1' '')
+		CC="$(tc-getCC)"
+		CXX="$(tc-getCXX)"
+	)
+
+	emake "${myconf[@]}"
 }
 
 src_install() {
@@ -377,27 +373,22 @@ src_install() {
 
 	# Classic Make binaries (top of src/)
 	local bins=(
-		"active-responses"
-		"agent-auth"
-		"manage_agents"
-		"wazuh-agentd"
-		"wazuh-execd"
-		"wazuh-logcollector"
-		"wazuh-modulesd"
-		"wazuh-syscheckd"
+		"${S}/src/agent-auth"
+		"${S}/src/manage_agents"
+		"${S}/src/wazuh-agentd"
+		"${S}/src/wazuh-execd"
+		"${S}/src/wazuh-logcollector"
+		"${S}/src/wazuh-modulesd"
+		"${S}/src/syscheckd/build/bin/wazuh-syscheckd"
 	)
 
 	exeinto "${ossec}/bin"
 	local b
 	for b in "${bins[@]}"; do
-		[[ -x ${b} ]] || die "missing binary: ${b}"
+		[[ -x ${b} ]] || die "Missing binary:  ${b}"
+einfo "Installing ${b}"
 		doexe "${b}"
 	done
-
-	# FIM: CMake output
-	local syscheck_bin="syscheckd/build/bin/wazuh-syscheckd"
-	[[ -x ${syscheck_bin} ]] || die "missing ${syscheck_bin} (syscheckd CMake build failed?)"
-	doexe "${syscheck_bin}"
 
 	# Shared libs used at runtime (rpath often points at ../lib)
 	exeinto "${ossec}/lib"
@@ -434,7 +425,22 @@ src_install() {
 	)
 
 	# Adjust to whatever actually exists in your tree:
-	doexe "${L[@]}" 2>/dev/null || true
+	local x
+	for x in "${L[@]}" ; do
+		if [[ ! -e "${x}" ]] ; then
+# For avoiding custom config issues
+ewarn "Skipping install of ${x}"
+			continue
+		fi
+		if [[ -L "${x}" ]] ; then
+			local b=$(basename "${x}")
+einfo "Installing symlink ${b}"
+			cp -a "${x}" "${ED}${ossec}/lib/"
+		else
+einfo "Installing lib ${x}"
+			doexe "${x}"
+		fi
+	done
 
 	# Config templates
 	insinto "${ossec}/"

@@ -1,0 +1,18 @@
+diff '--color=auto' -urp wazuh-4.14.9.orig/src/Makefile wazuh-4.14.9/src/Makefile
+--- wazuh-4.14.9.orig/src/Makefile	2026-10-08 02:21:28.000000000 -0700
++++ wazuh-4.14.9/src/Makefile	2026-10-17 07:28:04.914777630 -0700
+@@ -589,6 +589,14 @@ ifeq (,$(filter ${DISABLE_SYSC}, YES yes
+ 	SYSCOLLECTOR_LIB+=-lsyscollector
+ endif
+ 
++OSSEC_CFLAGS  += $(EXTRA_CFLAGS)
++OSSEC_LDFLAGS += $(EXTRA_LDFLAGS)
++OSSEC_LIBS    += $(EXTRA_LIBS)
++AR_LDFLAGS    += $(EXTRA_AR_LDFLAGS)
++CMAKE_OPTS    += -DCMAKE_C_FLAGS="$(EXTRA_CFLAGS)"
++CMAKE_OPTS    += -DCMAKE_CXX_FLAGS="$(EXTRA_CXXFLAGS)"
++CMAKE_OPTS    += -DCMAKE_EXE_LINKER_FLAGS="$(EXTRA_LDFLAGS)"
++CMAKE_OPTS    += -DCMAKE_SHARED_LINKER_FLAGS="$(EXTRA_LDFLAGS)"
+ 
+ ####################
+ #### Target ########
