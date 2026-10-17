@@ -579,7 +579,7 @@ IUSE_CODECS=(
 )
 
 MITIGATION_DATE="Oct 15, 2026" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1792012140 # From `date +%s -d "Oct 14, 2026 2:09 PM PDT"` From blog date
+MITIGATION_LAST_UPDATE=1792012140 # From `date +%s -d "Oct 14, 2026 2:09 PM PDT"` From repo tag on GitHub
 MITIGATION_URI="https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_01886704284.html"
 VULNERABILITIES_FIXED=(
 	# 155.0.8059.84
