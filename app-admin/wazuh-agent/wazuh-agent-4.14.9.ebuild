@@ -41,6 +41,7 @@ EAPI=8
 # XDR - Extended Detection and Response [aggregates and correlates across assets beyond endpoints]
 
 # Dependency versions:  https://github.com/wazuh/wazuh/blob/v4.14.9/README.md#software-and-libraries-used
+# Security notes:  The agent is outbound network only.
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
