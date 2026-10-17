@@ -102,7 +102,7 @@ HOMEPAGE="
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="
--big-endian -geoip -inotify +jemalloc openrc selinux +syscollector -system-libs +syscat systemd
+-big-endian -geoip -inotify openrc selinux +sysc +syscat -system-libs systemd
 ebuild_revision_3
 "
 REQUIRED_USE="
@@ -158,9 +158,6 @@ RDEPEND="
 		sys-apps/pacman:=
 		sys-libs/db:=
 		sys-process/audit:=
-		jemalloc? (
-			>=dev-libs/jemalloc-${JEMALLOC_PV}:=
-		)
 	)
 "
 BDEPEND="
@@ -265,7 +262,6 @@ einfo "OSSEC_LDFLAGS:  ${all_ldflags}"
 	emake \
 		V=1 \
 		TARGET=agent \
-		DISABLE_JEMALLOC=$(usex jemalloc '0' '1') \
 		DISABLE_SYSC=$(usex sysc '0' '1') \
 		DISABLE_SYSCAT=$(usex syscat '0' '1') \
 		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
@@ -278,7 +274,6 @@ einfo "OSSEC_LDFLAGS:  ${all_ldflags}"
 	emake \
 		V=1 \
 		TARGET=agent \
-		DISABLE_JEMALLOC=$(usex jemalloc '0' '1') \
 		DISABLE_SYSC=$(usex sysc '0' '1') \
 		DISABLE_SYSCAT=$(usex syscat '0' '1') \
 		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \

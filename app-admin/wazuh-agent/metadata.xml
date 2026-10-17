@@ -39,20 +39,17 @@
     <flag name="inotify">
       Add support for real time FIM (File Integrity Monitoring).
     </flag>
-    <flag name="jemalloc">
-      Use the high performance jemalloc memory allocator.
-    </flag>
     <flag name="selinux">
       Add support to safely containerize the agent's behavior and to allow the
       agent to read sensitive files.
     </flag>
+    <flag name="sysc">
+      Build the Syscollector module for gathering system info (hardware specs,
+      running process, installed processes)
+    </flag>
     <flag name="syscat">
       Build the deprecated CIS-CAT module used for audit/evaluate compliants
       against CIS benchmarks.
-    </flag>
-    <flag name="syscollector">
-      Build the Syscollector module for gathering system info (hardware specs,
-      running process, installed processes)
     </flag>
   </use>
 </pkgmetadata>
