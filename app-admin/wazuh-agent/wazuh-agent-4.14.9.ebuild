@@ -125,7 +125,7 @@ RDEPEND="
 	acct-group/wazuh:*
 	acct-user/wazuh:*
 	geoip? (
-		dev-libs/geoip
+		dev-libs/geoip:=
 	)
 	openrc? (
 		>=sys-apps/openrc-${OPENRC_PV}:*
