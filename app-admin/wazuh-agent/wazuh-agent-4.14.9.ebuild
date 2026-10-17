@@ -70,11 +70,20 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-arch/libarchive-9999"
+	"app-arch/xz-utils-9999"
+	"dev-cpp/nlohmann_json-9999"
+	"dev-db/sqlite-9999"
+	"dev-libs/cJSON-9999"
+	"dev-libs/libffi-9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
+	"net-misc/curl-9999"
+	"sys-process/procps-9999"
 )
 
 inherit cflags-hardened chkl libcxx-slot libstdcxx-slot linux-info python-single-r1 sandbox-changes secure-version systemd
@@ -93,8 +102,8 @@ HOMEPAGE="
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="
-openrc systemd
-ebuild_revision_2
+-big-endian -geoip -inotify +jemalloc openrc selinux +syscollector -system-libs +syscat systemd
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -112,11 +121,46 @@ RDEPEND="
 	${DEPEND}
 	acct-group/wazuh:*
 	acct-user/wazuh:*
+	geoip? (
+		dev-libs/geoip
+	)
 	openrc? (
 		>=sys-apps/openrc-${OPENRC_PV}:*
 	)
 	systemd? (
 		>=sys-apps/systemd-${SYSTEMD_PV}:*
+	)
+	system-libs? (
+		$(secure-version_gen_openssl_depends)
+		>=app-arch/bzip2-${BZIP2_PV}:=
+		>=app-arch/libarchive-${LIBARCHIVE_PV}:=
+		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
+		>=dev-cpp/cpp-httplib-${CPP_HTTPLIB_PV}:=
+		>=dev-cpp/nlohmann_json-${NLOHMANN_JSON_PV}:=
+		>=dev-libs/cJSON-${CJSON_PV}:=
+		>=dev-libs/libffi-${LIBFFI_PV}:=
+		>=dev-libs/libpcre2-${LIBPCRE2_PV}:=
+		>=net-misc/curl-${CURL_PV}:=
+		>=sys-apps/dbus-${DBUS_PV}:=
+		>=sys-process/procps-${PROCPS_PV}:=
+		app-arch/rpm:=[sqlite]
+			>=dev-db/sqlite-${SQLITE_PV}:=
+			>=virtual/zlib-${ZLIB_PV}:=
+			dev-lang/lua:=
+			dev-libs/popt:=
+		app-pda/libplist:=
+		dev-cpp/benchmark:=
+		dev-cpp/gtest:=
+                dev-libs/libbpf-bootstrap:=
+		dev-libs/libyaml:=
+		dev-libs/msgpack:=
+		dev-libs/rocksdb:=
+		sys-apps/pacman:=
+		sys-libs/db:=
+		sys-process/audit:=
+		jemalloc? (
+			>=dev-libs/jemalloc-${JEMALLOC_PV}:=
+		)
 	)
 "
 BDEPEND="
@@ -131,9 +175,14 @@ BDEPEND="
 	sys-devel/gcc:=
 	virtual/pkgconfig
 "
+PATCHES=(
+)
 
 pkg_setup() {
 ewarn "${PN} is under construction"
+	if use system-libs ; then
+ewarn "You are using an untested USE flag.  Not every ebuild for it is packaged yet."
+	fi
 	python-single-r1_pkg_setup
 	linux-info_pkg_setup
 	if [[ -z "${WAZUH_MANGEMENT_SERVER_IP}" ]] ; then
@@ -155,7 +204,38 @@ eerror
 	fi
 	libcxx-slot_verify
 	libstdcxx-slot_verify
-	sandbox-changes_no_network_sandbox "For downloading vendored dependencies"
+
+	L=(
+		"cJSON"
+		"curl"
+		"libdb"
+		"libffi"
+		"libyaml"
+		"openssl"
+		"procps"
+		"sqlite"
+		"zlib"
+		"audit-userspace"
+		"msgpack"
+		"bzip2"
+		"nlohmann"
+		"googletest"
+		"libpcre2"
+		"libplist"
+		"pacman"
+		"libarchive"
+		"popt"
+		"lua"
+		"rpm"
+		"rocksdb"
+		"lzma"
+		"cpp-httplib"
+		"benchmark"
+		"libbpf-bootstrap"
+		"dbus"
+	)
+
+	use system-libs || sandbox-changes_no_network_sandbox "For downloading prebuilt vendored dependencies (${L[@]})"
 }
 
 src_configure() {
@@ -166,8 +246,52 @@ src_configure() {
 # Wazuh install.sh is interactive; we drive it non-interactively
 src_compile() {
 	cd src || die
-	emake TARGET=agent deps
-	emake TARGET=agent
+
+	local hardening_cflags hardening_ldflags
+	# Mirror upstream intent, or drop if you prefer pure Portage
+	hardening_cflags="-fstack-protector-strong -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fPIC"
+	hardening_ldflags="-Wl,-z,relro -Wl,-z,now -Wl,-pie"
+
+	local all_cflags="${hardening_cflags} ${CFLAGS}"
+	local all_cxxflags="${hardening_cflags} ${CXXFLAGS}"
+	local all_ldflags="${hardening_ldflags} ${LDFLAGS}"
+
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
+einfo "OSSEC_CFLAGS:  ${all_cflags}"
+einfo "OSSEC_CXXFLAGS:  ${all_cxxflags}"
+einfo "OSSEC_LDFLAGS:  ${all_ldflags}"
+
+	emake \
+		V=1 \
+		TARGET=agent \
+		DISABLE_JEMALLOC=$(usex jemalloc '0' '1') \
+		DISABLE_SYSC=$(usex sysc '0' '1') \
+		DISABLE_SYSCAT=$(usex syscat '0' '1') \
+		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
+		USE_BIG_ENDIAN=$(usex big-endian '1' '') \
+		USE_GEOIP=$(usex geoip '1' '') \
+		USE_INOTIFY=$(usex inotify '1' '0') \
+		USE_SELINUX=$(usex selinux '1' '') \
+		deps
+
+	emake \
+		V=1 \
+		TARGET=agent \
+		DISABLE_JEMALLOC=$(usex jemalloc '0' '1') \
+		DISABLE_SYSC=$(usex sysc '0' '1') \
+		DISABLE_SYSCAT=$(usex syscat '0' '1') \
+		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
+		USE_BIG_ENDIAN=$(usex big-endian '1' '') \
+		USE_GEOIP=$(usex geoip '1' '') \
+		USE_INOTIFY=$(usex inotify '1' '0') \
+		USE_SELINUX=$(usex selinux '1' '') \
+		CC="$(tc-getCC)" \
+		CXX="$(tc-getCXX)" \
+		OSSEC_CFLAGS="${all_cflags}" \
+		OSSEC_LDFLAGS="${all_ldflags}" \
+		AR_LDFLAGS="${all_ldflags}" \
+		CMAKE_OPTS="-DCMAKE_C_FLAGS=${all_cflags} -DCMAKE_CXX_FLAGS=${all_cxxflags} -DCMAKE_EXE_LINKER_FLAGS=${all_ldflags} -DCMAKE_SHARED_LINKER_FLAGS=${all_ldflags} -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
 }
 
 src_install() {
@@ -221,12 +345,14 @@ src_install() {
 
 	# Classic Make binaries (top of src/)
 	local bins=(
-		wazuh-agentd
-		wazuh-execd
-		wazuh-logcollector
-		wazuh-modulesd
-		agent-auth
-		manage_agents
+		"active-responses"
+		"agent-auth"
+		"manage_agents"
+		"wazuh-agentd"
+		"wazuh-execd"
+		"wazuh-logcollector"
+		"wazuh-modulesd"
+		"wazuh-syscheckd"
 	)
 
 	exeinto "${ossec}/bin"
@@ -245,34 +371,34 @@ src_install() {
 	exeinto "${ossec}/lib"
 
 	local L=(
-# find /var/tmp/portage/app-admin/wazuh-agent-4.14.9/work/wazuh-4.14.9/src/ -name "*.so*" | cut -f 10- -d "/" | sed -e "/Makefile.soname/d" -e "/fips.module.sources/d"
-shared_modules/rsync/build/lib/librsync.so
-shared_modules/dbsync/build/lib/libdbsync.so
-libstdc++.so.6
-libwazuhext.so
-data_provider/build/lib/libsysinfo.so
-syscheckd/build/lib/libfimebpf.so
-syscheckd/build/lib/libfimdb.so
-libgcc_s.so.1
-external/libdb/build_unix/.libs/libdb-18.1.so
-external/libffi/server/.libs/libffi.so.6
-external/libffi/server/.libs/libffi.so.6.0.4
-external/libffi/server/.libs/libffi.so
-external/rocksdb/build/librocksdb.so
-external/rocksdb/build/librocksdb.so.8
-external/rocksdb/build/librocksdb.so.8.3.2
-external/libbpf-bootstrap/build/libbpf/libbpf.so
-external/curl/lib/.libs/libcurl.so.4.8.0
-external/curl/lib/.libs/libcurl.so
-external/curl/lib/.libs/libcurl.so.4
-external/audit-userspace/lib/.libs/libaudit.so
-external/audit-userspace/lib/.libs/libaudit.so.1.0.0
-external/audit-userspace/lib/.libs/libaudit.so.1
-external/libarchive/.libs/libarchive.so.13
-external/libarchive/.libs/libarchive.so
-external/libarchive/.libs/libarchive.so.13.8.1
-wazuh_modules/syscollector/build/lib/libsyscollector.so
-libwazuhshared.so
+		# Obtained from:  find /var/tmp/portage/app-admin/wazuh-agent-4.14.9/work/wazuh-4.14.9/src/ -name "*.so*" | cut -f 10- -d "/" | sed -e "/Makefile.soname/d" -e "/fips.module.sources/d"
+		"shared_modules/rsync/build/lib/librsync.so"
+		"shared_modules/dbsync/build/lib/libdbsync.so"
+		"libstdc++.so.6"
+		"libwazuhext.so"
+		"data_provider/build/lib/libsysinfo.so"
+		"syscheckd/build/lib/libfimebpf.so"
+		"syscheckd/build/lib/libfimdb.so"
+		"libgcc_s.so.1"
+		"external/libdb/build_unix/.libs/libdb-18.1.so"
+		"external/libffi/server/.libs/libffi.so.6"
+		"external/libffi/server/.libs/libffi.so.6.0.4"
+		"external/libffi/server/.libs/libffi.so"
+		"external/rocksdb/build/librocksdb.so"
+		"external/rocksdb/build/librocksdb.so.8"
+		"external/rocksdb/build/librocksdb.so.8.3.2"
+		"external/libbpf-bootstrap/build/libbpf/libbpf.so"
+		"external/curl/lib/.libs/libcurl.so.4.8.0"
+		"external/curl/lib/.libs/libcurl.so"
+		"external/curl/lib/.libs/libcurl.so.4"
+		"external/audit-userspace/lib/.libs/libaudit.so"
+		"external/audit-userspace/lib/.libs/libaudit.so.1.0.0"
+		"external/audit-userspace/lib/.libs/libaudit.so.1"
+		"external/libarchive/.libs/libarchive.so.13"
+		"external/libarchive/.libs/libarchive.so"
+		"external/libarchive/.libs/libarchive.so.13.8.1"
+		"wazuh_modules/syscollector/build/lib/libsyscollector.so"
+		"libwazuhshared.so"
 	)
 
 	# Adjust to whatever actually exists in your tree:

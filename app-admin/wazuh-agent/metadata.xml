@@ -2,31 +2,57 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <!-- This file is partly AI generated -->
 <pkgmetadata>
-    <maintainer type="person">
-        <email>orsonteodoro@hotmail.com</email>
-        <name>Orson Teodoro</name>
-    </maintainer>
-    <longdescription>
-        Wazuh is a free, open source and enterprise-ready security monitoring
-        solution for threat detection, integrity monitoring, incident response
-        and compliance.
-    </longdescription>
-    <!--
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Wazuh is a free, open source and enterprise-ready security monitoring
+    solution for threat detection, integrity monitoring, incident response and
+    compliance.
+  </longdescription>
+  <!--
 
-    The Wazah Agent requirements:
+  The Wazah Agent requirements:
 
-    35-60 MB RAM
-    50-100 MB install
-    1514/TCP - Port for agent communication / event logs
-    1515/TCP - Port for agent enrollment
+  35-60 MB RAM
+  50-100 MB install
+  1514/TCP - Port for agent communication / event logs
+  1515/TCP - Port for agent enrollment
 
 
-    Environment variables:
+  Environment variables:
 
-    WAZUH_MANGEMENT_SERVER_IP - The IP address or FQDN of the central Wazah manager/server.
+  WAZUH_MANGEMENT_SERVER_IP - The IP address or FQDN of the central Wazah manager/server.
 
-    -->
-    <upstream>
-        <remote-id type="github">wazuh/wazuh</remote-id>
-    </upstream>
+  -->
+  <upstream>
+    <remote-id type="github">wazuh/wazuh</remote-id>
+  </upstream>
+  <use>
+    <flag name="audit">
+      Link to the system audit daemon to monitor system events.
+    </flag>
+    <flag name="geoip">
+      Translate the IP address to a geographical approximate location.
+    </flag>
+    <flag name="inotify">
+      Add support for real time FIM (File Integrity Monitoring).
+    </flag>
+    <flag name="jemalloc">
+      Use the high performance jemalloc memory allocator.
+    </flag>
+    <flag name="selinux">
+      Add support to safely containerize the agent's behavior and to allow the
+      agent to read sensitive files.
+    </flag>
+    <flag name="syscat">
+      Build the deprecated CIS-CAT module used for audit/evaluate compliants
+      against CIS benchmarks.
+    </flag>
+    <flag name="syscollector">
+      Build the Syscollector module for gathering system info (hardware specs,
+      running process, installed processes)
+    </flag>
+  </use>
 </pkgmetadata>
