@@ -1610,7 +1610,7 @@ diff '--color=auto' -urp wazuh-4.14.9.orig/src/syscheckd/src/whodata/syscheck_au
  #ifdef __linux__
  #include "syscheck_audit.h"
 -#include "../external/procps/readproc.h"
-+#include <procps/readproc.h>
++#include <libproc2/readproc.h>
  
  #include <sys/socket.h>
  #include <sys/un.h>
@@ -1713,7 +1713,7 @@ diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/syscheckd/whodata/test
  #include "wrappers/wazuh/syscheckd/audit_rule_handling_wrappers.h"
  
 -#include "../../../external/procps/readproc.h"
-+#include <procps/readproc.h>
++#include <libproc2/readproc.h>
  
  extern atomic_int_t audit_health_check_creation;
  extern atomic_int_t hc_thread_active;
@@ -1769,7 +1769,7 @@ diff '--color=auto' -urp wazuh-4.14.9.orig/src/unit_tests/wrappers/externals/pro
  #define READPROC_WRAPPERS_H
  
 -#include "../external/procps/readproc.h"
-+#include <procps/readproc.h>
++#include <libproc2/readproc.h>
  
  void __wrap_closeproc(PROCTAB* PT);
  
