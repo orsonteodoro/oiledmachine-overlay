@@ -434,6 +434,7 @@ SECURE_TIMESTAMP["sys_auth_pambase_999999999"]="Nov 4, 2025 1:38 AM PST"
 SECURE_TIMESTAMP["sys_auth_polkit_9999"]="May 11, 2026 9:29 AM PDT"
 SECURE_TIMESTAMP["sys_auth_seatd_9999"]="Apr 20, 2026 5:27 AM PDT"
 SECURE_TIMESTAMP["sys_devel_binutils_9999"]="Sat, 8 Aug 2026 17:00:08 -0700" # For a list of exes, do `ls /usr/*-pc-linux-*/binutils-bin/9999`
+SECURE_TIMESTAMP["sys_fs_btrfs_progs_9999"]="Jul 14, 2026 3:41 PM PDT"
 SECURE_TIMESTAMP["sys_kernel_linux_next_9999"]="2026-10-14 08:23:37 -0700"
 SECURE_TIMESTAMP["sys_kernel_ot_sources_7_3_9999"]="2026-10-14 08:23:37 -0700"
 SECURE_TIMESTAMP["sys_kernel_raspberrypi_image_9999"]="Oct 5, 2026 9:51 AM PDT"
