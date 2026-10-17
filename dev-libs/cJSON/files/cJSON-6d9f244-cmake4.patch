@@ -1,0 +1,10 @@
+diff '--color=auto' -urp cJSON-9999.orig/CMakeLists.txt cJSON-9999/CMakeLists.txt
+--- cJSON-9999.orig/CMakeLists.txt	2026-10-16 17:15:04.220653868 -0700
++++ cJSON-9999/CMakeLists.txt	2026-10-16 17:15:37.432431458 -0700
+@@ -1,5 +1,5 @@
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+-cmake_minimum_required(VERSION 3.5)
++cmake_minimum_required(VERSION 3.10)
+ 
+ project(cJSON
+     VERSION 1.7.19

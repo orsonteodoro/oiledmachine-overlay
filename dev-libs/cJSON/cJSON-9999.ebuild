@@ -8,11 +8,22 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO UAF"
 
 inherit cflags-hardened cmake-multilib
 
-KEYWORDS="~amd64 ~arm64"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="c859b25da02955fef659d658b8f324b5cde87be3"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/DaveGamble/cJSON.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
 https://github.com/DaveGamble/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
+
+KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Ultralightweight JSON parser in ANSI C"
 HOMEPAGE="https://github.com/DaveGamble/cJSON"
@@ -28,8 +39,20 @@ test
 ebuild_revision_23
 "
 PATCHES=(
-	"${FILESDIR}"/${PV}-cmake4.patch
+	"${FILESDIR}/${PN}-6d9f244-cmake4.patch"
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
+
+}
 
 src_prepare() {
 	cmake_src_prepare
