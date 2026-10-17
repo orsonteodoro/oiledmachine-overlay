@@ -105,7 +105,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 -big-endian -geoip -inotify openrc selinux +sysc +syscat -system-libs systemd
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -435,7 +435,7 @@ ewarn "Skipping install of ${x}"
 		if [[ -L "${x}" ]] ; then
 			local b=$(basename "${x}")
 einfo "Installing symlink ${b}"
-			cp -a "${x}" "${ED}${ossec}/lib/"
+			cp -a "${x}" "${ED}${ossec}/lib/" || die
 		else
 einfo "Installing lib ${x}"
 			doexe "${x}"
