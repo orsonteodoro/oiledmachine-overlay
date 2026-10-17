@@ -1,0 +1,109 @@
+diff '--color=auto' -urp procps-ng-9999.orig/library/pids.c procps-ng-9999/library/pids.c
+--- procps-ng-9999.orig/library/pids.c	2026-10-17 07:10:11.898311891 -0700
++++ procps-ng-9999/library/pids.c	2026-10-17 07:14:42.170709543 -0700
+@@ -1518,8 +1518,10 @@ fresh_start:
+         pids_containers_check();
+ 
+     info->boot_tics = 0;
++#ifdef CLOCK_BOOTTIME
+     if (0 >= clock_gettime(CLOCK_BOOTTIME, &ts))
+         info->boot_tics = (ts.tv_sec + ts.tv_nsec * 1.0e-9) * info->hertz;
++#endif
+ 
+     if (NULL == info->read_something(info->get_PT, &info->get_proc))
+         return NULL;
+@@ -1562,8 +1564,10 @@ PROCPS_EXPORT struct pids_fetch *procps_
+     info->read_something = which ? readeither : readproc;
+ 
+     info->boot_tics = 0;
++#ifdef CLOCK_BOOTTIME
+     if (0 >= clock_gettime(CLOCK_BOOTTIME, &ts))
+         info->boot_tics = (ts.tv_sec + ts.tv_nsec * 1.0e-9) * info->hertz;
++#endif
+ 
+     rc = pids_stacks_fetch(info);
+ 
+@@ -1671,8 +1675,10 @@ PROCPS_EXPORT struct pids_fetch *procps_
+     info->read_something = (which & PIDS_FETCH_THREADS_TOO) ? readeither : readproc;
+ 
+     info->boot_tics = 0;
++#ifdef CLOCK_BOOTTIME
+     if (0 >= clock_gettime(CLOCK_BOOTTIME, &ts))
+         info->boot_tics = (ts.tv_sec + ts.tv_nsec * 1.0e-9) * info->hertz;
++#endif
+ 
+     rc = pids_stacks_fetch(info);
+ 
+Only in procps-ng-9999/library: pids.c.orig
+Only in procps-ng-9999/library: pids.c.rej
+diff '--color=auto' -urp procps-ng-9999.orig/library/readproc.c procps-ng-9999/library/readproc.c
+--- procps-ng-9999.orig/library/readproc.c	2026-10-17 07:10:11.898311891 -0700
++++ procps-ng-9999/library/readproc.c	2026-10-17 07:13:57.739982380 -0700
+@@ -1755,7 +1755,11 @@ pid_t look_up_our_self (void) {
+     pid_t tid;
+     int fd;
+ 
++#ifdef O_PATH
+     fd = open("/proc/self", O_PATH|O_DIRECTORY);
++#else
++    fd = open("/proc/self", O_DIRECTORY);
++#endif
+     if(fd < 0 || file2str(fd, "stat", &ub) == -1) {
+         fprintf(stderr, "Error, do this: mount -t proc proc /proc\n");
+         _exit(47);
+Only in procps-ng-9999/library: readproc.c.orig
+Only in procps-ng-9999/library: readproc.c.rej
+diff '--color=auto' -urp procps-ng-9999.orig/library/uptime.c procps-ng-9999/library/uptime.c
+--- procps-ng-9999.orig/library/uptime.c	2026-10-17 07:10:11.905221139 -0700
++++ procps-ng-9999/library/uptime.c	2026-10-17 07:11:00.315780683 -0700
+@@ -181,8 +181,12 @@ PROCPS_EXPORT int procps_container_uptim
+     if (!uptime_secs)
+         return 0; //valid, but odd call
+ 
++#ifdef CLOCK_BOOTTIME
+     if ( (rv = clock_gettime(CLOCK_BOOTTIME, &tp) < 0))
+         return rv;
++#else
++        return -1;
++#endif
+ 
+     if ( (rv = procps_pids_new(&info, items, 1) < 0))
+         return rv;
+Only in procps-ng-9999/library: uptime.c.orig
+diff '--color=auto' -urp procps-ng-9999.orig/src/top/top.c procps-ng-9999/src/top/top.c
+--- procps-ng-9999.orig/src/top/top.c	2026-10-17 07:10:11.973224931 -0700
++++ procps-ng-9999/src/top/top.c	2026-10-17 07:11:00.316734560 -0700
+@@ -2832,6 +2832,8 @@ static void *tasks_refresh (void *unused
+       while (sem_wait(&Semaphore_tasks_beg) == -1 && errno == EINTR)
+          ;
+ #endif
++
++#ifdef CLOCK_BOOTTIME
+       if (0 != clock_gettime(CLOCK_BOOTTIME, &ts))
+          Frame_etscale = 0;
+       else {
+@@ -2842,6 +2844,10 @@ static void *tasks_refresh (void *unused
+          // if in Solaris mode, adjust our scaling for all cpus
+          Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
+       }
++#else
++         Frame_etscale = 0;
++
++#endif
+       what = Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
+       if (Monpidsidx) {
+          what |= PIDS_SELECT_PID;
+Only in procps-ng-9999/src/top: top.c.orig
+diff '--color=auto' -urp procps-ng-9999.orig/testsuite/ps.test/test-hugetlb.c procps-ng-9999/testsuite/ps.test/test-hugetlb.c
+--- procps-ng-9999.orig/testsuite/ps.test/test-hugetlb.c	2026-10-17 07:10:11.981462188 -0700
++++ procps-ng-9999/testsuite/ps.test/test-hugetlb.c	2026-10-17 07:11:00.317390288 -0700
+@@ -63,7 +63,7 @@ int main(int argc, const char *argv[])
+         usage(argv[0], "Invalid size");
+ 
+     if (MAP_FAILED == (addr = mmap(NULL, (kbytes*1024), (PROT_READ | PROT_WRITE),
+-                    (MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB), 0, 0))) {
++                    (MAP_PRIVATE | MAP_ANONYMOUS), 0, 0))) {
+         perror("mmap");
+         exit(EXIT_FAILURE);
+     }
+Only in procps-ng-9999/testsuite/ps.test: test-hugetlb.c.orig

@@ -819,7 +819,7 @@ diff '--color=auto' -urp wazuh-4.14.9.orig/src/Makefile wazuh-4.14.9/src/Makefil
 -		mv *.o libwazuhext/; \
 -	done
 -	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -latomic -lm
-+	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -latomic -lm $()
++	$(OSSEC_SHARED) $(OSSEC_CFLAGS) libwazuhext/*.o -o $@ -static-libgcc -latomic -lm $(EXTERNAL_LIBS)
  else
  ifeq (${uname_S},HP-UX)
 -$(WAZUHEXT_LIB): $(EXTERNAL_LIBS)

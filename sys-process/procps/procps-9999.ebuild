@@ -14,7 +14,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools chkl flag-o-matic multilib-minimal verify-sig secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="cbe5f3fe3d5a3409666b067c89b16b3c692380d8"
+	FALLBACK_COMMIT="9bd4021f13bc3148e5753d4195669917dad14135"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-ng-${PV}"
 	EGIT_REPO_URI="https://gitlab.com/procps-ng/procps.git"
@@ -41,7 +41,10 @@ S="${WORKDIR}"/${PN}-ng-${PV}
 LICENSE="GPL-2+ LGPL-2+ LGPL-2.1+"
 SLOT="0/1-ng"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
-IUSE+=" elogind +kill modern-top +ncurses nls selinux static-libs skill systemd test unicode"
+IUSE+="
+elogind +kill modern-top +ncurses nls selinux static-libs skill systemd test unicode
+ebuild_revision_3
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="
@@ -74,7 +77,7 @@ QA_CONFIG_IMPL_DECL_SKIP=( makedev )
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-4.0.5-sysctl-manpage.patch # bug #565304
-	"${FILESDIR}"/${PN}-4.0.6-hurd.patch
+	"${FILESDIR}"/${PN}-9bd4021-hurd.patch
 )
 
 src_prepare() {
@@ -183,6 +186,10 @@ multilib_src_install() {
 		rm "${ED}"/usr/bin/{uptime,vmstat} || die
 		rm "${ED}"/bin/ps || die
 	fi
+
+	# Install header for app-admin/wazuh-agent[system-libs]
+	insinto "/usr/include/libproc2"
+	doins "${S}/library/include/readproc.h"
 }
 
 multilib_src_install_all() {

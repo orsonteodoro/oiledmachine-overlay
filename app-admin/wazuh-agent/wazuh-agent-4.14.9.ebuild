@@ -307,26 +307,23 @@ einfo "OSSEC_CFLAGS:  ${all_cflags}"
 einfo "OSSEC_CXXFLAGS:  ${all_cxxflags}"
 einfo "OSSEC_LDFLAGS:  ${all_ldflags}"
 
-	local myconf=(
-		V=1
-		TARGET=agent
-		DISABLE_SYSC=$(usex sysc '0' '1')
-		DISABLE_SYSCAT=$(usex syscat '0' '1')
-		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1')
-		USE_BIG_ENDIAN=$(usex big-endian '1' '')
-		USE_GEOIP=$(usex geoip '1' '')
-		USE_INOTIFY=$(usex inotify '1' '0')
-		USE_SELINUX=$(usex selinux '1' '')
-		CC="$(tc-getCC)"
-		CXX="$(tc-getCXX)"
-		OSSEC_CFLAGS="${all_cflags}"
-		OSSEC_LDFLAGS="${all_ldflags}"
-		AR_LDFLAGS="${all_ldflags}"
-		CMAKE_OPTS="-DCMAKE_C_FLAGS=${all_cflags} -DCMAKE_CXX_FLAGS=${all_cxxflags} -DCMAKE_EXE_LINKER_FLAGS=${all_ldflags} -DCMAKE_SHARED_LINKER_FLAGS=${all_ldflags} -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
-	)
-
-	emake "${myconf[@]}" settings
-	emake "${myconf[@]}" build
+	emake \
+		V=1 \
+		TARGET=agent \
+		DISABLE_SYSC=$(usex sysc '0' '1') \
+		DISABLE_SYSCAT=$(usex syscat '0' '1') \
+		EXTERNAL_SRC_ONLY=$(usex system-libs '0' '1') \
+		USE_BIG_ENDIAN=$(usex big-endian '1' '') \
+		USE_GEOIP=$(usex geoip '1' '') \
+		USE_INOTIFY=$(usex inotify '1' '0') \
+		USE_SELINUX=$(usex selinux '1' '') \
+		CC="$(tc-getCC)" \
+		CXX="$(tc-getCXX)" \
+		OSSEC_CFLAGS="${all_cflags}" \
+		OSSEC_LDFLAGS="${all_ldflags}" \
+		AR_LDFLAGS="${all_ldflags}" \
+		CMAKE_OPTS="-DCMAKE_C_FLAGS=\"${all_cflags}\" -DCMAKE_CXX_FLAGS=\"${all_cxxflags}\" -DCMAKE_EXE_LINKER_FLAGS=\"${all_ldflags}\" -DCMAKE_SHARED_LINKER_FLAGS=\"${all_ldflags}\" -DCMAKE_POSITION_INDEPENDENT_CODE=ON" \
+		build
 }
 
 src_install() {
