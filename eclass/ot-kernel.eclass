@@ -481,7 +481,7 @@ VULNERABILITIES_FIXED=(
 
 # For the current month
 	"CVE-2026-89603;RC, IV;Rejected"
-	"CVE-2026-99999;PwnEscape, VME, CE, IV, DoS, DT, ID;Critical"
+	"CVE-2026-99999;PwnEscape, EBR, VME, CE, IV, DoS, DT, ID;Critical"
 	"CVE-2026-98432;RC;"
 
 	"CVE-2026-98414;;"
