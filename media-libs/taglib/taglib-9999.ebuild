@@ -10,7 +10,7 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="2ada48a77f9b5158f6a4313ed7a90de8efc4eb75"
+	FALLBACK_COMMIT="55ceae49ba0882d4c514a1828a7e3f0ad2c75d30"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/taglib/taglib.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -28,7 +28,10 @@ HOMEPAGE="https://taglib.org"
 LICENSE="LGPL-2.1 MPL-1.1"
 SOVER="2"
 SLOT="0/${SOVER}"
-IUSE+=" doc examples test"
+IUSE+="
+doc examples test
+ebuild_revision_2
+"
 
 RESTRICT="!test? ( test )"
 
