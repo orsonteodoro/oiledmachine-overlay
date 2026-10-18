@@ -16,7 +16,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl flag-o-matic multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="a1b872e6704cc5825750098ce0e0c0b4aacaef4d"
+	FALLBACK_COMMIT="f461ff44072493dde26d72862921ab5d30180cd4"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.xiph.org/xiph/speex.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -51,7 +51,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 utils valgrind +vbr
-ebuild_revision_24
+ebuild_revision_26
 "
 RDEPEND="
 	utils? (
