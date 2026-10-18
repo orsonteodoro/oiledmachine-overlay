@@ -2859,7 +2859,7 @@ PATCHES=(
 )
 
 LLAMA_CPP_PATCHES=(
-	"${FILESDIR}/llama-cpp-b11232-custom-cpu-features.patch"
+	"${FILESDIR}/llama-cpp-b11669-custom-cpu-features.patch"
 	"${FILESDIR}/llama-cpp-b9509-cuda-not-fatal.patch"
 )
 
