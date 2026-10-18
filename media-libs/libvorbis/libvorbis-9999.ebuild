@@ -13,7 +13,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="e3c9861ff096d52378e131ff8c334552e09cdffa"
+	FALLBACK_COMMIT="1b75110b5a2754ba1931d82dd83cb822b266a21d"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.xiph.org/xiph/vorbis.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -32,7 +32,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE+="
 static-libs test
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
 
