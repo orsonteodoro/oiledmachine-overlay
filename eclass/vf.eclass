@@ -250,6 +250,9 @@ einfo "DT = Data Tampering"
 #
 einfo "DZ = Drop Zone"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EBR")($|" "|";"|",") ]] ; then
+einfo "EBR = Extended Blast Radius"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EM"|"EMA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
@@ -471,15 +474,6 @@ einfo "LI = Log Injection"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"LPE"($|" "|";"|",") ]] ; then
 einfo "LPE = Local Privilege Escalation"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MBV"($|" "|";"|",") ]] ; then
-# Deprecated
-# See also ObO, Ob1, ObIO, OE, BOR, BUR
-# Includes heap/stack overread/overwrite/underread/overwrite
-# Includes off-by-one read/write
-# Includes reads/writes by incorrect offset
-# Same as CWE-119
-einfo "MBV = Memory Bounds Violation"
-		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"MC"($|" "|";"|",") ]] ; then
 # Use for RAM storage
 einfo "MC = Memory Corruption"
@@ -509,8 +503,9 @@ einfo "NSS = Not Sufficiently Secure"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("Ob1"|"OB1")($|" "|";"|",") ]] ; then
 einfo "Ob1 = Off-by-one"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ObO"|"OBO")($|" "|";"|",") ]] ; then
-einfo "ObO = Off-by-one"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ObM"|"OBM")($|" "|";"|",") ]] ; then
+# Similar to Ob1 but with larger increment
+einfo "ObM = Off-by-many"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OE"($|" "|";"|",") ]] ; then
 # Same as incorrect offset
