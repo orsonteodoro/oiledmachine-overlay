@@ -5,13 +5,32 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical"
 
+MY_TESTDATA_COMMIT="39524bd3a601d90ed8e0177559400d23945f96a9"
+
 CHKL_TIMESTAMPS=(
 	"media-libs/lcms-9999"
 	"media-libs/libpng-9999"
 	"media-libs/tiff-9999"
 )
 
-inherit cflags-hardened chkl cmake-multilib flag-o-matic
+inherit cflags-hardened chkl cmake-multilib flag-o-matic secure-version
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="8314119b067c0fc77834731168daaebd379fdb12"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/uclouvain/openjpeg.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="
+https://github.com/uclouvain/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	test? (
+https://github.com/uclouvain/openjpeg-data/archive/${MY_TESTDATA_COMMIT}.tar.gz -> ${PN}-data_20241113.tar.gz
+	)
+"
+fi
 
 # Make sure that test data are not newer than release;
 # otherwise we will see "Found-But-No-Test" test failures!
@@ -19,24 +38,20 @@ inherit cflags-hardened chkl cmake-multilib flag-o-matic
 # To update: Go to https://github.com/uclouvain/openjpeg-data and grab the hash
 # of the latest possible commit whose commit date is older than the release
 # date.
-MY_TESTDATA_COMMIT="39524bd3a601d90ed8e0177559400d23945f96a9"
 
 DESCRIPTION="Open-source JPEG 2000 library"
 HOMEPAGE="https://www.openjpeg.org"
-SRC_URI="https://github.com/uclouvain/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	test? ( https://github.com/uclouvain/openjpeg-data/archive/${MY_TESTDATA_COMMIT}.tar.gz -> ${PN}-data_20241113.tar.gz )"
-
 LICENSE="BSD-2"
 SLOT="2/7" # based on SONAME
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="doc test"
+IUSE+=" doc test"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	>=media-libs/lcms-9999:2=
-	>=media-libs/libpng-1.6.57:0=
-	>=media-libs/tiff-9999:=
-	>=virtual/zlib-1.3.2:=
+	>=media-libs/lcms-${LCMS_PV}:=
+	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=media-libs/tiff-${TIFF_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 "
 DEPEND="${RDEPEND}"
 BDEPEND="doc? ( app-text/doxygen )"
@@ -44,9 +59,19 @@ BDEPEND="doc? ( app-text/doxygen )"
 DOCS=( AUTHORS.md CHANGELOG.md NEWS.md README.md THANKS.md )
 
 PATCHES=(
-	"${FILESDIR}/${P}-cmake4.patch"
-	"${FILESDIR}/${P}-overflow.patch"
 )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
+
+}
 
 src_prepare() {
 	if use test; then
@@ -59,8 +84,8 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	append-lfs-flags
 	chkl_check_many_timestamps
+	append-lfs-flags
 	cflags-hardened_append
 
 	local mycmakeargs=(
