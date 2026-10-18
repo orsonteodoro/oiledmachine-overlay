@@ -25,7 +25,7 @@ DESCRIPTION="Linux-PAM (Pluggable Authentication Modules)"
 HOMEPAGE="https://github.com/linux-pam/linux-pam"
 
 if [[ ${PV} == *9999 ]] ; then
-	FALLBACK_COMMIT="dd74fc113a9ba1f94d5469f6f7857a1884b3f550"
+	FALLBACK_COMMIT="584ef2275254016ee68126f90dab6df3604124b9"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/linux-pam/linux-pam.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -56,7 +56,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE+="
 audit berkdb elogind examples debug nis nls selinux systemd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="?? ( elogind systemd )"
 
