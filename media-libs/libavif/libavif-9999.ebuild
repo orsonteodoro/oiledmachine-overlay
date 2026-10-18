@@ -21,7 +21,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib gnome2-utils secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ea160ac56df44c571cd5781cbc24b2aeb1419b46"
+	FALLBACK_COMMIT="b1e4d339c1ff5b547664c85f1713279f4997d694"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/AOMediaCodec/libavif.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -48,7 +48,7 @@ LICENSE="
 
 IUSE+="
 +aom dav1d examples extras gdk-pixbuf rav1e svt-av1 libyuv test
-ebuild_revision_3
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 REQUIRED_USE="|| ( aom dav1d )"
