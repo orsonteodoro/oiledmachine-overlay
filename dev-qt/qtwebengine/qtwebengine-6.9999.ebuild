@@ -74,6 +74,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"
 	"media-libs/mesa-9999"
 	"media-libs/openh264-9999"
+	"media-libs/openjpeg-9999"
 	"media-libs/opus-9999"
 	"media-libs/tiff-9999"
 	"media-video/pipewire-9999"

@@ -33,6 +33,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"
 	"media-libs/libwmf-9999"
 	"media-libs/openexr-9999"
+	"media-libs/openjpeg-9999"
 	"media-libs/tiff-9999"
 	"sys-libs/libunwind-9999"
 	"x11-libs/cairo-9999"

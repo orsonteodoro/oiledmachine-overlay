@@ -441,6 +441,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libvpx-9999"
 	"media-libs/libwebp-9999"
 	"media-libs/openh264-9999"
+	"media-libs/openjpeg-9999"
 	"media-libs/opus-9999"
 	"media-libs/speex-9999"
 	"media-libs/svt-av1-9999"

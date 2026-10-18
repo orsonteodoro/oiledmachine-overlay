@@ -21,6 +21,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libraw-9999"
 	"media-libs/libyuv-9999"
 	"media-libs/libwebp-9999"
+	"media-libs/openjpeg-9999"
 	"media-libs/tiff-9999"
 	"x11-libs/libX11-9999"
 	"x11-libs/libxcb-9999"

@@ -72,6 +72,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libultrahdr-9999"
 	"media-libs/libwebp-9999"
 	"media-libs/openexr-9999"
+	"media-libs/openjpeg-9999"
 	"media-libs/tiff-9999"
 	"x11-libs/cairo-9999"
 )

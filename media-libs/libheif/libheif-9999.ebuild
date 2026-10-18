@@ -32,6 +32,7 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libwebp-9999"
 	"media-libs/tiff-9999"
 	"media-libs/openh264-9999"
+	"media-libs/openjpeg-9999"
 	"media-libs/openjph-9999"
 	"media-libs/svt-av1-9999"
 	"media-libs/uvg266-9999"
