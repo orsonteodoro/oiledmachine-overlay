@@ -47,7 +47,7 @@ RDEPEND="
 	>=dev-libs/glib-${GLIB_PV}:=
 	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}:=
 	>=dev-libs/libxml2-${LIBXML2_PV}:=
-	>=media-libs/libdicom-1.0.5:=
+	>=media-libs/libdicom-1.3.0:=
 	>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}:=
 	>=media-libs/libpng-${LIBPNG_PV}:=
 	>=media-libs/openjpeg-${OPENJPEG_PV}:=

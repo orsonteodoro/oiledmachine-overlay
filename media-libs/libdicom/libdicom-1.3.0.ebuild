@@ -31,7 +31,7 @@ test
 ebuild_revision_18
 "
 RDEPEND="
-	dev-libs/uthash
+	dev-libs/uthash:=
 "
 DEPEND="
 	${RDEPEND}
