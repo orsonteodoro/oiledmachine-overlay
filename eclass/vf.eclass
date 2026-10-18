@@ -691,8 +691,20 @@ einfo "UAF = Use After Free"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UAR"($|" "|";"|",") ]] ; then
 einfo "UAR = Use After Return"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UARR"($|" "|";"|",") ]] ; then
+einfo "UARR = Uninitialized Array"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UB"($|" "|";"|",") ]] ; then
 einfo "UB = Undefined Behavior"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UBMA"($|" "|";"|",") ]] ; then
+einfo "UBMA = Unbounded Memory Allocation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UBRA"($|" "|";"|",") ]] ; then
+einfo "UBRA = Unbounded Resource Allocation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UBRECUR"($|" "|";"|",") ]] ; then
+einfo "UBRECUR = Unbounded Recursion"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UESE"($|" "|";"|",") ]] ; then
 # Taxonomic name
@@ -704,6 +716,9 @@ einfo "UESE = UnExpected Sign Extension"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UF"($|" "|";"|",") ]] ; then
 einfo "UF = Underflow"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFNPTR"($|" "|";"|",") ]] ; then
+einfo "UFNPTR = Uninitialized Function Pointer"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UI"($|" "|";"|",") ]] ; then
 # Deprecated use SAV
 einfo "UI = UI Spoofing"
@@ -713,27 +728,32 @@ einfo "UI = UI Spoofing"
 # UM should typically used when ID possible for proper association/implication.
 einfo "UM = Uninitialized Memory"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UP"($|" "|";"|",") ]] ; then
-einfo "UP = Uninitialized Pointer"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UMVAR"($|" "|";"|",") ]] ; then
+einfo "UMVAR = Uninitialized Member Variable"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"US"($|" "|";"|",") ]] ; then
-einfo "US = Unterminated String"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"USI"($|" "|";"|",") ]] ; then
-einfo "USI = UnSanitized Input"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UV"($|" "|";"|",") ]] ; then
-# Deprecated.  Use UVAL
-einfo "UV = Uninitialized Value"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UOBJ"($|" "|";"|",") ]] ; then
+einfo "UOBJ = Uninitialized Object"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UPTR"($|" "|";"|",") ]] ; then
 einfo "UPTR = Uninitialized Pointer"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFNPTR"($|" "|";"|",") ]] ; then
-einfo "UFNPTR = Uninitialized Function Pointer"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"URES"($|" "|";"|",") ]] ; then
+einfo "URES = Uninitialized Resource"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UMVAR"($|" "|";"|",") ]] ; then
-einfo "UMVAR = Uninitialized Member Variable"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UTB"($|" "|";"|",") ]] ; then
+einfo "UTB = Unterminated Buffer"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UTS"($|" "|";"|",") ]] ; then
+einfo "UTS = Unterminated String"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"USI"($|" "|";"|",") ]] ; then
+einfo "USI = UnSanitized Input"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"USM"($|" "|";"|",") ]] ; then
+einfo "USM = Uninitialized Struct Member"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UUM"($|" "|";"|",") ]] ; then
+einfo "UUM = Use of Uninitialized Memory"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAL"($|" "|";"|",") ]] ; then
 einfo "UVAL = Uninitialized Value"
@@ -742,7 +762,7 @@ einfo "UVAL = Uninitialized Value"
 einfo "UVAR = Uninitialized Variable"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"VME"($|" "|";"|",") ]] ; then
-einfo "VME = VM Escape"
+einfo "VME = Virtual Machine Escape"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("WARN")($|" "|";"|",") ]] ; then
 einfo "WARN = Panic On Warning"
