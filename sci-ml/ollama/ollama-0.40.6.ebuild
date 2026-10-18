@@ -29,6 +29,7 @@ EAPI=8
 # 0.32.4 -> 0.35.1
 # 0.35.1 -> 0.40.3 # TODO:  Update models in patch
 # 0.40.3 -> 0.40.4 # TODO:  Update models in patch
+# 0.40.4 -> 0.40.6 # TODO:  Update models in patch
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -64,14 +65,14 @@ EGO_PN="github.com/ollama/ollama"
 GEN_EBUILD=0
 LLAMA_CPP_UPDATE=0
 
-LLAMA_CPP_TAG="b11521" # See https://github.com/ollama/ollama/blob/v0.40.4/LLAMA_CPP_VERSION
+LLAMA_CPP_TAG="b11669" # See https://github.com/ollama/ollama/blob/v0.40.6/LLAMA_CPP_VERSION
 
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.40.4/CMakePresets.json#L71
-# CUDA:  https://github.com/ollama/ollama/blob/v0.40.4/CMakePresets.json#L33
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.40.4/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.40.6/CMakePresets.json#L71
+# CUDA:  https://github.com/ollama/ollama/blob/v0.40.6/CMakePresets.json#L33
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.40.6/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	"gfx908_xnack_minus"
 	"gfx908_xnack_plus"
@@ -171,7 +172,7 @@ CPU_FLAGS_X86=(
 )
 
 CUDA_FATTN_TARGETS_COMPAT=(
-# https://github.com/ollama/ollama/blob/v0.40.4/discover/types.go#L173
+# https://github.com/ollama/ollama/blob/v0.40.6/discover/types.go#L173
 	"sm_75"
 	"sm_80"
 	"sm_86"
@@ -682,6 +683,8 @@ else
 		"github.com/aymanbagabas/go-udiff v0.2.0/go.mod"
 		"github.com/bahlo/generic-list-go v0.2.0"
 		"github.com/bahlo/generic-list-go v0.2.0/go.mod"
+		"github.com/bits-and-blooms/bitset v1.22.0"
+		"github.com/bits-and-blooms/bitset v1.22.0/go.mod"
 		"github.com/buger/jsonparser v1.1.1"
 		"github.com/buger/jsonparser v1.1.1/go.mod"
 		"github.com/bytedance/sonic/loader v0.1.1"
@@ -739,11 +742,15 @@ else
 		"github.com/gin-gonic/gin v1.9.1/go.mod"
 		"github.com/goccy/go-json v0.10.2"
 		"github.com/goccy/go-json v0.10.2/go.mod"
+		"github.com/golang/protobuf v1.5.0"
+		"github.com/golang/protobuf v1.5.0/go.mod"
 		"github.com/google/go-cmp v0.5.5"
+		"github.com/google/go-cmp v0.5.5/go.mod"
 		"github.com/google/go-cmp v0.6.0"
 		"github.com/google/go-cmp v0.6.0/go.mod"
 		"github.com/google/go-cmp v0.7.0"
 		"github.com/google/go-cmp v0.7.0/go.mod"
+		"github.com/google/gofuzz v1.0.0"
 		"github.com/google/gofuzz v1.0.0/go.mod"
 		"github.com/google/uuid v1.6.0"
 		"github.com/google/uuid v1.6.0/go.mod"
@@ -757,15 +764,19 @@ else
 		"github.com/go-playground/validator/v10 v10.20.0/go.mod"
 		"github.com/inconshreveable/mousetrap v1.1.0"
 		"github.com/inconshreveable/mousetrap v1.1.0/go.mod"
+		"github.com/josharian/intern v1.0.0"
 		"github.com/josharian/intern v1.0.0/go.mod"
 		"github.com/json-iterator/go v1.1.12"
 		"github.com/json-iterator/go v1.1.12/go.mod"
 		"github.com/klauspost/compress v1.18.3"
 		"github.com/klauspost/compress v1.18.3/go.mod"
+		"github.com/klauspost/cpuid/v2 v2.0.9"
 		"github.com/klauspost/cpuid/v2 v2.0.9/go.mod"
 		"github.com/klauspost/cpuid/v2 v2.2.7"
 		"github.com/klauspost/cpuid/v2 v2.2.7/go.mod"
+		"github.com/knz/go-libedit v1.10.1"
 		"github.com/knz/go-libedit v1.10.1/go.mod"
+		"github.com/kr/pretty v0.1.0"
 		"github.com/kr/pretty v0.1.0/go.mod"
 		"github.com/kr/pretty v0.2.1"
 		"github.com/kr/pretty v0.2.1/go.mod"
@@ -800,6 +811,7 @@ else
 		"github.com/mattn/go-runewidth v0.0.9/go.mod"
 		"github.com/mattn/go-sqlite3 v1.14.24"
 		"github.com/mattn/go-sqlite3 v1.14.24/go.mod"
+		"github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421"
 		"github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod"
 		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd"
 		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod"
@@ -819,6 +831,7 @@ else
 		"github.com/pelletier/go-toml/v2 v2.2.2/go.mod"
 		"github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c"
 		"github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c/go.mod"
+		"github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e"
 		"github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod"
 		"github.com/pmezard/go-difflib v1.0.0"
 		"github.com/pmezard/go-difflib v1.0.0/go.mod"
@@ -826,6 +839,7 @@ else
 		"github.com/rivo/uniseg v0.2.0/go.mod"
 		"github.com/rivo/uniseg v0.4.7"
 		"github.com/rivo/uniseg v0.4.7/go.mod"
+		"github.com/rogpeppe/go-internal v1.6.1"
 		"github.com/rogpeppe/go-internal v1.6.1/go.mod"
 		"github.com/rogpeppe/go-internal v1.8.0"
 		"github.com/rogpeppe/go-internal v1.8.0/go.mod"
@@ -850,6 +864,7 @@ else
 		"github.com/stretchr/testify v1.8.0/go.mod"
 		"github.com/stretchr/testify v1.8.1"
 		"github.com/stretchr/testify v1.8.1/go.mod"
+		"github.com/stretchr/testify v1.8.4"
 		"github.com/stretchr/testify v1.8.4/go.mod"
 		"github.com/stretchr/testify v1.9.0"
 		"github.com/stretchr/testify v1.9.0/go.mod"
@@ -865,6 +880,8 @@ else
 		"github.com/tree-sitter/go-tree-sitter v0.24.0/go.mod"
 		"github.com/tree-sitter/go-tree-sitter v0.25.0"
 		"github.com/tree-sitter/go-tree-sitter v0.25.0/go.mod"
+		"github.com/tree-sitter/tree-sitter-cpp v0.22.4-0.20240818224355-b1a4e2b25148"
+		"github.com/tree-sitter/tree-sitter-cpp v0.22.4-0.20240818224355-b1a4e2b25148/go.mod"
 		"github.com/tree-sitter/tree-sitter-cpp v0.23.4"
 		"github.com/tree-sitter/tree-sitter-cpp v0.23.4/go.mod"
 		"github.com/tree-sitter/tree-sitter-c v0.21.5-0.20240818205408-927da1f210eb"
@@ -921,11 +938,17 @@ else
 		"github.com/x448/float16 v0.8.4/go.mod"
 		"github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e"
 		"github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod"
+		"github.com/yuin/goldmark v1.4.13/go.mod"
+		"golang.org/x/arch v0.0.0-20210923205945-b76863e36670"
 		"golang.org/x/arch v0.0.0-20210923205945-b76863e36670/go.mod"
 		"golang.org/x/arch v0.7.0"
 		"golang.org/x/arch v0.7.0/go.mod"
 		"golang.org/x/arch v0.8.0"
 		"golang.org/x/arch v0.8.0/go.mod"
+		"golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod"
+		"golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod"
+		"golang.org/x/crypto v0.19.0"
+		"golang.org/x/crypto v0.19.0/go.mod"
 		"golang.org/x/crypto v0.22.0"
 		"golang.org/x/crypto v0.22.0/go.mod"
 		"golang.org/x/crypto v0.23.0"
@@ -938,10 +961,20 @@ else
 		"golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa/go.mod"
 		"golang.org/x/image v0.22.0"
 		"golang.org/x/image v0.22.0/go.mod"
+		"golang.org/x/mod v0.23.0"
+		"golang.org/x/mod v0.23.0/go.mod"
 		"golang.org/x/mod v0.28.0"
 		"golang.org/x/mod v0.28.0/go.mod"
 		"golang.org/x/mod v0.30.0"
 		"golang.org/x/mod v0.30.0/go.mod"
+		"golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod"
+		"golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod"
+		"golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod"
+		"golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod"
+		"golang.org/x/net v0.17.0"
+		"golang.org/x/net v0.17.0/go.mod"
+		"golang.org/x/net v0.21.0"
+		"golang.org/x/net v0.21.0/go.mod"
 		"golang.org/x/net v0.24.0"
 		"golang.org/x/net v0.24.0/go.mod"
 		"golang.org/x/net v0.25.0"
@@ -950,27 +983,47 @@ else
 		"golang.org/x/net v0.45.0/go.mod"
 		"golang.org/x/net v0.46.0"
 		"golang.org/x/net v0.46.0/go.mod"
+		"golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod"
+		"golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod"
+		"golang.org/x/sync v0.11.0"
+		"golang.org/x/sync v0.11.0/go.mod"
 		"golang.org/x/sync v0.17.0"
 		"golang.org/x/sync v0.17.0/go.mod"
+		"golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod"
+		"golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod"
 		"golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c"
 		"golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c/go.mod"
+		"golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod"
+		"golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e"
 		"golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod"
 		"golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a"
 		"golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a/go.mod"
+		"golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod"
+		"golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e"
+		"golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e/go.mod"
+		"golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod"
 		"golang.org/x/sys v0.1.0"
 		"golang.org/x/sys v0.1.0/go.mod"
+		"golang.org/x/sys v0.17.0"
+		"golang.org/x/sys v0.17.0/go.mod"
 		"golang.org/x/sys v0.19.0"
 		"golang.org/x/sys v0.19.0/go.mod"
 		"golang.org/x/sys v0.20.0"
 		"golang.org/x/sys v0.20.0/go.mod"
+		"golang.org/x/sys v0.26.0"
+		"golang.org/x/sys v0.26.0/go.mod"
 		"golang.org/x/sys v0.30.0"
 		"golang.org/x/sys v0.30.0/go.mod"
 		"golang.org/x/sys v0.36.0"
 		"golang.org/x/sys v0.36.0/go.mod"
 		"golang.org/x/sys v0.37.0"
 		"golang.org/x/sys v0.37.0/go.mod"
+		"golang.org/x/sys v0.5.0"
 		"golang.org/x/sys v0.5.0/go.mod"
+		"golang.org/x/sys v0.6.0"
 		"golang.org/x/sys v0.6.0/go.mod"
+		"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
+		"golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod"
 		"golang.org/x/term v0.36.0"
 		"golang.org/x/term v0.36.0/go.mod"
 		"golang.org/x/text v0.14.0"
@@ -981,28 +1034,43 @@ else
 		"golang.org/x/text v0.20.0/go.mod"
 		"golang.org/x/text v0.30.0"
 		"golang.org/x/text v0.30.0/go.mod"
+		"golang.org/x/text v0.3.0/go.mod"
+		"golang.org/x/text v0.3.3/go.mod"
+		"golang.org/x/text v0.3.7/go.mod"
 		"golang.org/x/text v0.3.8"
 		"golang.org/x/text v0.3.8/go.mod"
+		"golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod"
+		"golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod"
+		"golang.org/x/tools v0.1.12/go.mod"
+		"golang.org/x/tools v0.30.0"
+		"golang.org/x/tools v0.30.0/go.mod"
 		"golang.org/x/tools v0.37.0"
 		"golang.org/x/tools v0.37.0/go.mod"
 		"golang.org/x/tools v0.38.0"
 		"golang.org/x/tools v0.38.0/go.mod"
+		"golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod"
 		"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543"
+		"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod"
+		"google.golang.org/protobuf v1.26.0-rc.1/go.mod"
 		"google.golang.org/protobuf v1.34.0"
 		"google.golang.org/protobuf v1.34.0/go.mod"
 		"google.golang.org/protobuf v1.34.1"
 		"google.golang.org/protobuf v1.34.1/go.mod"
 		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405"
 		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod"
+		"gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127"
 		"gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod"
 		"gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c"
 		"gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod"
+		"gopkg.in/errgo.v2 v2.1.0"
 		"gopkg.in/errgo.v2 v2.1.0/go.mod"
 		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c"
 		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
 		"gopkg.in/yaml.v3 v3.0.1"
 		"gopkg.in/yaml.v3 v3.0.1/go.mod"
+		"nullprogram.com/x/optparse v1.0.0"
 		"nullprogram.com/x/optparse v1.0.0/go.mod"
+		"rsc.io/pdf v0.1.1"
 		"rsc.io/pdf v0.1.1/go.mod"
 	)
 	go-module_set_globals
@@ -2318,7 +2386,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
-ebuild_revision_146
+ebuild_revision_148
 "
 
 gen_rocm_required_use() {
