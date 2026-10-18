@@ -746,6 +746,9 @@ einfo "UVAL = Uninitialized Value"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAR"($|" "|";"|",") ]] ; then
 einfo "UVAR = Uninitialized Variable"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"VME"($|" "|";"|",") ]] ; then
+einfo "VME = VM Escape"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("WARN")($|" "|";"|",") ]] ; then
 einfo "WARN = Panic On Warning"
 		fi

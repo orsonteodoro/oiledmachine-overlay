@@ -457,8 +457,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Oct 14, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1791725270 # From `date --date="Sun Oct 11, 2026 15:27:50 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
+MITIGATION_DATE="Oct 16, 2026" # Advisory date
+MITIGATION_LAST_UPDATE=1792058408 # From `date --date="Thu Oct 15, 2026 12:00:08 +0200" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -480,6 +480,9 @@ VULNERABILITIES_FIXED=(
 # UBSAN: array-index-out-of-bounds - use panic_on_warn=1
 
 # For the current month
+	"CVE-2026-89603;RC, IV;Rejected"
+	"CVE-2026-99999;PwnEscape, VME, CE, IV, DoS, DT, ID;Critical"
+	"CVE-2026-98432;RC;"
 
 	"CVE-2026-98414;;"
 	"CVE-2026-98413;;"
