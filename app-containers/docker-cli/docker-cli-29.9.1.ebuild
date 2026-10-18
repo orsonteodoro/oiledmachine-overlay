@@ -6,7 +6,11 @@ EAPI=8
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
-inherit cflags-hardened shell-completion go-env go-module secure-version toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-lang/go-9999"
+)
+
+inherit cflags-hardened chkl shell-completion go-env go-module secure-version toolchain-funcs
 
 # update this on every bump
 GIT_COMMIT="dfc520dcc28994c4c699b9b219fd2f5a6bcec0ff"
@@ -37,6 +41,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 }
 

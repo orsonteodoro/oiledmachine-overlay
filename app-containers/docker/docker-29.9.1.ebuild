@@ -8,6 +8,7 @@ CFLAGS_HARDENED_USE_CASES="daemon security-critical sensitive-data untrusted-dat
 CHKL_TIMESTAMPS=(
 	"app-arch/xz-utils-9999"
 	"dev-db/sqlite-9999"
+	"dev-lang/go-9999"
 	"dev-vcs/git-9999"
 	"dev-vcs/git-9999-r1"
 	"dev-vcs/git-9999-r2"

@@ -5,6 +5,11 @@ EAPI=8
 
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon security-critical sensitive-data untrusted-data"
+
+CHKL_TIMESTAMPS=(
+	"dev-lang/go-9999"
+)
+
 inherit cflags-hardened go-env go-module secure-version systemd toolchain-funcs
 
 GIT_REVISION="b7a25261e029d68978bbf290df0a62fc819b3c51"
@@ -31,7 +36,7 @@ RDEPEND="${DEPEND}
 "
 BDEPEND="
 	dev-go/go-md2man
-	>=dev-lang/go-1.26.6:=
+	>=dev-lang/go-${GO_PV}:=
 	virtual/pkgconfig
 "
 
@@ -46,6 +51,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	default
 }
