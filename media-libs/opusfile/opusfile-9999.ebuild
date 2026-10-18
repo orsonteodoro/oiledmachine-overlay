@@ -5,27 +5,47 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 
-inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal
+CHKL_TIMESTAMPS=(
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
+	"dev-libs/openssl-3.4.9999"
+	"media-libs/libogg-9999"
+	"media-libs/opus-9999"
+)
 
-SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
+inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic secure-version multilib-minimal
+
+if [[ "${PV}" == "9999" ]] ; then
+	FALLBACK_COMMIT="6dfd29e7adb87f2e193575fc3fa88cbf1a0b27df"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://gitlab.xiph.org/xiph/opusfile.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
+fi
 
 DESCRIPTION="A high-level decoding and seeking API for .opus files"
 HOMEPAGE="https://www.opus-codec.org/"
 LICENSE="BSD"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64"
-IUSE="
+IUSE+="
 doc fixed-point +float +http libressl static-libs
-ebuild_revision_25
+ebuild_revision_26
 "
-RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
-	media-libs/opus[${MULTILIB_USEDEP}]
+RDEPEND="
+	>=media-libs/libogg-${LIBOGG_PV}:=[${MULTILIB_USEDEP}]
+	>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
 	http? (
 		!libressl? (
-			dev-libs/openssl:0=[${MULTILIB_USEDEP}]
+			$(secure-version_gen_openssl_depends)
 		)
 		libressl? (
-			dev-libs/libressl:0=[${MULTILIB_USEDEP}]
+			>=dev-libs/libressl-${LIBRESSL_PV}:=[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -46,12 +66,26 @@ pkg_setup() {
 	check-compiler-switch_start
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
+
+}
+
 src_prepare() {
 	default
+	eautoreconf
 	multilib_copy_sources
 }
 
 multilib_src_configure() {
+	chkl_check_many_timestamps
 	check-compiler-switch_end
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.

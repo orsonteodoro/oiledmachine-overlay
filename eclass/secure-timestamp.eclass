@@ -19,6 +19,9 @@ _SECURE_TIMESTAMP_ECLASS=1
 
 # This ebuild contains AI inference clarification and info.
 
+# When updating this file, it is better/safer to use the latest commit date for
+# under reported vulnerabilties or if you are at a beginner level.
+
 #
 # Bump policy:
 #
@@ -337,6 +340,7 @@ SECURE_TIMESTAMP["media_libs_openjph_9999"]="Jun 21, 2026 5:45 AM PDT"
 SECURE_TIMESTAMP["media_libs_opensubdiv_9999"]="Aug 12, 2026 7:54 PM PDT"
 SECURE_TIMESTAMP["media_libs_openusd_26_9999"]="Sep 25, 2026 9:23 PM PDT"
 SECURE_TIMESTAMP["media_libs_opus_9999"]="Sep 6, 2026 9:58 AM PDT"
+SECURE_TIMESTAMP["media_libs_opusfile_9999"]="2026-03-28 T14:59:03 -07:00"
 SECURE_TIMESTAMP["media_libs_osl_9999"]="Aug 15, 2026 5:30 PM PDT"
 SECURE_TIMESTAMP["media_libs_rnnoise_9999"]="Sep 2, 2017 5:51 PM PDT"
 SECURE_TIMESTAMP["media_libs_rubberband_9999"]="Oct 25, 2026 9:26 AM PDT"
