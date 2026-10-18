@@ -16,6 +16,8 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib flag-o-matic secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_VERSION="2.5.4"
+	SOMAJOR=$(ver_cut "1" "${INTERNAL_VERSION}")
 	FALLBACK_COMMIT="8314119b067c0fc77834731168daaebd379fdb12"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/uclouvain/openjpeg.git"
@@ -24,6 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
+	SOMAJOR=$(ver_cut "1" "${PV}")
 	SRC_URI="
 https://github.com/uclouvain/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
@@ -42,7 +45,8 @@ fi
 DESCRIPTION="Open-source JPEG 2000 library"
 HOMEPAGE="https://www.openjpeg.org"
 LICENSE="BSD-2"
-SLOT="2/7" # based on SONAME
+SOVER="7"
+SLOT="${SOMAJOR}/${SOVER}" # based on SONAME
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+=" doc test"
 RESTRICT="!test? ( test )"
@@ -70,7 +74,25 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-
+	local pv_a=$(grep -o -E "OPENJPEG_VERSION_MAJOR [0-9]+" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d " ")
+	local pv_b=$(grep -o -E "OPENJPEG_VERSION_MINOR [0-9]+" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d " ")
+	local pv_c=$(grep -o -E "OPENJPEG_VERSION_BUILD [0-9]+" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d " ")
+	local actual_somajor="${pv_a}"
+	local expected_somajor="${SOMAJOR}"
+	if ver_test "${actual_somajor}" "-ne" "${expected_somajor}" ; then
+eerror "Bump INTERNAL_VERSION, PV"
+eerror "Actual somajor:  ${actual_somajor}"
+eerror "Expected somajor:  ${expected_somajor}"
+		die
+	fi
+	local actual_sover=$(grep -o -E "OPENJPEG_SOVERSION [0-9]+" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d " ")
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "Bump SOVER"
+eerror "Actual sover:  ${actual_sover}"
+eerror "Expected sover:  ${expected_sover}"
+		die
+	fi
 }
 
 src_prepare() {
