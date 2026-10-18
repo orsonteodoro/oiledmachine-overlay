@@ -1,0 +1,32 @@
+--- a/configure.py.orig	2026-10-17 21:00:12.691429643 -0700
++++ b/configure.py	2026-10-17 21:09:25.000232449 -0700
+@@ -756,6 +756,12 @@ parser.add_argument('--experimental-poin
+     default=None,
+     help='[Experimental] Use V8 pointer compression with a shared cage and enable the V8 sandbox (requires --experimental-enable-pointer-compression)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--v8-options',
+     action='store',
+     dest='v8_options',
+@@ -1998,7 +2004,15 @@ def configure_v8(o, configs):
+   # Like V8's own default, the sandbox goes with the shared pointer compression
+   # cage. Multi-cage builds give every IsolateGroup its own sandbox, which the
+   # array buffer allocator does not know about yet.
+-  o['variables']['v8_enable_sandbox'] = 1 if options.pointer_compression_shared_cage else 0
++  # The V8 says pointer_compression_shared_cage is default enabled when enable_pointer_compression is enabled.
++  # enable_v8_sandbox is default enabled when pointer_compression_shared_cage=1, enable_pointer_compression=1 + others.
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  if options.enable_v8_sandbox and not options.pointer_compression_shared_cage:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-pointer-compression-shared-cage')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_pointer_compression and options.pointer_compression_shared_cage else 0
+   o['variables']['v8_enable_pointer_compression_shared_cage'] = 1 if options.pointer_compression_shared_cage else 0
+   o['variables']['v8_enable_external_code_space'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0

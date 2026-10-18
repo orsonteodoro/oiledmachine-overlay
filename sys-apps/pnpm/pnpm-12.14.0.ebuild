@@ -17,7 +17,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v12.4.0/pnpm-lock.yaml#L1
+SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v12.14.0/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ebuild_revision_6
@@ -26,7 +26,7 @@ ebuild_revision_6
 # See https://github.com/pnpm/pnpm/blob/v12.6.0/pnpm/npm/pnpm/package.json	# Rust based pnpm, needs node >= 18
 # See https://github.com/pnpm/pnpm/blob/v12.6.0/pnpm11/pnpm/package.json#L188	# npm based pnpm, needs node >= 22.13
 CDEPEND+="
-	>=net-libs/nodejs-22[corepack,ssl]
+	>=net-libs/nodejs-22.13[corepack,ssl]
 "
 DEPEND+="
 	${CDEPEND}

@@ -1,0 +1,91 @@
+--- a/common.gypi.orig	2026-10-17 21:20:44.119676214 -0700
++++ b/common.gypi	2026-10-17 21:21:22.613812177 -0700
+@@ -180,8 +180,12 @@
+       'Release': {
+         'variables': {
+           'v8_enable_handle_zapping': 0,
+-          'pgo_generate': ' -fprofile-generate ',
+-          'pgo_use': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_gcc': ' -fprofile-generate ',
++          'pgo_use_gcc': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_clang': ' -fprofile-generate=<(pgo_profile_dir) -mllvm -vp-counters-per-site=3 ',
++          'pgo_generate_clang_ldflags': ' -fprofile-generate=<(pgo_profile_dir) ',
++          'pgo_use_clang': ' -fprofile-use=<(pgo_profile_profdata) -mllvm -vp-counters-per-site=3 ',
++          'pgo_use_clang_ldflags': ' -fprofile-use=<(pgo_profile_profdata) ',
+           'conditions': [
+             ['node_shared != "true"', {
+               'MSVC_runtimeType': 0    # MultiThreaded (/MT)
+@@ -252,7 +256,31 @@
+             # frames otherwise, even with --call-graph dwarf.
+             'cflags': [ '-fno-omit-frame-pointer' ],
+           }],
+-          ['OS=="linux" or OS=="openharmony"', {
++          ['OS=="linux" and llvm_version=="0.0"', {
++            'conditions': [
++              ['enable_pgo_generate=="true"', {
++                'cflags': ['<(pgo_generate_gcc)'],
++                'ldflags': ['<(pgo_generate_gcc)'],
++              },],
++              ['enable_pgo_use=="true"', {
++                'cflags': ['<(pgo_use_gcc)'],
++                'ldflags': ['<(pgo_use_gcc)'],
++              },],
++            ],
++          },],
++          ['OS=="linux" and llvm_version!="0.0"', {
++            'conditions': [
++              ['enable_pgo_generate=="true"', {
++               'cflags': ['<(pgo_generate_clang)'],
++               'ldflags': ['<(pgo_generate_clang_ldflags)'],
++              },],
++              ['enable_pgo_use=="true"', {
++               'cflags': ['<(pgo_use_clang)'],
++               'ldflags': ['<(pgo_use_clang_ldflags)'],
++              },],
++            ],
++          },],
++          ['OS=="openharmony"', {
+             'conditions': [
+               ['enable_pgo_generate=="true"', {
+                 'cflags': ['<(pgo_generate)'],
+--- a/configure.py.orig	2026-10-17 21:20:44.141475140 -0700
++++ b/configure.py	2026-10-17 21:25:47.611222746 -0700
+@@ -2035,23 +2035,22 @@ def configure_node(o):
+       '--enable-pgo-generate first, profile node, and then recompile '
+       'with --enable-pgo-use')
+ 
+-  if flavor in ('linux', 'mac'):
++  o['variables']['pgo_profile_dir'] = ""
++  o['variables']['pgo_profile_profdata'] = ""
++  if flavor == 'linux':
+     if options.enable_pgo_generate or options.enable_pgo_use:
+-      clang_compilers = [try_check_compiler(compiler, language)[1]
+-                         for compiler, language in ((CC, 'c'), (CXX, 'c++'))]
+-      if all(clang_compilers):
+-        profile = os.path.abspath('node.profdata')
+-        if options.enable_pgo_use and not os.path.isfile(profile):
+-          raise Exception(
+-            f'PGO profile not found: {profile}. Run llvm-profdata merge first.')
+-        o['variables']['pgo_profile'] = profile
+-      elif flavor == 'mac' or any(clang_compilers):
+-        raise Exception('PGO requires both CC and CXX to use Clang on macOS '
+-                        'or the same compiler family on linux.')
+-      elif not gcc_version_ge((5, 4, 1)):
+-        raise Exception(
+-          'The options --enable-pgo-generate and --enable-pgo-use '
+-          'require gcc and gxx 5.4.1 or newer.')
++      gcc_version_checked = (5, 4, 1)
++      clang_version_checked = (3, 9, 1)
++      if not gcc_version_ge(gcc_version_checked) and not clang_version_ge(clang_version_checked):
++        gcc_version_checked_str = ".".join(map(str, gcc_version_checked))
++        clang_version_checked_str = ".".join(map(str, clang_version_checked))
++         raise Exception(
++           'The options --enable-pgo-generate and --enable-pgo-use '
++          f'are supported for gcc and gxx {gcc_version_checked_str} or newer only'
++          f'or for clang and clang++ {clang_version_checked_str} or newer only.')
++      if clang_version_ge(clang_version_checked):
++        o['variables']['pgo_profile_dir'] = os.environ.get('PGO_PROFILE_DIR')
++        o['variables']['pgo_profile_profdata'] = os.environ.get('PGO_PROFILE_PROFDATA')
+ 
+   o['variables']['enable_pgo_generate'] = b(options.enable_pgo_generate)
+   o['variables']['enable_pgo_use']      = b(options.enable_pgo_use)

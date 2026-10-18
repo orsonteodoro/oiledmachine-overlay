@@ -5,7 +5,7 @@
 EAPI=8
 
 # For node range see:
-# https://github.com/acornjs/acorn/blob/8.18.0/acorn/package.json#L21
+# https://github.com/acornjs/acorn/blob/8.19.0/acorn/package.json#L21
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
