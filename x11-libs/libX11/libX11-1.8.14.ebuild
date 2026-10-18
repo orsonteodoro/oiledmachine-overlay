@@ -17,8 +17,7 @@ CHKL_TIMESTAMPS=(
 )
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="7924c23dcad8fa5e5c8c0974f1d9e05f34da4cd1"
-#	FALLBACK_COMMIT="b10abf6b99d5acf846c26f305f1a14a86360a96c" # works
+	FALLBACK_COMMIT="b8d5a7046a98a244ee8ca3c9c07fd617c800dde2"
 fi
 
 inherit cflags-hardened chkl secure-version toolchain-funcs xorg-3
@@ -29,7 +28,7 @@ DESCRIPTION="X.Org X11 library"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
 IUSE+="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="!test? ( test )"
 
@@ -46,7 +45,7 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	x11-libs/xtrans:=
 "
-BDEPEND="test? ( dev-lang/perl )"
+BDEPEND="test? ( >=dev-lang/perl-${PERL_PV} )"
 
 src_configure() {
 	chkl_check_many_timestamps
