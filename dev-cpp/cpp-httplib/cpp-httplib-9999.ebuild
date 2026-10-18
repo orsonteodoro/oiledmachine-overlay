@@ -23,7 +23,7 @@ DESCRIPTION="C++ HTTP/HTTPS server and client library"
 HOMEPAGE="https://github.com/yhirose/cpp-httplib/"
 
 if [[ "${PV}" == *9999* ]] ; then
-	FALLBACK_COMMIT="17eeb18febd8d3d640513c7e5661fa92f91731a9"
+	FALLBACK_COMMIT="94cf1b5c9a04a487493cedf3133ee6339c39d259"
 	EGIT_REPO_URI="https://github.com/yhirose/${PN}.git"
 	EGIT_BRANCH="master"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -42,7 +42,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 
 IUSE+="
 brotli mbedtls ssl test zlib zstd
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="test? ( brotli zlib zstd )"
 RESTRICT="!test? ( test )"
