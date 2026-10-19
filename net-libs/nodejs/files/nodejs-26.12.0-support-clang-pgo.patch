@@ -79,8 +79,8 @@
 +      if not gcc_version_ge(gcc_version_checked) and not clang_version_ge(clang_version_checked):
 +        gcc_version_checked_str = ".".join(map(str, gcc_version_checked))
 +        clang_version_checked_str = ".".join(map(str, clang_version_checked))
-+         raise Exception(
-+           'The options --enable-pgo-generate and --enable-pgo-use '
++        raise Exception(
++          'The options --enable-pgo-generate and --enable-pgo-use '
 +          f'are supported for gcc and gxx {gcc_version_checked_str} or newer only'
 +          f'or for clang and clang++ {clang_version_checked_str} or newer only.')
 +      if clang_version_ge(clang_version_checked):
