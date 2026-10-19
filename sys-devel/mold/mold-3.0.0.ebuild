@@ -138,7 +138,7 @@ SLOT="0"
 IUSE="
 ${MODES[@]}
 debug +mimalloc -system-mimalloc -system-tbb test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
@@ -202,7 +202,7 @@ einfo "Memory allocator:  system"
 	fi
 
 	if ! use mimalloc ; then
-		:
+		sed -i -e "s|@MIMALLOC_MODE@|performance_critical|g" "${S}/cli/Cargo.toml" || die
 	elif use security-critical ; then
 einfo "mimalloc mode:  security-critical"
 		sed -i -e "s|@MIMALLOC_MODE@|security_critical|g" "${S}/cli/Cargo.toml" || die
