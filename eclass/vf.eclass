@@ -692,7 +692,7 @@ einfo "UAF = Use After Free"
 einfo "UAR = Use After Return"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UARR"($|" "|";"|",") ]] ; then
-einfo "UARR = Uninitialized Array"
+einfo "UARR = Use of Uninitialized Array"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UB"($|" "|";"|",") ]] ; then
 einfo "UB = Undefined Behavior"
@@ -717,7 +717,7 @@ einfo "UESE = UnExpected Sign Extension"
 einfo "UF = Underflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFNPTR"($|" "|";"|",") ]] ; then
-einfo "UFNPTR = Uninitialized Function Pointer"
+einfo "UFNPTR = Use of Uninitialized Function Pointer"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UI"($|" "|";"|",") ]] ; then
 # Deprecated use SAV
@@ -726,19 +726,19 @@ einfo "UI = UI Spoofing"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UM"($|" "|";"|",") ]] ; then
 # See also WBUU, UPTR, UVAL, UVAR for non ID.
 # UM should typically used when ID possible for proper association/implication.
-einfo "UM = Uninitialized Memory"
+einfo "UM = Use of Uninitialized Memory"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UMVAR"($|" "|";"|",") ]] ; then
-einfo "UMVAR = Uninitialized Member Variable"
+einfo "UMVAR = Use of Uninitialized Member Variable"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UOBJ"($|" "|";"|",") ]] ; then
-einfo "UOBJ = Uninitialized Object"
+einfo "UOBJ = Use of Uninitialized Object"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UPTR"($|" "|";"|",") ]] ; then
-einfo "UPTR = Uninitialized Pointer"
+einfo "UPTR = Use of Uninitialized Pointer"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"URES"($|" "|";"|",") ]] ; then
-einfo "URES = Uninitialized Resource"
+einfo "URES = Use of Uninitialized Resource"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UTB"($|" "|";"|",") ]] ; then
 einfo "UTB = Unterminated Buffer"
@@ -750,16 +750,13 @@ einfo "UTS = Unterminated String"
 einfo "USI = UnSanitized Input"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"USM"($|" "|";"|",") ]] ; then
-einfo "USM = Uninitialized Struct Member"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UUM"($|" "|";"|",") ]] ; then
-einfo "UUM = Use of Uninitialized Memory"
+einfo "USM = Use of Uninitialized Struct Member"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAL"($|" "|";"|",") ]] ; then
-einfo "UVAL = Uninitialized Value"
+einfo "UVAL = Use of Uninitialized Value"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UVAR"($|" "|";"|",") ]] ; then
-einfo "UVAR = Uninitialized Variable"
+einfo "UVAR = Use of Uninitialized Variable"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"VME"($|" "|";"|",") ]] ; then
 einfo "VME = Virtual Machine Escape"
