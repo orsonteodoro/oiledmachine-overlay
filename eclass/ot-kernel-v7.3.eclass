@@ -1086,7 +1086,7 @@ ot-kernel_pkg_setup_cb() {
 ewarn
 ewarn "Upstream security update delay from live:  0"
 ewarn "Release quality:  Live release candidate (post rc7 out of rc7, development quality for WIP code, production quality for mature code)"
-ewarn "Merge window announced?  No"
+ewarn "Merge window announced?  YES, https://lkml.org/lkml/2026/10/18/1221"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
