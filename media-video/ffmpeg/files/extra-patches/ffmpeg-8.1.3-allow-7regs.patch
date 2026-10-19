@@ -1,0 +1,14 @@
+diff '--color=auto' -urp ffmpeg-8.1.3.orig/libavutil/x86/asm.h ffmpeg-8.1.3/libavutil/x86/asm.h
+--- ffmpeg-8.1.3.orig/libavutil/x86/asm.h	2026-09-19 09:57:01.000000000 -0700
++++ ffmpeg-8.1.3/libavutil/x86/asm.h	2026-10-18 21:46:35.844476202 -0700
+@@ -71,7 +71,7 @@ typedef int32_t x86_reg;
+ typedef int x86_reg;
+ #endif
+ 
+-#define HAVE_7REGS (ARCH_X86_64 || HAVE_X86_32_7REGS)
++#define HAVE_7REGS (ALLOW_7REGS && (ARCH_X86_64 || HAVE_X86_32_7REGS))
+ #define HAVE_6REGS (ARCH_X86_64 || (HAVE_EBX_AVAILABLE || HAVE_EBP_AVAILABLE))
+ 
+ #if ARCH_X86_64 && defined(PIC)
+Only in ffmpeg-8.1.3/libavutil/x86: asm.h.orig
+Only in ffmpeg-8.1.3/libavutil/x86: asm.h.rej

@@ -1329,7 +1329,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-6.0.1-alignment.patch"
 #	"${FILESDIR}/${PN}-6.1.1-vulkan-rename.patch"
 #	"${FILESDIR}/${PN}-6.1.1-memory-leak.patch"
-	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
+	"${FILESDIR}/extra-patches/${PN}-8.1.3-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-7.1-add-includes-hwcontext_vulkan.patch"
