@@ -220,7 +220,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-138-configure-enable-libopus.patch"
+	"${FILESDIR}/${PN}-155-configure-enable-libopus.patch"
 	"${FILESDIR}/chromium.patch"
 )
 DOCS=(
