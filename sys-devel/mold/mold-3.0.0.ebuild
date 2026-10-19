@@ -5,6 +5,10 @@ EAPI=8
 
 # U24
 
+# Maintenance notes:
+# For lockfile updates, change the rust-version in Cargo.toml:
+# rust-version = "1.98.1"
+
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1" # LLVM 22.1
 
