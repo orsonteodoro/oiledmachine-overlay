@@ -1086,9 +1086,17 @@ ot-kernel_pkg_setup_cb() {
 ewarn
 ewarn "Upstream security update delay from live:  0"
 ewarn "Release quality:  Live release candidate (post rc7 out of rc7, development quality for WIP code, production quality for mature code)"
-ewarn "Merge window announced?  YES, https://lkml.org/lkml/2026/10/18/1221"
+ewarn "Has the 7.4 merge window been announced?  YES, https://lkml.org/lkml/2026/10/18/1221"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
+ewarn
+ewarn "The merge window - the period when reworks or new code are accepted."
+ewarn "The period after rc7 (no extraversion) and before rc1.  Officially"
+ewarn "announced in the Linux Kernel Mailing List (LKML) and lasting 2 weeks."
+ewarn
+ewarn "Release Candidate (rc) - the period when bug fixes, security patches,"
+ewarn "or regression fixes are accepted."
+ewarn
 ewarn
 ewarn "This ebuild series is a WIP / IN DEVELOPMENT."
 ewarn "Expect patchtime failures."
@@ -1117,13 +1125,6 @@ ewarn "The live sources is intended for people that want to submit commits or"
 ewarn "patches to upstream, to use daily security fixes, for ebuild maintainers"
 ewarn "or modders to smooth out updates before stable, or to volunteer and"
 ewarn "report sanitizer findings for bug reports."
-ewarn
-ewarn "The merge window - the period when reworks or new code are accepted."
-ewarn "The period after rc7 (no extraversion) and before rc1.  Officially"
-ewarn "announced in the Linux Kernel Mailing List (LKML) and lasting 2 weeks."
-ewarn
-ewarn "Release Candidate (rc) - the period when bug fixes, security patches,"
-ewarn "or regression fixes are accepted."
 ewarn
 ewarn
 ewarn "Tip:  Ask the following prompt to learn what is new about this release"
