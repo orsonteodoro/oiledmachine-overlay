@@ -183,7 +183,7 @@ IUSE="
 	doc patent_status_nonfree
 	ebuild_revision_1
 "
-# The threads USE flag is required to avoid:
+# As suggested by AI, the threads USE flag is required to avoid:
 #libavutil/slicethread.c: In function 'wrapper_worker':
 #libavutil/slicethread.c:313:8: error: invalid use of incomplete typedef 'AVSliceThread'
 #  313 |     ctx->worker_func_v1(ctx->priv_v1, jobnr, threadnr, nb_jobs, nb_threads);
