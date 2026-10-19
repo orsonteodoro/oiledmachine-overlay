@@ -1202,4 +1202,16 @@ ewarn "Users of app-misc/wego need to sanitize location data to mitigate social 
 ewarn "Users of sys-libs/geoclue need to sanitize location, API keys, and BSSIDs to mitigate threat actor abuse or lateral movement."
 ewarn "Users of x11-misc/gammastep need to sanitize latitude/longitude data to mitigate physical damage/harm."
 ewarn "Users of x11-misc/redshift need to sanitize latitude/longitude data to mitigate physical damage/harm."
+	if use audit ; then
+ewarn
+ewarn "The audit USE flag is not for production.  It should be disabled after"
+ewarn "after USE prevent leaking weaknesses."
+ewarn
+	fi
+	if use file-transfers ; then
+ewarn
+ewarn "The file-transfers is not for production but for maintenence mode only."
+ewarn "It should be disabled to prevent full exfiltration."
+ewarn
+	fi
 }
