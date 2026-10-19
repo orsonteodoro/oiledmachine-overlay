@@ -12,6 +12,9 @@ EAPI=8
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1" # LLVM 22.1
 
+# Upstream has mimalloc-secure off and runs it as performance-critical by default.
+# The system-toolchain is system-critical according to AI, so secure mode is enabled by default.
+# It is assumed that all code is untrusted if unreviewed.
 MODES=(
 	"+security-critical"
 	"balanced"
@@ -136,9 +139,6 @@ LICENSE="
 	ZLIB
 "
 SLOT="0"
-# Upstream has mimalloc-secure off and runs it as performance-critical by default (+mimalloc).
-# The system-toolchain is system-critical according to AI, so secure mode is enabled by default.
-# It is assumed that all code is untrusted if unreviewed.
 IUSE="
 ${MODES[@]}
 debug +mimalloc -system-mimalloc -system-tbb test
