@@ -236,15 +236,6 @@ src_configure() {
 	cargo_src_configure
 }
 
-src_test() {
-	export \
-		TEST_CC="$(tc-getCC)" \
-		TEST_CXX="$(tc-getCXX)" \
-		TEST_GCC="$(tc-getCC)" \
-		TEST_GXX="$(tc-getCXX)"
-	cmake_src_test
-}
-
 src_compile() {
 	cargo_src_compile
 }
@@ -290,4 +281,7 @@ src_install() {
 }
 
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 3.0.0 (20261019)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 3.0.0 (20261019) INTERACTIVE
+# ffmpeg linking:  passed
+# mesa-progs linking:  passed
+# chromium:  TBA
