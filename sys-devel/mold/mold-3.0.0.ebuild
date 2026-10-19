@@ -7,8 +7,6 @@ EAPI=8
 
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1" # LLVM 22.1
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted"
-RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted"
 
 MODES=(
 	"+security-critical"
@@ -140,7 +138,7 @@ SLOT="0"
 IUSE="
 ${MODES[@]}
 debug +mimalloc -system-mimalloc -system-tbb test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -288,5 +286,8 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party"
-#	lcnr_install_files
+	lcnr_install_files
 }
+
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 3.0.0 (20261019)
