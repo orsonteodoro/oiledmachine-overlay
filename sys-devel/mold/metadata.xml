@@ -16,19 +16,22 @@
   </upstream>
   <use>
     <flag name="balanced">
+      For mimalloc:
       - ASLR
       - Guard pages for metadata only
       - UAF mitigation
       - Heap corruption mitigation
     </flag>
     <flag name="mimalloc">
-      Optimize memory allocation for memory use efficiency caused by fragmentation
+      Optimize memory allocation for memory use efficiency caused by fragmentation.
     </flag>
     <flag name="performance-critical">
+      For mimalloc:
       - ASLR
       - No guard page mitigation
     </flag>
     <flag name="security-critical">
+      For mimalloc:
       - ASLR
       - Every page guarded
       - Guard pages for metadata also
