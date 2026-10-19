@@ -1,0 +1,56 @@
+diff '--color=auto' -urp mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698.orig/Cargo.toml mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698/Cargo.toml
+--- mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698.orig/Cargo.toml	2026-10-01 00:43:41.000000000 -0700
++++ mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698/Cargo.toml	2026-10-19 14:11:26.379167856 -0700
+@@ -29,7 +29,10 @@ libmimalloc-sys = { path = "libmimalloc-
+ 
+ [features]
+ default = []
+-secure = ["libmimalloc-sys/secure"]
++security_critical = ["libmimalloc-sys/security_critical"]
++balanced = ["libmimalloc-sys/balanced"]
++performance_critical = ["libmimalloc-sys/performance_critical"]
++bug_testing = ["libmimalloc-sys/bug_testing"]
+ override = ["libmimalloc-sys/override"]
+ debug = ["libmimalloc-sys/debug"]
+ debug_in_debug = ["libmimalloc-sys/debug_in_debug"]
+diff '--color=auto' -urp mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698.orig/libmimalloc-sys/build.rs mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698/libmimalloc-sys/build.rs
+--- mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698.orig/libmimalloc-sys/build.rs	2026-10-01 00:43:41.000000000 -0700
++++ mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698/libmimalloc-sys/build.rs	2026-10-19 14:10:55.806765933 -0700
+@@ -78,8 +78,21 @@ fn main() {
+         }
+     }
+ 
+-    if env::var_os("CARGO_FEATURE_SECURE").is_some() {
++    if env::var_os("CARGO_FEATURE_SECURE_CRITICAL").is_some() {
++        build.define("MI_GUARDED", "1");
+         build.define("MI_SECURE", "4");
++    } else if env::var_os("CARGO_FEATURE_BALANCED").is_some() {
++        build.define("MI_GUARDED", "0");
++        build.define("MI_SECURE", "4");
++    } else if env::var_os("CARGO_FEATURE_BUG_TESTING").is_some() {
++        build.define("MI_GUARDED", "1");
++        build.define("MI_SECURE", "0");
++    } else if env::var_os("CARGO_FEATURE_PERFORMANCE_CRITICAL").is_some() {
++        build.define("MI_GUARDED", "0");
++        build.define("MI_SECURE", "0");
++    } else {
++        build.define("MI_GUARDED", "0");
++        build.define("MI_SECURE", "0");
+     }
+ 
+     if target_os == "windows" && env::var_os("CARGO_FEATURE_WIN_DIRECT_TLS").is_some() {
+diff '--color=auto' -urp mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698.orig/libmimalloc-sys/Cargo.toml mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698/libmimalloc-sys/Cargo.toml
+--- mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698.orig/libmimalloc-sys/Cargo.toml	2026-10-01 00:43:41.000000000 -0700
++++ mimalloc_rust-3979460494f1cd1e7f936cb8e10f41e927c9f698/libmimalloc-sys/Cargo.toml	2026-10-19 14:11:17.659376807 -0700
+@@ -34,7 +34,10 @@ libc = "0.2"
+ cc = "1.2"
+ 
+ [features]
+-secure = []
++security_critical = []
++balanced = []
++performance_critical = []
++bug_testing = []
+ debug = []
+ debug_in_debug = []
+ override = []
