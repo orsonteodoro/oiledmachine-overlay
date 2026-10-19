@@ -57,7 +57,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM24_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	atomic-builtins? (
@@ -202,6 +202,7 @@ ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 		-DCOMPILER_RT_BUILD_MEMPROF=OFF
 		-DCOMPILER_RT_BUILD_ORC=OFF
 		-DCOMPILER_RT_BUILD_PROFILE=OFF
+		-DCOMPILER_RT_BUILD_COPYPROF=OFF
 		-DCOMPILER_RT_BUILD_SANITIZERS=OFF
 		-DCOMPILER_RT_BUILD_XRAY=OFF
 
