@@ -295,7 +295,7 @@ src_configure() {
 		# interfere with proper detections, bug #671746 and bug #645778
 		# We use optflags, so that overrides them anyway.
 		--disable-optimizations
-		--disable-libcelt # bug #664158
+		#--disable-libcelt # bug #664158
 		"${myconf[@]}"
 	)
 
