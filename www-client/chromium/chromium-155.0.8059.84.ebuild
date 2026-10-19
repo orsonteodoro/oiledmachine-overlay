@@ -291,7 +291,7 @@ OPENPOWER_PATCHES_COMMIT="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6" # Same as PP
 TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
 
 # SHA512 about_credits.html fingerprint:
-LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="4633d93cbe061ed993cb6f4bc31338344aea1add42945d600c3e44a86bea63b4fd3dc8399d3cb187879c2f8d091086556334148aed5343291578ad83596ea9f5"
+LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="5471e1a25446f0dce041e08a866a083b54c35c227bcff2a77fa027b198f2844f501e4e3dcea019874146ba063beb82e563c214bae97fb0863df6ddebce984f9c"
 LICENSE_FINGERPRINT_VANILLA="b50fb8698e5576b6655740bf69151d5a54652adffea05edd7e011a6dd9f93e312a24fcaedbce7d739af077a8d648d002c00f5240af9e0a525fccf88d94c380b2"
 
 # Mitigate flood the zone vulnerability.
@@ -3424,7 +3424,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-153.0.8010.36-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-155.0.8059.84-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
