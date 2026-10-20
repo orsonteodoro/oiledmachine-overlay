@@ -978,6 +978,9 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 # For the oiledmachine-overlay patchset, it is for mold, compiler flags,
 # CPU flags, x86-64 ISA Level 1 support
 
+# For the Fedora patchset, it may used for fixes for Rust, LLVM/Clang, ppc64,
+# security
+
 # For build files fixes
 if [[ "${ARCH_PATCHSET}" == "1" ]] ; then
 	ARCH_PATCHSET_URI="
