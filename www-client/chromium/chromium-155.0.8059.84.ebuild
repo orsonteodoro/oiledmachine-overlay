@@ -1151,7 +1151,7 @@ RESTRICT="
 		test
 	)
 " # Tests require CFI, which requires LTO, which is broken on arm64 with LLVM 21.
-SLOT="stable"
+SLOT="0"
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/155.0.8059.84/media/gpu/args.gni#L24
@@ -1968,7 +1968,7 @@ COMMON_DEPEND="
 # runtime for most configurations.
 RDEPEND+="
 	${COMMON_DEPEND}
-	!www-client/chromium:0
+	!www-client/chromium:155.0.8059.84
 	>=www-client/chromium-common-2:*
 	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/ttf-fonts:*
@@ -1994,13 +1994,13 @@ RDEPEND+="
 	)
 	bindist? (
 		ffmpeg-chromium? (
-			~media-video/ffmpeg-chromium-${PV}:=[patent_status_nonfree=]
+			~media-video/ffmpeg-chromium-${PV}:0=[patent_status_nonfree=]
 		)
 	)
 "
 DEPEND+="
 	${COMMON_DEPEND}
-	www-client/chromium-sources:${PV}=
+	www-client/chromium-sources:0=
 	!headless? (
 		>=media-video/pipewire-${PIPEWIRE_PV}:=
 		gtk3? (
@@ -2047,7 +2047,7 @@ BDEPEND+="
 	dev-vcs/git
 	sys-apps/hwdata
 	sys-devel/flex
-	www-client/chromium-toolchain:${PV%.*}.x=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
+	www-client/chromium-toolchain:0=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
 	x11-misc/xdg-utils
 	mold? (
 		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]

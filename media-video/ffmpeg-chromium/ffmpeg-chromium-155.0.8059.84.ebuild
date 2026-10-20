@@ -176,12 +176,12 @@ KEYWORDS="amd64 ~arm arm64 ~loong ~ppc64"
 RESTRICT="
 	test
 "
-SLOT="${PV%%.*}/${PV}"
+SLOT="0"
 IUSE="
 	${CPU_FEATURES_MAP[@]%:*}
 	${FFMPEG_FLAG_MAP[@]%:*}
 	doc patent_status_nonfree
-	ebuild_revision_1
+	ebuild_revision_2
 "
 # As suggested by AI, the threads USE flag is required to avoid:
 #libavutil/slicethread.c: In function 'wrapper_worker':
@@ -197,6 +197,7 @@ REQUIRED_USE="
 "
 
 RDEPEND="
+	!media-video/ffmpeg-chromium:155.0.8059.84
 	>=media-libs/opus-${OPUS_PV}:=
 	nvenc? (
 		>=media-libs/nv-codec-headers-11.1.5.3:=

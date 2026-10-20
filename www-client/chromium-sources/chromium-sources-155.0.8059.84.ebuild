@@ -54,9 +54,10 @@ LICENSE="
 	chromium-$(ver_cut 1-3 ${PV}).x.html
 "
 RESTRICT="binchecks mirror strip test"
-SLOT="${PV}"
-IUSE+=" ebuild_revision_8"
+SLOT="0"
+IUSE+=" ebuild_revision_9"
 RDEPEND+="
+	!www-client/chromium-sources:155.0.8059.84
 "
 DEPEND+="
 	${RDEPEND}
