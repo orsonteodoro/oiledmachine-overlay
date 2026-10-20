@@ -4195,8 +4195,11 @@ src_prepare() {
 	# So the proper remediation is to triage both attack surfaces -- ROP
 	# attack surface and the memory corruption attack surface.  We mitigate
 	# the memory corruption attack surface for the initial attack.  We
-	# mitigate the ROP attack surface to block the running malicious
+	# mitigate the ROP attack surface to block the running of ROP malicious
 	# programs used after the initial attack.
+
+	# It is possible that there are threat actors or infiltrators that are
+	# aware about this with intent to increase the attack surface.
 
 	apply_cromite_patchset
 	apply_ungoogled_chromium_patchset
