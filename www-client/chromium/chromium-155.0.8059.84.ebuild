@@ -214,6 +214,7 @@ MJ_PATCHSET=${MJ_PATCHSET:-1} # DEPRECATED.  Used as the Gentoo patchset at M152
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
 OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-1}
 EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
+FEDORA_PATCHSET=${FEDORA_PATCHSET:-0}
 PPC64_PATCHSET_PROVIDER=${PPC64_PATCHSET_PROVIDER:-"openpower"} # Valid values debian, openpower
 
 ABSEIL_CPP_SLOT="20251021"
@@ -283,6 +284,8 @@ CROMITE_PV="153.0.8010.37"
 DEBIAN_PATCHSET_PV="155.0.8059.79"
 DEBIAN_PATCHSET_REV="1"
 DEBIAN_PATCHSET_TAG="" # It can be "" for (sid/unstable), "_deb13u1", "_deb12u1" ## Use the version closest for latest glibc, gcc, llvm on G23.
+FEDORA_PATCHSET_BRANCH="f45"
+FEDORA_PATCHSET_VERSION="155.0.8059.84"
 GCC_PV="10.2.1" # Minimum
 MJ_PATCHSET_PV="151"
 MJ_PATCHSET_REV="3"
@@ -921,7 +924,7 @@ SYSTEM_USE=(
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chkl chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
-inherit re2 readme.gentoo-r1 systemd toolchain-funcs vf web-kernel-config xdg-utils
+inherit re2 readme.gentoo-r1 sandbox-changes systemd toolchain-funcs vf web-kernel-config xdg-utils
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut "4" "${PV}")
@@ -966,15 +969,14 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 #
 # The G23 distro patchset is banned for failing to meet weekly update.
 #
-# Whitelisted patch providers:
+# Patchset providers:
 #
-# Arch Linux (Primary, rolling) - https://gitlab.archlinux.org/archlinux/packaging/packages/chromium
-# Copium - https://codeberg.org/selfisekai/copium
-# Debian (Secondary, LTS) - https://salsa.debian.org/chromium-team/chromium
-# Fedora (Tertiary, rolling) - https://src.fedoraproject.org/rpms/chromium/tree/f45  ## Use only the version with similar glibc, GCC, LLVM to G23
-#
-# From testing the Arch's patchset is more correct than Debian's.
-# This is why it is the primary patchset.
+# Arch Linux (rolling)       - https://gitlab.archlinux.org/archlinux/packaging/packages/chromium
+# Copium                     - https://codeberg.org/selfisekai/copium
+# Cromite                    - https://github.com/uazo/cromite
+# Debian (rolling with Sid)  - https://salsa.debian.org/chromium-team/chromium
+# Fedora (rolling with F45)  - https://src.fedoraproject.org/rpms/chromium/tree/f45  ## Use only the version with similar glibc, GCC, LLVM to G23
+# ungoogled-chromium         - https://github.com/ungoogled-software/ungoogled-chromium
 #
 
 # For the oiledmachine-overlay patchset, it is for mold, compiler flags,
@@ -1007,7 +1009,7 @@ else
 	"
 fi
 
-# For loongarch, ppc64le, LLVM 19, LLVM 22, Rust 1.85, system deps support
+# For LoongArch, ppc64le, LLVM 19, LLVM 22, Rust 1.85, system deps support
 if [[ "${DEBIAN_PATCHSET}" == "1" ]] ; then
 	DEBIAN_PATCHSET_URI="
 https://salsa.debian.org/chromium-team/chromium/-/archive/debian/${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}.tar.gz?ref_type=tags
@@ -3165,6 +3167,10 @@ ewarn "The default DNS servers and settings could weaken the privacy."
 einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
 	chkl_check_many_timestamps
+
+	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
+		sandbox-changes_no_network_sandbox "To download the Fedora patchset"
+	fi
 }
 
 src_unpack() {
@@ -3193,6 +3199,9 @@ src_unpack() {
 	fi
 	if [[ "${OPENPOWER_PATCHSET}" == "1" ]] ; then
 		unpack "chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz"
+	fi
+	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
+		git clone -b "${FEDORA_PATCHSET_BRANCH}" "https://src.fedoraproject.org/rpms/chromium.git" "${WORKDIR}/fedora-patchset" || die
 	fi
 	die
 
@@ -3333,200 +3342,153 @@ apply_gentoo_patchset_2() {
 	change_rustfmt_suffix
 }
 
-# TODO:  Dedupe patch overlap and remove function
-apply_mj_patchset() {
-	[[ "${MJ_PATCHSET}" == "1" ]] || return
-einfo "Applying the MJ patchset (aka distro patchset)..."
+apply_arch_patchset() {
+	[[ "${ARCH_PATCHSET}" == "1" ]] || return
+einfo "Applying the Arch patchset..."
 
-	# Generated from:  find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-patches-151-3/ -name "*.patch" | sort -V
+	local base_path="${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}"
+	PATCHES+=(
 
-	PATCHES=(
-$(use system-zlib && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr109-system-zlib.patch")
-$(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-unbundle-icu-target.patch")
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
-#$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch") # Rollup removed from inspector
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr149-channel-aware-build.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr151-metric-histogram-non-git.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/common/cross-compile.patch"
+# DO NOT ENABLE ALL PATCHES!
+# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
-	# https://issues.chromium.org/issues/442698344
-	# Unreleased fontconfig changed magic numbers and google have rolled to this version
-$(use system-fontconfig && has_version "<=media-libs/fontconfig-2.17.1" && echo "${FILESDIR}/chromium-142-work-with-old-fontconfig.patch")
+#"${base_path}/chromium-138-nodejs-version-check.patch"
+#"${base_path}/chromium-144-fix-hdr-issue.patch"
+#"${base_path}/chromium-145-fix-SYS_SECCOMP.patch"
+#"${base_path}/chromium-147-rust-1.95-bytemuck.patch"
+#"${base_path}/chromium-149-use-of-undeclared-identifier-ERROR.patch"
+#"${base_path}/chromium-150-revert-avx-flag-change.patch"
+#"${base_path}/chromium-152-unbundle-minizip-undo-unicode.patch"
+#"${base_path}/chromium-152-unbundle-opus-devtools.patch"
+#"${base_path}/chromium-153-hermetic-python.patch"
+#"${base_path}/chromium-153-iamf-tools-unbundled-opus.patch"
+#"${base_path}/chromium-154-typescript.patch"
+"${base_path}/chromium-155-crubit.patch"
+#"${base_path}/chromium-155-isolatedDeclarations.patch"
+"${base_path}/chromium-155-remove-private_verification_tokens.patch"
+#"${base_path}/chromium-155-use-system-esbuild.patch"
+#"${base_path}/compiler-rt-adjust-paths.patch"
+#"${base_path}/enable-widevine-arm64.patch"
+#"${base_path}/glibc-2.42-baud-rate-fix.patch"
+#"${base_path}/increase-fortify-level.patch"
+"${base_path}/use-oauth2-client-switches-as-default.patch" # Enabled like the MJ patchset
 	)
-
-	if use system-clang ; then
-		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" && "${OPENPOWER_PATCHSET}" == "1" ]] ; then
-			PATCHES=(
-"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/cr145-ppc64-libpng.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/libpng-pdfium-compile-98.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/rust-clanglib.patch"
-			)
-		fi
-
-		PATCHES+=(
-"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr146-empty-parsed_rustc_args.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-bindgen-libclang-paths.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-fix-rust.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"
-#"${WORKDIR}/chromium-patches-${PATCH_VER}/toolchain/cr150-compiler.patch"				# oiledmachine-overlay changes prefered
-"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"					# Same as cr151-dawn-system-go.patch but with updated context
-"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"					# Same as cr151-mold-unbundle.patch
-		)
-
-		PATCHES+=(
-"${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr147-disable-fno-lifetime-dse.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr149-ubsan-feature.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/llvm/lt-23/cr151-fdiagnostics-show-inlining-chain.patch"
-		)
-	fi
 }
 
 apply_debian_patchset() {
 	[[ "${DEBIAN_PATCHSET}" == "1" ]] || return
 einfo "Applying the Debian patchset..."
 
-	# DO NOT ENABLE ALL PATCHES!
-	# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
+# DO NOT ENABLE ALL PATCHES!
+# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
+
+	local base_path="${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches"
 
 # For using system-libs instead
 # Only enable if build breakage.
 	PATCHES+=(
 # From `grep "^system/" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/golang.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/icu-shim.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/jpeg.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/openjpeg.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/opus.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rapidjson.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rollup.patch" # Use the system's build for compatibility for arm64/loong/ppc64 instead of prebuilt
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/llvm.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/python.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/tsc.patch"
-#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/tsc2.patch"
+#"${base_path}/system/golang.patch"
+#"${base_path}/system/icu-shim.patch"
+#"${base_path}/system/jpeg.patch"
+#"${base_path}/system/openjpeg.patch"
+#"${base_path}/system/opus.patch"
+#"${base_path}/system/rapidjson.patch"
+"${base_path}/system/rollup.patch" # Use the system's build for compatibility for arm64/loong/ppc64 instead of prebuilt
+#"${base_path}/system/llvm.patch"
+#"${base_path}/system/python.patch"
+#"${base_path}/system/tsc.patch"
+#"${base_path}/system/tsc2.patch"
 	)
 
 	# LLVM support like G23 distro patchset.
 	PATCHES+=(
 # From `grep -r -e "^llvm-22" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/ignore-for-ubsan.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/clang22.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/clone-traits.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/const-profile.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/keyfactory.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/raw-ref-map-find.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/shut-up-clang.patch"
+"${base_path}/llvm-22/ignore-for-ubsan.patch"
+"${base_path}/llvm-22/clang22.patch"
+"${base_path}/llvm-22/clone-traits.patch"
+"${base_path}/llvm-22/const-profile.patch"
+"${base_path}/llvm-22/keyfactory.patch"
+"${base_path}/llvm-22/raw-ref-map-find.patch"
+"${base_path}/llvm-22/shut-up-clang.patch"
 	)
 
 	if [[ "${KEYWORDS}" =~ "ppc64" && "${CHOST}" =~ "powerpc64le" && "${PPC64_PATCHSET_PROVIDER}" == "debian" ]] && use ppc64 ; then
 #From `grep -r -e "^ppc64le" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
 		PATCHES+=(
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/sandbox/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/sandbox/0009-sandbox-ignore-byte-span-error.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-angle-Include-missing-header-cstddef-in-.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-Add-PPC64-support-for-boringssl.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-libvpx-Disable-vsx-on-ppc64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-libvpx-Properly-generate-gni-on-ppc64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-pffft-Include-altivec.h-on-ppc64-with-SI.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-swiftshader-fix-build.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-Add-PPC64-generated-files-for-boringssl.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-third_party-lss-kernel-structs.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/webrtc/Rtc_base-system-arch.h-PPC.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0004-third_party-crashpad-port-curl-transport-ppc64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/workarounds/HACK-third_party-libvpx-use-generic-gnu.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/workarounds/HACK-debian-clang-disable-base-musttail.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/workarounds/HACK-debian-clang-disable-pa-musttail.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/libaom/0001-Add-ppc64-target-to-libaom.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/libaom/0001-Add-pregenerated-config-for-libaom-on-ppc64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-third_party-libvpx-Remove-bad-ppc64-config.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0003-third_party-libvpx-Add-ppc64-generated-config.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0003-third_party-ffmpeg-Add-ppc64-generated-config.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0004-third_party-libvpx-work-around-ambiguous-vsx.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-add-xnn-ppc64el-support.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-regenerate-xnn-buildgn.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/skia-vsx-instructions.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/breakpad/0001-Implement-support-for-ppc64-on-Linux.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/crashpad/0001-Implement-support-for-PPC64-on-Linux.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-Force-baseline-POWER8-AltiVec-VSX-CPU-features-when-.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-rustc.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-rust-linking.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-breakpad-compile.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-page-allocator-overflow.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-different-data-layouts.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/v8/0001-Enable-ppc64-pointer-compression.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/dawn-fix-ppc64le-detection.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0005-blink-add-audio-vector-support.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/add-ppc64-architecture-string.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/add-ppc64-pthread-stack-size.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-study-crash.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/add-ppc64-architecture-to-extensions.diff"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-unknown-warning-option-messages.diff"
-$(use cpu_flags_ppc_vsx3 && echo "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/baseline-isa-3-0.patch")
+"${base_path}/ppc64le/sandbox/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
+"${base_path}/ppc64le/sandbox/0009-sandbox-ignore-byte-span-error.patch"
+"${base_path}/ppc64le/third_party/0001-third_party-angle-Include-missing-header-cstddef-in-.patch"
+"${base_path}/ppc64le/third_party/0001-Add-PPC64-support-for-boringssl.patch"
+"${base_path}/ppc64le/third_party/0001-third_party-libvpx-Disable-vsx-on-ppc64.patch"
+"${base_path}/ppc64le/third_party/0001-third_party-libvpx-Properly-generate-gni-on-ppc64.patch"
+"${base_path}/ppc64le/third_party/0001-third_party-pffft-Include-altivec.h-on-ppc64-with-SI.patch"
+"${base_path}/ppc64le/third_party/0001-swiftshader-fix-build.patch"
+"${base_path}/ppc64le/third_party/0002-Add-PPC64-generated-files-for-boringssl.patch"
+"${base_path}/ppc64le/third_party/0002-third_party-lss-kernel-structs.patch"
+"${base_path}/ppc64le/webrtc/Rtc_base-system-arch.h-PPC.patch"
+"${base_path}/ppc64le/third_party/0004-third_party-crashpad-port-curl-transport-ppc64.patch"
+"${base_path}/ppc64le/workarounds/HACK-third_party-libvpx-use-generic-gnu.patch"
+"${base_path}/ppc64le/workarounds/HACK-debian-clang-disable-base-musttail.patch"
+"${base_path}/ppc64le/workarounds/HACK-debian-clang-disable-pa-musttail.patch"
+"${base_path}/ppc64le/libaom/0001-Add-ppc64-target-to-libaom.patch"
+"${base_path}/ppc64le/libaom/0001-Add-pregenerated-config-for-libaom-on-ppc64.patch"
+"${base_path}/ppc64le/third_party/0002-third_party-libvpx-Remove-bad-ppc64-config.patch"
+"${base_path}/ppc64le/third_party/0003-third_party-libvpx-Add-ppc64-generated-config.patch"
+"${base_path}/ppc64le/third_party/0003-third_party-ffmpeg-Add-ppc64-generated-config.patch"
+"${base_path}/ppc64le/third_party/0004-third_party-libvpx-work-around-ambiguous-vsx.patch"
+"${base_path}/ppc64le/third_party/0001-add-xnn-ppc64el-support.patch"
+"${base_path}/ppc64le/third_party/0002-regenerate-xnn-buildgn.patch"
+"${base_path}/ppc64le/third_party/skia-vsx-instructions.patch"
+"${base_path}/ppc64le/breakpad/0001-Implement-support-for-ppc64-on-Linux.patch"
+"${base_path}/ppc64le/crashpad/0001-Implement-support-for-PPC64-on-Linux.patch"
+"${base_path}/ppc64le/third_party/0001-Force-baseline-POWER8-AltiVec-VSX-CPU-features-when-.patch"
+"${base_path}/ppc64le/fixes/fix-rustc.patch"
+"${base_path}/ppc64le/fixes/fix-rust-linking.patch"
+"${base_path}/ppc64le/fixes/fix-breakpad-compile.patch"
+"${base_path}/ppc64le/fixes/fix-page-allocator-overflow.patch"
+"${base_path}/ppc64le/fixes/fix-different-data-layouts.patch"
+"${base_path}/ppc64le/v8/0001-Enable-ppc64-pointer-compression.patch"
+"${base_path}/ppc64le/third_party/dawn-fix-ppc64le-detection.patch"
+"${base_path}/ppc64le/third_party/0005-blink-add-audio-vector-support.patch"
+"${base_path}/ppc64le/core/add-ppc64-architecture-string.patch"
+"${base_path}/ppc64le/core/add-ppc64-pthread-stack-size.patch"
+"${base_path}/ppc64le/fixes/fix-study-crash.patch"
+"${base_path}/ppc64le/core/add-ppc64-architecture-to-extensions.diff"
+"${base_path}/ppc64le/fixes/fix-unknown-warning-option-messages.diff"
+$(use cpu_flags_ppc_vsx3 && echo "${base_path}/ppc64le/core/baseline-isa-3-0.patch")
 		)
 	fi
 
 	if [[ "${KEYWORDS}" =~ "loong" ]] && use loong ; then
 # From `grep -r -e "^loongarch64" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
 		PATCHES+=(
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0001-loong64-core-add-loong64-architecture-to-extensions.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0002-loong64-sandbox-Enable-seccomp_bpf-for-loongarch64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0003-sandbox-linux-Implement-support-for-loong64-syscalls.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0004-loong64-sandbox-sandbox-linux-Update-syscall-helpers.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0005-loong64-sandbox-sandbox-linux-bpf_dsl-Update-syscall.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0006-loong64-sandbox-sandbox-linux-system_headers-Update-.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0007-loong64-sandbox-sandbox-linux-seccomp-bpf-Add-loonga.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0008-loong64-sandbox-sandbox-linux-services-credentials.c.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0009-loong64-sandbox-sandbox-linux-bpf_dsl-Modify-seccomp.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0010-loong64-sandbox-seccomp-bpf-helpers-fix-build-for-lo.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0011-sandbox-linux-system_headers-Update-linux-seccomp-he.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0012-sandbox-linux-add-statx-support-for-loongarch64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0013-swiftshader-support-for-loongarch.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0014-crashpad-support-for-loongarch.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0015-ffmpeg-support-for-loongarch.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0016-medium-cmodel-support-for-loongarch64.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0017-sys_info-add-loongarch64-architecture-string.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0018-fix-study-crash.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0019-boringssl-add-loongarch-support.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0020-user_agent-add-loongarch-architecture-support.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0021-components-metrics-add-loongarch64-support.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0022-blink-fix-lsx-code-of-webgl_image_conversion_lsx.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0023-loongarch64-enable-lsx-by-default.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0024-optimize-nested-128-bit-additions.patch"
+"${base_path}/loongarch64/0001-loong64-core-add-loong64-architecture-to-extensions.patch"
+"${base_path}/loongarch64/0002-loong64-sandbox-Enable-seccomp_bpf-for-loongarch64.patch"
+"${base_path}/loongarch64/0003-sandbox-linux-Implement-support-for-loong64-syscalls.patch"
+"${base_path}/loongarch64/0004-loong64-sandbox-sandbox-linux-Update-syscall-helpers.patch"
+"${base_path}/loongarch64/0005-loong64-sandbox-sandbox-linux-bpf_dsl-Update-syscall.patch"
+"${base_path}/loongarch64/0006-loong64-sandbox-sandbox-linux-system_headers-Update-.patch"
+"${base_path}/loongarch64/0007-loong64-sandbox-sandbox-linux-seccomp-bpf-Add-loonga.patch"
+"${base_path}/loongarch64/0008-loong64-sandbox-sandbox-linux-services-credentials.c.patch"
+"${base_path}/loongarch64/0009-loong64-sandbox-sandbox-linux-bpf_dsl-Modify-seccomp.patch"
+"${base_path}/loongarch64/0010-loong64-sandbox-seccomp-bpf-helpers-fix-build-for-lo.patch"
+"${base_path}/loongarch64/0011-sandbox-linux-system_headers-Update-linux-seccomp-he.patch"
+"${base_path}/loongarch64/0012-sandbox-linux-add-statx-support-for-loongarch64.patch"
+"${base_path}/loongarch64/0013-swiftshader-support-for-loongarch.patch"
+"${base_path}/loongarch64/0014-crashpad-support-for-loongarch.patch"
+"${base_path}/loongarch64/0015-ffmpeg-support-for-loongarch.patch"
+"${base_path}/loongarch64/0016-medium-cmodel-support-for-loongarch64.patch"
+"${base_path}/loongarch64/0017-sys_info-add-loongarch64-architecture-string.patch"
+"${base_path}/loongarch64/0018-fix-study-crash.patch"
+"${base_path}/loongarch64/0019-boringssl-add-loongarch-support.patch"
+"${base_path}/loongarch64/0020-user_agent-add-loongarch-architecture-support.patch"
+"${base_path}/loongarch64/0021-components-metrics-add-loongarch64-support.patch"
+"${base_path}/loongarch64/0022-blink-fix-lsx-code-of-webgl_image_conversion_lsx.patch"
+"${base_path}/loongarch64/0023-loongarch64-enable-lsx-by-default.patch"
+"${base_path}/loongarch64/0024-optimize-nested-128-bit-additions.patch"
 		)
 	fi
-}
-
-
-apply_arch_patchset() {
-	[[ "${ARCH_PATCHSET}" == "1" ]] || return
-einfo "Applying the Arch patchset..."
-
-	PATCHES+=(
-# DO NOT ENABLE ALL PATCHES!
-# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-138-nodejs-version-check.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-144-fix-hdr-issue.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-145-fix-SYS_SECCOMP.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-147-rust-1.95-bytemuck.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-149-use-of-undeclared-identifier-ERROR.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-150-revert-avx-flag-change.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-152-unbundle-minizip-undo-unicode.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-152-unbundle-opus-devtools.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-153-hermetic-python.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-153-iamf-tools-unbundled-opus.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-154-typescript.patch"
-"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-155-crubit.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-155-isolatedDeclarations.patch"
-"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-155-remove-private_verification_tokens.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/chromium-155-use-system-esbuild.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/compiler-rt-adjust-paths.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/enable-widevine-arm64.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/glibc-2.42-baud-rate-fix.patch"
-#"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/increase-fortify-level.patch"
-"${WORKDIR}/chromium-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}/use-oauth2-client-switches-as-default.patch" # Enabled like the MJ patchset
-	)
 }
 
 apply_copium_patchset() {
@@ -3539,6 +3501,7 @@ einfo "Applying the Copium patchset..."
 
 # DO NOT ENABLE ALL PATCHES!
 # ENABLE ONLY MINIMAL REQUIRED TO BUILD.
+
 #"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
 #"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
 #"${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"
@@ -3570,6 +3533,192 @@ einfo "Applying the Copium patchset..."
 #"${WORKDIR}/copium/cr155-devtools-typescript-6.x-isolated-declarations.patch"
 #"${WORKDIR}/copium/cr155-no-python-vendoring.patch"
 	)
+}
+
+apply_fedora_patchset() {
+	[[ "${FEDORA_PATCHSET}" == "1" ]] || return
+
+# DO NOT ENABLE ALL PATCHES!
+# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
+
+	local base_path="${WORKDIR}/fedora-patchset"
+
+	local actual_version=""
+	local expected_version="${FEDORA_PATCHSET_VERSION}"
+	if ! grep -E "Version: ${expected_version}" "${base_path}/chromium.spec" >/dev/null 2>&1 ; then
+		actual_version=$(grep -E "Version: [0-9.]+" "${base_path}/chromium.spec" | cut -f 2 -d " ")
+eerror "Rejected the Fedora patchset.  Version out of range."
+eerror "Actual version:  ${actual_version}"
+eerror "Expected version:  ${expected_version}"
+		die
+	else
+einfo "Applying the Fedora patchset..."
+	fi
+
+# Generated from `localhost /usr/local/oiledmachine-overlay/www-client/chromium # grep -E "^Patch[0-9]+:" /var/tmp/portage/www-client/chromium-155.0.8059.84/work//fedora-patchset/chromium.spec | cut -f 2 -d " "`
+	PATCHES+=(
+#"${basepath}/chromium-115-initial_prefs-etc-path.patch"
+#"${basepath}/chromium-117-widevine-other-locations.patch"
+#"${basepath}/chromium-154-widevine-no-download.patch"
+#"${basepath}/chromium-154-set-extension-content-verification-enforce_strict.patch"
+#"${basepath}/chromium-disable-font-tests.patch"
+#"${basepath}/chromium-123-screen-ai-service.patch"
+#"${basepath}/chromium-131-fix-qt-ui.pach"
+#"${basepath}/chromium-152-build-error-libpng_for_testonly.patch"
+#"${basepath}/glibc-2.42-baud-rate-fix.patch"
+#"${basepath}/chromium-153-ftbfs-pipewire-api.patch"
+#"${basepath}/chromium-145-disable-enterprise_companion_integration_tests.patch"
+#"${basepath}/chromium-142-system-brotli.patch"
+#"${basepath}/chromium-121-system-libxml.patch"
+#"${basepath}/chromium-108-system-opus.patch"
+#"${basepath}/chromium-138-checkversion-nodejs.patch"
+#"${basepath}/chromium-141-csss_style_sheet.patch"
+#"${basepath}/chromium-148-v8-sanitize-build-error.patch"
+#"${basepath}/chromium-142-crabbyavif-ftbfs-old-rust.patch"
+#"${basepath}/chromium-138-el9-ffmpeg-deprecated-apis.patch"
+#"${basepath}/chromium-el9-ffmpeg-AV_CODEC_FLAG_COPY_OPAQUE.patch"
+#"${basepath}/chromium-148-el9-ffmpeg-build-error.patch"
+#"${basepath}/chromium-107-proprietary-codecs.patch"
+#"${basepath}/chromium-118-sigtrap_system_ffmpeg.patch"
+#"${basepath}/chromium-151-el9-ffmpeg-5.1.x.patch"
+#"${basepath}/chromium-151-el9-build-error-system-ffmpeg5.patch"
+#"${basepath}/chromium-133-disable-H.264-video-parser-during-demuxing.patch"
+#"${basepath}/chromium-133-workaround-system-ffmpeg-whitelist.patch"
+#"${basepath}/chromium-147-system-ffmpeg.patch"
+#"${basepath}/chromium-150-ffmpeg-AVDynamicHDRSmpte2094App5.patch"
+#"${basepath}/chromium-153-el9-python-3.9-build-error.patch"
+#"${basepath}/chromium-118-dma_buf_export_sync_file-conflict.patch"
+#"${basepath}/chromium-149-rust-1.88-build-error.patch"
+#"${basepath}/chromium-155-rust-1.88-enable-unstable_features.patch"
+#"${basepath}/chromium-146-rust-1.88-undefined-symbol.patch"
+#"${basepath}/chromium-124-qt6.patch"
+#"${basepath}/chromium-145-swiftshader-missing-include.patch"
+#"${basepath}/chromium-145-static_assert.patch"
+#"${basepath}/chromium-146-ftfs-llvm-octal-notation.patch"
+#"${basepath}/chromium-146-llvm-crash.patch"
+#"${basepath}/chromium-124-el8-arm64-memory_tagging.patch"
+#"${basepath}/chromium-127-el8-ifunc-header.patch"
+#"${basepath}/chromium-134-el8-atk-compiler-error.patch"
+#"${basepath}/chromium-136-unsupport-clang-flags.patch"
+#"${basepath}/chromium-132-el8-unsupport-rustc-flags.patch"
+#"${basepath}/chromium-139-rust-FTBFS-suppress-warnings.patch"
+#"${basepath}/chromium-123-fstack-protector-strong.patch"
+#"${basepath}/chromium-154-ftbfs-crubit.patch"
+#"${basepath}/chromium-154-ftbfs-private-verification-tokens.patch"
+#"${basepath}/chromium-136-rust-skrifa-build-error.patch"
+#"${basepath}/chromium-145-rustc-ftbfs.patch"
+#"${basepath}/chromium-153-clang++-unknown-argument.patch"
+#"${basepath}/memory-allocator-dcheck-assert-fix.patch"
+#"${basepath}/chromium-143-swiftshader-llvm-16.0.patch"
+#"${basepath}/chromium-149-aarch64-log-error.patch"
+#"${basepath}/chromium-151-system-golang.patch"
+#"${basepath}/chromium-151-histograms_xml-build-error.patch"
+#"${basepath}/chromium-117-workaround_for_crash_on_BTI_capable_system.patch"
+#"${basepath}/chromium-127-aarch64-duplicate-case-value.patch"
+#"${basepath}/chromium-142-split-threshold-for-reg-with-hint.patch"
+#"${basepath}/chromium-130-hardware_destructive_interference_size.patch"
+#"${basepath}/chromium-141-use_libcxx_modules.patch"
+#"${basepath}/chromium-134-type-mismatch-error.patch"
+#"${basepath}/chromium-144-rust-clanglib.patch"
+#"${basepath}/chromium-148-rust-1.95-bytemuck-ftbfs.patch"
+#"${basepath}/add-ppc64-architecture-string.patch"
+#"${basepath}/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
+#"${basepath}/0001-third_party-angle-Include-missing-header-cstddef-in-.patch"
+#"${basepath}/0001-Add-PPC64-support-for-boringssl.patch"
+#"${basepath}/0001-third_party-libvpx-Disable-vsx-on-ppc64.patch"
+#"${basepath}/0001-third_party-libvpx-Properly-generate-gni-on-ppc64.patch"
+#"${basepath}/0001-third_party-pffft-Include-altivec.h-on-ppc64-with-SI.patch"
+#"${basepath}/0002-Add-PPC64-generated-files-for-boringssl.patch"
+#"${basepath}/0002-third_party-lss-kernel-structs.patch"
+#"${basepath}/0001-swiftshader-fix-build.patch"
+#"${basepath}/Rtc_base-system-arch.h-PPC.patch"
+#"${basepath}/0004-third_party-crashpad-port-curl-transport-ppc64.patch"
+#"${basepath}/HACK-third_party-libvpx-use-generic-gnu.patch"
+#"${basepath}/HACK-debian-clang-disable-base-musttail.patch"
+#"${basepath}/HACK-debian-clang-disable-pa-musttail.patch"
+#"${basepath}/0001-Add-ppc64-target-to-libaom.patch"
+#"${basepath}/0001-Add-pregenerated-config-for-libaom-on-ppc64.patch"
+#"${basepath}/0002-third_party-libvpx-Remove-bad-ppc64-config.patch"
+#"${basepath}/0003-third_party-libvpx-Add-ppc64-generated-config.patch"
+#"${basepath}/0004-third_party-libvpx-work-around-ambiguous-vsx.patch"
+#"${basepath}/skia-vsx-instructions.patch"
+#"${basepath}/0001-Implement-support-for-ppc64-on-Linux.patch"
+#"${basepath}/0001-Implement-support-for-PPC64-on-Linux.patch"
+#"${basepath}/0001-Force-baseline-POWER8-AltiVec-VSX-CPU-features-when-.patch"
+#"${basepath}/fix-rustc.patch"
+#"${basepath}/fix-rust-linking.patch"
+#"${basepath}/fix-breakpad-compile.patch"
+#"${basepath}/fix-study-crash.patch"
+#"${basepath}/fix-different-data-layouts.patch"
+#"${basepath}/fix-page-allocator-overflow.patch"
+#"${basepath}/0001-Enable-ppc64-pointer-compression.patch"
+#"${basepath}/dawn-fix-ppc64le-detection.patch"
+#"${basepath}/add-ppc64-architecture-to-extensions.diff"
+#"${basepath}/fix-unknown-warning-option-messages.diff"
+#"${basepath}/add-ppc64-pthread-stack-size.patch"
+#"${basepath}/0001-add-xnn-ppc64el-support.patch"
+#"${basepath}/0002-regenerate-xnn-buildgn.patch"
+#"${basepath}/0009-sandbox-ignore-byte-span-error.patch"
+#"${basepath}/0005-blink-add-audio-vector-support.patch"
+#"${basepath}/chromium-150-pt_regs-kernel-7.2.0.patch"
+#"${basepath}/flatpak-Add-initial-sandbox-support.patch"
+#"${basepath}/flatpak-Adjust-paths-for-the-sandbox.patch"
+#"${basepath}/flatpak-Expose-Widevine-into-the-sandbox.patch"
+#"${basepath}/0001-Remove-unused-OpenSSL-config.patch"
+#"${basepath}/0001-fips-disable-options.patch"
+#"${basepath}/disable-ai.patch"
+	)
+}
+
+# TODO:  Dedupe the patch overlap and remove this function while keeping necessary G23 distro mods.
+apply_mj_patchset() {
+	[[ "${MJ_PATCHSET}" == "1" ]] || return
+einfo "Applying the MJ patchset (Gentoo patchset)..."
+
+	# Generated from:  find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-patches-151-3/ -name "*.patch" | sort -V
+	local base_path="${WORKDIR}/chromium-patches-${PATCH_VER}"
+	PATCHES=(
+$(use system-zlib && echo "${base_path}/common/cr109-system-zlib.patch")
+$(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")
+"${base_path}/common/cr138-nodejs-version-check.patch"
+"${base_path}/common/cr144-glibc-2.43.patch"
+"${base_path}/common/cr145-oauth2-client-switches.patch"
+#$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${base_path}/common/cr145-revert-to-rollup-wasm.patch") # Rollup removed from inspector
+"${base_path}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
+"${base_path}/common/cr149-channel-aware-build.patch"
+"${base_path}/common/cr151-metric-histogram-non-git.patch"
+"${base_path}/common/cross-compile.patch"
+
+	# https://issues.chromium.org/issues/442698344
+	# Unreleased fontconfig changed magic numbers and google have rolled to this version
+$(use system-fontconfig && has_version "<=media-libs/fontconfig-2.17.1" && echo "${FILESDIR}/chromium-142-work-with-old-fontconfig.patch")
+	)
+
+	if use system-clang ; then
+		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" && "${OPENPOWER_PATCHSET}" == "1" ]] ; then
+			PATCHES=(
+"${base_path}/ppc64le/cr145-ppc64-libpng.patch"
+"${base_path}/ppc64le/libpng-pdfium-compile-98.patch"
+"${base_path}/ppc64le/rust-clanglib.patch"
+			)
+		fi
+
+		PATCHES+=(
+"${base_path}/toolchain/cr146-empty-parsed_rustc_args.patch"
+"${base_path}/toolchain/cr149-bindgen-libclang-paths.patch"
+"${base_path}/toolchain/cr149-fix-rust.patch"
+"${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"
+#"${base_path}/toolchain/cr150-compiler.patch"				# oiledmachine-overlay changes prefered
+"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"					# Same as cr151-dawn-system-go.patch but with updated context
+"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"					# Same as cr151-mold-unbundle.patch
+		)
+
+		PATCHES+=(
+"${base_path}/llvm/lt-23/cr147-disable-fno-lifetime-dse.patch"
+"${base_path}/llvm/lt-23/cr149-ubsan-feature.patch"
+"${base_path}/llvm/lt-23/cr151-fdiagnostics-show-inlining-chain.patch"
+		)
+	fi
 }
 
 apply_openpower_patchset() {
@@ -4237,8 +4386,10 @@ src_prepare() {
 	# Unbunding dependencies may introduce a class of vulnerability.  The
 	# patchsets below attempts to unbundle, but it may increase the attack
 	# surface.  The most secure flavor of CFI requires static linkage.  You
-	# can use the Cross DSO CFI flavor to get dynamic .so linkage which the
-	# distro wants but the attack surface would increase.
+	# can use the dynamic .so linkage which Linux distros and rash users
+	# want but the attack surface would increase.  You can try to do Cross
+	# DSO CFI flavor (non-static CFI) for ROP mitigation but it requires
+	# A/B partitioning for updates.
 
 	# The ROP attack is used to disable security, run the shell for attacker
 	# shell code but using system dependencies which are typically not ROP
@@ -4271,6 +4422,7 @@ src_prepare() {
 	apply_mj_patchset # TODO:  Remove
 	apply_gentoo_patchset_2
 	apply_openpower_patchset
+	apply_fedora_patchset
 	# TODO:  If build breakage, get https://github.com/obentoo/bentoo/blob/master/www-client/chromium/files/chromium-155-devtools-tsc-binary-via-node.patch
 	apply_oiledmachine_overlay_patchset
 
