@@ -4411,7 +4411,9 @@ src_prepare() {
 	# programs used after the initial attack.
 
 	# It is possible that there are threat actors or infiltrators that are
-	# aware about this with intent to increase the attack surface.
+	# aware about this with intent to increase the attack surface to maybe
+	# help state level threat actors for state interests or insider threat
+	# actors that are maybe trying to sabotage Linux distros.
 
 	apply_cromite_patchset
 	apply_ungoogled_chromium_patchset
