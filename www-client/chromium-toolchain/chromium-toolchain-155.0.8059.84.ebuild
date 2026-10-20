@@ -27,7 +27,7 @@ CXX_STANDARD=23 # Same as libcxx and chromium.
 GN_COMMIT="cfcd774b98f3433e18b722f9a7ff06119825b8eb"
 GN_PV="0.2562" # See get_gn_ver.sh to obtain the version.
 GN_USE_GIT=1
-INSTALL_PREFIX="/usr/share/chromium/${PV%.*}.x"
+INSTALL_PREFIX="/usr/share/chromium/${PV}"
 LIBCXX_USEDEP_SKIP=1
 LLVM_SYSTEM_SLOT="24" # We use the latest to mitigate miscompilation vulnerabilities.
 LLVM_SYSTEM_SLOT_LIVE="1"
@@ -234,7 +234,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_36
+ebuild_revision_37
 "
 REQUIRED_USE="
 	system-clang? (
@@ -664,14 +664,10 @@ einfo "QA:  Update chromium ebuild with tc_count_expected_rust=${rust_count}"
 		rm -rf "/usr/share/chromium/toolchain"
 	fi
 
-	local x
-	for x in ${REPLACING_VERSIONS} ; do
-		local y="${x%.*}"
-		if [[ "${y}" != "${PV%.*}" ]] ; then
-einfo "Removing ${PN}:${y}"
-			rm -rf "/usr/share/chromium/${y}.x" >/dev/null 2>&1 || true
-		fi
-	done
+	# Remove old multislot
+	if ls "/usr/share/chromium/"*".x" >/dev/null 2>&1 ; then
+		rm -rf "/usr/share/chromium/${y}.x" >/dev/null 2>&1 || true
+	fi
 }
 
 pkg_postrm() {
