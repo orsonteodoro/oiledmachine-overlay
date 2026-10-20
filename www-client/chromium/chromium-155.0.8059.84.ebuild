@@ -3401,7 +3401,7 @@ einfo "Applying the Debian patchset..."
 #"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/openjpeg.patch"
 #"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/opus.patch"
 #"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rapidjson.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rollup.patch" # Use the system's build for compatibility for arm64/loong
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rollup.patch" # Use the system's build for compatibility for arm64/loong/ppc64 instead of prebuilt
 #"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/llvm.patch"
 #"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/python.patch"
 #"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/tsc.patch"
