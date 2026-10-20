@@ -214,6 +214,7 @@ MJ_PATCHSET=${MJ_PATCHSET:-1} # DEPRECATED.  Used as the Gentoo patchset at M152
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
 OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-1}
 EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
+PPC64_PATCHSET_PROVIDER=${PPC64_PATCHSET_PROVIDER:-"openpower"} # Valid values debian, openpower
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
@@ -275,18 +276,19 @@ fi
 
 inherit multilib-build secure-version
 
-ARCH_PATCHSET_PV="155.0.8059.79"
-ARCH_PATCHSET_REV="2"
+ARCH_PATCHSET_PV="155.0.8059.84"
+ARCH_PATCHSET_REV="1"
 COPIUM_PV="155.2"
 CROMITE_PV="153.0.8010.37"
 DEBIAN_PATCHSET_PV="155.0.8059.79"
 DEBIAN_PATCHSET_REV="1"
-DEBIAN_PATCHSET_TAG="_deb13u1" # can be "", "_deb13u1", "_deb12u1"
+DEBIAN_PATCHSET_TAG="" # It can be "" for (sid/unstable), "_deb13u1", "_deb12u1" ## Use the version closest for latest glibc, gcc, llvm on G23.
 GCC_PV="10.2.1" # Minimum
 MJ_PATCHSET_PV="151"
 MJ_PATCHSET_REV="3"
 GN_PV="0.2562"
-ESBUILD_PV="0.28.2"
+ESBUILD_PV="0.28.2" # third_party/devtools-frontend/src/node_modules/esbuild/package.json
+ROLLUP_WASM_NODE_PV="4.62.4" # third_party/chromium-bidi/node_modules/@rollup/wasm-node/package.json
 QT6_PV="${QTBASE6_PV}"
 UNGOOGLED_CHROMIUM_PV="155.0.8059.84-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
@@ -952,10 +954,10 @@ is_ungoogle_chromium_compatible() {
 if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
 	:
 else
-	# Only amd64 support due to time constraints and lack of hardware.
-	# If you want to support other arches, merge changes and sign up as ebuild co-maintainer.
-	KEYWORDS="~amd64" # Ebuild needs patches updated
-	:
+	# amd64 - tested in older releases
+	# loong - untested, but available
+	# ppc64 - untested, but available
+	KEYWORDS="~amd64 ~loong ~ppc64"
 fi
 
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_PV}-${CROMITE_ID}"
@@ -2058,6 +2060,7 @@ BDEPEND+="
 	app-alternatives/ninja
 	app-alternatives/lex
 	dev-util/esbuild:${ESBUILD_PV}
+	dev-util/rollup-wasm-node:${ROLLUP_WASM_NODE_PV}
 	dev-util/patchutils
 	dev-vcs/git
 	sys-apps/hwdata
@@ -3243,7 +3246,7 @@ eerror "gn >= ${GN_MIN_VER} is required"
 	mkdir -p "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin" || die
 	ln -s "/usr/bin/go" "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin/go" || die
 
-	if use ppc64 && [[ "${KEYWORDS}" =~ "ppc64" && "${OPENPOWER_PATCHSET}" == "1" ]] ; then
+	if [[ "${KEYWORDS}" =~ "ppc64" && "${OPENPOWER_PATCHSET}" == "1" ]] && use ppc64 ; then
 		unpack "chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz"
 	fi
 
@@ -3385,23 +3388,87 @@ apply_debian_patchset() {
 	[[ "${DEBIAN_PATCHSET}" == "1" ]] || return
 einfo "Applying the Debian patchset..."
 
-# Generated from `find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1_deb13u1 -type f -name "*.patch" | sort -V`
-
 	# DO NOT ENABLE ALL PATCHES!
 	# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
+# For using system-libs instead
+# Only enable if build breakage.
+	PATCHES+=(
+# From `grep "^system/" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/golang.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/icu-shim.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/jpeg.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/openjpeg.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/opus.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rapidjson.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/rollup.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/llvm.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/python.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/tsc.patch"
+#"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/system/tsc2.patch"
+	)
+
 	# LLVM support like G23 distro patchset.
 	PATCHES+=(
+# From `grep -r -e "^llvm-22" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/ignore-for-ubsan.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/clang22.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/clone-traits.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/const-profile.patch"
-"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/ignore-for-ubsan.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/keyfactory.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/raw-ref-map-find.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/shut-up-clang.patch"
 	)
 
-	if use loong && [[ "${KEYWORDS}" =~ "loong" ]] ; then
+	if [[ "${KEYWORDS}" =~ "ppc64" && "${CHOST}" =~ "powerpc64le" && "${PPC64_PATCHSET_PROVIDER}" == "debian" ]] && use ppc64 ; then
+#From `grep -r -e "^ppc64le" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
+		PATCHES+=(
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/sandbox/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/sandbox/0009-sandbox-ignore-byte-span-error.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-angle-Include-missing-header-cstddef-in-.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-Add-PPC64-support-for-boringssl.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-libvpx-Disable-vsx-on-ppc64.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-libvpx-Properly-generate-gni-on-ppc64.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-third_party-pffft-Include-altivec.h-on-ppc64-with-SI.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-swiftshader-fix-build.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-Add-PPC64-generated-files-for-boringssl.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-third_party-lss-kernel-structs.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/webrtc/Rtc_base-system-arch.h-PPC.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0004-third_party-crashpad-port-curl-transport-ppc64.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/workarounds/HACK-third_party-libvpx-use-generic-gnu.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/workarounds/HACK-debian-clang-disable-base-musttail.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/workarounds/HACK-debian-clang-disable-pa-musttail.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/libaom/0001-Add-ppc64-target-to-libaom.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/libaom/0001-Add-pregenerated-config-for-libaom-on-ppc64.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-third_party-libvpx-Remove-bad-ppc64-config.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0003-third_party-libvpx-Add-ppc64-generated-config.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0003-third_party-ffmpeg-Add-ppc64-generated-config.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0004-third_party-libvpx-work-around-ambiguous-vsx.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-add-xnn-ppc64el-support.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0002-regenerate-xnn-buildgn.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/skia-vsx-instructions.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/breakpad/0001-Implement-support-for-ppc64-on-Linux.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/crashpad/0001-Implement-support-for-PPC64-on-Linux.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0001-Force-baseline-POWER8-AltiVec-VSX-CPU-features-when-.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-rustc.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-rust-linking.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-breakpad-compile.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-page-allocator-overflow.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-different-data-layouts.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/v8/0001-Enable-ppc64-pointer-compression.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/dawn-fix-ppc64le-detection.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/third_party/0005-blink-add-audio-vector-support.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/add-ppc64-architecture-string.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/add-ppc64-pthread-stack-size.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-study-crash.patch"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/add-ppc64-architecture-to-extensions.diff"
+"${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/fixes/fix-unknown-warning-option-messages.diff"
+$(use cpu_flags_ppc_vsx3 && echo "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/ppc64le/core/baseline-isa-3-0.patch")
+		)
+	fi
+
+	if [[ "${KEYWORDS}" =~ "loong" ]] && use loong ; then
+# From `grep -r -e "^loongarch64" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
 		PATCHES+=(
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0001-loong64-core-add-loong64-architecture-to-extensions.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/loongarch64/0002-loong64-sandbox-Enable-seccomp_bpf-for-loongarch64.patch"
@@ -3508,6 +3575,7 @@ einfo "Applying the Copium patchset..."
 apply_openpower_patchset() {
 	use ppc64 || return
 	[[ "${CHOST}" =~ "powerpc64le" ]] || return
+	[[ "${PPC64_PATCHSET_PROVIDER}" == "openpower" ]] || return
 
 	local base_path="${WORKDIR}/work/openpower-patches-${OPENPOWER_PATCHES_COMMIT}/patches"
 
