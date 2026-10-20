@@ -55,7 +55,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="0"
-IUSE+=" ebuild_revision_9"
+IUSE+=" ebuild_revision_10"
 RDEPEND+="
 	!www-client/chromium-sources:155.0.8059.84
 "
