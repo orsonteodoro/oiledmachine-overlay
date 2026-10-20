@@ -213,6 +213,7 @@ GENTOO_PATCHSET=${GENTOO_PATCHSET:-1}
 MJ_PATCHSET=${MJ_PATCHSET:-1} # DEPRECATED.  Used as the Gentoo patchset at M152 and earlier.
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
 OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-1}
+EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
 
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
@@ -286,15 +287,17 @@ MJ_PATCHSET_PV="151"
 MJ_PATCHSET_REV="3"
 GN_PV="0.2562"
 ESBUILD_PV="0.28.2"
-ROLLUP_WASM_NODE_PV="4.57.1"
 QT6_PV="${QTBASE6_PV}"
 UNGOOGLED_CHROMIUM_PV="155.0.8059.84-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
 # mksnapshot "Return code is -11" error.  To fix it, it required to either \
-# disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
+# disable the V8 sandbox, or pointer compression and DrumBrake.  Before it was \
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
-#V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
+V8_PV="15.5.35.25" # Oct 13, 2026.   The V8 current version for 155.
+#V8_PV="15.6.75.20" # Oct 20, 2026.  The lastest active with near compatibility.  15.6.75.x, 15.7.112.x, 15.8.x are active for V8.
+# tools/builtins-pgo/profiles/ folder contains the PGO profile for V8.
+# The AI said no version guarantees for compatibility.
 
 CROMITE_ID="11507ac1061b5ea227806f5e84db5a57df6ccf6a" # Not the same as the tagged commit but the ID from the commit message
 OPENPOWER_PATCHES_COMMIT="800388aa2deef5717f869d051eecafb52a117976" # Same as latest for the chromium-155 branch
@@ -1012,19 +1015,42 @@ fi
 #
 # Deprecated, move some to files folder
 #
-# For system-zlib, system-icu nodejs, glibc, rollup-wasm, v8-cfi fix,
+# For system-zlib, system-icu nodejs, glibc, V8 CFI fix,
 # module-sysroot, cross-compile, llvm, ppc64le, rust, toolchain, system-go,
 # mold support
 #
-# oiledmachine-overlay:  We delete everything except for multislot.
+# oiledmachine-overlay plans:  We delete/dedupe most of patches except for
+# multislot and G23 system deps compatibility then move patches to files dir,
+# but rely on Arch/Debian patchsets as fallback for Linux compatibility and
+# build fixes.
 #
 if [[ "${MJ_PATCHSET}" == "1" ]] ; then
 	MJ_PATCHSET_URI="
 https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}/chromium-patches-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}.tar.gz
-	-> matt-jolly-chromium-patchset-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}.tar.gz
+	-> chromium-matt-jolly-patches-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}.tar.gz
 	"
 else
 	MJ_PATCHSET_URI="
+	"
+fi
+
+if [[ "${OPENPOWER_PATCHSET}" == "1" ]] ; then
+	OPENPOWER_PATCHSET_URI="
+https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${OPENPOWER_PATCHES_COMMIT}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}.tar.gz
+	-> chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz
+	"
+else
+	OPENPOWER_PATCHSET_URI="
+	"
+fi
+
+if [[ "${EXTERNAL_V8}" == "1" ]] ; then
+	V8_URI="
+https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
+	-> v8-${V8_PV}.tar.gz
+	"
+else
+	V8_URI="
 	"
 fi
 
@@ -1033,29 +1059,13 @@ SRC_URI+="
 	${COPIUM_PATCHSET_URI}
 	${DEBIAN_PATCHSET_URI}
 	${MJ_PATCHSET_URI}
-	https://deps.gentoo.zip/www-client/chromium/rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz
+	${OPENPOWER_PATCHSET_URI}
+	${V8_URI}
 	test? (
 https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
         -> chromium-testfonts-${TEST_FONT:0:10}.tar.gz
 	)
 "
-
-if [[ "${OPENPOWER_PATCHSET}" == "1" ]] ; then
-	SRC_URI+="
-https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches/-/archive/${OPENPOWER_PATCHES_COMMIT}/openpower-patches-${OPENPOWER_PATCHES_COMMIT}.tar.gz
-	-> chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz
-	"
-fi
-#	ppc64? (
-#	)
-
-
-if [[ -n "${V8_PV}" ]] ; then
-	SRC_URI+="
-https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
-	-> v8-${V8_PV}.tar.gz
-	"
-fi
 
 LICENSE=""
 
@@ -3170,7 +3180,7 @@ src_unpack() {
 		unpack "chromium-debian-patchset-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}.tar.gz"
 	fi
 	if [[ "${MJ_PATCHSET}" == "1" ]] ; then # G23 patchset
-		unpack "matt-jolly-chromium-patchset-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}.tar.gz"
+		unpack "chromium-matt-jolly-patches-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}.tar.gz"
 	fi
 	if [[ "${OPENPOWER_PATCHSET}" == "1" ]] ; then
 		unpack "chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz"
@@ -3249,16 +3259,13 @@ einfo "Unpacking test fonts ..."
 			|| die "Failed to unpack testfonts"
 	fi
 
-	if [[ -n "${V8_PV}" ]] ; then
-einfo "Updating V8 to ${V8_PV}"
+	if [[ "${EXTERNAL_V8}" == "1" ]] ; then
+einfo "Replacing vendored V8 with external V8."
+einfo "V8 version:  ${V8_PV}"
 		unpack "v8-${V8_PV}.tar.gz"
 		rm -rf "${S}/v8" || die
 		mv "${WORKDIR}/v8-${V8_PV}" "${S}/v8" || die
 	fi
-
-	# This is a dirty hack, but we need rollup to build successfully and it's proving to be challenging
-	# to build locally due to deps
-	unpack "rollup-wasm-node-${ROLLUP_WASM_NODE_PV}.tgz"
 }
 
 is_generating_credits() {
@@ -3270,7 +3277,7 @@ is_generating_credits() {
 }
 
 # sed patches
-apply_gentoo_patchset1() {
+apply_gentoo_patchset_1() {
 	# So many fontconfig magic numbers to cover
 	# TODO: once upstream roll to 2.18.2+ set that as our minimum and remove this logic.
 	# <=2.17.1 -> 9
@@ -3312,7 +3319,7 @@ change_rustfmt_suffix() {
 }
 
 # sed/awk patches
-apply_gentoo_patchset2() {
+apply_gentoo_patchset_2() {
 	remove_compiler_builtins
 	change_rustfmt_suffix
 }
@@ -3330,7 +3337,7 @@ $(use system-icu && echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr131-
 "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr138-nodejs-version-check.patch"
 "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr144-glibc-2.43.patch"
 "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-oauth2-client-switches.patch"
-$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch")
+#$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr145-revert-to-rollup-wasm.patch") # Rollup removed from inspector
 "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
 "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr149-channel-aware-build.patch"
 "${WORKDIR}/chromium-patches-${PATCH_VER}/common/cr151-metric-histogram-non-git.patch"
@@ -3343,9 +3350,6 @@ $(use system-fontconfig && has_version "<=media-libs/fontconfig-2.17.1" && echo 
 
 	if use system-clang ; then
 		PATCHES+=(
-"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/cr145-ppc64-libpng.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/libpng-pdfium-compile-98.patch"
-"${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/rust-clanglib.patch"
 		)
 
 		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" && "${OPENPOWER_PATCHSET}" == "1" ]] ; then
@@ -3657,11 +3661,14 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
+	# Print the current V8 (JavaScript engine) version for external v8
+	# compatibility patches and vulnerability advisories.
 	local v8_pv_c1=$(grep "V8_MAJOR_VERSION" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
 	local v8_pv_c2=$(grep "V8_MINOR_VERSION" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
 	local v8_pv_c3=$(grep "V8_BUILD_NUMBER" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
 	local v8_pv_c4=$(grep "V8_PATCH_LEVEL" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
-einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}" # For patch name and vulnerability advisories
+einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}"
+
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-149.0.7827.114-custom-optimization-level.patch"
 		$((in_iuse "cromite" && use cromite) || echo "${FILESDIR}/extra-patches/${PN}-149.0.7827.114-hardening.patch")
@@ -4161,31 +4168,44 @@ src_prepare() {
 		prepare_cromite_with_ungoogled_chromium
 	fi
 
-	# Proper CFI requires static linkage.
-	# You can use Cross DSO CFI (aka dynamic .so linkage) but the attack
-	# surface would increase.
-	# cfi-icall with static linkage may have less breakage than dynamic,
-	# which will force user to disable cfi-icall in Cross DSO CFI unvendored
-	# lib.
+	# Unbunding dependencies may introduce a class of vulnerability.  The
+	# patchsets below attempts to unbundle, but it may increase the attack
+	# surface.  The most secure flavor of CFI requires static linkage.  You
+	# can use the Cross DSO CFI flavor to get dynamic .so linkage which the
+	# distro wants but the attack surface would increase.
+
+	# The ROP attack is used to disable security, run the shell for attacker
+	# shell code but using system dependencies which are typically not ROP
+	# mitigated by default opens an unattended consequence of this class of
+	# vulnerability because the ROP attack can be used across unmitigated
+	# dynamic libraries.
+
+	# The ROP attack has a higher attack complexity over typical memory
+	# corruption (OOBW, HO, SO, etc).
+
+	# The attack surface of ROP is more reduced compared to memory
+	# corruption bugs attack surface.  Most devs are gambling and
+	# telegraphing their intent on triaging the memory corruption attack
+	# surface mostly, but most skilled threat actors preform reconnaissance.
+	# So the proper remediation is to triage both attack surfaces -- ROP
+	# attack surface and the memory corruption attack surface.  We mitigate
+	# the memory corruption attack surface for the initial attack.  We
+	# mitigate the ROP attack surface to block the running malicious
+	# programs used after the initial attack.
 
 	apply_cromite_patchset
 	apply_ungoogled_chromium_patchset
 	apply_copium_patchset
 	apply_arch_patchset
 	apply_debian_patchset
-	apply_gentoo_patchset1
+	apply_gentoo_patchset_1
 	apply_mj_patchset # TODO:  Remove
-	apply_gentoo_patchset2
+	apply_gentoo_patchset_2
 	apply_openpower_patchset
-	# TODO:  Review bentoo patchset
+	# TODO:  If build breakage, get https://github.com/obentoo/bentoo/blob/master/www-client/chromium/files/chromium-155-devtools-tsc-binary-via-node.patch
 	apply_oiledmachine_overlay_patchset
 
-	# Do this before we apply patches since (e.g.) ppc64 needs to patch rollup and it's easier in ${S}
-	einfo "Moving rollup wasm-node package into place ..."
-	mkdir -p "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
-		|| die "Failed to create node_modules/@rollup/wasm-node"
-	mv "${WORKDIR}/package/"* "third_party/devtools-frontend/src/node_modules/@rollup/wasm-node" \
-		|| die "Failed to move rollup package"
+	# Rollup references removed from inspector
 
 	default
 
