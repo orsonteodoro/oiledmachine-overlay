@@ -286,6 +286,7 @@ DEBIAN_PATCHSET_REV="1"
 DEBIAN_PATCHSET_TAG="" # It can be "" for (sid/unstable), "_deb13u1", "_deb12u1" ## Use the version closest for latest glibc, gcc, llvm on G23.
 FEDORA_PATCHSET_BRANCH="f45"
 FEDORA_PATCHSET_VERSION="155.0.8059.84"
+FEDORA_PATCHSET_COMMIT="f450ddf0ede9d57b155f0f9efc3ae5e260cfc010"
 GCC_PV="10.2.1" # Minimum
 MJ_PATCHSET_PV="151"
 MJ_PATCHSET_REV="3"
@@ -3202,6 +3203,7 @@ src_unpack() {
 	fi
 	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
 		git clone -b "${FEDORA_PATCHSET_BRANCH}" "https://src.fedoraproject.org/rpms/chromium.git" "${WORKDIR}/fedora-patchset" || die
+		git checkout "${FEDORA_PATCHSET_COMMIT}" || die
 	fi
 	die
 
