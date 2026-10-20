@@ -962,13 +962,14 @@ S_CROMITE="${WORKDIR}/cromite-${CROMITE_PV}-${CROMITE_ID}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 
 #
-# The D23 distro patchset is banned for failing to meet weekly update.
+# The G23 distro patchset is banned for failing to meet weekly update.
 #
 # Whitelisted patch providers:
 #
+# Arch Linux (Primary, rolling) - https://gitlab.archlinux.org/archlinux/packaging/packages/chromium
 # Copium - https://codeberg.org/selfisekai/copium
-# Arch Linux (Primary) - https://gitlab.archlinux.org/archlinux/packaging/packages/chromium
-# Debian (Secondary) - https://salsa.debian.org/chromium-team/chromium
+# Debian (Secondary, LTS) - https://salsa.debian.org/chromium-team/chromium
+# Fedora (Tertiary, rolling) - https://src.fedoraproject.org/rpms/chromium/tree/f45  ## Only the version with similar glibc, gcc, llvm to G23
 #
 # From testing the Arch's patchset is more correct than Debian's.
 # This is why it is the primary patchset.
@@ -3387,7 +3388,7 @@ einfo "Applying the Debian patchset..."
 	# DO NOT ENABLE ALL PATCHES!
 	# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
-	# LLVM support like D23 distro patchset.
+	# LLVM support like G23 distro patchset.
 	PATCHES+=(
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/clang22.patch"
 "${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches/llvm-22/clone-traits.patch"
