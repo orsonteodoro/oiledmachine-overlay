@@ -3386,6 +3386,9 @@ einfo "Applying the Debian patchset..."
 
 	local base_path="${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches"
 
+	# TODO:  Replace sources/third_party/chromium-bidi/node_modules/@rollup/wasm-node/dist/wasm-node/bindings_wasm_bg.wasm with native build.
+	# file:  bindings_wasm_bg.wasm: WebAssembly (wasm) binary version 0x1 (MVP module)
+
 # For using system-libs instead
 # Only enable if build breakage.
 	PATCHES+=(
