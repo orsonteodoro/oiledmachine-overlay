@@ -283,8 +283,8 @@ COPIUM_PV="155.2"
 CROMITE_PV="153.0.8010.37"
 DEBIAN_PATCHSET_PV="155.0.8059.79"
 DEBIAN_PATCHSET_REV="1"
-DEBIAN_PATCHSET_TAG="" # It can be "" for (sid/unstable), "_deb13u1", "_deb12u1" ## Use the version closest for latest glibc, gcc, llvm on G23.
-FEDORA_PATCHSET_BRANCH="f45"
+DEBIAN_PATCHSET_TAG="" # It can be "" for (sid/unstable), "_deb13u1", "_deb12u1"	# Use the version closest for latest glibc, gcc, llvm with G23.
+FEDORA_PATCHSET_BRANCH="f45"								# Use only the version with similar versions for glibc, GCC, LLVM, Rust with G23
 FEDORA_PATCHSET_VERSION="155.0.8059.84"
 FEDORA_PATCHSET_COMMIT="f450ddf0ede9d57b155f0f9efc3ae5e260cfc010"
 GCC_PV="10.2.1" # Minimum
@@ -970,14 +970,18 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 #
 # The G23 distro patchset is banned for failing to meet weekly update.
 #
-# Patchset providers:
+# Patchsets:
 #
-# Arch Linux (rolling)       - https://gitlab.archlinux.org/archlinux/packaging/packages/chromium
-# Copium                     - https://codeberg.org/selfisekai/copium
-# Cromite                    - https://github.com/uazo/cromite
-# Debian (rolling with Sid)  - https://salsa.debian.org/chromium-team/chromium
-# Fedora (rolling with F45)  - https://src.fedoraproject.org/rpms/chromium/tree/f45  ## Use only the version with similar glibc, GCC, LLVM to G23
-# ungoogled-chromium         - https://github.com/ungoogled-software/ungoogled-chromium
+# | Provider name          | URI                                                                                       | Notes                                                            |
+# | -----------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+# | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                      |
+# | Copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources                       |
+# | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                       |
+# | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                  |
+# | Fedora (rolling, F45)  | https://src.fedoraproject.org/rpms/chromium/tree/f45                                      | Used for security fixes                                          |
+# | Gentoo                 | https://gitlab.com/Matt.Jolly/chromium-patches                                            | (DEPRECATED) Used for multislot, system toolchain compatibility  |
+# | Raptor Engineering     | https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches | Used for ppc64le support                                         |
+# | ungoogled-chromium     | https://github.com/ungoogled-software/ungoogled-chromium                                  | Used for improving privacy or decrapfication                     |
 #
 
 # For the oiledmachine-overlay patchset, it is for mold, compiler flags,
@@ -997,7 +1001,7 @@ else
 	"
 fi
 
-# For source code level fixes
+# For source code level fixes, musl support
 if [[ "${COPIUM_PATCHSET}" == "1" ]] ; then
 	COPIUM_PATCHSET_URI="
 	system-clang? (
@@ -1023,11 +1027,11 @@ fi
 
 
 #
-# Deprecated, move some to files folder
+# DEPRECATED, move some patches to files folder.
 #
-# For system-zlib, system-icu nodejs, glibc, V8 CFI fix,
-# module-sysroot, cross-compile, llvm, ppc64le, rust, toolchain, system-go,
-# mold support
+# For V8 CFI fix, module-sysroot, cross-compile, LLVM < 23, ppc64le, Rust, toolchain,
+# mold support, cross compile, unbundling (system-zlib, system-icu, system-go,
+# system-nodejs)
 #
 # oiledmachine-overlay plans:  We delete/dedupe most of patches except for
 # multislot and G23 system deps compatibility then move patches to files dir,
@@ -3693,10 +3697,6 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")
 "${base_path}/common/cr149-channel-aware-build.patch"
 "${base_path}/common/cr151-metric-histogram-non-git.patch"
 "${base_path}/common/cross-compile.patch"
-
-	# https://issues.chromium.org/issues/442698344
-	# Unreleased fontconfig changed magic numbers and google have rolled to this version
-$(use system-fontconfig && has_version "<=media-libs/fontconfig-2.17.1" && echo "${FILESDIR}/chromium-142-work-with-old-fontconfig.patch")
 	)
 
 	if use system-clang ; then
@@ -3713,7 +3713,7 @@ $(use system-fontconfig && has_version "<=media-libs/fontconfig-2.17.1" && echo 
 "${base_path}/toolchain/cr149-bindgen-libclang-paths.patch"
 "${base_path}/toolchain/cr149-fix-rust.patch"
 "${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"
-#"${base_path}/toolchain/cr150-compiler.patch"				# oiledmachine-overlay changes prefered
+#"${base_path}/toolchain/cr150-compiler.patch"								# oiledmachine-overlay changes prefered
 "${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"					# Same as cr151-dawn-system-go.patch but with updated context
 "${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"					# Same as cr151-mold-unbundle.patch
 		)
