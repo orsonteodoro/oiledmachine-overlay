@@ -203,8 +203,8 @@ TC_COUNT_EXPECTED_CLANG=419
 TC_COUNT_EXPECTED_GN=1340
 TC_COUNT_EXPECTED_RUST=7258
 SOURCES_COUNT_EXPECTED=592154 # Update with DOWNLOAD_FLAVOR change
-CHROMIUM_EBUILD_MAINTAINER=0 # Also set GEN_ABOUT_CREDITS
-GEN_ABOUT_CREDITS=0
+MAINTENANCE_MODE=1 # Also set GEN_LICENSE_FILE
+GEN_LICENSE_FILE=0
 
 ARCH_PATCHSET=${ARCH_PATCHSET:-1}
 COPIUM_PATCHSET=${COPIUM_PATCHSET:-1}
@@ -949,12 +949,12 @@ is_ungoogle_chromium_compatible() {
 	fi
 }
 
-if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
+if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
 	:
 else
 	# Only amd64 support due to time constraints and lack of hardware.
 	# If you want to support other arches, merge changes and sign up as ebuild co-maintainer.
-	KEYWORDS="~amd64 ~ppc64" # Ebuild needs patches updated
+	KEYWORDS="~amd64" # Ebuild needs patches updated
 	:
 fi
 
@@ -2885,7 +2885,7 @@ ewarn "Missing kernel .config file."
 
 pkg_setup() {
 ewarn "This ebuild is still under maintenance."
-	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" || "${GEN_ABOUT_CREDITS}" == "1" ]] && [[ "${OILEDMACHINE_OVERLAY_MAINTAINER:-0}" == "0" ]] ; then
+	if [[ "${MAINTENANCE_MODE}" == "1" || "${GEN_LICENSE_FILE}" == "1" ]] && [[ "${OILEDMACHINE_OVERLAY_MAINTAINER:-0}" == "0" ]] ; then
 eerror "The ebuild patch update is still incomplete"
 		die
 	fi
@@ -3046,8 +3046,9 @@ eerror
 		fi
 	fi
 
-	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
+	if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
 		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
+# For updating license file
 eerror
 eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
 eerror "of your overlay or local repo.  The base path should contain all the"
@@ -3274,7 +3275,7 @@ einfo "V8 version:  ${V8_PV}"
 }
 
 is_generating_credits() {
-	if [[ "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
+	if [[ "${GEN_LICENSE_FILE}" == "1" ]] ; then
 		return 0
 	else
 		return 1
@@ -3354,9 +3355,6 @@ $(use system-fontconfig && has_version "<=media-libs/fontconfig-2.17.1" && echo 
 	)
 
 	if use system-clang ; then
-		PATCHES+=(
-		)
-
 		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" && "${OPENPOWER_PATCHSET}" == "1" ]] ; then
 			PATCHES=(
 "${WORKDIR}/chromium-patches-${PATCH_VER}/ppc64le/cr145-ppc64-libpng.patch"
@@ -3508,13 +3506,8 @@ einfo "Applying the Copium patchset..."
 }
 
 apply_openpower_patchset() {
-	if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
-		:
-	else
-		return
-	fi
-
 	use ppc64 || return
+	[[ "${CHOST}" =~ "powerpc64le" ]] || return
 
 	local base_path="${WORKDIR}/work/openpower-patches-${OPENPOWER_PATCHES_COMMIT}/patches"
 
@@ -3666,8 +3659,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	# Print the current V8 (JavaScript engine) version for external v8
-	# compatibility patches and vulnerability advisories.
+	# Print the current V8 (JavaScript engine) version for external V8
+	# compatibility patches and vulnerability advisory discovery.
 	local v8_pv_c1=$(grep "V8_MAJOR_VERSION" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
 	local v8_pv_c2=$(grep "V8_MINOR_VERSION" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
 	local v8_pv_c3=$(grep "V8_BUILD_NUMBER" "${S}/v8/include/v8-version.h" | cut -f 3 -d " ")
@@ -6118,7 +6111,7 @@ einfo "C++ library hardening:  Fully hardened"
 }
 
 _configure_performance_pgo(){
-	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then # Disable annoying check
+	if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then # Disable annoying check
 		:
 	elif use pgo ; then
 
@@ -8145,9 +8138,9 @@ _update_licenses() {
 	# Upstream doesn't package PATENTS files
 	if \
 		[[ \
-			"${CHROMIUM_EBUILD_MAINTAINER}" == "1" \
+			"${MAINTENANCE_MODE}" == "1" \
 				&& \
-			"${GEN_ABOUT_CREDITS}" == "1" \
+			"${GEN_LICENSE_FILE}" == "1" \
 		]] \
 	; then
 einfo "Generating license and copyright notice file"
@@ -8170,7 +8163,7 @@ einfo
 einfo "  LICENSE_FINGERPRINT${flavor_var}=\"${fp}\""
 einfo
 einfo "and with LICENSE variable updates.  When you are done updating, comment"
-einfo "out GEN_ABOUT_CREDITS."
+einfo "out GEN_LICENSE_FILE."
 einfo
 		die
 	fi
@@ -8829,7 +8822,7 @@ einfo
 #   Fix patches
 # Sync update depends section
 # Update license files
-#   Set GEN_ABOUT_CREDITS=1
+#   Set GEN_LICENSE_FILE=1
 #   Copy license to license folder
 # Update the llvm commit details
 #  Update LLVM_COMPAT
