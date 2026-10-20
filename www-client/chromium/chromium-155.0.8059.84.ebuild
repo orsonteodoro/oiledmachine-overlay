@@ -969,13 +969,14 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 # Arch Linux (Primary, rolling) - https://gitlab.archlinux.org/archlinux/packaging/packages/chromium
 # Copium - https://codeberg.org/selfisekai/copium
 # Debian (Secondary, LTS) - https://salsa.debian.org/chromium-team/chromium
-# Fedora (Tertiary, rolling) - https://src.fedoraproject.org/rpms/chromium/tree/f45  ## Only the version with similar glibc, gcc, llvm to G23
+# Fedora (Tertiary, rolling) - https://src.fedoraproject.org/rpms/chromium/tree/f45  ## Use only the version with similar glibc, GCC, LLVM to G23
 #
 # From testing the Arch's patchset is more correct than Debian's.
 # This is why it is the primary patchset.
 #
 
-# For the oiledmachine-overlay patchset, it is for mold, rust/c-family hardening, x86-64 ISA level 1 support
+# For the oiledmachine-overlay patchset, it is for mold, compiler flags,
+# CPU flags, x86-64 ISA Level 1 support
 
 # For build files fixes
 if [[ "${ARCH_PATCHSET}" == "1" ]] ; then
@@ -1001,7 +1002,7 @@ else
 	"
 fi
 
-# For loongarch, ppc64le, llvm-19, llvm-22, rust-1.85, system deps support
+# For loongarch, ppc64le, LLVM 19, LLVM 22, Rust 1.85, system deps support
 if [[ "${DEBIAN_PATCHSET}" == "1" ]] ; then
 	DEBIAN_PATCHSET_URI="
 https://salsa.debian.org/chromium-team/chromium/-/archive/debian/${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}.tar.gz?ref_type=tags
