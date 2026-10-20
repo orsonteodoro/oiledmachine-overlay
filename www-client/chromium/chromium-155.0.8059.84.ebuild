@@ -4389,7 +4389,7 @@ src_prepare() {
 	# can use the dynamic .so linkage which Linux distros and rash users
 	# want but the attack surface would increase.  You can try to do Cross
 	# DSO CFI flavor (non-static CFI) for ROP mitigation but it requires
-	# A/B partitioning for updates.
+	# A/B partitioning for smooth systemwide updates.
 
 	# The ROP attack is used to disable security, run the shell for attacker
 	# shell code but using system dependencies which are typically not ROP
