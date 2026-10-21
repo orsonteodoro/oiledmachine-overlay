@@ -3419,7 +3419,7 @@ einfo "Applying the Arch patchset..."
 # DO NOT ENABLE ALL PATCHES!
 # ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
-"${base_path}/chromium-138-nodejs-version-check.patch"			# Enabled like the MJ patchset
+#"${base_path}/chromium-138-nodejs-version-check.patch"			# Enabled like the MJ patchset, using copium instead
 #"${base_path}/chromium-144-fix-hdr-issue.patch"
 "${base_path}/chromium-145-fix-SYS_SECCOMP.patch"			# Enabled like the MJ patchset
 #"${base_path}/chromium-147-rust-1.95-bytemuck.patch"
@@ -3577,7 +3577,7 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
 #"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
 #"${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"
-#"${WORKDIR}/copium/cr138-node-version-check.patch"
+"${WORKDIR}/copium/cr138-node-version-check.patch"				# Equivalent to MJ patchset
 #"${WORKDIR}/copium/cr140-musl-prctl.patch"
 #"${WORKDIR}/copium/cr140-rust-pre1.89.patch"
 #"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
@@ -3611,7 +3611,7 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
 #"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
 "${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"				# Used in Alpine
-#"${WORKDIR}/copium/cr138-node-version-check.patch"				# Used in Alpine, but Arch patch used instead
+"${WORKDIR}/copium/cr138-node-version-check.patch"				# Used in Alpine and equivalent to MJ patchset
 "${WORKDIR}/copium/cr140-musl-prctl.patch"					# Used in Alpine
 #"${WORKDIR}/copium/cr140-rust-pre1.89.patch"
 #"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
@@ -5413,6 +5413,9 @@ _configure_compiler_common() {
 		"enable_check_raw_ref_fields=false"
 
 		"treat_warnings_as_errors=false"
+
+	# Relax check, already handled by ebuild
+		"node_version_check=false"
 	)
 
 	# Dedupe flags
