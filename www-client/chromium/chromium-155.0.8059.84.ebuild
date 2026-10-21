@@ -962,7 +962,7 @@ else
 	# amd64 - tested in older releases
 	# loong - untested, but available
 	# ppc64 - untested, but available
-	KEYWORDS="~amd64 ~loong ~ppc64"
+	KEYWORDS="~amd64"
 fi
 
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_PV}-${CROMITE_ID}"
@@ -3423,7 +3423,7 @@ einfo "Applying the Debian patchset..."
 "${base_path}/llvm-22/shut-up-clang.patch"
 	)
 
-	if [[ "${KEYWORDS}" =~ "ppc64" && "${CHOST}" =~ "powerpc64le" && "${PPC64_PATCHSET_PROVIDER}" == "debian" ]] && use ppc64 ; then
+	if [[ "${CHOST}" =~ "powerpc64le" && "${PPC64_PATCHSET_PROVIDER}" == "debian" ]] && use ppc64 ; then
 #From `grep -r -e "^ppc64le" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
 		PATCHES+=(
 "${base_path}/ppc64le/sandbox/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
@@ -3470,7 +3470,7 @@ $(use cpu_flags_ppc_vsx3 && echo "${base_path}/ppc64le/core/baseline-isa-3-0.pat
 		)
 	fi
 
-	if [[ "${KEYWORDS}" =~ "loong" ]] && use loong ; then
+	if use loong ; then
 # From `grep -r -e "^loongarch64" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
 		PATCHES+=(
 "${base_path}/loongarch64/0001-loong64-core-add-loong64-architecture-to-extensions.patch"
