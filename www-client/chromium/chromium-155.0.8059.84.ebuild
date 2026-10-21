@@ -3804,7 +3804,7 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")	
 #$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${base_path}/common/cr145-revert-to-rollup-wasm.patch")	# Using Debian rollup.patch instead
 "${base_path}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"							# Unique patch
 #"${base_path}/common/cr149-channel-aware-build.patch"										# Unique patch, dropping patch
-"${base_path}/common/FIXMEcr151-metric-histogram-non-git.patch"									# Unique patch
+#"${base_path}/common/cr151-metric-histogram-non-git.patch"									# Unique patch, dropping patch, already applied upstream, a compatibility check for older gn build
 "${base_path}/common/cross-compile.patch"											# Unique patch
 	)
 
