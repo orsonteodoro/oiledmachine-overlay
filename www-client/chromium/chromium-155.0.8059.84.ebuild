@@ -206,7 +206,7 @@ SOURCES_COUNT_EXPECTED=592154 # Update with DOWNLOAD_FLAVOR change
 MAINTENANCE_MODE=1 # Also set GEN_LICENSE_FILE
 GEN_LICENSE_FILE=0
 
-ALPINE_PATCHSET=${ALPINE_PATCHSET:-0}
+ALPINE_PATCHSET=${ALPINE_PATCHSET:-1}
 ARCH_PATCHSET=${ARCH_PATCHSET:-1}
 COPIUM_PATCHSET=${COPIUM_PATCHSET:-1}
 DEBIAN_PATCHSET=${DEBIAN_PATCHSET:-1}
@@ -215,7 +215,7 @@ MJ_PATCHSET=${MJ_PATCHSET:-1} # DEPRECATED.  Used as the Gentoo patchset at M152
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
 OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-1}
 EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
-FEDORA_PATCHSET=${FEDORA_PATCHSET:-1}
+FEDORA_PATCHSET=${FEDORA_PATCHSET:-0}
 PPC64_PATCHSET_PROVIDER=${PPC64_PATCHSET_PROVIDER:-"openpower"} # Valid values debian, openpower
 
 ABSEIL_CPP_SLOT="20251021"
@@ -930,6 +930,10 @@ inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-li
 inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit re2 readme.gentoo-r1 sandbox-changes systemd toolchain-funcs vf web-kernel-config xdg-utils
+
+if [[ "${FEDORA_PATCHSET}" == "1" || "${ALPINE_PATCHSET}" == "1" ]] ; then
+	inherit git-r3
+fi
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut "4" "${PV}")
@@ -3197,7 +3201,7 @@ src_unpack() {
 	mkdir -p "${S}" || die
 
 
-	# Unpack the patches first so we can know the implicit patch order and manual review before patching.
+	# Unpack the patches first so we can know the implicit patch order and allow for manual patch review before patching.
 	if [[ "${ARCH_PATCHSET}" == "1" ]] ; then
 		unpack "chromium-arch-patchset-${ARCH_PATCHSET_PV}-${ARCH_PATCHSET_REV}.tar.gz"
 	fi
@@ -3214,16 +3218,20 @@ src_unpack() {
 		unpack "chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz"
 	fi
 	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
-		git clone -b "${FEDORA_PATCHSET_BRANCH}" "https://src.fedoraproject.org/rpms/chromium.git" "${WORKDIR}/fedora-patchset" || die
-		pushd "${WORKDIR}/fedora-patchset" >/dev/null 2>&1 || die
-			git checkout "${FEDORA_PATCHSET_COMMIT}" || die
-		popd || die
+		EGIT_BRANCH="${FEDORA_PATCHSET_BRANCH}"
+		EGIT_CHECKOUT_DIR="${WORKDIR}/fedora-patchset"
+		EGIT_COMMIT="${FEDORA_PATCHSET_COMMIT}"
+		EGIT_REPO_URI="https://src.fedoraproject.org/rpms/chromium.git"
+		git-r3_fetch
+		git-r3_checkout
 	fi
 	if [[ "${ALPINE_PATCHSET}" == "1" ]] ; then
-		git clone -b "${ALPINE_PATCHSET_BRANCH}" "https://github.com/alpinelinux/aports.git" "${WORKDIR}/alpine-patchset" || die
-		pushd "${WORKDIR}/alpine-patchset/" >/dev/null 2>&1 || die
-			git checkout "${ALPINE_PATCHSET_COMMIT}" || die
-		popd || die
+		EGIT_BRANCH="${ALPINE_PATCHSET_BRANCH}"
+		EGIT_CHECKOUT_DIR="${WORKDIR}/alpine-patchset"
+		EGIT_COMMIT="${ALPINE_PATCHSET_COMMIT}"
+		EGIT_REPO_URI="https://github.com/alpinelinux/aports.git"
+		git-r3_fetch
+		git-r3_checkout
 	fi
 
 	if in_iuse "cromite" && use cromite ; then
@@ -3234,7 +3242,7 @@ src_unpack() {
 		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
 	fi
 
-	die
+	die # For reviewing and updating patch sections.
 
 	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
 	export PATH="${CHROMIUM_TOOLCHAIN_PREFIX}/gn/out:${PATH}" # Adds gn to PATH.
