@@ -2,7 +2,7 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 2
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: virtual/linux-sources
@@ -41,12 +41,18 @@ VME - Virtual Machine Escape
 
 Versions patched:
 
-7.3.9999 (Wed, 7 Oct 2026 18:42:49 -0400, commit 6785011)
-7.3
-7.2.11
-6.18.57
-6.12.113
-6.6.159
-6.1.190
-5.15.223
-5.10.272
+>= 7.3.9999 (Wed, 7 Oct 2026 18:42:49 -0400, commit 6785011)
+>= 7.3
+>= 7.2.11
+>= 6.18.57
+>= 6.12.113
+>= 6.6.159
+>= 6.1.190
+>= 5.15.223
+>= 5.10.272
+
+Remediation:
+
+Simply `emerge -a <kernel-flavor>` to a new point release should fix the security
+bug no matter what kernel flavor you use.  To avoid boot issues, also update the
+initramfs.  To update the initramfs, use genkernel or dracut.
