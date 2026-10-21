@@ -1982,6 +1982,9 @@ COMMON_DEPEND="
 	elibc_glibc? (
 		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
+	elibc_musl? (
+		>=sys-libs/musl-${MUSL_PV}:=
+	)
 	system-ffmpeg? (
 		system-opus? (
 			>=media-libs/opus-${OPUS_PV}:=[${MULTILIB_USEDEP}]
