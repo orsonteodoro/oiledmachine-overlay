@@ -983,7 +983,7 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 # | Provider name          | URI                                                                                       | Notes                                                                                 |
 # | -----------------------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
 # | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                                           |
-# | Alpine (rolling, edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                                                 |
+# | Alpine (rolling, Edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                                                 |
 # | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources and musl fixes                             |
 # | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                                            |
 # | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                                       |
