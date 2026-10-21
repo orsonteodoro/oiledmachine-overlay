@@ -214,7 +214,7 @@ MJ_PATCHSET=${MJ_PATCHSET:-1} # DEPRECATED.  Used as the Gentoo patchset at M152
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
 OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-1}
 EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
-FEDORA_PATCHSET=${FEDORA_PATCHSET:-0}
+FEDORA_PATCHSET=${FEDORA_PATCHSET:-1}
 PPC64_PATCHSET_PROVIDER=${PPC64_PATCHSET_PROVIDER:-"openpower"} # Valid values debian, openpower
 
 ABSEIL_CPP_SLOT="20251021"
@@ -240,6 +240,7 @@ DOWNLOAD_FLAVOR="tarball-lite" # tarball-lite, tarball-full, depot_tools; Same a
 DISABLE_AUTOFORMATTING="yes"
 DISTRIBUTED_BUILD=0 # Global variable
 ENABLE_FULL_OPTIMIZATION=1 # Global variable
+FIND_NODE_FILES=${FIND_NODE_FILES:-0}
 LIBCXX_USEDEP_SKIP=1
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
@@ -3358,9 +3359,9 @@ einfo "Applying the Arch patchset..."
 # DO NOT ENABLE ALL PATCHES!
 # ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
-#"${base_path}/chromium-138-nodejs-version-check.patch"
+"${base_path}/chromium-138-nodejs-version-check.patch"			# Enabled like the MJ patchset
 #"${base_path}/chromium-144-fix-hdr-issue.patch"
-#"${base_path}/chromium-145-fix-SYS_SECCOMP.patch"
+"${base_path}/chromium-145-fix-SYS_SECCOMP.patch"			# Enabled like the MJ patchset
 #"${base_path}/chromium-147-rust-1.95-bytemuck.patch"
 #"${base_path}/chromium-149-use-of-undeclared-identifier-ERROR.patch"
 #"${base_path}/chromium-150-revert-avx-flag-change.patch"
@@ -3369,15 +3370,15 @@ einfo "Applying the Arch patchset..."
 #"${base_path}/chromium-153-hermetic-python.patch"
 #"${base_path}/chromium-153-iamf-tools-unbundled-opus.patch"
 #"${base_path}/chromium-154-typescript.patch"
-"${base_path}/chromium-155-crubit.patch"
+"${base_path}/chromium-155-crubit.patch"				# For fixing build files initial compile time issue
 #"${base_path}/chromium-155-isolatedDeclarations.patch"
-"${base_path}/chromium-155-remove-private_verification_tokens.patch"
+"${base_path}/chromium-155-remove-private_verification_tokens.patch"	# For fixing build files initial compile time issue
 #"${base_path}/chromium-155-use-system-esbuild.patch"
 #"${base_path}/compiler-rt-adjust-paths.patch"
 #"${base_path}/enable-widevine-arm64.patch"
 #"${base_path}/glibc-2.42-baud-rate-fix.patch"
 #"${base_path}/increase-fortify-level.patch"
-"${base_path}/use-oauth2-client-switches-as-default.patch" # Enabled like the MJ patchset
+"${base_path}/use-oauth2-client-switches-as-default.patch"		# Enabled like the MJ patchset
 	)
 }
 
@@ -3392,6 +3393,10 @@ einfo "Applying the Debian patchset..."
 
 	# TODO:  Replace sources/third_party/chromium-bidi/node_modules/@rollup/wasm-node/dist/wasm-node/bindings_wasm_bg.wasm with native build.
 	# file:  bindings_wasm_bg.wasm: WebAssembly (wasm) binary version 0x1 (MVP module)
+
+	PATCHES+=(
+"${base_path}/fixes/rust-clanglib.patch"	# Original used in MJ, Fedora patchsets
+	)
 
 # For using system-libs instead
 # Only enable if build breakage.
@@ -3413,8 +3418,8 @@ einfo "Applying the Debian patchset..."
 	# LLVM support like G23 distro patchset.
 	PATCHES+=(
 # From `grep -r -e "^llvm-22" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
-"${base_path}/llvm-22/ignore-for-ubsan.patch"
-"${base_path}/llvm-22/clang22.patch"
+"${base_path}/llvm-22/ignore-for-ubsan.patch"	# Equivalent to cr149-ubsan-feature.patch in MJ patchset
+"${base_path}/llvm-22/clang22.patch"		# Equivalent to cr147-disable-fno-lifetime-dse.patch and cr151-fdiagnostics-show-inlining-chain.patch in MJ patchset
 "${base_path}/llvm-22/clone-traits.patch"
 "${base_path}/llvm-22/const-profile.patch"
 "${base_path}/llvm-22/keyfactory.patch"
@@ -3529,7 +3534,7 @@ einfo "Applying the Copium patchset..."
 #"${WORKDIR}/copium/cr148-rust-1.95-bytemuck.patch"
 #"${WORKDIR}/copium/cr148-v8-no-san-trap.patch"
 #"${WORKDIR}/copium/cr149-musl-alloc-shim-dispatch.patch"
-#"${WORKDIR}/copium/cr149-rust-toolchain-var.patch"
+"${WORKDIR}/copium/cr149-rust-toolchain-var.patch"				# Equivalent to MJ patchset
 #"${WORKDIR}/copium/cr151-dawn-cgo_enabled.patch"
 #"${WORKDIR}/copium/cr152-dawn-clang-22.patch"
 #"${WORKDIR}/copium/cr152-ffmpeg-no-agtm.patch"
@@ -3680,6 +3685,8 @@ einfo "Applying the Fedora patchset..."
 }
 
 # TODO:  Dedupe the patch overlap and remove this function while keeping necessary G23 distro mods.
+# We can _drop most of the unique patches_ and keep only the necessary to build.
+# Dropping these patches will reduce the maintenance cost big time.
 apply_mj_patchset() {
 	[[ "${MJ_PATCHSET}" == "1" ]] || return
 einfo "Applying the MJ patchset (Gentoo patchset)..."
@@ -3687,41 +3694,41 @@ einfo "Applying the MJ patchset (Gentoo patchset)..."
 	# Generated from:  find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-patches-151-3/ -name "*.patch" | sort -V
 	local base_path="${WORKDIR}/chromium-patches-${PATCH_VER}"
 	PATCHES=(
-$(use system-zlib && echo "${base_path}/common/cr109-system-zlib.patch")
-$(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")
-"${base_path}/common/cr138-nodejs-version-check.patch"
-"${base_path}/common/cr144-glibc-2.43.patch"
-"${base_path}/common/cr145-oauth2-client-switches.patch"
-#$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${base_path}/common/cr145-revert-to-rollup-wasm.patch") # Rollup removed from inspector
-"${base_path}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"
-"${base_path}/common/cr149-channel-aware-build.patch"
-"${base_path}/common/cr151-metric-histogram-non-git.patch"
-"${base_path}/common/cross-compile.patch"
+$(use system-zlib && echo "${base_path}/common/cr109-system-zlib.patch")							# Unique patch
+$(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")							# Unique patch
+#"${base_path}/common/cr138-nodejs-version-check.patch"										# Using Arch chromium-138-nodejs-version-check.patch instead
+#"${base_path}/common/cr144-glibc-2.43.patch"											# Using Arch chromium-145-fix-SYS_SECCOMP.patch instead
+#"${base_path}/common/cr145-oauth2-client-switches.patch"									# Using Arch use-oauth2-client-switches-as-default.patch instead
+#$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${base_path}/common/cr145-revert-to-rollup-wasm.patch")	# Using Debian rollup.patch instead
+"${base_path}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"							# Unique patch
+"${base_path}/common/cr149-channel-aware-build.patch"										# Unique patch, planning to drop patch since it is monoslot now.  Also update ebuild install section.
+"${base_path}/common/cr151-metric-histogram-non-git.patch"									# Unique patch
+"${base_path}/common/cross-compile.patch"											# Unique patch
 	)
 
 	if use system-clang ; then
-		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" && "${OPENPOWER_PATCHSET}" == "1" ]] ; then
+		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
 			PATCHES=(
-"${base_path}/ppc64le/cr145-ppc64-libpng.patch"
-"${base_path}/ppc64le/libpng-pdfium-compile-98.patch"
-"${base_path}/ppc64le/rust-clanglib.patch"
+"${base_path}/ppc64le/cr151-ppc64-libpng.patch"											# Unique patch
+"${base_path}/ppc64le/libpng-pdfium-compile-98.patch"										# Unique patch
+#"${base_path}/ppc64le/rust-clanglib.patch"											# Using Debian rust-clanglib.patch instead
 			)
 		fi
 
 		PATCHES+=(
-"${base_path}/toolchain/cr146-empty-parsed_rustc_args.patch"
-"${base_path}/toolchain/cr149-bindgen-libclang-paths.patch"
-"${base_path}/toolchain/cr149-fix-rust.patch"
-"${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"
-#"${base_path}/toolchain/cr150-compiler.patch"								# oiledmachine-overlay changes prefered
-"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"					# Same as cr151-dawn-system-go.patch but with updated context
-"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"					# Same as cr151-mold-unbundle.patch
+"${base_path}/toolchain/cr146-empty-parsed_rustc_args.patch"									# Unique patch
+"${base_path}/toolchain/cr149-bindgen-libclang-paths.patch"									# Unique patch
+#"${base_path}/toolchain/cr149-fix-rust.patch"											# Using copium cr149-rust-toolchain-var.patch instead
+"${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"									# Unique patch
+#"${base_path}/toolchain/cr150-compiler.patch"											# Dropping patch, oiledmachine-overlay patch used instead
+"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"								# Unique patch, same as cr151-dawn-system-go.patch but with updated context
+"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"								# Unique patch, same as cr151-mold-unbundle.patch
 		)
 
 		PATCHES+=(
-"${base_path}/llvm/lt-23/cr147-disable-fno-lifetime-dse.patch"
-"${base_path}/llvm/lt-23/cr149-ubsan-feature.patch"
-"${base_path}/llvm/lt-23/cr151-fdiagnostics-show-inlining-chain.patch"
+#"${base_path}/llvm/lt-23/cr147-disable-fno-lifetime-dse.patch"									# Using Debian patch clang22.patch instead
+#"${base_path}/llvm/lt-23/cr149-ubsan-feature.patch"										# Using Debian patch ignore-for-ubsan.patch instead
+#"${base_path}/llvm/lt-23/cr151-fdiagnostics-show-inlining-chain.patch"								# Using Debian clang22.patch instead
 		)
 	fi
 }
@@ -8242,6 +8249,23 @@ _configure_env() {
 	unset -v ${L[@]}
 }
 
+_find_node_files() {
+	(( ${FIND_NODE_FILES} == 1 )) || return
+
+	# This is for checking if there is still more packages to unbundle.
+	# It is only interesting for ebuild maintainers that are interested
+	# building outside of x86-64 or want *everything* built from source.
+
+# Equivalent to .so files.
+einfo "Scanning for device dependent .node files..."
+	find "${WORKDIR}" -name "*.node"
+einfo "DONE"
+
+einfo "Scanning for device independent .wasm files..."
+	find "${WORKDIR}" -name "*.wasm"
+einfo "DONE"
+}
+
 _src_configure() {
 	local s
 	s=$(_get_s)
@@ -8274,6 +8298,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	local myconf_gn=()
 
+	_find_node_files
 	_configure_env
 	_configure_compiler_common
 	_configure_build_system
