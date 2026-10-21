@@ -294,6 +294,7 @@ MJ_PATCHSET_REV="3"
 GN_PV="0.2562"
 ESBUILD_PV="0.28.2" # third_party/devtools-frontend/src/node_modules/esbuild/package.json
 ROLLUP_WASM_NODE_PV="4.62.4" # third_party/chromium-bidi/node_modules/@rollup/wasm-node/package.json
+TYPESCRIPT_PV="7.0.2" # third_party/typescript/linux-amd64/src/package.json
 QT6_PV="${QTBASE6_PV}"
 UNGOOGLED_CHROMIUM_PV="155.0.8059.84-1"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
@@ -2060,7 +2061,8 @@ BDEPEND+="
 	')
 	$(secure-version_gen_perl_depends)
 	>=app-arch/gzip-${GZIP_PV}
-	>=dev-lang/go-${GO_PV}
+	>=dev-lang/go-${GO_PV}:=
+	>=dev-lang/typescript-${TYPESCRIPT_PV}:7.0=
 	>=dev-util/gperf-3.2[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},inspector]
@@ -2075,7 +2077,7 @@ BDEPEND+="
 	www-client/chromium-toolchain:0=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
 	x11-misc/xdg-utils
 	mold? (
-		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},-system-mimalloc]
+		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
 	)
 	system-rust? (
 		>=dev-util/bindgen-0.72.1
@@ -3368,7 +3370,7 @@ einfo "Applying the Arch patchset..."
 #"${base_path}/chromium-152-unbundle-opus-devtools.patch"
 #"${base_path}/chromium-153-hermetic-python.patch"
 #"${base_path}/chromium-153-iamf-tools-unbundled-opus.patch"
-#"${base_path}/chromium-154-typescript.patch"
+"${base_path}/chromium-154-typescript.patch"				# Unvendor
 "${base_path}/chromium-155-crubit.patch"				# For fixing build files initial compile time issue
 #"${base_path}/chromium-155-isolatedDeclarations.patch"
 "${base_path}/chromium-155-remove-private_verification_tokens.patch"	# For fixing build files initial compile time issue
