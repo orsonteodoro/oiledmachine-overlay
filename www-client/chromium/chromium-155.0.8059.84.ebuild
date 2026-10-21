@@ -3209,6 +3209,7 @@ src_unpack() {
 	fi
 	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
 		git clone -b "${FEDORA_PATCHSET_BRANCH}" "https://src.fedoraproject.org/rpms/chromium.git" "${WORKDIR}/fedora-patchset" || die
+		cd "${WORKDIR}/fedora-patchset" || die
 		git checkout "${FEDORA_PATCHSET_COMMIT}" || die
 	fi
 #	die
