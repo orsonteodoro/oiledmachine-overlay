@@ -206,6 +206,7 @@ SOURCES_COUNT_EXPECTED=592154 # Update with DOWNLOAD_FLAVOR change
 MAINTENANCE_MODE=1 # Also set GEN_LICENSE_FILE
 GEN_LICENSE_FILE=0
 
+ALPINE_PATCHSET=${ALPINE_PATCHSET:-0}
 ARCH_PATCHSET=${ARCH_PATCHSET:-1}
 COPIUM_PATCHSET=${COPIUM_PATCHSET:-1}
 DEBIAN_PATCHSET=${DEBIAN_PATCHSET:-1}
@@ -276,6 +277,9 @@ fi
 
 inherit multilib-build secure-version
 
+ALPINE_PATCHSET_BRANCH="master"
+ALPINE_PATCHSET_COMMIT="2099e8eb3ed79226c479b013f999c47023ce4cd5"
+ALPINE_PATCHSET_PV="155.0.8059.84"
 ARCH_PATCHSET_PV="155.0.8059.84"
 ARCH_PATCHSET_REV="1"
 COPIUM_PV="155.2"
@@ -284,7 +288,7 @@ DEBIAN_PATCHSET_PV="155.0.8059.79"
 DEBIAN_PATCHSET_REV="1"
 DEBIAN_PATCHSET_TAG="" # It can be "" for (sid/unstable), "_deb13u1", "_deb12u1"	# Use the version closest for latest glibc, gcc, llvm with G23.
 FEDORA_PATCHSET_BRANCH="f45"								# Use only the version with similar versions for glibc, GCC, LLVM, Rust with G23
-FEDORA_PATCHSET_VERSION="155.0.8059.84"
+FEDORA_PATCHSET_PV="155.0.8059.84"
 FEDORA_PATCHSET_COMMIT="f450ddf0ede9d57b155f0f9efc3ae5e260cfc010"
 GCC_PV="10.2.1" # Minimum
 MJ_PATCHSET_PV="151"
@@ -975,6 +979,7 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 # | Provider name          | URI                                                                                       | Notes                                                            |
 # | -----------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------|
 # | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                      |
+# | Alpine (rolling, edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                            |
 # | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources                       |
 # | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                       |
 # | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                  |
@@ -3167,7 +3172,14 @@ einfo "RUSTC:  ${RUSTC}"
 	chkl_check_many_timestamps
 
 	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
-		sandbox-changes_no_network_sandbox "To download the Fedora patchset"
+		sandbox-changes_no_network_sandbox "To download the Fedora patchset for security fixes"
+	fi
+	if [[ "${ALPINE_PATCHSET}" == "1" ]] ; then
+		sandbox-changes_no_network_sandbox "To download the Alpine patchset for musl support"
+	fi
+
+	if use elibc_musl ; then
+ewarn "musl support is untested.  Fork ebuild and modify patches.  Set ALPINE_PATCHSET=1"
 	fi
 }
 
@@ -3204,6 +3216,12 @@ src_unpack() {
 			git checkout "${FEDORA_PATCHSET_COMMIT}" || die
 		popd || die
 	fi
+	if [[ "${ALPINE_PATCHSET}" == "1" ]] ; then
+		git clone -b "${ALPINE_PATCHSET_BRANCH}" "https://github.com/alpinelinux/aports.git" "${WORKDIR}/alpine-patchset" || die
+		pushd "${WORKDIR}/alpine-patchset/" >/dev/null 2>&1 || die
+			git checkout "${ALPINE_PATCHSET_COMMIT}" || die
+		popd || die
+	fi
 
 	if in_iuse "cromite" && use cromite ; then
 		unpack "cromite-${CROMITE_PV}-${CROMITE_ID}.tar.gz"
@@ -3213,7 +3231,7 @@ src_unpack() {
 		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
 	fi
 
-#	die
+	die
 
 	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
 	export PATH="${CHROMIUM_TOOLCHAIN_PREFIX}/gn/out:${PATH}" # Adds gn to PATH.
@@ -3338,6 +3356,54 @@ change_rustfmt_suffix() {
 apply_gentoo_patchset_2() {
 	remove_compiler_builtins
 	change_rustfmt_suffix
+}
+
+apply_alpine_patchset() {
+	[[ "${ALPINE_PATCHSET}" == "1" ]] || return
+einfo "Applying the Alpine patchset..."
+	local base_path="${WORKDIR}/alpine-patchset/community/chromium/"
+
+	local actual_version=""
+	local expected_version="${ALPINE_PATCHSET_PV}"
+	if ! grep -E "pkgver=${expected_version}" "${base_path}/APKBUILD" >/dev/null 2>&1 ; then
+		actual_version=$(grep -E "pkgver=[0-9.]+" "${base_path}/APKBUILD" | cut -f 2 -d "=")
+eerror "Rejected the Alpine patchset.  Version out of range."
+eerror "Actual version:  ${actual_version}"
+eerror "Expected version:  ${expected_version}"
+		die
+	else
+einfo "Applying the Alpine patchset..."
+	fi
+
+	PATCHES+=(
+# DO NOT ENABLE ALL PATCHES!
+# ENABLE ONLY MINIMAL REQUIRED TO BUILD.
+
+# Keep in sync with https://github.com/alpinelinux/aports/blob/master/community/chromium/APKBUILD
+
+# TODO:  finish
+
+"${base_path}/0001-hotfix-ignore-a-new-warning-in-rust-1.89.patch"
+#"${base_path}/compiler.patch"						# TODO rework for G23
+"${base_path}/disable-dns_config_service.patch"
+"${base_path}/disable-failing-tests.patch"
+"${base_path}/fix-ffmpeg-codec-list.patch"
+"${base_path}/fstatat-32bit.patch"
+"${base_path}/gdbinit.patch"
+"${base_path}/headless-shell-no-license.patch"
+"${base_path}/musl-conditional-tkill.patch"
+"${base_path}/musl-sandbox.patch"
+"${base_path}/musl-tid-caching.patch"
+"${base_path}/net-test-no-vpython.patch"
+"${base_path}/net-test-pyws3-py3.12.patch"
+"${base_path}/no-execinfo.patch"
+"${base_path}/no-mallinfo.patch"
+"${base_path}/no-res-ninit-nclose.patch"
+"${base_path}/no-sandbox-settls.patch"
+"${base_path}/partalloc-no-tagging-arm64.patch"
+"${base_path}/pvalloc.patch"
+"${base_path}/temp-failure-retry.patch"
+	)
 }
 
 apply_arch_patchset() {
@@ -3497,13 +3563,14 @@ apply_copium_patchset() {
 	[[ "${COPIUM_PATCHSET}" == "1" ]] || return
 einfo "Applying the copium patchset..."
 
-	PATCHES+=(
 # Generated from `find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/copium | sort -V`
 # There is some overlap so only the ones needed are applied.
 
 # DO NOT ENABLE ALL PATCHES!
 # ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
+	if use elibc_glibc ; then
+		PATCHES+=(
 #"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
 #"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
 #"${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"
@@ -3534,7 +3601,42 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cr154-rust-1.96-no-windows-sys.patch"
 #"${WORKDIR}/copium/cr155-devtools-typescript-6.x-isolated-declarations.patch"
 #"${WORKDIR}/copium/cr155-no-python-vendoring.patch"
-	)
+		)
+	elif use elibc_musl ; then
+# Same as Alpine enabled set
+		PATCHES+=(
+#"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
+#"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
+"${WORKDIR}/copium/cr133-ffmpeg-no-noh264parse.patch"				# Used in Alpine
+#"${WORKDIR}/copium/cr138-node-version-check.patch"				# Used in Alpine, but Arch patch used instead
+"${WORKDIR}/copium/cr140-musl-prctl.patch"					# Used in Alpine
+#"${WORKDIR}/copium/cr140-rust-pre1.89.patch"
+#"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
+"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"				# Used in Alpine and in G23 build
+"${WORKDIR}/copium/cr145-iwyu-dev_t.patch"					# Used in Alpine
+"${WORKDIR}/copium/cr145-musl-unfortify-SkDescriptor.patch"			# Used in Alpine
+#"${WORKDIR}/copium/cr146-rust-pre1.95-bytemuck.patch"
+"${WORKDIR}/copium/cr146-swiftshader-unfortify-memset-memcpy.patch"		# Used in Alpine
+"${WORKDIR}/copium/cr146-unfortify-blink-display_item_list.patch"		# Used in Alpine
+"${WORKDIR}/copium/cr147-is-musl-libcxx.patch"					# Used in Alpine
+"${WORKDIR}/copium/cr147-simdutf-8.0-base-char.patch"				# Used in Alpine
+"${WORKDIR}/copium/cr148-rust-1.95-bytemuck.patch"				# Used in Alpine
+"${WORKDIR}/copium/cr148-v8-no-san-trap.patch"					# Used in Alpine
+"${WORKDIR}/copium/cr149-musl-alloc-shim-dispatch.patch"			# Used in Alpine
+"${WORKDIR}/copium/cr149-rust-toolchain-var.patch"				# Used in Alpine and equivalent to MJ patchset
+"${WORKDIR}/copium/cr151-dawn-cgo_enabled.patch"				# Used in Alpine
+#"${WORKDIR}/copium/cr152-dawn-clang-22.patch"
+"${WORKDIR}/copium/cr152-ffmpeg-no-agtm.patch"					# Used in Alpine
+"${WORKDIR}/copium/cr152-unbundle-minizip-undo-unicode.patch"			# Used in Alpine and in G23 build
+"${WORKDIR}/copium/cr152-unbundle-opus-devtools.patch"				# Used in Alpine
+"${WORKDIR}/copium/cr153-typescript-break-definitions.patch"			# Used in Alpine
+"${WORKDIR}/copium/cr153-unbundle-opus-iamf.patch"				# Used in Alpine
+"${WORKDIR}/copium/cr154-dawn-armv7-is-real.patch"				# Used in Alpine
+#"${WORKDIR}/copium/cr154-rust-1.96-no-windows-sys.patch"
+"${WORKDIR}/copium/cr155-devtools-typescript-6.x-isolated-declarations.patch"	# Used in Alpine
+"${WORKDIR}/copium/cr155-no-python-vendoring.patch"				# Used in Alpine
+		)
+	fi
 }
 
 apply_fedora_patchset() {
@@ -3546,7 +3648,7 @@ apply_fedora_patchset() {
 	local base_path="${WORKDIR}/fedora-patchset"
 
 	local actual_version=""
-	local expected_version="${FEDORA_PATCHSET_VERSION}"
+	local expected_version="${FEDORA_PATCHSET_PV}"
 	if ! grep -E "Version: ${expected_version}" "${base_path}/chromium.spec" >/dev/null 2>&1 ; then
 		actual_version=$(grep -E "Version: [0-9.]+" "${base_path}/chromium.spec" | cut -f 2 -d " ")
 eerror "Rejected the Fedora patchset.  Version out of range."
@@ -3690,7 +3792,7 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")	
 #$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${base_path}/common/cr145-revert-to-rollup-wasm.patch")	# Using Debian rollup.patch instead
 "${base_path}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"							# Unique patch
 #"${base_path}/common/cr149-channel-aware-build.patch"										# Unique patch, dropping patch
-"${base_path}/common/cr151-metric-histogram-non-git.patch"									# Unique patch
+"${base_path}/common/FIXMEcr151-metric-histogram-non-git.patch"									# Unique patch
 "${base_path}/common/cross-compile.patch"											# Unique patch
 	)
 
@@ -3970,7 +4072,7 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}"
 	fi
 
 	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " " | cut -f 1 -d "-")
-einfo "rust_pv:  ${rust_pv}"
+einfo "Rust version:  ${rust_pv}"
 	if ver_test "${rust_pv}" "-ge" "1.95.0" && grep -q -e "SupportedLaneCount" "third_party/rust/chromium_crates_io/vendor/bytemuck-v1/src/zeroable.rs" ; then
 einfo "Removing SupportedLaneCount"
 		PATCHES+=(
@@ -4415,6 +4517,7 @@ src_prepare() {
 	# help state level threat actors for state interests or insider threat
 	# actors that are maybe trying to sabotage Linux distros.
 
+	apply_alpine_patchset
 	apply_cromite_patchset
 	apply_ungoogled_chromium_patchset
 	apply_copium_patchset
