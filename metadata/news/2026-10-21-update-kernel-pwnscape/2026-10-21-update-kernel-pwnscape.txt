@@ -2,7 +2,7 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 3
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: virtual/linux-sources
@@ -57,4 +57,15 @@ Remediation:
 
 Simply `emerge -a <kernel-flavor>` to a new point release should fix the security
 bug no matter what kernel flavor you use.  To avoid boot issues, also update the
-initramfs.  To update the initramfs, use genkernel or dracut.
+initramfs.  To update the initramfs, use genkernel or dracut.  The host bare
+metal machine must be triaged or upgraded to the latest kernel point release
+for that slot [aka major minor version].
+
+Examples:
+
+emaint sync -A
+emerge -a1vO "=sys-kernel/ot-sources-7.3.9999"
+emerge -vuDN ">=sys-kernel/gentoo-kernel-bin-6.18.57::gentoo"
+
+It is recommended to use the latest point release remediate the memory corruption
+vulnerabilities (UAF, OOBW, HO, SO, DF).
