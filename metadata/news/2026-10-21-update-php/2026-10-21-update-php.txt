@@ -7,7 +7,7 @@ News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
 
 There are some reports on social media that the current fix is unpatched.  It is
-advised to put the critical-secure servers offline until the situation has
+advised to put the critical-secure HTTP servers offline until the situation has
 settled and finalized.
 
 Two critical severity vulnerabilities have been patched upstream by the PHP team.
