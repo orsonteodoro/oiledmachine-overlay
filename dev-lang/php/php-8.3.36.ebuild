@@ -48,7 +48,7 @@ CHKL_TIMESTAMPS=(
 	"sys-libs/readline-9999"
 )
 
-inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib postgres secure-version systemd
+inherit autotools cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib postgres secure-version systemd toolchain-funcs
 
 DESCRIPTION="The PHP language runtime engine"
 HOMEPAGE="https://www.php.net/"
@@ -62,7 +62,7 @@ LICENSE="PHP-3.01
 	unicode? ( BSD-2 LGPL-2.1 )"
 
 SLOT="$(ver_cut 1-2)"
-KEYWORDS="~alpha amd64 ~arm arm64 ~hppa ~loong ~mips ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos"
 
 # We can build the following SAPIs in the given order
 SAPIS="embed cli cgi fpm apache2 phpdbg"
@@ -537,8 +537,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		# ./configure script checks for the headers using "test -f" and
 		# ignores your CFLAGS... and pdo_odbc_def_libdir prevents the
 		# build system from appending a nonsense -L flag.
-		local iodbc_ldflags=$(pkg-config --libs libiodbc)
-		local iodbc_cflags=$(pkg-config --cflags libiodbc)
+		local iodbc_ldflags=$($(tc-getPKG_CONFIG) --libs libiodbc)
+		local iodbc_cflags=$($(tc-getPKG_CONFIG) --cflags libiodbc)
 		our_conf+=(
 			pdo_odbc_def_libdir="${EPREFIX}/usr/$(get_libdir)"
 			pdo_odbc_def_incdir="${EPREFIX}/usr/include/iodbc"
