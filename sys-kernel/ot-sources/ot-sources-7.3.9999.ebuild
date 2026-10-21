@@ -9,23 +9,23 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="58161ead29e50d70a317ea26b472e0c7508e69da" # 2026-10-16 15:33:36 -1000 @ Merge tag 'drm-fixes-2026-10-17'
+LINUX_SOURCES_FALLBACK_COMMIT="bb29b957eaaa15be33243550d9ee576c2d601669" # 2026-10-21 10:45:44 -1000 @ Merge tag 'kbuild-7.4-1' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.2
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.3
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_59"
-GENPATCHES_VER="9999" # can be live only when 9999
-PATCH_PROJC_VER="7.2-r1"
-PATCH_RT_VER="7.3-rc4-rt1"
+EBUILD_REV="ebuild_revision_60"
+GENPATCHES_VER="1" # can be live only when 9999
+PATCH_PROJC_VER="7.3-r0"
+PATCH_RT_VER="7.3-rt2"
 
 inherit ot-kernel-v7.3
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v7.2.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v7.3.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses

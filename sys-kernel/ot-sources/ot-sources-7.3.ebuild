@@ -1,0 +1,112 @@
+# Copyright 2019-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# Contains AI generated synthetic data in metadata.xml.
+# Contains patches derived from AI generated code.
+
+# See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
+
+GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
+LINUX_SOURCES_FALLBACK_COMMIT="bb29b957eaaa15be33243550d9ee576c2d601669" # 2026-10-21 10:45:44 -1000 @ Merge tag 'kbuild-7.4-1' of
+RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+
+# See
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.3
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+
+EBUILD_REV="ebuild_revision_60"
+GENPATCHES_VER="1" # can be live only when 9999
+PATCH_PROJC_VER="7.3-r0"
+PATCH_RT_VER="7.3-rt2"
+
+inherit ot-kernel-v7.3
+
+# See also,
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v7.3.eclass
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
+# OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
+# OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.1 (20260424) with gaming profile
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.3 (20260503) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.5 (20260508) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.7 (20260514) with hardened profile with -O2 and -march=native, KASAN on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.0.7 (20260514) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 665159e (20260701) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 87320be (20260702) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 f105f36 (20260705) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 940d91c (20260712) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 7059bdf (20260714) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 7059bdf (20260714) with hardened profile with -O2 and -march=native, KASAN on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 48a5a7a (20260723) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 f5098b6 (20260726) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 62cc902 (20260727) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 2d2338c (20260801) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 848acc8 (20260803) with builder profile with -O2 and -march=native, KFENCE on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 06cf618 (20260809) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 15ef2f7 (20260815) with hardened profile with -O2 and -march=native, KASAN on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 15ef2f7 (20260815) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 a4ff2be (20260820) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 786262b (20260901) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 bc35965 (20260904) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 654ae5d (20260904) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.2.9999 704340f (20260914) with hardened profile with -O2 and -march=native, KASAN on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 704340f (20260914) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 5dd1818 (20260918) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 d4fa924 (20260918) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 f010036 (20260921) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 fe2ec83 (20260922) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 47324d3 (20261008) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 0fcb05b (20261014) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+
+# OILEDMACHINE-OVERLAY-TEST:  N/A
+
+#
+# Some USE or OT_KERNEL_USE may be ignored in eclasses.
+#
+
+# boot time test - pass
+# emerge/compile test - pass
+# network - pass
+# streaming video playback - pass
+# initscript - pass
+# runtime stability note:  TBA
+
+# env file builder profile sample:
+# OT_KERNEL_CPU_SCHED="cfs-throughput"
+# OT_KERNEL_USE="-rt c2tcp -O3 -bbrv2 -bbrv3 disable_debug -tresor -tresor_sysfs
+# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
+# kernel_compiler_patch futex futex-proton multigen_lru -genpatches -clang pgo
+# -zen-muqss -zen-sauce -cfi -kcfi -zen-multigen_lru -genpatches_1510 build zstd
+# openssl -lto ncurses"
+# OT_KERNEL_VERBOSITY=1
+# OT_KERNEL_WORK_PROFILE="builder-interactive"
+# OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
+# OT_KERNEL_CPU_SCHED="cfs-throughput"
+# OT_KERNEL_EXTRAVERSION="builder"
+# OT_KERNEL_LOGO_COUNT=1
+# OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
+# OT_KERNEL_LOGO_URI="<redacted>"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
+# OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_SLAB_ALLOCATOR="slub"
+# OT_KERNEL_USB_AUTOSUSPEND=-1
+
+# env file gamer profile sample (disabled):
+# OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
+# OT_KERNEL_CPU_SCHED="cfs-interactive"
+# OT_KERNEL_EXTRAVERSION="gaming"
+# OT_KERNEL_LOGO_COUNT=1
+# OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
+# OT_KERNEL_LOGO_URI="<redacted>"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
+# OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_SLAB_ALLOCATOR="slab"
+# OT_KERNEL_USB_AUTOSUSPEND=-1
+# OT_KERNEL_WORK_PROFILE="pro-gaming"
+# OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
+# OT_KERNEL_ZSWAP_COMPRESSOR="zstd"

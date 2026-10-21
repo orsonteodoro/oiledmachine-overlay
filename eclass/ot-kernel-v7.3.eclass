@@ -424,6 +424,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 REQUIRED_USE+="
+	!zen-sauce
 	!clang? (
 		^^ (
 			${GCC_COMPAT[@]}
