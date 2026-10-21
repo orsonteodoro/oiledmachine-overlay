@@ -27,7 +27,7 @@ RCE - Remote Code Execution
 UAF - Use After Free
 UBMA - Unbounded Memory Allocation
 UPTR - Use of Uninitalized Pointer
-ZC - Zero Click Vulnerability
+ZC - Zero Click Vulnerability (AV:N, PR:N, UI:N)
 
 Versions with the fixes:
 
