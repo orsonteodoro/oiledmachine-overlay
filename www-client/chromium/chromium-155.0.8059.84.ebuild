@@ -2068,7 +2068,6 @@ BDEPEND+="
 	app-alternatives/ninja
 	app-alternatives/lex
 	dev-util/esbuild:${ESBUILD_PV}
-	dev-util/rollup-wasm-node:${ROLLUP_WASM_NODE_PV}
 	dev-util/patchutils
 	dev-vcs/git
 	sys-apps/hwdata
@@ -3391,9 +3390,6 @@ einfo "Applying the Debian patchset..."
 
 	local base_path="${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches"
 
-	# TODO:  Replace sources/third_party/chromium-bidi/node_modules/@rollup/wasm-node/dist/wasm-node/bindings_wasm_bg.wasm with native build.
-	# file:  bindings_wasm_bg.wasm: WebAssembly (wasm) binary version 0x1 (MVP module)
-
 	PATCHES+=(
 "${base_path}/fixes/rust-clanglib.patch"	# Original used in MJ, Fedora patchsets
 	)
@@ -3408,7 +3404,7 @@ einfo "Applying the Debian patchset..."
 #"${base_path}/system/openjpeg.patch"
 #"${base_path}/system/opus.patch"
 #"${base_path}/system/rapidjson.patch"
-"${base_path}/system/rollup.patch" # Use the system's build for compatibility for arm64/loong/ppc64 instead of prebuilt
+#"${base_path}/system/rollup.patch" # There is a device dependent .node and device independent .wasm file.
 #"${base_path}/system/llvm.patch"
 #"${base_path}/system/python.patch"
 #"${base_path}/system/tsc.patch"
