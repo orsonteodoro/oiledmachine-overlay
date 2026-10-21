@@ -1,0 +1,47 @@
+Title: Update PHP
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-21
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: dev-lang/php
+
+Two critical severity vulnerabilities have been patched upstream by the PHP team.
+It was estimated both would be 10s on the socials but downgraded to 9.2 for
+CVSS 4, or 9.8 for CVSS 3.
+
+CVE-2026-109618 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
+CVE-2026-109619 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
+
+DoS - Denial of Service
+DT - Data Tampering
+ID - Information Disclosure
+IEH - Improper Exception Handling
+RCE - Remote Code Execution
+UAF - Use After Free
+UBMA - Unbounded Memory Allocation
+UPTR - Use of Uninitalized Pointer
+ZC - Zero Click Vulnerability
+
+Versions with the fixes:
+
+PHP 8.5.12
+PHP 8.4.27
+PHP 8.3.36
+PHP 8.2.35
+
+To update, pick one of the following:
+emerge -avuDN dev-lang/php:8.5::oiledmachine-overlay
+emerge -avuDN dev-lang/php:8.4::oiledmachine-overlay
+emerge -avuDN dev-lang/php:8.3::oiledmachine-overlay
+emerge -avuDN dev-lang/php:8.2::oiledmachine-overlay
+
+If you are using a local build that is outdated, it was suggested by other
+security reports to put the server offline (or disconnect it from the network)
+until the remediation to the newer version is complete.
+
+It is preferred to disable the HTTP server, remediate, then put it back HTTP
+server online.
+
+While the technical/definitional blast radius is limited, your personal threat
+model or circumstance may treat it or interpret it correctly as extended.
