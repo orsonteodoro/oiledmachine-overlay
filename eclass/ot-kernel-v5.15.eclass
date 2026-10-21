@@ -604,13 +604,13 @@ BUILD_DEPEND+="
 	>=app-shells/bash-${BASH_PV}:=
 	>=dev-build/make-3.81:=
 	>=dev-lang/perl-${PERL_PV}:=
+	>=sys-apps/grep-${GREP_PV}:=[pcre]
 	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
 	>=sys-devel/bison-2.0:=
 	>=sys-devel/flex-2.5.35:=
 	app-alternatives/bc:*
 	app-alternatives/cpio:*
 	dev-util/pkgconf:=
-	sys-apps/grep:=[pcre]
 	virtual/libelf:=
 	virtual/pkgconfig:*
 	!clang? (
