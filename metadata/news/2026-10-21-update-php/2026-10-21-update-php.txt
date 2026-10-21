@@ -2,9 +2,13 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
+
+There are some reports on social media that the current fix is unpatched.  It is
+advised to put the critical-secure servers offline until the situation has
+settled and finalized.
 
 Two critical severity vulnerabilities have been patched upstream by the PHP team.
 It was estimated both would be 10s on the socials but downgraded to 9.2 for
