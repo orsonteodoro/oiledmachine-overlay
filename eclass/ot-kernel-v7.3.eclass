@@ -1085,8 +1085,13 @@ PDEPEND+="
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
+	if [[ "${PV}" == "7.3" ]] ; then
+ewarn "Upstream security update delay from live:  3"
+ewarn "Release quality:  Production ready"
+	else
 ewarn "Upstream security update delay from live:  0"
-ewarn "Release quality:  Live release candidate (post rc7 out of rc7, development quality for WIP code, production quality for mature code)"
+ewarn "Release quality:  Entering development quality (adding 7.4 commits, development quality for WIP code, production quality for mature code)"
+	fi
 ewarn "Has the 7.4 merge window been announced?  YES, https://lkml.org/lkml/2026/10/18/1221"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
