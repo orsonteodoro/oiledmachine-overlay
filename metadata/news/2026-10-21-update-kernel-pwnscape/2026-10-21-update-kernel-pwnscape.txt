@@ -24,6 +24,8 @@ Security Operation Centers (SOCs)
 Developers
 Security users that use VMs
 Cloud devs/owners that use VMs
+Users that use multiple operating systems
+CI/CD
 
 Researcher vulnerability name:  PwnEscape
 
