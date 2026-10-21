@@ -976,7 +976,7 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 # | Provider name          | URI                                                                                       | Notes                                                            |
 # | -----------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------|
 # | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                      |
-# | Copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources                       |
+# | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources                       |
 # | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                       |
 # | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                  |
 # | Fedora (rolling, F45)  | https://src.fedoraproject.org/rpms/chromium/tree/f45                                      | Used for security fixes                                          |
@@ -3503,7 +3503,7 @@ $(use cpu_flags_ppc_vsx3 && echo "${base_path}/ppc64le/core/baseline-isa-3-0.pat
 
 apply_copium_patchset() {
 	[[ "${COPIUM_PATCHSET}" == "1" ]] || return
-einfo "Applying the Copium patchset..."
+einfo "Applying the copium patchset..."
 
 	PATCHES+=(
 # Generated from `find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/copium | sort -V`
