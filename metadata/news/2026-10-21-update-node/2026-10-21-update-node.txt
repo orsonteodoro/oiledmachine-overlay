@@ -20,8 +20,8 @@ CVE-2026-106070 - RV
 CVE-2026-106071 - IV, IBC
 CVE-2026-106073 - IV
 
-II - Inappropriate Implementation
 IBC - Inappropriate Boundary Conditions
+II - Inappropriate Implementation
 IV - Insufficient or Inappropriate Validation
 OOBW - Out of Bounds Write
 RCE - Remote Code Execution
