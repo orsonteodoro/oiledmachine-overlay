@@ -1,0 +1,41 @@
+Title: Update Node
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-21
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: net-libs/nodejs
+
+There is a defect in the vendored Brotli package that contains an RCE according
+to AI.  The Node.js package has several CVEs patched.
+
+CVE-2026-106069 - IV
+CVE-2026-106072 - IV
+CVE-2026-105482 - IV
+CVE-2026-105483 - IV, hostname check bypass
+CVE-2026-111497 - RCE, OOBW
+CVE-2026-105481 - II
+CVE-2026-106074 - RV
+CVE-2026-106070 - RV
+CVE-2026-106071 - IV, IBC
+CVE-2026-106073 - IV
+
+II - Inappropriate Implementation
+IBC - Inappropriate Boundary Conditions
+IV - Insufficient or Inappropriate Validation
+OOBW - Out of Bounds Write
+RCE - Remote Code Execution
+RV - Reuse Vulnerability
+UM - Use of Uninitalized Memory
+
+Versions with the fixes:
+
+26.12.1
+24.22.1
+22.23.4
+
+To update, replace the installed with one or more of the following:
+
+emerge -avuDN net-libs/nodejs:26::oiledmachine-overlay
+emerge -avuDN net-libs/nodejs:24::oiledmachine-overlay
+emerge -avuDN net-libs/nodejs:22::oiledmachine-overlay
