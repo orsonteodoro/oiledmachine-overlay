@@ -99,6 +99,7 @@ verify_rust() {
 	if "${RUSTC}" --version | grep -q "nightly" ; then
 		local actual_timestamp=$(rustc --version | cut -f 4 -d " " | sed -e "s|)||g" | sed -e "s|-||g")
 		local expected_timestamp=${RUST_EXPECTED_TIMESTAMP}
+		local current_timestamp=$(date --date="${actual_timestamp}" "+%s")
 		if (( ${current_timestamp} < ${expected_timestamp} )) ; then
 eerror "You need to re-emerge =dev-lang/rust-bin-9999 or =dev-lang/rust"
 eerror "Actual timestamp:  ${actual_timestamp}"
