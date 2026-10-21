@@ -2390,7 +2390,6 @@ check_security_expire() {
 	local safe_period
 	local now=${EPOCHSECONDS}
 	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
-	local channel="${SLOT#*/}"
 
 	local desc=""
 	local mitigation_use_case="${MITIGATION_USE_CASE:-socials}"
@@ -2413,12 +2412,6 @@ eerror "release will not (re-)install."
 eerror
 eerror "Time passed since the last security update:  ${dhms_passed}"
 eerror "Assumed use case(s):  ${mitigation_use_case}"
-eerror
-eerror "Solutions:"
-eerror
-eerror "1.  Use a newer ${channel} release from the overlay."
-eerror "2.  Use the latest ${channel} distro release."
-eerror "3.  Use the latest www-client/google-chrome release, temporarily."
 eerror
 eerror "See metadata.xml for details to adjust MITIGATION_USE_CASE."
 eerror
@@ -2969,7 +2962,7 @@ ewarn "Expected file count:  ${sources_count_expected}"
 ewarn
 	fi
 
-einfo "Release channel:  ${SLOT#*/}"
+einfo "Release channel:  Stable"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security fixes applied:  ${MITIGATION_URI}"
@@ -3209,9 +3202,19 @@ src_unpack() {
 	fi
 	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
 		git clone -b "${FEDORA_PATCHSET_BRANCH}" "https://src.fedoraproject.org/rpms/chromium.git" "${WORKDIR}/fedora-patchset" || die
-		cd "${WORKDIR}/fedora-patchset" || die
-		git checkout "${FEDORA_PATCHSET_COMMIT}" || die
+		pushd "${WORKDIR}/fedora-patchset" >/dev/null 2>&1 || die
+			git checkout "${FEDORA_PATCHSET_COMMIT}" || die
+		popd || die
 	fi
+
+	if in_iuse "cromite" && use cromite ; then
+		unpack "cromite-${CROMITE_PV}-${CROMITE_ID}.tar.gz"
+	fi
+
+	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
+		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
+	fi
+
 #	die
 
 	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
@@ -3263,18 +3266,6 @@ eerror "gn >= ${GN_MIN_VER} is required"
 
 	mkdir -p "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin" || die
 	ln -s "/usr/bin/go" "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin/go" || die
-
-	if [[ "${KEYWORDS}" =~ "ppc64" && "${OPENPOWER_PATCHSET}" == "1" ]] && use ppc64 ; then
-		unpack "chromium-openpower-patches-${OPENPOWER_PATCHES_COMMIT:0:7}.tar.gz"
-	fi
-
-	if in_iuse "cromite" && use cromite ; then
-		unpack "cromite-${CROMITE_PV}-${CROMITE_ID}.tar.gz"
-	fi
-
-	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
-		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
-	fi
 
 	if use test ; then
 	# This just contains a bunch of font files that need to be unpacked (or
@@ -3700,7 +3691,7 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")	
 #"${base_path}/common/cr145-oauth2-client-switches.patch"									# Using Arch use-oauth2-client-switches-as-default.patch instead
 #$((in_iuse ungoogled-chromium && use ungoogled-chromium) || echo "${base_path}/common/cr145-revert-to-rollup-wasm.patch")	# Using Debian rollup.patch instead
 "${base_path}/common/cr148-v8-fix-cfi-sanitizer-set-death-callback.patch"							# Unique patch
-"${base_path}/common/cr149-channel-aware-build.patch"										# Unique patch, planning to drop patch since it is monoslot now.  Also update ebuild install section.
+#"${base_path}/common/cr149-channel-aware-build.patch"										# Unique patch, dropping patch
 "${base_path}/common/cr151-metric-histogram-non-git.patch"									# Unique patch
 "${base_path}/common/cross-compile.patch"											# Unique patch
 	)
@@ -7921,11 +7912,6 @@ ewarn "Unbundling libs and lowering security"
 	# We now need to opt-in
 		"enable_freetype=true"
 
-	# Custom patch: Enable building Chromium as individual channels (e.g.
-	# stable, beta, dev) that use different profile directories, desktop
-	# entries, etc. This enables slotting the ebuild.
-		"enable_channel_branding=true"
-
 		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_hidpi=$(usex hidpi true false)"
 		"enable_libaom=$(usex libaom $(usex encode true false) false)"
@@ -8628,7 +8614,6 @@ einfo "mksnapshot:  OFF (Optimizing build speed)"
 	# See: #684550 #706786 #968958
 	"${EPYTHON}" "${FILESDIR}/generate-support-files.py" \
 		--installdir "/usr/$(get_libdir)/chromium-browser" \
-		--channel "${SLOT}" \
 			|| die "Failed to generate support files"
 }
 
@@ -9033,18 +9018,6 @@ ewarn
 		if ${replacing_non_slotted} ; then
 ewarn
 ewarn "This version of Chromium has replaced a non-slotted ebuild."
-ewarn
-			if [[ "${SLOT}" != "stable" ]]; then
-ewarn
-ewarn "This channel has its own profile directory, so your existing profile"
-ewarn "will not be used.  To use your existing profile, either copy or move it"
-ewarn "to the new location.  See"
-ewarn
-ewarn "  https://wiki.gentoo.org/wiki/Chromium#Profile_Directories"
-ewarn
-ewarn "for more information."
-ewarn
-			fi
 ewarn
 ewarn "Any existing Progressive Web Apps (PWAs) will need to be reinstalled,"
 ewarn "or have the path in the desktop files updated to point to the new"

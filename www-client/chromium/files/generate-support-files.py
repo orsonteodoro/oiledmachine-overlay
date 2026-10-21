@@ -22,27 +22,7 @@ def main():
         required=True,
         help="Installation directory (e.g. /usr/lib/chromium-browser)",
     )
-    parser.add_argument(
-        "-c",
-        "--channel",
-        default="stable",
-        choices=["stable", "beta", "unstable", "dev", "canary"],
-        help="Channel to build for (default: stable)",
-    )
     args = parser.parse_args()
-
-    # Normalise channel name (upstream uses 'unstable' for dev)
-    channel = args.channel
-    if channel == "dev":
-        channel = "unstable"
-
-    # Define suffixes based on channel
-    channel_suffix = ""
-    menu_suffix = ""
-
-    if channel != "stable":
-        channel_suffix = f"-{channel}"
-        menu_suffix = f" ({channel})"
 
     abi = os.environ['GENERATE_SUPPORT_ABI']
     menu_name = os.environ['GENERATE_SUPPORT_MENU_NAME']
@@ -56,16 +36,16 @@ def main():
         "EXTRA_DESKTOP_ENTRIES": "",
         "FULLDESC": "An open-source browser project that aims to build a safer, faster, and more stable way to experience the web.",
         "HELPURL": "https://wiki.gentoo.org/wiki/Chromium",
-        "INSTALLDIR": args.installdir,  # Note: We've patched the installer scripts to automatically append the channel suffix, but we'll use the arg since we bypass all that.
+        "INSTALLDIR": args.installdir,
         "MAINTMAIL": "Gentoo Chromium Project <chromium@gentoo.org>",
         "MENUNAME": f"{menu_name}",
-        "PACKAGE": f"chromium-browser{channel_suffix}",
+        "PACKAGE": f"chromium-browser",
         "PRODUCTURL": "https://www.chromium.org/",
         "PROGNAME": "chrome",
         "PROJECT_LICENSE": "BSD, LGPL-2, LGPL-2.1, MPL-1.1, MPL-2.0, Apache-2.0, and others",
         "SHORTDESC": "Open-source foundation of many web browsers including Google Chrome",
         # Use a distinct scheme handler for slotted installs to avoid conflicts
-        "URI_SCHEME": f"x-scheme-handler/chromium{channel_suffix}",
+        "URI_SCHEME": f"x-scheme-handler/chromium",
         "USR_BIN_SYMLINK_NAME": f"{sym_name}",
     }
 
@@ -77,28 +57,28 @@ def main():
     # Generate Desktop file
     installer.process_template(
         Path("chrome/installer/linux/common/desktop.template"),
-        Path(f"out/Release/chromium-browser{channel_suffix}-{abi}.desktop"),
+        Path(f"out/Release/chromium-browser-{abi}.desktop"),
         context,
     )
 
     # Generate Manpage
     installer.process_template(
         Path("chrome/app/resources/manpage.1.in"),
-        Path(f"out/Release/chromium-browser{channel_suffix}.1"),
+        Path(f"out/Release/chromium-browser.1"),
         context,
     )
 
     # Generate AppData (AppStream)
     installer.process_template(
         Path("chrome/installer/linux/common/appdata.xml.template"),
-        Path(f"out/Release/chromium-browser{channel_suffix}.appdata.xml"),
+        Path(f"out/Release/chromium-browser.appdata.xml"),
         context,
     )
 
     # Generate GNOME Default Apps entry
     installer.process_template(
         Path("chrome/installer/linux/common/default-app.template"),
-        Path(f"out/Release/chromium-browser{channel_suffix}.xml"),
+        Path(f"out/Release/chromium-browser.xml"),
         context,
     )
 
