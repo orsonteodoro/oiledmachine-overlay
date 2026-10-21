@@ -247,8 +247,6 @@ LTO_TYPE="" # Global variable
 NABIS=0 # Global variable
 NODE_SLOT="24"
 OSHIT_OPTIMIZED=0 # Global variable
-PATCH_REVISION="-1"
-PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 USE_LTO=0 # Global variable
@@ -3682,7 +3680,7 @@ apply_mj_patchset() {
 einfo "Applying the MJ patchset (Gentoo patchset)..."
 
 	# Generated from:  find /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-patches-151-3/ -name "*.patch" | sort -V
-	local base_path="${WORKDIR}/chromium-patches-${PATCH_VER}"
+	local base_path="${WORKDIR}/chromium-patches-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}"
 	PATCHES=(
 $(use system-zlib && echo "${base_path}/common/cr109-system-zlib.patch")							# Unique patch
 $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")							# Unique patch
