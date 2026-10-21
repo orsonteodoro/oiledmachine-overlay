@@ -1,0 +1,52 @@
+Title: Update PHP
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-21
+Revision: 2
+News-Item-Format: 2.0
+Display-If-Installed: virtual/dist-kernel
+Display-If-Installed: virtual/linux-sources
+Display-If-Installed: sys-kernel/ot-sources
+
+A critical vulnerability has been discovered affecting users of virtual machines.
+This vulnerability is a VM escape vulnerability that leads
+to arbitrary code execution.
+
+Because this overlay was originally a performance overlay and those people the
+overlay maintainer know do not use VMs, the advisory is not a priority.  This
+advisory is passed on for users that still use VMs.
+
+Stakeholders that it may affect:
+
+Red team cybersecurity with VM labs
+Blue team cybersecurity with VM labs
+Security Operation Centers (SOCs)
+Developers
+Security users that use VMs
+Cloud devs/owners that use VMs
+
+Researcher vulnerability name:  PwnEscape
+
+Severity:  Critical
+
+CVE-2026-99999 - EBR, VME, ACE, IV, DoS, DT, ID
+
+ACE - Arbitrary Code Execution
+DoS - Denial of Service
+DT - Data Tampering
+ID - Information Disclosure
+EBR - Extended Blast Radius
+IV - Insufficient Validation
+VME - Virtual Machine Escape
+
+Versions patched:
+
+7.3.9999 (Wed, 7 Oct 2026 18:42:49 -0400, commit 6785011)
+7.3
+7.2.11
+6.18.57
+6.12.113
+6.6.159
+6.1.190
+5.15.223
+5.10.272

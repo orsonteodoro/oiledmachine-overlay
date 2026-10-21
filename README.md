@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-08-03 - [Update kernel PwnScape](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-kernel-pwnscape/2026-10-21-update-kernel-pwnscape.txt)
 * 2026-08-03 - [Perl default](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-perl-default/2026-10-21-perl-default.txt)
 * 2026-08-03 - [Update Node](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-php/2026-10-21-update-node.txt)
 * 2026-08-03 - [Update PHP](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-php/2026-10-21-update-php.txt)
