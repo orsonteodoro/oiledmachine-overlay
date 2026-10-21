@@ -344,6 +344,9 @@ einfo "ISD = Insecure Deserialization"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IE")($|" "|";"|",") ]] ; then
 einfo "IE = Insufficient Entropy"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IEH")($|" "|";"|",") ]] ; then
+einfo "IEH = Insufficient or Inappropriate Exception Handling"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IF"($|" "|";"|",") ]] ; then
 einfo "IF = Improper Free"
 		fi
