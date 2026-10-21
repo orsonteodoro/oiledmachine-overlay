@@ -976,17 +976,17 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 #
 # Patchsets:
 #
-# | Provider name          | URI                                                                                       | Notes                                                            |
-# | -----------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------|
-# | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                      |
-# | Alpine (rolling, edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                            |
-# | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources                       |
-# | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                       |
-# | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                  |
-# | Fedora (rolling, F45)  | https://src.fedoraproject.org/rpms/chromium/tree/f45                                      | Used for security fixes                                          |
-# | Gentoo                 | https://gitlab.com/Matt.Jolly/chromium-patches                                            | (DEPRECATED) Used for multislot, system toolchain compatibility  |
-# | Raptor Engineering     | https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches | Used for ppc64le support                                         |
-# | ungoogled-chromium     | https://github.com/ungoogled-software/ungoogled-chromium                                  | Used for improving privacy or decrapfication                     |
+# | Provider name          | URI                                                                                       | Notes                                                                    |
+# | -----------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+# | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                              |
+# | Alpine (rolling, edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                                    |
+# | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources                               |
+# | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                               |
+# | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                          |
+# | Fedora (rolling, F45)  | https://src.fedoraproject.org/rpms/chromium/tree/f45                                      | Used for security fixes                                                  |
+# | Gentoo                 | https://gitlab.com/Matt.Jolly/chromium-patches                                            | (DEPRECATED) Used for unbundle, system toolchain compatibility           |
+# | Raptor Engineering     | https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches | Used for ppc64le support                                                 |
+# | ungoogled-chromium     | https://github.com/ungoogled-software/ungoogled-chromium                                  | Used for improving privacy or decrapfication                             |
 #
 
 # For the oiledmachine-overlay patchset, it is for mold, compiler flags,
@@ -3780,6 +3780,7 @@ einfo "Applying the Fedora patchset..."
 # TODO:  Dedupe the patch overlap and remove this function while keeping necessary G23 distro mods.
 # We can _drop most of the unique patches_ and keep only the necessary to build.
 # Dropping these patches will reduce the maintenance cost big time.
+# The goal is to offload patching to other patchsets to reduce maintenance cost.
 apply_mj_patchset() {
 	[[ "${MJ_PATCHSET}" == "1" ]] || return
 einfo "Applying the MJ patchset (Gentoo patchset)..."
