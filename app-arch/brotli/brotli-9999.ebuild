@@ -8,14 +8,14 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO IU"
 DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL="1"
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10..14} )
+PYTHON_COMPAT=( python3_{10..15} )
 SO_CURRENT=3
 SO_AGE=2
 
 inherit cflags-hardened cmake-multilib distutils-r1 flag-o-matic
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="392b261debb0f478811ddacb98b118da36b06158"
+	FALLBACK_COMMIT="1260a29899b26294923075309cb31349bd05a14d"
 	EGIT_REPO_URI="https://github.com/google/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -37,7 +37,7 @@ SOVER=$(( ${SO_CURRENT} - ${SO_AGE} )) # The distro formula is wrong.
 SLOT="0/${SOVER}"
 IUSE+="
 python test
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 RESTRICT="!test? ( test )"
