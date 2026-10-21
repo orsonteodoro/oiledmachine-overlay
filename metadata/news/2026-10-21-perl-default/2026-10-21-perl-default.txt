@@ -1,0 +1,15 @@
+Title: Perl default
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-21
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: dev-lang/perl
+Display-If-Installed: virtual/perl-Compress-Raw-Zlib
+
+The Perl default on the oiledmachine-overlay is the 5.44.  Older associated
+ebuilds may be removed.  The ebuilds on the distro overlay are mature enough to
+allow for proper update with perl-cleaner to 5.44.x.  Older perl versions
+are not supported on the oiledmachine-overlay because the distro assumes that
+Perl is the latest stable unislot and puts no effort in testing older slots
+even though upstream uses a multi version release.

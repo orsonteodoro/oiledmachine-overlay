@@ -46,18 +46,11 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-08-03 - [Perl default](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-perl-default/2026-10-21-perl-default.txt)
 * 2026-08-03 - [Update Node](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-php/2026-10-21-update-node.txt)
 * 2026-08-03 - [Update PHP](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-php/2026-10-21-update-php.txt)
 * 2026-08-03 - [Update Perl](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-08-03-update-perl/2026-08-03-update-perl.txt)
 * 2026-07-01 - [Split-usr users, update util-linux and others](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-07-01-update-util-linux-and-others/2026-06-19-update-util-linux-and-others.txt)
-* 2026-06-19 - [Use split-usr](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-19-use-split-usr/2026-06-19-use-split-usr.txt)
-* 2026-06-14 - [Use FFmpeg live](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-14-use-ffmpeg-live/2026-06-14-use-ffmpeg-live.txt)
-* 2026-06-02 - [Firejail env-max-count](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-06-02-firejail-maxenvs/2026-06-02-firejail-maxenvs.txt)
-* 2026-05-14 - [Rebuild the kernel against 0-day vulnerabilities (Fragnesia mitigation)](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-14-update-kernel/2026-05-14-update-kernel.txt)
-* 2026-05-09 - [Rebuild and restart coolercontrold as non-root](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-coolercontrold-update/2026-05-09-coolercontrold-update.txt)
-* 2026-05-09 - [Rebuild libpcre2 dependencies](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-05-09-rebuild-libpcre2-dependencies/2026-05-09-rebuild-libpcre2-dependencies.txt)
-* 2025-01-16 - [Rotate passwords immediately](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2025-01-16-rotate-passwords/2025-01-16-rotate-passwords.txt)
-* 2023-11-05 - [ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't perform data validation (It addresses the GCC_PGO_PHASE message spam also.)](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2023-11-05-fix-emerge-at-world/2023-11-05-fix-emerge-at-world.txt)
 
 ## Docs
 
