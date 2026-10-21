@@ -3211,7 +3211,7 @@ src_unpack() {
 		git clone -b "${FEDORA_PATCHSET_BRANCH}" "https://src.fedoraproject.org/rpms/chromium.git" "${WORKDIR}/fedora-patchset" || die
 		git checkout "${FEDORA_PATCHSET_COMMIT}" || die
 	fi
-	die
+#	die
 
 	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
 	export PATH="${CHROMIUM_TOOLCHAIN_PREFIX}/gn/out:${PATH}" # Adds gn to PATH.
