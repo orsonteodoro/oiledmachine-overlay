@@ -3391,7 +3391,7 @@ einfo "Applying the Debian patchset..."
 	local base_path="${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches"
 
 	PATCHES+=(
-"${base_path}/fixes/rust-clanglib.patch"	# Original used in MJ, Fedora patchsets
+"${base_path}/fixes/rust-clanglib.patch"				# Original used in MJ, Fedora patchsets
 	)
 
 # For using system-libs instead
@@ -3404,7 +3404,7 @@ einfo "Applying the Debian patchset..."
 #"${base_path}/system/openjpeg.patch"
 #"${base_path}/system/opus.patch"
 #"${base_path}/system/rapidjson.patch"
-#"${base_path}/system/rollup.patch" # There is a device dependent .node and device independent .wasm file.
+#"${base_path}/system/rollup.patch"					# There is a device dependent .node and device independent .wasm file.
 #"${base_path}/system/llvm.patch"
 #"${base_path}/system/python.patch"
 #"${base_path}/system/tsc.patch"
@@ -3414,8 +3414,8 @@ einfo "Applying the Debian patchset..."
 	# LLVM support like G23 distro patchset.
 	PATCHES+=(
 # From `grep -r -e "^llvm-22" /var/tmp/portage/www-client/chromium-155.0.8059.84/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
-"${base_path}/llvm-22/ignore-for-ubsan.patch"	# Equivalent to cr149-ubsan-feature.patch in MJ patchset
-"${base_path}/llvm-22/clang22.patch"		# Equivalent to cr147-disable-fno-lifetime-dse.patch and cr151-fdiagnostics-show-inlining-chain.patch in MJ patchset
+"${base_path}/llvm-22/ignore-for-ubsan.patch"				# Equivalent to cr149-ubsan-feature.patch in MJ patchset
+"${base_path}/llvm-22/clang22.patch"					# Equivalent to cr147-disable-fno-lifetime-dse.patch and cr151-fdiagnostics-show-inlining-chain.patch in MJ patchset
 "${base_path}/llvm-22/clone-traits.patch"
 "${base_path}/llvm-22/const-profile.patch"
 "${base_path}/llvm-22/keyfactory.patch"
@@ -3519,7 +3519,7 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cr140-musl-prctl.patch"
 #"${WORKDIR}/copium/cr140-rust-pre1.89.patch"
 #"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
-"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"
+"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"				# Used in G23 build
 #"${WORKDIR}/copium/cr145-iwyu-dev_t.patch"
 #"${WORKDIR}/copium/cr145-musl-unfortify-SkDescriptor.patch"
 #"${WORKDIR}/copium/cr146-rust-pre1.95-bytemuck.patch"
@@ -3534,7 +3534,7 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cr151-dawn-cgo_enabled.patch"
 #"${WORKDIR}/copium/cr152-dawn-clang-22.patch"
 #"${WORKDIR}/copium/cr152-ffmpeg-no-agtm.patch"
-"${WORKDIR}/copium/cr152-unbundle-minizip-undo-unicode.patch"
+"${WORKDIR}/copium/cr152-unbundle-minizip-undo-unicode.patch"			# Used in G23 build
 #"${WORKDIR}/copium/cr152-unbundle-opus-devtools.patch"
 #"${WORKDIR}/copium/cr153-typescript-break-definitions.patch"
 #"${WORKDIR}/copium/cr153-unbundle-opus-iamf.patch"
