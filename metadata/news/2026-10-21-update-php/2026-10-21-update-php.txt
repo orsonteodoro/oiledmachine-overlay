@@ -14,6 +14,8 @@ Two critical severity vulnerabilities have been patched upstream by the PHP team
 It was estimated both would be 10s on the socials but downgraded to 9.2 for
 CVSS 4, or 9.8 for CVSS 3.
 
+Researcher vulnerability name:  PHP2Shell
+
 CVE-2026-109618 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
 CVE-2026-109619 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
 
