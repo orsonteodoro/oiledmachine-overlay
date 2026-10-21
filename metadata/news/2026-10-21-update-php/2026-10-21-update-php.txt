@@ -2,7 +2,7 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 1
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
 
@@ -47,7 +47,8 @@ security reports to put the server offline (or disconnect it from the network)
 until the remediation to the newer version is complete.
 
 It is preferred to disable the HTTP server, remediate, then put it back HTTP
-server online.
+server online.  The alternative is to disable the PHP module temporarily
+with under maintenance message.
 
 While the technical/definitional blast radius is limited, your personal threat
 model or circumstance may treat it or interpret it correctly as extended.
