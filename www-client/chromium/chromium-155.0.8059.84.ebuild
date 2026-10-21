@@ -3993,10 +3993,10 @@ einfo "Removing SupportedLaneCount"
 		"${S}/build/config/gclient_args.gni" \
 		|| die
 
-#	PATCHES+=(
+	PATCHES+=(
 #		"${FILESDIR}/extra-patches/chromium-155-crubit.patch"
 #		"${FILESDIR}/extra-patches/chromium-155-remove-private_verification_tokens.patch"
-#	)
+	)
 }
 
 is_cromite_patch_non_fatal() {
@@ -4441,6 +4441,15 @@ src_prepare() {
 	# Rollup references removed from inspector
 
 	default
+
+	node --version || die
+	local typescript_pv=$("/opt/typescript/7.0."*"/bin/tsc" --version)
+einfo "TypeScript version:  ${typescript_pv}"
+	sed -i \
+		-e "s|/usr/bin/tsc|/opt/typescript/${typescript_pv}/bin/tsc|g" \
+		"${S}/third_party/devtools-frontend/src/scripts/build/typescript/typescript_vars.gni" \
+		"${S}/third_party/devtools-frontend/src/third_party/typescript/typescript.py" \
+		|| die
 
 	if [[ -e "${S}/tools/slice_string.py" ]] ; then
 		chmod +x "${S}/tools/slice_string.py" || die
