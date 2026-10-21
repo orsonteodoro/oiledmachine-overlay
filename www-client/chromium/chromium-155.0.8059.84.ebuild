@@ -206,7 +206,7 @@ SOURCES_COUNT_EXPECTED=592154 # Update with DOWNLOAD_FLAVOR change
 MAINTENANCE_MODE=1 # Also set GEN_LICENSE_FILE
 GEN_LICENSE_FILE=0
 
-ALPINE_PATCHSET=${ALPINE_PATCHSET:-1}
+ALPINE_PATCHSET=${ALPINE_PATCHSET:-0}
 ARCH_PATCHSET=${ARCH_PATCHSET:-1}
 COPIUM_PATCHSET=${COPIUM_PATCHSET:-1}
 DEBIAN_PATCHSET=${DEBIAN_PATCHSET:-1}
@@ -980,17 +980,17 @@ S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 #
 # Patchsets:
 #
-# | Provider name          | URI                                                                                       | Notes                                                                    |
-# | -----------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-# | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                              |
-# | Alpine (rolling, edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                                    |
-# | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources and musl fixes                |
-# | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                               |
-# | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                          |
-# | Fedora (rolling, F45)  | https://src.fedoraproject.org/rpms/chromium/tree/f45                                      | Used for security fixes                                                  |
-# | Gentoo                 | https://gitlab.com/Matt.Jolly/chromium-patches                                            | (DEPRECATED) Used for unbundle, system toolchain compatibility           |
-# | Raptor Engineering     | https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches | Used for ppc64le support                                                 |
-# | ungoogled-chromium     | https://github.com/ungoogled-software/ungoogled-chromium                                  | Used for improving privacy or decrapfication                             |
+# | Provider name          | URI                                                                                       | Notes                                                                                 |
+# | -----------------------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+# | Arch Linux (rolling)   | https://gitlab.archlinux.org/archlinux/packaging/packages/chromium                        | Used for configure time or build time fixes                                           |
+# | Alpine (rolling, edge) | https://github.com/alpinelinux/aports/tree/master/community/chromium                      | Used for musl support                                                                 |
+# | copium                 | https://codeberg.org/selfisekai/copium                                                    | Used for build time fixes in C/C++ sources and musl fixes                             |
+# | Cromite                | https://github.com/uazo/cromite                                                           | Used for improving privacy                                                            |
+# | Debian (rolling, Sid)  | https://salsa.debian.org/chromium-team/chromium                                           | Used for system-libs support, LoongArch support                                       |
+# | Fedora (rolling, F45)  | https://src.fedoraproject.org/rpms/chromium/tree/f45                                      | Used for security fixes                                                               |
+# | Gentoo                 | https://gitlab.com/Matt.Jolly/chromium-patches                                            | (DEPRECATED) Used for unbundle, system toolchain compatibility                        |
+# | Raptor Engineering     | https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches | Used for ppc64le support                                                              |
+# | ungoogled-chromium     | https://github.com/ungoogled-software/ungoogled-chromium                                  | Originally added to decrapify for performance/minimalism, but also to improve privacy |
 #
 
 # For the oiledmachine-overlay patchset, it is for mold, compiler flags,
@@ -3242,7 +3242,7 @@ src_unpack() {
 		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
 	fi
 
-	die # For reviewing and updating patch sections.
+	#die # For reviewing and updating patch sections.
 
 	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
 	export PATH="${CHROMIUM_TOOLCHAIN_PREFIX}/gn/out:${PATH}" # Adds gn to PATH.
@@ -3395,7 +3395,7 @@ einfo "Applying the Alpine patchset..."
 # TODO:  finish
 
 "${base_path}/0001-hotfix-ignore-a-new-warning-in-rust-1.89.patch"
-#"${base_path}/compiler.patch"						# TODO rework for G23
+#"${base_path}/compiler.patch"						# TODO rework for G23, it needs the Rust targets patch hunks changed
 "${base_path}/disable-dns_config_service.patch"
 "${base_path}/disable-failing-tests.patch"
 "${base_path}/fix-ffmpeg-codec-list.patch"
