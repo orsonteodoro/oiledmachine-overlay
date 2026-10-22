@@ -1,0 +1,63 @@
+Title: LiteLLM Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-22
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: dev-python/instructor
+Display-If-Installed: dev-python/litellm
+
+The dev-python/instructor ebuild has a USE flag to enable litellm.  By
+default the litellm USE flag is not enabled, and also it is not installed on
+the ebuild maintainer machine.
+
+We are all good right?
+
+However, a few curious people may want to try the feature out.
+
+Recently LiteLLM had recently had a supply chain attack.  It has been
+circulating on the social media.  The LLM has shared that one version
+is compromised and the other version referenced on the portage overlays
+website is insecure.
+
+Affected and insecure versions
+
+1.107.0 - Supply chain attack, infostealer, RAT (Remote Access Trojan)
+1.91.1 - Insecure version
+  CVE-2026-93355 (High 7.6), WA, DoS, DT
+  CVE-2026-84377 (Medium 6.5), SSRF, ID
+
+DoS - Denial Of Service
+DT - Data Tampering
+ID - Information Disclosure
+SSRF - Server Side Request Forgery
+WA - Weak Authentication
+
+Checking if you downloaded the compromised or insecure versions:
+
+realpath /var/db/pkg/dev-python/litellm*
+
+Secure versions
+
+The AI said versions earlier than 1.107.0 are secure.  It corresponds
+to the active most recent releases:
+
+1.106.2 - Recommend pinned version by AI
+1.105.3
+1.104.5
+1.103.7
+1.106.1
+1.105.2
+1.104.4
+1.103.6
+
+Remediation
+
+For 1.107.0, it is recommended to rotate passwords on a different device
+and to do a clean format on the affected devices.
+
+For 1.91.1, it is recommended to bump to the latest release ASAP.
+
+It is recommended to have a local copy of the secured release of the
+litellm ebuild or disable the USE flag.  For the local copy, you need
+to start new.  Do not copy and paste the 1.107.0 ebuild.
