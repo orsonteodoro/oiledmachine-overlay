@@ -16,7 +16,7 @@ We are all good right?
 However, a few curious people may want to try the feature out.
 
 Recently LiteLLM had recently had a supply chain attack.  It has been
-circulating on the social media.  The LLM has shared that one version
+circulating on the social media.  The AI has shared that one version
 is compromised and the other version referenced on the portage overlays
 website is insecure.
 
