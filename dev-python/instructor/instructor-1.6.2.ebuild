@@ -17,7 +17,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 pypi secure-version-python
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -123,9 +123,6 @@ RDEPEND+="
 		jsonref? (
 			>=dev-python/jsonref-1.1.0[${PYTHON_USEDEP}]
 		)
-		litellm? (
-			>=dev-python/litellm-1.35.31[${PYTHON_USEDEP}]
-		)
 		mistralai? (
 			>=dev-python/mistralai-1.0.3[${PYTHON_USEDEP}]
 		)
@@ -156,6 +153,9 @@ RDEPEND+="
 		>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/datasets[${PYTHON_SINGLE_USEDEP}]
 	)
+	litellm? (
+		$(secure-version-python_gen_litellm_depends '' '[${PYTHON_SINGLE_USEDEP}]')
+	)
 	test-docs? (
 		>=sci-ml/datasets-3.0.1[${PYTHON_SINGLE_USEDEP}]
 	)
@@ -175,7 +175,7 @@ BDEPEND+="
 			dev-python/mkdocstrings[${PYTHON_USEDEP}]
 			dev-python/mkdocstrings-python[${PYTHON_USEDEP}]
 			media-gfx/cairosvg[${PYTHON_USEDEP}]
-			virtual/pillow[${PYTHON_USEDEP}]
+			>=virtual/pillow-'${PYTHON_PILLOW_PV}'[${PYTHON_USEDEP}]
 		)
 	')
 "
