@@ -147,7 +147,7 @@ SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Oct 20, 2026 7:04 AM PDT"
 
 SECURE_TIMESTAMP["dev_games_ogre_9999"]="Jun 19, 2026 10:03 AM PDT"
 SECURE_TIMESTAMP["dev_games_recastnavigation_9999"]="Feb 26, 2026 11:16 PM PST"
-SECURE_TIMESTAMP["dev_lang_go_9999"]="Oct 8, 2026 8:36 AM PDT"
+SECURE_TIMESTAMP["dev_lang_go_9999"]="Oct 19, 2026 6:26 PM PDT"
 SECURE_TIMESTAMP["dev_lang_python_3_15_9999"]="Sep 1, 2026 2:14 AM PDT"
 SECURE_TIMESTAMP["dev_lang_python_3_14_9999"]="Aug 5, 2026 3:29 AM PDT"
 SECURE_TIMESTAMP["dev_lang_python_3_13_9999"]="Aug 5, 2026 5:25 AM PDT"
