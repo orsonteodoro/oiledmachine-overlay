@@ -425,10 +425,11 @@ USE flags support
 | ---       | ---                     |
 | split-usr | Fully supported [1]     |
 
-[1] To test if you are using split-usr do
-`ls -id /bin /usr/bin` if the id is not the same it is split.  Usually
-AI will tell you to give up because the AI is compromised and so is the
-Wiki and the devs who are pro systemd.
+[1] To test if you are using split-usr do `ls -id /bin /usr/bin` if the id is
+not the same it is split.  Usually the AI will tell you to give up because the
+AI, the Wiki, and the devs who are pro systemd are all compromised with
+enterprise Linux marketing slop.  The distro does provide split-usr stage 3
+images in the "Stages (advanced)" section of their downloads page.
 
 Unsupported or rejected projects/ebuilds
 
