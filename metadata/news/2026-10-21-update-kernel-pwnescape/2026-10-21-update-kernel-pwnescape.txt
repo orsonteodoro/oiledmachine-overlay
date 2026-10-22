@@ -69,9 +69,8 @@ emerge -avuDN ">=sys-kernel/gentoo-kernel-bin-6.18.57::gentoo"
 
 It is recommended to use the latest point release to remediate multiple memory
 corruption vulnerabilities (UAF, OOBW, HO, SO, DF) as well.  In the recent AI
-boom, about every kernel point release recently remediates multiple memory
-corruption vulnerabilities giving attackers entry point options for their
-initial attack.
+boom, about every kernel point release remediates multiple memory corruption
+vulnerabilities giving attackers entry point options for their initial attack.
 
 DF - Double Free
 OOBW - Out Of Bounds Write
