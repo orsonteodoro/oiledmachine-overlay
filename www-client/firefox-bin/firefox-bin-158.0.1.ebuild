@@ -34,10 +34,16 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
-MITIGATION_DATE="Oct 13, 2026" # Official annoucement (advisories)
-MITIGATION_LAST_UPDATE=1791830820 # From `date +%s -d "12-Oct-2026 11:47"` From ftp linux-x86_64/en-US/
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-106/"
+MITIGATION_DATE="Oct 20, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1792484340 # From `date +%s -d "20-Oct-2026 01:19"` From ftp source code
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-111/"
 VULNERABILITIES_FIXED=(
+	# 158.0.1
+	"CVE-2026-113399;IBC;"
+	"CVE-2026-113470;;"
+	"CVE-2026-113400;UM, ID;"
+	"CVE-2026-113401;DoS;"
+
 	# 158.0
 	"CVE-2026-109704;PE;"
 	"CVE-2026-109705;UAF, IBC, SBE, IOV;"
