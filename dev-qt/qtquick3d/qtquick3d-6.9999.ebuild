@@ -6,7 +6,7 @@ EAPI=8
 CXX_STANDARD=17
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-FALLBACK_COMMIT="777865501bb7b7d07c5a9abf1b9142d5258d67f1"
+FALLBACK_COMMIT="581f0c9bfed5048075ee298a92803666dc71a505"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -39,7 +39,7 @@ fi
 
 IUSE+="
 opengl vulkan
-ebuild_revision_4
+ebuild_revision_5
 "
 
 RDEPEND="

@@ -9,7 +9,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="d8bb0db1d1aef963aa82b3b5b617e7606f8f0762"
+FALLBACK_COMMIT="c72657372863b5dff8ace3ea4b630d19e482668a"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
