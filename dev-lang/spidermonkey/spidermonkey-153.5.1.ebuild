@@ -16,14 +16,13 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 
-MITIGATION_DATE="Sep 29, 2026" # Advisory date
-MITIGATION_LAST_UPDATE=1790665200 # From `date +%s -d "29-Sep-2026"` from advisory date
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-99/"
-SEVERITY_LABEL="Severity:"
+MITIGATION_DATE="Oct 20, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1792517100 # From `date +%s -d "20-Oct-2026 10:25"` From ftp source code
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-112/"
 VULNERABILITIES_FIXED=(
 )
 
-FIREFOX_PATCHSET="firefox-153esr-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-140-patches-02.tar.xz"
 
 RUST_LIVE_TIMESTAMP="Fri, 14 Aug 2026 09:23:13 -0700"

@@ -208,16 +208,43 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 		(( ${l} != ${expected_size} )) && die "Atomic copy and integrity failed for ${d}/nssckbi.h"
 		# Percent change between rolling and ESR is 0%
 
-	# Cheap integrity check of certdata.txt content
+	# Cheap certdata.txt integrity checks
+
+	# Cheap integrity check of beginning of certdata.txt content
 		grep -q -e "Mozilla Builtin Roots" "${d}/certdata.txt" || die "Integrity failed for start of ${d}/certdata.txt"
 		grep -q -F -e "\150\025\322\064" "${d}/certdata.txt" || die "Integrity failed for end of ${d}/certdata.txt"
 
 	# Cheap integrity check for last seen commit
 		grep -q -F -e "emSign ECC Root CA - G3" "${d}/certdata.txt" && die "Integrity failed for last commit ${d}/certdata.txt" # Removed cert
 
+	# Cheap nssckbi.h integrity checks
+
 	# Cheap integrity check of nssckbi.h content last seen edit
-		grep -q -e "NSS_BUILTINS_LIBRARY_VERSION_MINOR 92" "${d}/nssckbi.h" || die "Integrity failed for start of ${d}/nssckbi.h"
-		grep -q -e "NSS_BUILTINS_LIBRARY_VERSION \"2.92\"" "${d}/nssckbi.h" || die "Integrity failed for end of ${d}/nssckbi.h"
+		local c1=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION_MAJOR [0-9]+" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " ")
+		local c2=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION_MINOR [0-9]+" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " ")
+		local actual_pv
+		actual_pv="${c1}.${c2}"
+einfo "actual_pv:  ${actual_pv}"
+		local expected_pv_min="2.92"
+		local expected_pv_max="2.93" # The tolerance is arbitrary but slow bumps
+		if ver_test "${expected_pv_min}" "-le" "${actual_pv}" && ver_test "${actual_pv}" "-le" "${expected_pv_max}" ; then
+			:
+		else
+eerror "Version rejected (Test 1):"
+eerror "Actual PV:  ${actual_pv}"
+eerror "Expected version:  ${expected_pv_min} <= ${actual_pv} <= ${expected_pv_max}"
+			die
+		fi
+
+		actual_pv=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION \"[0-9.]+\"" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " " | sed -e "s|\"||g")
+		if ver_test "${expected_pv_min}" "-le" "${actual_pv}" && ver_test "${actual_pv}" "-le" "${expected_pv_max}" ; then
+			:
+		else
+eerror "Version rejected (Test 2):"
+eerror "Actual PV:  ${actual_pv}"
+eerror "Expected version:  ${expected_pv_min} <= ${actual_pv} <= ${expected_pv_max}"
+			die
+		fi
 	else
 		local commit_id=$(get_certdata_commit)
 		local certdata_flavor=$(get_certdata_desc)
