@@ -28,7 +28,7 @@ website is insecure.
 Affected and insecure versions
 
 1.107.0 - Supply chain attack, infostealer, RAT (Remote Access Trojan)
-  only if using PyPi tarball or Docker image.
+  only if using PyPI tarball or Docker image.
 1.91.1 - Insecure version
   CVE-2026-93355 (High 7.6), WA, DoS, DT
   CVE-2026-84377 (Medium 6.5), SSRF, ID
