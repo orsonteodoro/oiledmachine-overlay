@@ -2,7 +2,7 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: virtual/linux-sources
@@ -41,7 +41,7 @@ EBR - Extended Blast Radius
 IV - Insufficient Validation
 VME - Virtual Machine Escape
 
-Versions patched:
+Kernel versions patched with fix:
 
 >= 7.3.9999 (Wed, 7 Oct 2026 18:42:49 -0400, commit 6785011)
 >= 7.3
@@ -55,11 +55,11 @@ Versions patched:
 
 Remediation:
 
-Simply `emerge -a <kernel-flavor>` to a new point release should fix the security
-bug no matter what kernel flavor you use.  To avoid boot issues, also update the
-initramfs.  To update the initramfs, use genkernel or dracut.  The host bare
-metal machine must be triaged or upgraded to the latest kernel point release
-for that slot [aka major minor version].
+Simply `emerge -a <kernel-flavor>` to a new point release as it should fix the
+security bug no matter what kernel flavor you use.  To avoid boot issues, make
+sure to always up the update the initramfs.  To update the initramfs, use
+genkernel or dracut.  The host bare metal machine must be triaged or upgraded
+to the latest kernel point release for that slot [aka major minor version].
 
 Examples:
 
@@ -77,3 +77,17 @@ OOBW - Out Of Bounds Write
 HO - Heap Overflow
 SO - Stack Overflow
 UAF - Use After Free
+
+Optional related updates:
+
+For standard VMs, confidential VMs, bootloaders, kernels, updating the CPU
+firmware, motherboard firmware, and bootloader may be necessary to ensure the
+integrity of the system to mitigate kernel security bypass, hardware level
+side channels, or hijack to attacker compromised kernels.  There are risks of
+bricking or expensive repair for this kind of remediation.
+
+sys-kernel/linux-firwmare - Ebuild available for AMD CPU firmware updates
+sys-firmware/intel-microcode - Ebuild available for Intel CPU firmware updates
+UEFI firmware - See manufacturer's site for update
+sys-boot/uboot - Vulnerabilities reported for this bootloader in 2026
+sys-boot/grub2 - Vulnerabilities reported for this bootloader in late 2025
