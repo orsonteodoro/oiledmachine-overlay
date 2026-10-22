@@ -10,8 +10,9 @@ Display-If-Installed: www-apps/LobeHub
 Display-If-Installed: www-misc/vercel
 
 The Next.js has a RCE vulnerability that can be exploited during the runtime use
-of an application.  In the upcoming days, it will be fixed.  Due to upgrade
-backlog and lack of staffing it will be delayed.  A lockfile update is needed.
+of an application.  In the upcoming days, it will be fixed.  Due to a emerge
+update backlog and lack of staffing it will be delayed.  A lockfile update is
+needed.
 
 CVE-2025-55182 - RCE, ISD, EBR, ZC, DoS, DT, ID, critical severity at 10 score with CVSS 3.0
 CVE-2025-66478 - Rejected as duplicate of CVE-2025-55182
@@ -52,6 +53,18 @@ Remeditiation
 
 Use the current recommended mitigation at this time.  This section will
 be updated when lockfile is ready.
+
+[PLACEHOLDER - NOT READY YET]
+
+To update to remediated builds with the updated Next.js version, do the
+following for your installed package:
+
+emerge -1vuDN app-misc/amica		# Next 16 based
+emerge -1vuDN media-gfx/upscayl		# Next 15 based
+emerge -1vuDN www-apps/LobeHub		# Next 16 based
+emerge -1vuDN www-misc/vercel
+
+[PLACEHOLDER - NOT READY YET]
 
 Remediated status
 
