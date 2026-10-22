@@ -2,7 +2,7 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 6
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: virtual/linux-sources
@@ -89,5 +89,5 @@ bricking or expensive repair for this kind of remediation.
 sys-kernel/linux-firwmare - Ebuild available for AMD CPU firmware updates
 sys-firmware/intel-microcode - Ebuild available for Intel CPU firmware updates
 UEFI firmware - See manufacturer's site for update
-sys-boot/uboot - Vulnerabilities reported for this bootloader in 2026
+sys-boot/u-boot - Vulnerabilities reported for this bootloader in 2026
 sys-boot/grub2 - Vulnerabilities reported for this bootloader in late 2025
