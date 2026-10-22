@@ -9,7 +9,7 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="bb29b957eaaa15be33243550d9ee576c2d601669" # 2026-10-21 10:45:44 -1000 @ Merge tag 'kbuild-7.4-1' of
+LINUX_SOURCES_FALLBACK_COMMIT="7be4bc52fd9e0e55dc9a2e0232b89427d2c4b614" # 2026-10-21 18:53:14 -1000 @ Merge tag 'driver-core-7.4-rc1' of
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
