@@ -2,7 +2,7 @@ Title: Next.js Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 1
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/amica
 Display-If-Installed: media-gfx/upscayl
@@ -44,7 +44,9 @@ Current mitigations
 
 Do not use the affected apps until lockfiles have been updated, uninstall
 the program, remove the executable bit with chmod, or add a global deny
-rule with your MAC (e.g. AppArmor or SELinux).
+rule with your MAC (e.g. AppArmor or SELinux) for the binaries in the
+/opt/<PROGRAM-NAME> folder and not the shell wrapper in
+/usr/bin/<PROGRAM-NAME>.
 
 Remeditiation
 
