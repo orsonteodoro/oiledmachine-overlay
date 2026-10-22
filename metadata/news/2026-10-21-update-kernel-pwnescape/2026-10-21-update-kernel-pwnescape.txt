@@ -67,7 +67,7 @@ emaint sync -A
 emerge -a1vO "=sys-kernel/ot-sources-7.3.9999"
 emerge -avuDN ">=sys-kernel/gentoo-kernel-bin-6.18.57::gentoo"
 
-It is recommended to use the latest point release remediate multiple memory
+It is recommended to use the latest point release to remediate multiple memory
 corruption vulnerabilities (UAF, OOBW, HO, SO, DF) as well.  About every kernel
 point release recently remediates multiple memory corruption vulnerability
 giving attackers entry point options for their initial attack.
