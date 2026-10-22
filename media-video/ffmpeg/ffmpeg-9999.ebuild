@@ -134,7 +134,6 @@ FFMPEG_FLAG_MAP=(
 	"ieee1394:libdc1394"
 	"libcaca"
 	"openal"
-	"opengl"
 
 	# Indevs
 	"+drm:libdrm"
@@ -1112,9 +1111,6 @@ RDEPEND+="
 	)
 	opencl? (
 		virtual/opencl:*[${MULTILIB_USEDEP}]
-	)
-	opengl? (
-		media-libs/libglvnd:=[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
 		$(secure-version_gen_openssl_depends '' '[${MULTILIB_USEDEP}]')
