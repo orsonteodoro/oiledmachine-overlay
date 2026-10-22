@@ -1,0 +1,50 @@
+Title: Next.js Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-22
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: app-misc/amica
+Display-If-Installed: media-gfx/upscayl
+Display-If-Installed: www-apps/LobeHub
+Display-If-Installed: www-misc/vercel
+
+The Next.js has a RCE vulnerability that can be exploited during the runtime use
+of an application.  In the upcoming days, it will be fixed.  Due to upgrade
+backlog and lack of staffing it will be delayed.  A lockfile update is needed.
+
+CVE-2025-55182 - RCE, ISD, critical severity at 10 score with CVSS 3.0
+CVE-2025-66478 - Rejected as duplicate of CVE-2025-55182
+CVE-2026-96889 - RCE, UAF, high severity at 7 score with CVSS 3.0
+
+ISD - Insecure Deseralization
+RCE - Remote Code Execution
+UAF - Use After Free
+
+Patched versions of Next.js
+
+>= 16.4.1
+>= 15.5.28 (EOL)
+
+Affected status of potential consumers of Node.js according to AI:
+
+app-misc/amica - Low risk/no [flip-flop]
+media-gfx/upscayl - No risk
+www-apps/LobeHub - High risk
+www-misc/vercel monorepo and the vercel cli utility - No/indirectly
+
+Current mitigations
+
+Do not use the affected apps until lockfiles have been updated, uninstall
+the program, remove the executable bit with chmod, or add a global deny
+rule with your MAC (e.g. AppArmor or SELinux).
+
+Remeditiation
+
+Use the current recommended mitigation at this time.  This section will
+be updated when lockfile is ready.
+
+Remediated status
+
+When the package has been fully remediated, it will be listed below.  In the
+meantime, do not use the affected apps.
