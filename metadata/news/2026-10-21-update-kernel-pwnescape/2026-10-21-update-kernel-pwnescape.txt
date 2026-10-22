@@ -24,7 +24,7 @@ Developers
 Blue team cybersecurity with VM labs
 Red team cybersecurity with VM labs
 Security Operation Centers (SOCs)
-Security conscious users that prefer the use of VMs
+Security conscious users that prefer the use of VMs over bare metal
 Users that use multiple operating systems with VMs
 
 Researcher vulnerability name:  PwnEscape
