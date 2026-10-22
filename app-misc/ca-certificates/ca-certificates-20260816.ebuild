@@ -28,9 +28,9 @@ PYTHON_COMPAT=( python3_{10..14} )
 # For releases, see also https://sources.debian.org/src/ca-certificates/
 # For the type of release, see also https://firefox-source-docs.mozilla.org/security/nss/releases/index.html#mozilla-projects-nss-releases
 # For certdata commits IDs, see https://github.com/mozilla/nss/commits/master/lib/ckfw/builtins/certdata.txt
-NSS_LIVE_COMMIT="fc168131f8a629e30c38b372e08848cabd443194" # Sep 8, 2026 (NSS master), oiledmachine-overlay preference, latest certdata.txt commit
+NSS_LIVE_COMMIT="0a2b0c75fa036930d98331b721c0780693a3e17a" # Oct 20, 2026 (NSS master), oiledmachine-overlay preference, latest certdata.txt commit
 NSS_ESR_COMMIT="108de14257bf363cf53a42e1ef382d44fe39c599" # Apr 22, 2026 (NSS 3.125), distro preference, tag's commit
-NSS_LATEST_COMMIT="9a58717486dedde782f9fbe33e7df61b57f27d60" # Oct 6, 2026 (NSS 3.131), tag's commit
+NSS_LATEST_COMMIT="0a2b0c75fa036930d98331b721c0780693a3e17a" # Oct 20, 2026 (NSS 3.132), tag's commit
 # Sep 18, 2026 (fc16813, NSS 3.129), certdata.txt commit snapshot, same as certdata.txt found in https://wiki.mozilla.org/CA/Included_Certificates
 
 NSS_FLAVORS=(
@@ -89,7 +89,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 ${PRECOMPILED} || IUSE+=" cacert"
 IUSE+="
 ${NSS_FLAVORS[@]}
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	^^ (
@@ -213,11 +213,11 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 		grep -q -F -e "\150\025\322\064" "${d}/certdata.txt" || die "Integrity failed for end of ${d}/certdata.txt"
 
 	# Cheap integrity check for last seen commit
-		grep -q -F -e "For Server Distrust After: Wed Apr 15 23:59:59 2026" "${d}/certdata.txt" || die "Integrity failed for last commit ${d}/certdata.txt"
+		grep -q -F -e "emSign ECC Root CA - G3" "${d}/certdata.txt" && die "Integrity failed for last commit ${d}/certdata.txt" # Removed cert
 
-	# Cheap integrity check of nssckbi.h content
-		grep -q -e "#ifndef NSSCKBI_H" "${d}/nssckbi.h" || die "Integrity failed for start of ${d}/nssckbi.h"
-		grep -q -e "#endif" "${d}/nssckbi.h" || die "Integrity failed for end of ${d}/nssckbi.h"
+	# Cheap integrity check of nssckbi.h content last seen edit
+		grep -q -e "NSS_BUILTINS_LIBRARY_VERSION_MINOR 92" "${d}/nssckbi.h" || die "Integrity failed for start of ${d}/nssckbi.h"
+		grep -q -e "NSS_BUILTINS_LIBRARY_VERSION \"2.92\"" "${d}/nssckbi.h" || die "Integrity failed for end of ${d}/nssckbi.h"
 	else
 		local commit_id=$(get_certdata_commit)
 		local certdata_flavor=$(get_certdata_desc)
