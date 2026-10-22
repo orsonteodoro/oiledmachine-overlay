@@ -2,9 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="8"
-
-LLVM_COMPAT=( 18 )
-LLVM_OPTIONAL=1
 WANT_LIBTOOL="none"
 
 CFLAGS_HARDENED_USE_CASES="login network security-critical sensitive-data system-set untrusted-data"
@@ -25,11 +22,10 @@ CHKL_TIMESTAMPS=(
 	"net-wireless/bluez-9999"
 )
 
-inherit autotools cflags-hardened check-reqs chkl flag-o-matic linux-info llvm-r1
-inherit multiprocessing pax-utils python-utils-r1 secure-version toolchain-funcs
-inherit verify-sig
+inherit autotools cflags-hardened check-reqs chkl flag-o-matic multiprocessing pax-utils
+inherit python-utils-r1 secure-version toolchain-funcs verify-sig
 
-MY_PV=${PV}
+MY_PV=${PV/_rc/rc}
 MY_P="Python-${MY_PV%_p*}"
 PYVER=$(ver_cut 1-2)
 PATCHSET="python-gentoo-patches-${MY_PV}"
@@ -50,15 +46,14 @@ S="${WORKDIR}/${MY_P}"
 
 LICENSE="PSF-2"
 SLOT="${PYVER}"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE="
-	bluetooth debug +ensurepip examples gdbm jit libedit +ncurses pgo
+	bluetooth debug +ensurepip examples gdbm libedit +ncurses pgo
 	+readline +sqlite +ssl test tk valgrind
 "
 # PGO + fzero-call-used-regs=all causes illegal instruction in 3.14.
 REQUIRED_USE="
 !pgo
-jit? ( ${LLVM_REQUIRED_USE} )
 "
 RESTRICT="!test? ( test )"
 
@@ -78,6 +73,7 @@ RDEPEND="
 	dev-python/gentoo-common:=
 	>=sys-apps/util-linux-${UTIL_LINUX_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
+	virtual/libcrypt:=
 	virtual/libintl:*
 	gdbm? ( sys-libs/gdbm:=[berkdb] )
 	ncurses? ( >=sys-libs/ncurses-${NCURSES_PV}:= )
@@ -99,8 +95,10 @@ DEPEND="
 	${RDEPEND}
 	bluetooth? ( >=net-wireless/bluez-${BLUEZ_PV}:= )
 	test? (
+		>=app-arch/xz-utils-${XZ_UTILS_PV}:=
 		dev-python/ensurepip-pip
 		dev-python/ensurepip-setuptools
+		dev-python/ensurepip-wheel
 	)
 	valgrind? ( dev-debug/valgrind:= )
 "
@@ -109,13 +107,7 @@ BDEPEND="
 	dev-build/autoconf-archive
 	app-alternatives/awk
 	virtual/pkgconfig
-	jit? (
-		$(llvm_gen_dep '
-			llvm-core/clang:${LLVM_SLOT}
-			llvm-core/llvm:${LLVM_SLOT}
-		')
-	)
-	verify-sig? ( >=sec-keys/openpgp-keys-python-20260805 )
+	verify-sig? ( >=sec-keys/openpgp-keys-python-20221025 )
 "
 if [[ ${PV} != *_alpha* ]]; then
 	RDEPEND+="
@@ -135,38 +127,12 @@ QA_PKGCONFIG_VERSION=${PYVER}
 # false positives -- functions specific to *BSD
 QA_CONFIG_IMPL_DECL_SKIP=( chflags lchflags )
 
-declare -rgA PYTHON_KERNEL_CHECKS=(
-	["CROSS_MEMORY_ATTACH"]="test_external_inspection" #bug 938589
-	["DNOTIFY"]="test_fcntl" # bug 938662
-)
-
 pkg_pretend() {
-	if use pgo || use test; then
-		check-reqs_pkg_pretend
-	fi
-
-	if use jit; then
-		ewarn "USE=jit is considered experimental upstream.  Using it"
-		ewarn "could lead to unexpected breakage, including race conditions"
-		ewarn "and crashes, respectively.  Please do not file Gentoo bugs, unless"
-		ewarn "you can reproduce the problem with dev-lang/python[-jit].  Instead,"
-		ewarn "please consider reporting JIT problems upstream."
-	fi
+	use test && check-reqs_pkg_pretend
 }
 
 pkg_setup() {
-	if [[ ${MERGE_TYPE} != binary ]]; then
-		use jit && llvm-r1_pkg_setup
-		if use test || use pgo; then
-			check-reqs_pkg_setup
-
-			local CONFIG_CHECK
-			for f in "${!PYTHON_KERNEL_CHECKS[@]}"; do
-				CONFIG_CHECK+="~${f} "
-			done
-			linux-info_pkg_setup
-		fi
-	fi
+	use test && check-reqs_pkg_setup
 }
 
 src_unpack() {
@@ -248,7 +214,7 @@ build_cbuild_python() {
 		# We disabled these for CBUILD because Python's setup.py can't handle locating
 		# libdir correctly for cross. This should be rechecked for the pure Makefile approach,
 		# and uncommented if needed.
-		#_ctypes
+		#_ctypes _crypt
 	EOF
 
 	ECONF_SOURCE="${S}" econf_build "${myeconfargs_cbuild[@]}"
@@ -291,8 +257,10 @@ src_configure() {
 		-x test_gdb
 		# this is actually test_gdb.test_pretty_print
 		-x test_pretty_print
-		# https://bugs.gentoo.org/933840
-		-x test_perf_profiler
+		# broken w/ >=linux-7.1, fixed w/ >=3.13
+		# https://github.com/python/cpython/issues/149078
+		# https://github.com/python/cpython/issues/149776
+		-x test_socket
 	)
 
 	# Arch-specific skips.  See #931888 for a collection of these.
@@ -340,14 +308,6 @@ src_configure() {
 			;;
 	esac
 
-	# Kernel-config specific skips
-	for option in "${!PYTHON_KERNEL_CHECKS[@]}"; do
-		if ! linux_config_exists || ! linux_chkconfig_present "${option}"
-		then
-			COMMON_TEST_SKIPS+=( -x "${PYTHON_KERNEL_CHECKS[${option}]}" )
-		fi
-	done
-
 	# musl-specific skips
 	use elibc_musl && COMMON_TEST_SKIPS+=(
 		# various musl locale deficiencies
@@ -369,7 +329,6 @@ src_configure() {
 			-m test
 			"-j$(makeopts_jobs)"
 			--pgo-extended
-			--verbose3
 			-u-network
 
 			# We use a timeout because of how often we've had hang issues
@@ -384,6 +343,7 @@ src_configure() {
 			# They'll even hang here but be fine in src_test sometimes.
 			# bug #828535 (and related: bug #788022)
 			-x test_asyncio
+			-x test_concurrent_futures
 			-x test_httpservers
 			-x test_logging
 			-x test_multiprocessing_fork
@@ -395,14 +355,41 @@ src_configure() {
 			-x test_tools
 		)
 
+		# Arch-specific skips.  See #931888 for a collection of these.
+		case ${CHOST} in
+			alpha*)
+				profile_task_flags+=(
+					-x test_os
+				)
+				;;
+			hppa*)
+				profile_task_flags+=(
+					-x test_descr
+					# bug 931908
+					-x test_exceptions
+					-x test_os
+				)
+				;;
+			powerpc64-*) # big endian
+				profile_task_flags+=(
+					# bug 931908
+					-x test_exceptions
+				)
+				;;
+			riscv*)
+				profile_task_flags+=(
+					-x test_statistics
+				)
+				;;
+		esac
+
 		if has_version "app-arch/rpm" ; then
 			# Avoid sandbox failure (attempts to write to /var/lib/rpm)
 			profile_task_flags+=(
 				-x test_distutils
 			)
 		fi
-		# PGO sometimes fails randomly
-		local -x PROFILE_TASK="${profile_task_flags[*]} || true"
+		local -x PROFILE_TASK="${profile_task_flags[*]}"
 	fi
 
 	local myeconfargs=(
@@ -426,10 +413,8 @@ src_configure() {
 		--with-platlibdir=lib
 		--with-pkg-config=yes
 		--with-wheel-pkg-dir="${EPREFIX}"/usr/lib/python/ensurepip
-		--enable-gil
 
 		$(use_with debug assertions)
-		$(use_enable jit experimental-jit)
 		$(use_enable pgo optimizations)
 		$(use_with readline readline "$(usex libedit editline readline)")
 		$(use_with valgrind)
@@ -559,6 +544,10 @@ src_test() {
 src_install() {
 	local libdir=${ED}/usr/lib/python${PYVER}
 
+	# the Makefile rules are broken
+	# https://github.com/python/cpython/issues/100221
+	mkdir -p "${libdir}"/lib-dynload || die
+
 	# -j1 hack for now for bug #843458
 	emake -j1 DESTDIR="${D}" TEST_MODULES=no altinstall
 
@@ -635,7 +624,8 @@ src_install() {
 	EOF
 	chmod +x "${scriptdir}/python${pymajor}-config" || die
 	ln -s "python${pymajor}-config" "${scriptdir}/python-config" || die
-	# pydoc
+	# 2to3, pydoc
+	ln -s "../../../bin/2to3-${PYVER}" "${scriptdir}/2to3" || die
 	ln -s "../../../bin/pydoc${PYVER}" "${scriptdir}/pydoc" || die
 	# idle
 	if use tk; then
