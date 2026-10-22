@@ -2,7 +2,7 @@ Title: LiteLLM Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 1
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: dev-python/instructor
 Display-If-Installed: dev-python/litellm
@@ -57,12 +57,14 @@ to the active most recent releases:
 
 Remediation
 
-For 1.107.0, it is recommended to rotate passwords on a different device
-and to do a clean format on the affected devices.  Boot from a clean
-rescue USB to extract the valuable assets from the device.  When copying
-data to the drive, create new home profiles do not copy entirely the
-home profile because there is a risk of running into persistent malware
-again.
+For 1.107.0, it is recommended to rotate both financial and login
+passwords, revoke tokens, and replace sensitive credentials, API keys,
+on a different device and to do a clean format on the affected devices.
+Boot from a clean rescue USB to extract the valuable assets from the
+device.  When copying data to the drive, create new home profiles do
+not copy entirely the home profile because there is a risk of running
+into persistent malware again.  In supply chain attacks, it is often
+for financial gain or AI credit theft.
 
 For 1.91.1, it is recommended to bump to the latest release ASAP.
 
