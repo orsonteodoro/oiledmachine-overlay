@@ -2,7 +2,7 @@ Title: Next.js Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/amica
 Display-If-Installed: media-gfx/upscayl
@@ -13,13 +13,20 @@ The Next.js has a RCE vulnerability that can be exploited during the runtime use
 of an application.  In the upcoming days, it will be fixed.  Due to upgrade
 backlog and lack of staffing it will be delayed.  A lockfile update is needed.
 
-CVE-2025-55182 - RCE, ISD, critical severity at 10 score with CVSS 3.0
+CVE-2025-55182 - RCE, ISD, EBR, ZC, DoS, DT, ID, critical severity at 10 score with CVSS 3.0
 CVE-2025-66478 - Rejected as duplicate of CVE-2025-55182
-CVE-2026-96889 - RCE, UAF, high severity at 7 score with CVSS 3.0
+CVE-2026-96889 - ACE/RCE, UAF, DoS, DT, ID, high severity at 7 score with CVSS 3.0
+GHSA-673q-mjm6-r5xr - EBR, ZC, DoS, DT, ID, critical severity at 9.5 with CVSS 4.0
 
+ACE - Arbitrary Code Execution
+DoS - Denial of Service
+DT - Data Tampering
+EBR - Extended Blast Radius
+ID - Information Disclosure
 ISD - Insecure Deseralization
 RCE - Remote Code Execution
 UAF - Use After Free
+ZC - Zero Click Vulnerability (AV:N, PR:N, UI:N)
 
 Patched versions of Next.js
 
@@ -28,7 +35,7 @@ Patched versions of Next.js
 
 Affected status of potential consumers of Node.js according to AI:
 
-app-misc/amica - Low risk/no [flip-flop]
+app-misc/amica - No low risk based on configuration
 media-gfx/upscayl - No risk
 www-apps/LobeHub - High risk
 www-misc/vercel monorepo and the vercel cli utility - No/indirectly
