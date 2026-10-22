@@ -31,7 +31,7 @@ esac
 # [1] Based on Chromium 156.0.8078.47, https://github.com/chromium/chromium/blob/156.0.8078.47/tools/clang/scripts/update.py#L42
 # [2] Based on latest with 100+ checks passed and no failed sanitizers in check results in main branch, https://github.com/llvm/llvm-project/commits/main
 # [3] Based on llvm.org.eclass, https://github.com/gentoo/gentoo/blob/master/eclass/llvm.org.eclass#L74
-# [5] Pass the sanitizer-x86_64-linux-fuzzer check
+# [5] Passed the sanitizer-x86_64-linux-fuzzer check
 # [6] This is an example of FAFO, or trust but no verify.
 
 #
