@@ -37,7 +37,7 @@ LLVM_SYSTEM_SLOT_LIVE="1"
 # in llvm-ebuilds.eclass for oiledmachine-overlay quality standards.  This
 # commit has passed > 100 checks, all tested sanitizers, most recent commit with
 # all sanitizers passed to mitigate multiple miscompilation bugs/vulnerabilities.
-LLVM_SYSTEM_TIMESTAMP_LIVE="Sep 20, 2026 4:35 PM PDT"
+LLVM_SYSTEM_TIMESTAMP_LIVE="Oct 18, 2026 5:09 AM PDT"
 
 # Vendored LLVM commit reference:  https://github.com/chromium/chromium/blob/156.0.8078.47/DEPS#L1074 \
 # Vendored LLVM commit reference (CLANG_SUB_REVISION):  https://github.com/chromium/chromium/blob/156.0.8078.47/tools/clang/scripts/update.py
@@ -234,7 +234,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cfi +pgo -system-clang -system-rust
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE="
 	system-clang? (

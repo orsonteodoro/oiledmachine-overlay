@@ -14,24 +14,25 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# The algorithm to pick the fallback-commit has changed on Sep 25, 2026.
+# The algorithm to pick the fallback-commit has changed on Oct 21, 2026.
 
 # This section is AI assisted to better explain the formula.
 
 #
-# Commit snapshot quality comparison on Aug 8, 2026
-# | Source                 | Commit ID     | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails    | sanitizer-* checks    | llvm-clang-*-pauthtest pass | llvm-clang-*-pac-ret pass | libc-*-asan passed |
-# | -----------------------|---------------|----------|------------|------------|---------------------------|-----------------------|-----------------------------|---------------------------|--------------------|
-# | chromium-toolchain     | 20e97c4 [1]   | 20260811 | 24.0.0-git | 40/46      | 0                         | 6                     | 0                           | 0                         | 2                  |
-# | distro                 | 3dcd66d [3]   | 20260919 | 24.0.0-git | 31/34      | 0 [4]                     | 6                     | 0                           | 0                         | 0                  |
-# | distro                 | 02bd47d [3]   | 20260916 | 24.0.0-git | 35/39      | 0                         | 5                     | 1                           | 0                         | 0                  |
-# | distro                 | 0bf3638 [3]   | 20260725 | 24.0.0-git | 120/134    | 0                         | 17                    | 1                           | 1                         | 2                  |
-# | oiledmachine-overlay   | 0bd3306 [2]   | 20260920 | 24.0.0-git | 106/113    | 0                         | 17                    | 1                           | 1                         | 2                  |
+# Commit snapshot quality comparison on Oct 21, 2026
 #
-# [1] Based on Chromium 154.0.8037.57, https://github.com/chromium/chromium/blob/154.0.8037.57/tools/clang/scripts/update.py#L42
+# | Source                 | Commit ID     | Date     | LLVM slot  | Checkmarks | sanitizer-* test fails | sanitizer-* checks | llvm-clang-*-pauthtest pass | llvm-clang-*-pac-ret pass | libc-*-asan passed | clangd-*-tsan |
+# | -----------------------|---------------|----------|------------|------------|------------------------|--------------------|-----------------------------|---------------------------|--------------------|---------------|
+# | chromium-toolchain     | 62397f8b [1]  | 20260907 | 24.0.0-git | 62/70      | 0                      | 1 [5]              | 0 [6]                       | 1                         | 2                  | missing [6]   |
+# | distro                 | c5904d2 [3]   | 20261018 | 24.0.0-git | 46/50      | 2 [6]                  | 10                 | 0 [6]                       | 0 [6]                     | 2                  | missing [6]   |
+# | distro                 | 53310c9 [3]   | 20261009 | 24.0.0-git | 83/86      | 1 [6]                  | 13                 | 0 [6]                       | 1                         | 2                  | fail [6]      |
+# | oiledmachine-overlay   | 9a0f815 [2]   | 20261018 | 24.0.0-git | 104/107    | 0                      | 13                 | 1                           | 1                         | 2                  | pass          |
+#
+# [1] Based on Chromium 156.0.8078.47, https://github.com/chromium/chromium/blob/156.0.8078.47/tools/clang/scripts/update.py#L42
 # [2] Based on latest with 100+ checks passed and no failed sanitizers in check results in main branch, https://github.com/llvm/llvm-project/commits/main
 # [3] Based on llvm.org.eclass, https://github.com/gentoo/gentoo/blob/master/eclass/llvm.org.eclass#L74
-# [4] The adajcent commit has 1 failed sanitizer check, https://github.com/llvm/llvm-project/commits/main/?before=3dcd66d0110335d7d1a5921fd085914b66ffbd3c+35
+# [5] Pass the sanitizer-x86_64-linux-fuzzer check
+# [6] This is an example of FAFO, or trust but no verify.
 
 #
 # My AI prompt:
@@ -110,7 +111,11 @@ esac
 # commits where they are above 120 for pre stable commit snapshots.  Reject
 # commits when a red checkmark for sanitizer(s) is/are observed for our
 # microarch use case.  Backtrack the search to 7 days as a soft requirement and
-# up to 30 days as a hard requirement.
+# up to 30 days as a hard requirement.  We also require that the sanitizer
+# passes for the entire commit page (analog to clearing the neighborhood in
+# astronomy) on GitHub of sanitizer errors.  If a commit is picked at the
+# top or bottom of the page, it must pass the failed sanitizers on the previous
+# or next page.
 #
 # There are consideration for faster bumps for most latest LLVM slot (24) to
 # mitigate miscompilations that may lead to vulnerabilities.  The
@@ -118,11 +123,11 @@ esac
 # zero-tolerance policy or bump once a month to balance the costs/benefits.
 #
 
-LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="0bd330675f9eb08126e467505a0800f167084473" # Sep 20, 2026 (106 / 113 green checkmarks)
+LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT="9a0f815169377748c2bb65b7fc395e3591058ecb" # Oct 18, 2026 (104 / 107 green checkmarks)
 
 LLVM_EBUILDS_LLVM24_BRANCH="main"
 
-LLVM_EBUILDS_LLVM24_REVISION="llvm24_revision_4"
+LLVM_EBUILDS_LLVM24_REVISION="llvm24_revision_6"
 
 if [[ -z "${_LLVM_EBUILDS_ECLASS}" ]] ; then
 
