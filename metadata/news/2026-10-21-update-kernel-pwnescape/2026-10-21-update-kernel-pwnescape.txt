@@ -18,14 +18,14 @@ advisory is passed on for users that still use VMs.
 
 Stakeholders that it may affect:
 
-Red team cybersecurity with VM labs
-Blue team cybersecurity with VM labs
-Security Operation Centers (SOCs)
-Developers
-Security users that use VMs
+CI/CD maintainers
 Cloud devs/owners that use VMs
-Users that use multiple operating systems
-CI/CD
+Developers
+Blue team cybersecurity with VM labs
+Red team cybersecurity with VM labs
+Security Operation Centers (SOCs)
+Security conscious users that prefer the use of VMs
+Users that use multiple operating systems with VMs
 
 Researcher vulnerability name:  PwnEscape
 
@@ -86,8 +86,8 @@ integrity of the system to mitigate kernel security bypass, hardware level
 side channels, or hijack to attacker compromised kernels.  There are risks of
 bricking or expensive repair for this kind of remediation.
 
-sys-kernel/linux-firwmare - Ebuild available for AMD CPU firmware updates
 sys-firmware/intel-microcode - Ebuild available for Intel CPU firmware updates
-UEFI firmware - See manufacturer's site for update
-sys-boot/u-boot - Vulnerabilities reported for this bootloader in 2026
+sys-kernel/linux-firwmare - Ebuild available for AMD CPU firmware updates
 sys-boot/grub2 - Vulnerabilities reported for this bootloader in late 2025
+sys-boot/u-boot - Vulnerabilities reported for this bootloader in 2026
+UEFI firmware - See manufacturer's site for update
