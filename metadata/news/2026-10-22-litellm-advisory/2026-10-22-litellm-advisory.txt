@@ -2,7 +2,7 @@ Title: LiteLLM Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: dev-python/instructor
 Display-If-Installed: dev-python/litellm
@@ -15,9 +15,10 @@ the oiledmachine-overlay.
 We are all good right?
 
 However, a few curious people may have wanted to try the feature out or wanted
-all the USE flags enabled and used the http://gpo.zugaina.org/ to either add the
-compromised overlay or copy and pasted the compromised litellm ebuild into their
-own locally hosted repo.
+all the USE flags enabled and used the http://gpo.zugaina.org/ to possibly copy
+and paste the ebuild and modified it a bit to use the PyPI artifact.  The PyPI
+and Docker image is compromised according to AI.  The GitHub tarball is not
+compromised according to AI.
 
 Recently LiteLLM had recently had a supply chain attack.  It has been
 circulating on the social media.  The AI has shared that one version
@@ -27,6 +28,7 @@ website is insecure.
 Affected and insecure versions
 
 1.107.0 - Supply chain attack, infostealer, RAT (Remote Access Trojan)
+  only if using PyPi tarball or Docker image.
 1.91.1 - Insecure version
   CVE-2026-93355 (High 7.6), WA, DoS, DT
   CVE-2026-84377 (Medium 6.5), SSRF, ID
