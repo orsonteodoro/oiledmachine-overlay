@@ -2,7 +2,7 @@ Title: Update PHP
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: virtual/linux-sources
@@ -65,7 +65,14 @@ Examples:
 
 emaint sync -A
 emerge -a1vO "=sys-kernel/ot-sources-7.3.9999"
-emerge -vuDN ">=sys-kernel/gentoo-kernel-bin-6.18.57::gentoo"
+emerge -avuDN ">=sys-kernel/gentoo-kernel-bin-6.18.57::gentoo"
 
-It is recommended to use the latest point release remediate the memory corruption
-vulnerabilities (UAF, OOBW, HO, SO, DF).
+It is recommended to use the latest point release remediate the memory
+corruption vulnerabilities (UAF, OOBW, HO, SO, DF) as well.  About every kernel
+point release recently remediates a memory corruption vulnerability.
+
+DF - Double Free
+OOBW - Out Of Bounds Write
+HO - Heap Overflow
+SO - Stack Overflow
+UAF - Use After Free
