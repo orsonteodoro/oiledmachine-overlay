@@ -26,7 +26,7 @@ HOMEPAGE="https://openssl-library.org/"
 MY_P=${P/_/-}
 
 if [[ ${PV} == *9999 ]] ; then
-	FALLBACK_COMMIT="c49cba0be426ac0abe588b59ccd39c8b6e56832f"
+	FALLBACK_COMMIT="e35c5ca36d93ec3a50d1dfd924e02f56f0689585"
 	[[ ${PV} == *.*.9999 ]] && EGIT_BRANCH="openssl-${PV%%.9999}"
 	EGIT_REPO_URI="https://github.com/openssl/openssl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -55,7 +55,7 @@ LICENSE="Apache-2.0"
 SLOT="0/$(ver_cut 1)" # .so version of libssl/libcrypto
 IUSE+="
 +asm cpu_flags_x86_sse2 fips ktls +quic rfc3779 sctp static-libs test tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_21
+ebuild_revision_22
 "
 RESTRICT="!test? ( test )"
 
