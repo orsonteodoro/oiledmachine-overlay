@@ -9,11 +9,15 @@ Display-If-Installed: dev-python/litellm
 
 The dev-python/instructor ebuild has a USE flag to enable litellm.  By
 default the litellm USE flag is not enabled, and also it is not installed on
-the ebuild maintainer's machine.
+the ebuild maintainer's machine.  The litellm ebuild does not exist on
+the oiledmachine-overlay.
 
 We are all good right?
 
-However, a few curious people may want to try the feature out.
+However, a few curious people may have wanted to try the feature out or wanted
+all the USE flags enabled and used the http://gpo.zugaina.org/ to either add the
+compromised overlay or copy and pasted the compromised litellm ebuild into their
+own locally hosted repo.
 
 Recently LiteLLM had recently had a supply chain attack.  It has been
 circulating on the social media.  The AI has shared that one version
