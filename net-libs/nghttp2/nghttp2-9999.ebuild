@@ -16,7 +16,6 @@ CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set u
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF DOS UAF"
 CXX_STANDARD=23
 PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
-USE_RUBY="ruby32 ruby33"
 
 HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d" # dep of urlparse
 MRUBY_COMMIT="831da26b9021de0369d17b71b5667e2941a1a32d"
@@ -61,7 +60,7 @@ LLVM_COMPAT=(
 
 
 
-inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 ruby-single secure-version systemd toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 secure-version systemd toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
 	FALLBACK_COMMIT="e4a2c989b39a9285791a8c0bbb9eb90fcb328659"
@@ -231,7 +230,6 @@ BDEPEND="
 		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	mruby? (
-		${RUBY_DEPS}
 		sys-devel/bison
 	)
 "
