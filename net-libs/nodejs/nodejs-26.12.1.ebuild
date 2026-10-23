@@ -19,7 +19,7 @@ EAPI=8
 
 CFLAGS_HARDENED_PIE="1"
 # Don't change the hardened use cases because it will generate a compiler error.
-CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
+CFLAGS_HARDENED_USE_CASES="security-critical jit language-runtime network sensitive-data server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
 CXX_STANDARD=20 # See https://github.com/nodejs/node/blob/v26.12.1/common.gypi#L601
@@ -152,7 +152,7 @@ IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
 +npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_59
+ebuild_revision_60
 "
 
 gen_required_use_pgo() {
@@ -238,6 +238,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 	"${FILESDIR}/${PN}-26.10.0-split-pointer-compression-and-v8-sandbox-options.patch"
 	"${FILESDIR}/${PN}-26.4.0-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-26.12.1-fno-delete-null-pointer-checks-fix.patch"
 )
 
 _count_useflag_slots() {

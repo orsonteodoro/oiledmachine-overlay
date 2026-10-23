@@ -1,0 +1,54 @@
+Fix use of security-critical -fno-delete-null-pointer-checks flag to avoid:
+
+../../deps/v8/third_party/abseil-cpp/absl/container/internal/raw_hash_set.h:2649:31:   required from 'std::pair<absl::container_internal::raw_hash_set<Policy, Hash, Eq, Alloc>::iterator, bool> absl::container_internal::raw_hash_set<Policy, Hash, Eq, Alloc>::emplace(Args&& ...) [with Args = {cppgc::internal::BasePage* const&, long int}; typename std::enable_if<absl::container_internal::IsDecomposable<void, absl::container_internal::hash_policy_traits<Policy>, Hash, Eq, Ts ...>::value, int>::type <anonymous> = 0; Policy = absl::container_internal::FlatHashMapPolicy<cppgc::internal::BasePage*, long int>; Hash = v8::base::hash<cppgc::internal::BasePage*>; Eq = absl::container_internal::HashEq<cppgc::internal::BasePage*, void>::Eq; Alloc = std::allocator<std::pair<cppgc::internal::BasePage* const, long int> >]'
+../../deps/v8/src/heap/base/cached-unordered-map.h:34:33:   required from 'heap::base::CachedUnorderedMap<_Key, _Value, _Hash>::Mapped& heap::base::CachedUnorderedMap<_Key, _Value, _Hash>::operator[](const Key&) [with _Key = cppgc::internal::BasePage*; _Value = long int; _Hash = v8::base::hash<cppgc::internal::BasePage*>; Mapped = long int; Key = cppgc::internal::BasePage*]'
+../../deps/v8/src/heap/cppgc/marking-state.h:354:30:   required from here
+../../deps/v8/third_party/abseil-cpp/absl/container/internal/raw_hash_set.h:3637:56:   in 'constexpr' expansion of 'absl::container_internal::hash_policy_traits<absl::container_internal::FlatHashMapPolicy<cppgc::internal::BasePage*, long int>, void>::get_hash_slot_fn<v8::base::hash<cppgc::internal::BasePage*> >()'
+../../deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h:159:54: error: '(absl::container_internal::TypeErasedApplyToSlotFn<v8::base::hash<cppgc::internal::BasePage*>, cppgc::internal::BasePage*> == 0)' is not a constant expression
+  159 |     return Policy::template get_hash_slot_fn<Hash>() == nullptr
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+
+--- a/deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h.orig	2026-10-20 11:39:37.000000000 -0700
++++ b/deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h	2026-10-23 15:03:41.952965822 -0700
+@@ -28,6 +28,17 @@ namespace absl {
+ ABSL_NAMESPACE_BEGIN
+ namespace container_internal {
+ 
++// Selects the policy-provided type-erased hash-slot function, or the generic
++// non-type-erased fallback when the policy returns nullptr.
++template <HashSlotFn kFallbackFn, HashSlotFn kPolicyFn>
++struct HashSlotFnSelector {
++  static constexpr HashSlotFn kValue = kPolicyFn;
++};
++template <HashSlotFn kFallbackFn>
++struct HashSlotFnSelector<kFallbackFn, nullptr> {
++  static constexpr HashSlotFn kValue = kFallbackFn;
++};
++
+ // Defines how slots are initialized/destroyed/moved.
+ template <class Policy, class = void>
+ struct hash_policy_traits : common_policy_traits<Policy> {
+@@ -149,19 +160,10 @@ struct hash_policy_traits : common_polic
+ 
+   template <class Hash>
+   static constexpr HashSlotFn get_hash_slot_fn() {
+-// get_hash_slot_fn may return nullptr to signal that non type erased function
+-// should be used. GCC warns against comparing function address with nullptr.
+-#if defined(__GNUC__) && !defined(__clang__)
+-#pragma GCC diagnostic push
+-// silent error: the address of * will never be NULL [-Werror=address]
+-#pragma GCC diagnostic ignored "-Waddress"
+-#endif
+-    return Policy::template get_hash_slot_fn<Hash>() == nullptr
+-               ? &hash_slot_fn_non_type_erased<Hash>
+-               : Policy::template get_hash_slot_fn<Hash>();
+-#if defined(__GNUC__) && !defined(__clang__)
+-#pragma GCC diagnostic pop
+-#endif
++    return HashSlotFnSelector<
++        &hash_slot_fn_non_type_erased<Hash /*, extra params if present */>,
++        Policy::template get_hash_slot_fn<Hash /*, extra params if present */>()
++    >::kValue;
+   }
+ 
+   // Whether small object optimization is enabled. True by default.
