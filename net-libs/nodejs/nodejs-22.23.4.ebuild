@@ -12,7 +12,8 @@ EAPI=8
 # Last deps commit date:  Sep 22, 2026
 
 CFLAGS_HARDENED_PIE="1"
-CFLAGS_HARDENED_USE_CASES="security-critical jit language-runtime network sensitive-data server untrusted-data web-server"
+#CFLAGS_HARDENED_USE_CASES="security-critical jit language-runtime network sensitive-data server untrusted-data web-server"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime network server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
 CXX_STANDARD=17 # See https://github.com/nodejs/node/blob/v22.23.4/common.gypi#L514
