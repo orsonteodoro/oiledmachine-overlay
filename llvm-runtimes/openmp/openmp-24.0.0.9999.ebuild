@@ -626,6 +626,7 @@ llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
 #	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
+	"${FILESDIR}/${PN}-24.0.0.9999-GenericProfiler-remove-annotation.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(

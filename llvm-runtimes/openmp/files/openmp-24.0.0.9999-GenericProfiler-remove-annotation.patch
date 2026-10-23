@@ -1,0 +1,17 @@
+Fixes:
+In file included from /var/tmp/portage/llvm-runtimes/openmp-24.0.0.9999/work/offload/plugins-nextgen/common/include/PluginInterface.h:33,
+                 from /var/tmp/portage/llvm-runtimes/openmp-24.0.0.9999/work/offload/plugins-nextgen/common/src/JIT.cpp:16:
+/var/tmp/portage/llvm-runtimes/openmp-24.0.0.9999/work/offload/plugins-nextgen/common/include/GenericProfiler.h:149:3: error: 'decl-specifier' in declaration of deduction guide
+  149 |   [[maybe_unused]]
+      |   ^
+This is an AI suggested fix.
+--- a/offload/plugins-nextgen/common/include/GenericProfiler.h.orig	2026-10-22 18:20:26.125341229 -0700
++++ b/offload/plugins-nextgen/common/include/GenericProfiler.h	2026-10-22 18:40:24.591888792 -0700
+@@ -146,7 +146,6 @@ public:
+   };
+ 
+   template <typename ProfilerFuncTy, typename... ProfilerFuncArgsTy>
+-  [[maybe_unused]]
+   ProfTimerTy(ProfilerFuncTy &&, GenericProfilerTy *, ProfilerFuncArgsTy...)
+       -> ProfTimerTy<ProfilerFuncTy, ProfilerFuncArgsTy...>;
+ 
