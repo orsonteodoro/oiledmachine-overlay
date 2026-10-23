@@ -978,7 +978,9 @@ secure-version_gen_ruby_single_depends() {
 	local python_usefix="" # python_targets_python, python_single_target_python
 
 	local t=""
+	# 3.2 is EOL, eject to mitigate LotL
 	t+="
+		!dev-lang/ruby:3.2
 		dev-lang/ruby:=${usedep}
 		|| (
 	"
@@ -1053,7 +1055,9 @@ secure-version_gen_ruby_ng_depends() {
 	local python_usefix="" # python_targets_python, python_single_target_python
 
 	local t=""
+	# 3.2 is EOL, eject to mitigate LotL
 	t+="
+		!dev-lang/ruby:3.2
 		dev-lang/ruby:=${usedep}
 	"
 	local l=""
