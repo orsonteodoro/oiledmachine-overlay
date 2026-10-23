@@ -151,7 +151,7 @@ IUSE+="
 ${_TRAINERS[@]/#/nodejs_trainers_}
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc -drumbrake fips +icu inspector
 +npm mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl test
-ebuild_revision_58
+ebuild_revision_59
 "
 
 gen_required_use_pgo() {
