@@ -22,7 +22,7 @@ is not compromised according to AI.
 
 Based on review of the 1.107* ebuild on the third party overlay, it is using
 the GitHub tarball.  The narrative hasn't been verified.  As a precaution, the
-1.107* is banned in secure-version-python and consequently in
+1.107* is banned in the secure-version-python eclass and consequently in
 dev-python/instructor.
 
 Recently LiteLLM had recently had a supply chain attack.  It has been
