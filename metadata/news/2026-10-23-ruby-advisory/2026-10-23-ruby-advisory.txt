@@ -2,7 +2,7 @@ Title: Ruby Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-23
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: media-libs/shaderc
 Display-If-Installed: media-libs/mlt-flowblade
@@ -55,10 +55,12 @@ Patched versions of Ruby:
 Current mitigations
 
 Simply emerge each slot and remove the EOL version of Ruby.
+The oiledmachine-overlay is temporarily making available these versions
+until the distro is up to date.
 
-emerge -vuDN >=dev-lang/ruby-4.0.9:4.0
-emerge -vuDN >=dev-lang/ruby-3.4.10:3.4
-emerge -vuDN >=dev-lang/ruby-3.3.13:3.3
+emerge -vuDN ">=dev-lang/ruby-4.0.9:4.0::oiledmachine-overlay"
+emerge -vuDN ">=dev-lang/ruby-3.4.10:3.4::oiledmachine-overlay"
+emerge -vuDN ">=dev-lang/ruby-3.3.13:3.3::oiledmachine-overlay"
 emerge -C dev-lang/ruby:3.2
 
 The recent wave of RCEs is possibly because it is Cybersecurity Awareness Month
