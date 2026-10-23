@@ -1,0 +1,68 @@
+Title: cURL Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-23
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: net-misc/curl
+
+cURL had a non-transparent silent update about an ACE/RCE fix but only discovered
+later through in social media post about PHP RCE.  The repo has updated the
+fallback-commit to the latest to address it and other newer security issues.  On
+the social media they say mostly use-after-free but rarely RCE.  The AI says it
+is both ACE and RCE.
+
+CVE-2026-92392 - 8.1 High - ACE/RCE, UAF, DoS, DT, ID
+SSVC - POC
+
+ACE - Arbitrary Code Execution
+DoS - Denial of Service
+DT - Data Tampering
+ID - Information Disclosure
+UAF - Use After Free
+
+CVE-<YEAR>-<NUMBER> - A vulnerability ID
+POC - Proof of Concept
+SSVC - Stakeholder Specific Vulnerability Categorization [how fast to patch]
+
+The AI said that the POC is used for a decision tree to determine urgency based
+on exposure of the type of asset.  Left of > is local context.  Right of > is
+the decision outcome produced by the decision tree.  Each decision tree outcome
+gives you how fast to remediate.
+
+ POC shifts to Active [explotation] > Act    -- Remediate 48 hours
+             Mission critical asset > Attend -- Remediate in 14 days
+      Not universally critcal asset > Track* -- Remediate in 60 days
+                 Non-critical asset > Track  -- Remediate in 90 days
+
+
+Patched versions:
+
+9999 (Oct 23, 2026 6:27 AM PDT, 41efc221)
+8.23.0
+
+
+Current mitigations
+
+Option 1:  Simply emerge cURL.
+
+emerge -1vO "=net-libs/curl-9999::oiledmachine-overlay"
+
+Option 2:  Alternatively, with the new secure-version.eclass, you can switch to
+stable.  To switch to stable, do this...
+
+Add to /etc/portage/make.conf:
+
+CURL_PV="8.23.0"
+
+Add to /etc/portage/package.mask:
+
+net-libs/curl::oiledmachine-overlay
+
+Then finally:
+
+emerge -1vO "=net-libs/curl-0.23.0::gentoo"
+
+
+The recent wave of RCEs is possibly because it is Cybersecurity Awareness Month
+and the red team is celebrating or it is a coordinated psyop.
