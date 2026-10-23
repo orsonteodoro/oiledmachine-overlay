@@ -2,7 +2,7 @@ Title: Update PHP (Updated Oct 23, 3 CVEs)
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
 
@@ -57,6 +57,11 @@ session.upload_progress.enabled = 0
 
 This setting is verified in
 https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp
+
+This setting only need to be applied for non default configurations or
+configurations that use a non default setup where session.serialize_handler
+is set to php_binary or php_serialize then switched to php via ini_set()
+before session_start().
 
 If you are using a local build that is outdated, it was suggested by other
 security reports to put the server offline (or disconnect it from the network)
