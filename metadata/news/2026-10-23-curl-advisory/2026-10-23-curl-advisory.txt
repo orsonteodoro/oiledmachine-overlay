@@ -2,7 +2,7 @@ Title: cURL Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-23
-Revision: 0
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: net-misc/curl
 
@@ -46,6 +46,7 @@ Current mitigations
 
 Option 1:  Simply emerge cURL.
 
+emaint sync -A
 emerge -1vO "=net-libs/curl-9999::oiledmachine-overlay"
 
 Option 2:  Alternatively, with the new secure-version.eclass, you can switch to
@@ -61,8 +62,11 @@ net-libs/curl::oiledmachine-overlay
 
 Then finally:
 
+emaint sync -A
 emerge -1vO "=net-libs/curl-0.23.0::gentoo"
 
+After updating an option, you need to either completely log out or restart so
+that existing running programs will load the updated cURL.
 
 The recent wave of RCEs is possibly because it is Cybersecurity Awareness Month
 and the red team is celebrating or it is a coordinated psyop.
