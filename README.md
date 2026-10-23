@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-10-23 - [Ruby advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-23-ruby-advisory/2026-10-23-ruby-advisory.txt)
 * 2026-10-22 - [LiteLLM advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-22-litellm-advisory/2026-10-22-litellm-advisory.txt)
 * 2026-10-22 - [Next.js advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-22-next-js-advisory/2026-10-22-next-js-advisory.txt)
 * 2026-10-21 - [Update kernel PwnEscape](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-kernel-pwnescape/2026-10-21-update-kernel-pwnescape.txt)

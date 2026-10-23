@@ -1,0 +1,65 @@
+Title: Ruby Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-23
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: media-libs/shaderc
+Display-If-Installed: media-libs/mlt-flowblade
+Display-If-Installed: media-libs/libcaca
+Display-If-Installed: dev-ruby/libcaca
+Display-If-Installed: sci-ml/ollama
+Display-If-Installed: app-shells/ohmyzsh
+Display-If-Installed: net-libs/grpc
+Display-If-Installed: net-libs/nghttp2
+Display-If-Installed: net-libs/webkit-gtk
+Display-If-Installed: dev-dotnet/monodevelop-bin
+Display-If-Installed: dev-dotnet/dotdevelop
+Display-If-Installed: sys-apps/util-linux
+Display-If-Installed: dev-php/libcaca
+Display-If-Installed: sys-kernel/ot-sources
+
+On the oiledmachine-overlay, several packages use Ruby.  There is a message on
+the socials about a ruby regex compilation vulnerability and AI agrees that
+there was an RCE in October 2026.  Both the GitLab and Ruby use the Onigmo regex
+engine that has the RCE.  If you have packages that vendor the Onigmo package,
+you need to update them.
+
+The oiledmachine-overlay does not distribute the ruby package but uses the
+distro overlay as the fallback provider of it.
+
+CVE-2026-89078 - 9.9 Critical with CVSS 3 - RCE, DF, EBR, DoS, DT, ID
+CVE-2026-93577 - 9.9 Critical with CVSS 3 - RCE, EBR, IO, DoS, DT, ID 
+CVE-2026-97229 - 10 Critical with CVSS 3 - RCE, EBR, ZC, IO, DoS, DT, ID
+CVE-2026-110264 - 10 Critical with CVSS 10 - RCE, EBR, ZC, IO, DoS, DT, ID
+
+RCE reference:  https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/
+(The AI says that www.ruby-lang.org is an official Ruby website.)
+
+ACE - Arbitrary Code Execution
+DF - Double Free
+DoS - Denial of Service
+DT - Data Tampering
+ID - Information Disclosure
+IO - Integer Overflow
+EBR - Extended Blast Radius
+RCE - Remote Code Execution
+ZC - Zero Click Vulnerability (AV:N, PR:N, UI:N)
+
+Patched versions of Ruby:
+
+4.0.9
+3.4.12
+3.3.13
+
+Current mitigations
+
+Simply emerge each slot and remove the EOL version of Ruby.
+
+emerge -vuDN >=dev-lang/ruby-4.0.9:4.0
+emerge -vuDN >=dev-lang/ruby-3.4.10:3.4
+emerge -vuDN >=dev-lang/ruby-3.3.13:3.3
+emerge -C dev-lang/ruby:3.2
+
+The recent wave of RCEs is possibly because it is Cybersecurity Awareness Month
+and the red team is celebrating or it is a coordinated psyop.
