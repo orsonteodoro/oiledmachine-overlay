@@ -15,7 +15,7 @@ CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="security-critical jit language-runtime network sensitive-data server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
-CXX_STANDARD=17
+CXX_STANDARD=17 # See https://github.com/nodejs/node/blob/v22.23.4/common.gypi#L514
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_"{10..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
@@ -96,7 +96,7 @@ _TRAINERS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 11-15
 )
 LIBSTDCXX_USEDEP_DEV="gcc_slot_skip(+)"
 

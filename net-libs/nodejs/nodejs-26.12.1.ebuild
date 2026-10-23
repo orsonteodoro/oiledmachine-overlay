@@ -21,7 +21,7 @@ CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="security-critical jit language-runtime network sensitive-data server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
-CXX_STANDARD=20
+CXX_STANDARD=20 # See https://github.com/nodejs/node/blob/v26.12.1/common.gypi#L601
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_"{10..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
@@ -102,7 +102,16 @@ _TRAINERS=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+	#"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13-16
+	#"gcc_slot_13_4" # Support -std=c++20.  Defaults:  U24
+	"gcc_slot_14_3" # Support -std=c++20.  Defaults:  D13
+	"gcc_slot_15_3" # Support -std=c++20.  Defaults:  F43, U26
+	"gcc_slot_16_1" # Support -std=c++20.  Defaults:  F44
+# 13 breaks with :
+#../../deps/v8/third_party/abseil-cpp/absl/container/internal/raw_hash_set.h:3580:72:   in 'constexpr' expansion of 'absl::container_internal::hash_policy_traits<absl::container_internal::FlatHashSetPolicy<cppgc::internal::HeapObjectHead>
+#../../deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h:158:66: error: '(absl::container_internal::TypeErasedApplyToSlotFn<HashEq<cppgc::internal::HeapObjectHeader*, void>::Hash, cppgc::internal::HeapObjectHead>
+#  158 |     return Policy::template get_hash_slot_fn<Hash, kIsDefault>() == nullptr
+#      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
