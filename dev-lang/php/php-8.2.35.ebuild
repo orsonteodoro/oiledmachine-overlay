@@ -86,7 +86,7 @@ IUSE="${IUSE} acl apparmor argon2 avif bcmath berkdb bzip2 calendar
 	+simplexml snmp soap sockets sodium spell sqlite ssl
 	sysvipc systemd test tidy tinycdb +tokenizer tokyocabinet truetype unicode
 	valgrind webp +xml xmlreader xmlwriter xpm xslt zip zlib
-	ebuild_revision_1
+	ebuild_revision_2
 "
 
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
@@ -971,6 +971,23 @@ pkg_postinst() {
 	elog
 	elog "  https://wiki.gentoo.org/wiki/PHP"
 	elog
+
+# To be removed when patch is released.
+elog
+elog "The AI said that CVE-2026-115560 has no patch yet but requires"
+elog "the following edit php.ini:"
+elog
+elog "session.upload_progress.enabled = 0"
+elog
+elog "It is only for those that use session.serialize_handler with"
+elog "php_binary or php_serialize and then switched to php via"
+elog "ini_set() before session_start().  You only need this manual"
+elog "edit for mitigation if you are running non default"
+elog "configuration."
+elog
+elog "This is a manual edit remedition that should have been applied"
+elog "along with CVE-2026-109618, CVE-2026-109619."
+elog
 }
 
 pkg_postrm() {
