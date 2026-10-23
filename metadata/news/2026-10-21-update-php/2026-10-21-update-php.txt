@@ -2,7 +2,7 @@ Title: Update PHP (Updated Oct 23, 3 CVEs)
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
 
@@ -73,3 +73,7 @@ with under maintenance message.
 
 While the technical/definitional blast radius is limited, your personal threat
 model or circumstance may treat it or interpret it correctly as extended.
+
+A system reset is recommended after updating everything, updated libs, updated
+kernel, updated PHP, updated Apache/NGINX.  NGINX had an RCE patched this
+Oct 2026.  This was also circulated on the socials.
