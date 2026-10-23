@@ -17,7 +17,7 @@ CVSS 4, or 9.8 for CVSS 3.
 Along with the 2 CVEs, the social media has shown a new 3rd CVE.  AI has
 agreed about the remediation.
 
-The release notes in the last two dates hint of possible partial mitigation for
+The release notes in the last two days hint of possible partial mitigation for
 the previous 2 CVEs:
 "There are no complete mitigations, updating is the only safe choice."
 
