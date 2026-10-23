@@ -13,7 +13,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libffi-9999"
 )
 
-inherit autotools cflags-hardened flag-o-matic multiprocessing secure-version rust
+inherit autotools cflags-hardened chkl flag-o-matic multiprocessing secure-version rust
 
 MY_P="${PN}-$(ver_cut 1-3)"
 MY_PV="${PV%.*}"
@@ -41,7 +41,10 @@ SLOT=${MY_SLOT}
 MY_SUFFIX=$(ver_rs 1 '' ${SLOT})
 RUBYVERSION=${SLOT}.0
 
-IUSE="berkdb debug doc examples gdbm gmp jemalloc jit socks5 +ssl static-libs systemtap tk valgrind xemacs"
+IUSE="
+berkdb debug doc examples gdbm gmp jemalloc jit socks5 +ssl static-libs systemtap tk valgrind xemacs
+ebuild_revision_1
+"
 
 RDEPEND="
 	berkdb? ( sys-libs/db:= )
@@ -52,22 +55,22 @@ RDEPEND="
 	ssl? (
 		$(secure-version_gen_openssl_depends)
 	)
-	socks5? ( >=net-proxy/dante-1.1.13 )
-	systemtap? ( dev-debug/systemtap )
+	socks5? ( >=net-proxy/dante-1.1.13:= )
+	systemtap? ( dev-debug/systemtap:= )
 	tk? (
 		dev-lang/tcl:0=[threads(+)]
 		dev-lang/tk:0=[threads(+)]
 	)
-	dev-libs/libyaml
+	dev-libs/libyaml:=
 	>=dev-libs/libffi-${LIBFFI_PV}:=
 	>=virtual/zlib-${ZLIB_PV}:=
 	virtual/libcrypt:=
-	>=app-eselect/eselect-ruby-20251225
+	>=app-eselect/eselect-ruby-20251225:*
 "
 
 DEPEND="
 	${RDEPEND}
-	valgrind? ( dev-debug/valgrind )
+	valgrind? ( dev-debug/valgrind:= )
 "
 
 # TODO verify version requirements
