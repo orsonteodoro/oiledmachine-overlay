@@ -554,6 +554,9 @@ PYTHON_3_13_PV=${PYTHON_3_13_PV:-"3.13.17"}
 PYTHON_3_12_PV=${PYTHON_3_12_PV:-"3.12.15"}
 PYTHON_3_11_PV=${PYTHON_3_11_PV:-"3.11.17"}
 PYTHON_3_10_PV=${PYTHON_3_10_PV:-"3.10.22"}
+RUBY_4_0_PV=${RUBY_4_0_PV:-"4.0.9"}
+RUBY_3_4_PV=${RUBY_3_4_PV:-"3.4.12"}
+RUBY_3_3_PV=${RUBY_3_3_PV:-"3.3.13"}
 RUNC_PV=${RUNC_PV:-"1.5.0_rc3"}
 QCORO_PV=${QCORO_PV:-"0.13.0"}
 QRENCODE_PV=${QRENCODE_PV:-"4.1.0"} # Same as libqrencode
@@ -630,8 +633,8 @@ VVDEC_PV=${VVDEC_PV:-"9999"}
 VVENC_PV=${VVENC_PV:-"9999"}
 WAVPACK_PV=${WAVPACK_PV:-"9999"}
 WAYLAND_PV=${WAYLAND_PV:-"9999"}
-WEBKIT_GTK_PV=${WEBKIT_GTK_PV:-"2.54.1"}
-WEBKIT_GTK_STABLE_PV=${WEBKIT_GTK_PV:-"2.54.1"}
+WEBKIT_GTK_PV=${WEBKIT_GTK_PV:-"2.54.2"}
+WEBKIT_GTK_STABLE_PV=${WEBKIT_GTK_PV:-"2.54.2"}
 WHISPER_CPP_PV=${WHISPER_CPP_PV:-"9999"}
 WILDMIDI_PV=${WILDMIDI_PV:-"9999"}
 WLROOTS_PV=${WLROOTS_PV:-"9999"}
@@ -954,6 +957,157 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 			t+="
 				${python_usefix}${x/./_}? (
 					>=dev-lang/python-${!u}:${x}${usedep}
+				)
+			"
+		fi
+	done
+	t+="
+	"
+
+	local output=""
+
+	output="${t}"
+#einfo "${output}"
+	echo "${output}"
+}
+
+# No ruby_targets_<impl> in IUSE.
+secure-version_gen_ruby_single_depends() {
+	local range="${1}" # 4.0; 3.3-4.0; 3.3, 3.4; 3.3-r, 3.3-l, 3.3-, <empty string>
+	local usedep="${2}" # [gmp], <empty string>
+	local python_usefix="" # python_targets_python, python_single_target_python
+
+	local t=""
+	t+="
+		dev-lang/ruby:=${usedep}
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+	# Slots used in any distro releases
+		l="3.3"
+		r="4.0"
+	elif [[ "${range}" == "s" ]] ; then
+	# Slots used in LTS distro releases
+		l="3.2"
+		r="3.3"
+	elif [[ "${range}" == "r" ]] ; then
+	# Slots used in rolling distro releases
+		l="4.0"
+		r="4.0"
+	elif [[ "${range}" == "l" ]] ; then
+	# Slots used in live distro releases
+		l="4.0"
+		r="4.0"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ "${r}" == "r" ]] ; then
+	# Slot used in rolling distro releases
+			r="4.0"
+		elif [[ "${r}" == "s" ]] ; then
+	# Slot used in LTS distro releases
+			r="3.3"
+		elif [[ "${r}" == "l" ]] ; then
+	# Slot used in live distro releases
+			r="4.0"
+		elif [[ -z "${r}" ]] ; then
+	# Slot used in live distro releases
+			r="4.0"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"4.0"
+		"3.4"
+		"3.3"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			local u="RUBY_${x/./_}_PV"
+#einfo "${u} ${x} ${!u}"
+			t+="
+				>=dev-lang/ruby-${!u}:${x}${usedep}
+			"
+		fi
+	done
+	t+="
+		)
+	"
+
+	local output=""
+
+	output="${t}"
+#einfo "${output}"
+	echo "${output}"
+}
+
+# Exposes ruby_targets_<impl> in IUSE.
+secure-version_gen_ruby_ng_depends() {
+	local range="${1}" # 4.0; 3.3-4.0; 3.3, 3.4; 3.3-r, 3.3-l, 3.3-, <empty string>
+	local usedep="${2}" # [gmp], <empty string>
+	local python_usefix="" # python_targets_python, python_single_target_python
+
+	local t=""
+	t+="
+		dev-lang/ruby:=${usedep}
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+	# Slots used in any distro releases
+		l="3.3"
+		r="4.0"
+	elif [[ "${range}" == "s" ]] ; then
+	# Slots used in LTS distro releases
+		l="3.2"
+		r="3.3"
+	elif [[ "${range}" == "r" ]] ; then
+	# Slots used in rolling distro releases
+		l="4.0"
+		r="4.0"
+	elif [[ "${range}" == "l" ]] ; then
+	# Slots used in live distro releases
+		l="4.0"
+		r="4.0"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ "${r}" == "r" ]] ; then
+	# Slot used in rolling distro releases
+			r="4.0"
+		elif [[ "${r}" == "s" ]] ; then
+	# Slot used in LTS distro releases
+			r="3.3"
+		elif [[ "${r}" == "l" ]] ; then
+	# Slot used in live distro releases
+			r="4.0"
+		elif [[ -z "${r}" ]] ; then
+	# Slot used in live distro releases
+			r="4.0"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"4.0"
+		"3.4"
+		"3.3"
+	)
+	local x
+	for x in "${L[@]}" ; do
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			local u="RUBY_${x/./_}_PV"
+#einfo "${u} ${x} ${!u}"
+			# See https://packages.gentoo.org/useflags/ruby_targets_ruby34
+			t+="
+				ruby_targets_ruby${x/./}? (
+					>=dev-lang/ruby-${!u}:${x}=${usedep}
 				)
 			"
 		fi

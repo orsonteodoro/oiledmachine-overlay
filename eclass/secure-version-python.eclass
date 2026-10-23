@@ -41,6 +41,7 @@ secure-version-python_gen_litellm_depends() {
 	local t=""
 	t+="
 		!=dev-python/litellm-1.107*
+		dev-python/litellm:=${usedep}
 		|| (
 	"
 	local l="" # Min
@@ -76,7 +77,7 @@ secure-version-python_gen_litellm_depends() {
 			local u="PYTHON_LITELLM_${x/./_}_PV"
 #einfo "${u} ${x} ${!u}"
 			t+="
-				>=dev-python/litellm-${!u}${usedep}
+				~dev-python/litellm-${!u}${usedep}
 			"
 		fi
 	done

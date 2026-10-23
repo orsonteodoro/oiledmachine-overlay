@@ -3,7 +3,7 @@
 # Checks only dependency lists and options
 #
 # Usage:
-# ./compare-point-releases.sh 2.38.2 2.38.3
+# ./compare-point-releases.sh 2.54.1-r410 2.54.1 2.54.2-r410 2.54.2
 
 PV1A="${1}"
 PV1B="${2}"

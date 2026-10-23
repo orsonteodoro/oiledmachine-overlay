@@ -13,12 +13,12 @@ EAPI=8
 # Re-try librice USE flag on next stable release (2.54.x).  The complete patch landed on 2.53.2.
 
 # -r revision notes
-# -rabcde
-# ab = WEBKITGTK_API_VERSION version (6.0)
-# c = reserved
-# de = ebuild revision
+# -rabc
+# ab = WEBKITGTK_API_VERSION version (4.1)
+# c = distro ebuild revision
+# For local repos, use ebuild_revision_xxxyyy instead.  yyy or 0-100 for oiledmachine-overlay, xxx or 1000-100000 for local repos
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -32,17 +32,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.54.1/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.54.2/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -73,11 +73,11 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="6.0"
+API_VERSION="4.1"
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -86,7 +86,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sen
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CMAKE_MAKEFILE_GENERATOR="ninja"
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/bmalloc/libpas/CMakeLists.txt#L5C5-L5C23
 CXX_STANDARD=23
 LLVM_MAX_SLOT="21"
 OCDM_WV="virtual/libc:*" # Placeholder
@@ -96,10 +96,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 6.0
-SO_CURRENT="23"
-#SO_REVISION="4"
-SO_AGE="19"
+# WEBKITGTK_API_VERSION is 4.1
+SO_CURRENT="24"
+#SO_REVISION="5"
+SO_AGE="24"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -123,13 +123,13 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
-LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 21
 )
-LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 FFMPEG_COMPAT=(
 	"0/60.62.62" # 8.x
@@ -148,7 +148,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 	"dev-libs/openssl-3.4.9999"
 	"dev-libs/wayland-9999"
-	"gui-libs/gtk-4.25.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/fontconfig-9999"
@@ -159,8 +158,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libjxl-9999"
 	"media-libs/libpng-9999"
-	"media-libs/libwebp-9999"
 	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
 	"media-libs/openh264-9999"
 	"media-libs/opus-9999"
 	"media-libs/woff2-9999"
@@ -170,6 +169,7 @@ CHKL_TIMESTAMPS=(
 	"sys-libs/libseccomp-9999"
 	"x11-libs/libdrm-9999"
 	"x11-libs/libX11-9999"
+	"x11-libs/gtk+-3.24.9999"
 )
 
 LANGS=(
@@ -178,8 +178,8 @@ ja ka kk kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta
 te tr uk vi zh_CN
 )
 
-MITIGATION_DATE="Sep 29, 2026"
-MITIGATION_LAST_UPDATE=1790938500 # From `date +%s -d "Oct 2, 2026 3:55 AM PDT"` from tag in GH for this version
+MITIGATION_DATE="Oct 23, 2026" # Fix several crashes on Latest News
+MITIGATION_LAST_UPDATE=1792745520 # From `date +%s -d "Oct 23, 2026 1:52 AM PDT"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2026-0006.html"
 VULNERABILITIES_FIXED=(
 	"CVE-2024-1283;HO, HC;"
@@ -414,6 +414,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-9982;IV, SBE;"
 	"CVE-2026-9983;TC;"
 	"CVE-2026-9998;IO, SBE;"
+
 )
 
 PATENT_STATUS=(
@@ -454,11 +455,11 @@ MSE_VCODECS=(
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.1/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.54.2/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS=(
 	"+a52"
 	"-aac"
@@ -508,7 +509,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -785,7 +786,7 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION%.*}/${SO_VERSION}"
+SLOT="${API_VERSION}/${SO_VERSION}"
 # SLOT=4.1/0  GTK3 SOUP3 (r41000)
 # SLOT=6/4    GTK4 SOUP3 (r60000)
 
@@ -799,6 +800,7 @@ SLOT="${API_VERSION%.*}/${SO_VERSION}"
 # Using dav1d because aom is slow for decoding.
 # libbacktrace is enabled upstream but disabled for security reasons.
 
+# The ruby-single eclass doesn't make ruby_targets_<impl> changes to IUSE.
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
@@ -1063,7 +1065,6 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-${LIBXML2_PV}:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-${LIBXSLT_PV}:=[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-${GTK4_PV}:4=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+),system-icu]
@@ -1073,7 +1074,8 @@ RDEPEND+="
 	>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-${LIBWEBP_PV}:=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-${LIBSOUP3_PV}:=[${MULTILIB_USEDEP},introspection?]
-	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-1.3.2:=[${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-${GTK3_PV}:3=[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	sys-kernel/secure-kernel:*
 	virtual/patent-status:*[patent_status_nonfree=]
 	~dev-util/glib-utils-${GLIB_PV}:=
@@ -1239,6 +1241,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	$(secure-version_gen_perl_depends)
+	$(secure-version_gen_ruby_single_depends)
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
@@ -1955,7 +1958,6 @@ ewarn "Chosen page size:  ${page_size}"
 ewarn
 	fi
 
-
 	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
 		# Use the exact page size
 		page_size=$(_get_actual_page_size)
@@ -2247,7 +2249,6 @@ verify_compiler_flags_hardening() {
 	"unconditional:dev-libs/libtasn1:untrusted-data"
 	"unconditional:dev-libs/libxml2:untrusted-data"
 	"unconditional:dev-libs/libxslt:untrusted-data"
-	"unconditional:gui-libs/gtk:sensitive-data"
 	"unconditional:media-libs/libpng:sensitive-data,untrusted-data"					# PII
 	"unconditional:media-libs/libwebp:sensitive-data,untrusted-data"				# PII
 	"unconditional:media-libs/fontconfig:untrusted-data"
@@ -2255,6 +2256,7 @@ verify_compiler_flags_hardening() {
 	"unconditional:media-libs/harfbuzz:attack-surface-risk,untrusted-data,sensitive-data"		# PII
 	"unconditional:media-libs/libjpeg-turbo:sensitive-data,untrusted-data"				# PII
 	"unconditional:virtual/zlib:untrusted-data"
+	"unconditional:x11-libs/gtk+:sensitive-data"
 
 	"aom:media-plugins/gst-plugins-aom:sensitive-data,untrusted-data"				# PII
 	"dash:media-plugins/gst-plugins-dash:untrusted-data"
@@ -2403,10 +2405,6 @@ pkg_setup() {
 	else
 		export OSHIT=0
 	fi
-ewarn
-ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-ewarn "It is currently not recommended due to rendering bug(s)."
-ewarn
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2715,7 +2713,7 @@ ewarn
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
@@ -3321,13 +3319,6 @@ eerror
 	if [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
-
-	# Anything less than -O2 may break rendering.
-	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
-	# -O2 feels like C- grade relative other browser engines.
-
 
 	filter-flags '-ffast-math'
 
