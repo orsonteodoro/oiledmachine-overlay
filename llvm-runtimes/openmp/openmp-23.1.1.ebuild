@@ -69,7 +69,6 @@ inherit abseil-cpp cmake-multilib crossdev flag-o-matic grpc libstdcxx-slot llvm
 inherit re2 secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 	EGIT_BRANCH="${LLVM_EBUILDS_LLVM23_BRANCH}"
 	if [[ "${USE}" =~ "fallback-commit" ]] ; then
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM23_FALLBACK_COMMIT}"
@@ -643,6 +642,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	llvm-ebuilds_message
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 	python-single-r1_pkg_setup
 	LLVM_MAX_SLOT="${LLVM_SLOT}"

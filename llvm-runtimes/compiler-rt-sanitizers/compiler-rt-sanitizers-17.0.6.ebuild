@@ -14,7 +14,6 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
 		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
@@ -365,6 +364,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	llvm-ebuilds_message
 	check-compiler-switch_start
 	linux-info_pkg_setup
 	# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness

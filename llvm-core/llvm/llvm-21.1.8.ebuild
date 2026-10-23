@@ -22,7 +22,6 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM21_FALLBACK_COMMIT}"
 		EGIT_BRANCH="${LLVM_EBUILDS_LLVM21_BRANCH}"
 	fi
@@ -211,6 +210,7 @@ BDEPEND+="
 [[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
 
 pkg_setup() {
+	llvm-ebuilds_message
 	dhms_start
 	check-compiler-switch_start
 	python-any-r1_pkg_setup

@@ -18,7 +18,6 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM24_FALLBACK_COMMIT}"
 		EGIT_BRANCH="${LLVM_EBUILDS_LLVM24_BRANCH}"
 	fi
@@ -111,6 +110,7 @@ ewarn
 }
 
 pkg_setup() {
+	llvm-ebuilds_message
 	check-compiler-switch_start
 	if target_is_not_host || tc-is-cross-compiler ; then
 		# strips vars like CFLAGS="-march=x86_64-v3" for non-x86 architectures

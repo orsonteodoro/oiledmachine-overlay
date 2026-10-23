@@ -7,6 +7,8 @@ CXX_STANDARD=17
 LLVM_COMPAT=( {17..19} )
 PYTHON_COMPAT=( python3_{11..13} )
 
+inherit llvm-ebuilds
+
 # Align libstdcxx to avoid symbol issues
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -38,6 +40,7 @@ LLVM_COMPONENTS=( "libclc" )
 llvm.org_set_globals
 
 pkg_setup() {
+	llvm-ebuilds_message
 	llvm-r1_pkg_setup
 	python-any-r1_pkg_setup
 	libstdcxx-slot_verify

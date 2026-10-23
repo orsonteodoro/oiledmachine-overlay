@@ -13,7 +13,6 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
 		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
@@ -54,6 +53,11 @@ llvm.org_set_globals
 
 SITEFILE="50llvm-gentoo.el"
 BYTECOMPFLAGS="-L emacs"
+
+pkg_setup() {
+	llvm-ebuilds_message
+	llvm_pkg_setup
+}
 
 src_compile() {
 	default

@@ -134,10 +134,8 @@ if [[ -z "${_LLVM_EBUILDS_ECLASS}" ]] ; then
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
-llvm_ebuilds_message() {
-	local slot="${1}"
-	local fn="${2}"
-	if [[ "${PV}" =~ "9999" && "${fn}" == "_llvm_set_globals" ]]  ; then
+llvm-ebuilds_message() {
+	if [[ "${PV}" =~ "9999" ]]  ; then
 # bbr1 fail
 # cubic fail
 # htcp fail
@@ -152,7 +150,7 @@ llvm_ebuilds_message() {
 # fetch-pack: unexpected disconnect while reading sideband packet
 # fatal: early EOF
 #
-einfo "Using fallback commit"
+ewarn "Using fallback commit"
 ewarn
 ewarn "Do the following to increase download chances of live ebuilds:"
 ewarn

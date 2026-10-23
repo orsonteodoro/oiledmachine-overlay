@@ -18,7 +18,6 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
 		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
@@ -102,6 +101,7 @@ ewarn
 }
 
 pkg_setup() {
+	llvm-ebuilds_message
 	check-compiler-switch_start
 
 	# Darwin Prefix builds do not have llvm installed yet, so rely on

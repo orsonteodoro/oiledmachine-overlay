@@ -6,6 +6,8 @@ EAPI=8
 CXX_STANDARD=17
 PYTHON_COMPAT=( python3_{11..12} )
 
+inherit llvm-ebuilds
+
 # Align libstdcxx to avoid symbol issues
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -46,6 +48,7 @@ llvm_check_deps() {
 }
 
 pkg_setup() {
+	llvm-ebuilds_message
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
 	libstdcxx-slot_verify
