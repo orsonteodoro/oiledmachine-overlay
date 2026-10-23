@@ -30,7 +30,7 @@ on exposure of the type of asset.  Left of > is local context.  Right of > is
 the decision outcome produced by the decision tree.  Each decision tree outcome
 gives you how fast to remediate.
 
- POC shifts to Active [explotation] > Act    -- Remediate 48 hours
+ POC shifts to Active [explotation] > Act    -- Remediate in 48 hours
              Mission critical asset > Attend -- Remediate in 14 days
      Not universally critical asset > Track* -- Remediate in 60 days
                  Non-critical asset > Track  -- Remediate in 90 days
