@@ -1,8 +1,8 @@
-Title: Update PHP
+Title: Update PHP (Updated Oct 23, 3 CVEs)
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 2
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
 
@@ -14,10 +14,18 @@ Two critical severity vulnerabilities have been patched upstream by the PHP team
 It was estimated both would be 10s on the socials but downgraded to 9.2 for
 CVSS 4, or 9.8 for CVSS 3.
 
+Along with the 2 CVEs, the social media has shown a new 3rd CVE.  AI has
+agreed about the remediation.
+
+The release notes in the last two dates hint of possible partial mitigation for
+the previous 2 CVEs:
+"There are no complete mitigations, updating is the only safe choice."
+
 Researcher vulnerability name:  PHP2Shell
 
 CVE-2026-109618 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
 CVE-2026-109619 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
+CVE-2026-115560 - (NEW) Reserved
 
 DoS - Denial of Service
 DT - Data Tampering
@@ -41,6 +49,14 @@ emerge -avuDN dev-lang/php:8.5::oiledmachine-overlay
 emerge -avuDN dev-lang/php:8.4::oiledmachine-overlay
 emerge -avuDN dev-lang/php:8.3::oiledmachine-overlay
 emerge -avuDN dev-lang/php:8.2::oiledmachine-overlay
+
+Mitigation for the new CVE-2026-115560 currently requires manual configuration in
+php.ini:
+
+session.upload_progress.enabled = 0
+
+This setting is verified in
+https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp
 
 If you are using a local build that is outdated, it was suggested by other
 security reports to put the server offline (or disconnect it from the network)

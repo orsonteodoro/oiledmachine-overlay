@@ -53,7 +53,7 @@ The selected first news items:
 * 2026-10-21 - [Update kernel PwnEscape](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-kernel-pwnescape/2026-10-21-update-kernel-pwnescape.txt)
 * 2026-10-21 - [Perl default](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-perl-default/2026-10-21-perl-default.txt)
 * 2026-10-21 - [Update Node](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-node/2026-10-21-update-node.txt)
-* 2026-10-21 - [Update PHP](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-php/2026-10-21-update-php.txt)
+* 2026-10-21 - [Update PHP (Updated Oct 23, 3 CVEs)](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-21-update-php/2026-10-21-update-php.txt)
 * 2026-08-03 - [Update Perl](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-08-03-update-perl/2026-08-03-update-perl.txt)
 * 2026-07-01 - [Split-usr users, update util-linux and others](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-07-01-update-util-linux-and-others/2026-06-19-update-util-linux-and-others.txt)
 
