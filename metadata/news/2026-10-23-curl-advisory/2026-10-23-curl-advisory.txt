@@ -32,7 +32,7 @@ gives you how fast to remediate.
 
  POC shifts to Active [explotation] > Act    -- Remediate 48 hours
              Mission critical asset > Attend -- Remediate in 14 days
-      Not universally critcal asset > Track* -- Remediate in 60 days
+     Not universally critical asset > Track* -- Remediate in 60 days
                  Non-critical asset > Track  -- Remediate in 90 days
 
 
