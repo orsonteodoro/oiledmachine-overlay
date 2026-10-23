@@ -16,8 +16,8 @@ We are all good right?
 
 However, a few curious people may have wanted to try the feature out or wanted
 all the USE flags enabled and used the http://gpo.zugaina.org/ to possibly copy
-and paste the ebuild and modified it a bit to use the PyPI artifact.  The PyPI
-artifact and Docker image is compromised according to AI.  The GitHub tarball
+and paste the ebuild and modified it a bit to use the PyPI wheel.  The PyPI
+wheel and Docker image is compromised according to AI.  The GitHub tarball
 is not compromised according to AI.
 
 Based on review of the 1.107* ebuild on the third party overlay, it is using
