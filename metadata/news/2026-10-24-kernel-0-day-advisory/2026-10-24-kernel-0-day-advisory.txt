@@ -2,7 +2,7 @@ Title: Kernel 0-day Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-24
-Revision: 6
+Revision: 8
 News-Item-Format: 2.0
 Display-If-Installed: virtual/linux-sources
 Display-If-Installed: virtual/dist-kernel
@@ -109,8 +109,5 @@ the kernel.
   OT_KERNEL_KCONFIG[CONFIG_DRM_VMWGFX]=n
   OT_KERNEL_KCONFIG[CONFIG_NVME_TARGET]=n
 
-  or
-
-(ot-sources only) for example set OT_KERNEL_CONFIG="/etc/kernels/kernel-config-7.3-hardened-x86_64" in
-`/etc/portage/ot-sources/<BRANCH>/<EXTRAVERSION-FLAVOR>/<ARCH>/env` file.
-and then modify `/etc/kernels/kernel-config-7.3-hardened-x86_64`.
+This is preferred for ot-sources because this is designed as the final
+config override.
