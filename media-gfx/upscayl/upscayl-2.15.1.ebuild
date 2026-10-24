@@ -133,7 +133,7 @@ THIRD_PARTY_LICENSES="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	THIRD_PARTY_LICENSES+="
-		electron-44.4.1-chromium.html
+		electron-45.0.0-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
