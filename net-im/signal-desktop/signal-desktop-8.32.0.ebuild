@@ -143,7 +143,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_114
+ebuild_revision_115
 "
 REQUIRED_USE+="
 	|| (
@@ -433,7 +433,7 @@ src_unpack() {
 			sed -i -e "s|\"linkify-it\": \"5.0.1\"|\"linkify-it\": \"${NODE_LINKIFY_IT_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"moment\": \"2.30.1\"|\"moment\": \"${NODE_MOMENT_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"svgo\": \"4.0.1\"|\"svgo\": \"${NODE_SVGO_4_PV}\"|g" "${S}/package.json" || die
-			sed -i -e "s|\"storybook\": \"8.6.18\"|\"storybook\": \"${NODE_SVGO_4_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"storybook\": \"8.6.18\"|\"storybook\": \"${NODE_STORYBOOK_8_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"${NODE_UUID_13_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"${NODE_WEBPACK_5_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"vite\": \"8.0.16\"|\"vite\": \"${NODE_VITE_8_PV}\"|g" "${S}/sticker-creator/package.json" || die
