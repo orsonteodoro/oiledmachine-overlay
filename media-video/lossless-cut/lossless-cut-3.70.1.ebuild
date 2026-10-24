@@ -22,6 +22,7 @@ NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
 NODE_SLOT="24"
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792852047
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -103,7 +104,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_48
+ebuild_revision_49
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -192,6 +193,7 @@ yarn_update_lock_install_post() {
 yarn_update_lock_yarn_import_post() {
 einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Manually remove sharp 0.33.5 and associated @img direct dependencies (1.0.4, 1.0.5) from yarn.lock"
 		patch_lockfile() {
 einfo "Called patch_lockfile"
 			sed -i -e "s|body-parser: \"npm:^2.2.1\"|body-parser: \"npm:^${NODE_BODY_PARSER_2_PV}\"|g" "yarn.lock" || die
@@ -286,9 +288,8 @@ einfo "Adding package.json patches"
 
 gen_icon() {
 einfo "DEBUG:  Called gen_icon()"
-	#cat "script/icon-gen.mjs" >> "script/icon-gen.mjs.t" || die
-	#mv "script/icon-gen.mjs"{".t",""} || die
-	edo npm run "generate-icon"
+	mkdir -p "icon-build" "build-resources/appx" || die
+	edo node "script/generateIcon.ts"
 
 	ls "icon-build/app-512.png" || die "Missing generated icon"
 }
@@ -330,26 +331,26 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	fi
 	L+=(
 		"sharp@${NODE_SHARP_PV}"
-		"@types/icon-gen"
+		#"@types/icon-gen"
 	)
 	eyarn add "${L[@]}" -D
 
-	jq ".dependencies.sharp = \"^${NODE_SHARP_PV}\"" \
-		"node_modules/icon-gen/package.json" \
-			> \
-		"temp.json" \
-			&& \
-		mv "temp.json" "node_modules/icon-gen/package.json" \
-		|| die "Failed to update icon-gen package.json"
-
-	L+=(
-		"icon-gen@5.0.0" # Must go before node-sharp_yarn_rebuild_sharp
-	)
-	eyarn add "${L[@]}" -D --no-optional
+#	jq ".dependencies.sharp = \"^${NODE_SHARP_PV}\"" \
+#		"node_modules/icon-gen/package.json" \
+#			> \
+#		"temp.json" \
+#			&& \
+#		mv "temp.json" "node_modules/icon-gen/package.json" \
+#		|| die "Failed to update icon-gen package.json"
+#
+#	L+=(
+#		"icon-gen@5.0.0" # Must go before node-sharp_yarn_rebuild_sharp
+#	)
+#	eyarn add "${L[@]}" -D --no-optional
 
 	# Remove nested sharp and prebuilt sharp
-	rm -rf "node_modules/icon-gen/node_modules/sharp" || die "Failed to remove nested sharp"
-	rm -rf "node_modules/@img" || die "Failed to remove nested sharp"
+	rm -rf "node_modules/icon-gen/node_modules/sharp" || true
+	rm -rf "node_modules/@img" || true
 
 	SHARP_INSTALL_ARGS=( "-D" )
 
@@ -403,17 +404,16 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	node-sharp_verify_dedupe
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
-		edo mkdirp "icon-build" "build-resources/appx"
-		#gen_icon # Broken
+		gen_icon
 	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
 
-	cat \
-		"${FILESDIR}/icon-gen.mjs" \
-			> \
-		"${S}/script/icon-gen.mjs" \
-		|| die
+#	cat \
+#		"${FILESDIR}/icon-gen.mjs" \
+#			> \
+#		"${S}/script/icon-gen.mjs" \
+#		|| die
 
 }
 
