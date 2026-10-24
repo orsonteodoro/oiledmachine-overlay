@@ -1,4 +1,4 @@
-Title: cURL Advisory
+Title: curl Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-23
@@ -6,7 +6,7 @@ Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: net-misc/curl
 
-cURL had a non-transparent silent update about an ACE/RCE fix but only discovered
+curl had a non-transparent silent update about an ACE/RCE fix but only discovered
 later through in social media post about PHP RCE.  The repo has updated the
 fallback-commit to the latest to address it and other newer security issues.  On
 the social media they say mostly use-after-free but rarely RCE.  The AI says it
@@ -44,7 +44,7 @@ Patched versions:
 
 Current mitigations
 
-Option 1:  Simply emerge cURL.
+Option 1:  Simply emerge curl.
 
 emaint sync -A
 emerge -1vO "=net-libs/curl-9999::oiledmachine-overlay"
@@ -67,7 +67,7 @@ emerge -1vO "=net-libs/curl-8.23.0::gentoo"
 
 After updating an option, the safest option is to restart.  Alternatively,
 you need to log out to reset the client side apps and restart your daemons or
-services if you run servers that use cURL.
+services if you run servers that use curl.
 
 The recent wave of RCEs is possibly because it is Cybersecurity Awareness Month
 and the red team is celebrating or it is a coordinated psyop.
