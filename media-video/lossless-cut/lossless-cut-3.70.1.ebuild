@@ -13,7 +13,7 @@ EAPI=8
 
 # To update:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# YARN_UPDATER_VERSIONS="3.69.0" yarn_updater_update_locks.sh
+# YARN_UPDATER_VERSIONS="3.70.1" yarn_updater_update_locks.sh
 
 MY_PN="${PN/-/}"
 
@@ -21,7 +21,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure.  Working with reproducibl
 NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
-NODE_SLOT="22"
+NODE_SLOT="24"
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -36,7 +36,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream preference
-	ELECTRON_APP_ELECTRON_PV="42.3.0" # Cr 148.0.7778.180, node 24.15.0
+	ELECTRON_APP_ELECTRON_PV="42.11.15" # Cr 148.0.7778.280, node 24.19.0
 fi
 
 NODE_SHARP_PATCHES=(
@@ -90,13 +90,12 @@ LICENSE="
 	GPL-2
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The license fingerprint of Electron 44.4.1 is the same as Electron 44.5.1
 	LICENSE+="
-		electron-44.4.1-chromium.html
+		electron-45.0.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-42.2.0-chromium.html
+		electron-42.11.15-chromium.html
 	"
 fi
 RESTRICT="mirror"
@@ -135,14 +134,20 @@ DEPEND+="
 BDEPEND+="
 	>=app-misc/jq-${JQ_PV}:=
 	>=net-libs/nodejs-${NODEJS_22_PV}:${NODE_SLOT}=
+	|| (
+		~sys-apps/yarn-${NODE_YARN_L8_PV}:8
+	)
+	|| (
+		~sys-apps/npm-${NODE_NPM_12_PV}:3
+		~sys-apps/npm-${NODE_NPM_11_PV}:3
+	)
 	sys-apps/yarn:${YARN_SLOT}=
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
 
 pkg_setup() {
-# Sharp is used for icon conversions.
-ewarn "Part of the sharp fix requires the use of the media-libs/vips ebuilds from the oiledmachine-overlay."
+	secure-version-node_check_update
 	yarn_pkg_setup
 	node-sharp_pkg_setup
 }
@@ -188,6 +193,8 @@ einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
 einfo "Called patch_lockfile"
+			sed -i -e "s|body-parser: \"npm:^2.2.1\"|body-parser: \"npm:^${NODE_BODY_PARSER_2_PV}\"|g" "yarn.lock" || die
+
 			sed -i -e "s|csv-parse: \"npm:^6.2.1\"|csv-parse: \"npm:^${NODE_CSV_PARSE_PV}\"|g" "yarn.lock" || die
 
 			sed -i -e "s#esbuild: ^0.27.0 || ^0.28.0#esbuild: ^${NODE_ESBUILD_PV}#g" "yarn.lock" || die
@@ -197,17 +204,26 @@ einfo "Called patch_lockfile"
 
 			sed -i -e "s|electron-builder: \"npm:26.16.1\"|electron-builder: \"npm:^${ELECTRON_BUILDER_PV}\"|g" "yarn.lock" || die
 
+			sed -i -e "s|fast-uri: \"npm:^3.0.1\"|fast-uri: \"npm:^${NODE_FAST_URI_3_PV}\"|g" "yarn.lock" || die
+
 			sed -i -e "s|\"icon-gen/sharp\": \"^0.34.5\"|\"icon-gen/sharp\": \"${NODE_SHARP_PV}\"|g" "package.json" || die
 
 			sed -i -e "s|sharp: \"npm:^0.33.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
 			sed -i -e "s|sharp: \"npm:0.35.4\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
 			sed -i -e "s|sharp: \"npm:^0.34.5\"|sharp: \"npm:${NODE_SHARP_PV}\"|g" "yarn.lock" || die
 
+			sed -i -e "s|undici: \"npm:^6.23.0\"|undici: \"npm:^${NODE_UNDICI_6_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|undici: \"npm:^6.25.0\"|undici: \"npm:^${NODE_UNDICI_6_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|undici: \"npm:^7.24.4\"|undici: \"npm:^${NODE_UNDICI_7_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|undici: \"npm:^8.4.1\"|undici: \"npm:^${NODE_UNDICI_8_PV}\"|g" "yarn.lock" || die
+
 			sed -i -e "s#vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0\"#vite: ^${NODE_VITE_7_PV}#g" "yarn.lock" || die
 			sed -i -e "s#vite: ^5.0.0 || ^6.0.0 || ^7.0.0\"#vite: ^${NODE_VITE_7_PV}#g" "yarn.lock" || die
 			sed -i -e "s#vite: ^6.0.0 || ^7.0.0 || ^8.0.0\"#vite: ^${NODE_VITE_7_PV}#g" "yarn.lock" || die
 			sed -i -e "s#vite: \"npm:^6.0.0 || ^7.0.0 || ^8.0.0\"#vite: \"npm:^${NODE_VITE_7_PV}\"#g" "yarn.lock" || die
 			sed -i -e "s|vite: \"npm:7.3.5\"|vite: \"npm:^${NODE_VITE_7_PV}\"|g" "yarn.lock" || die
+
+			sed -i -e "s|\"@vitest/mocker\": \"npm:4.1.11\"|\"@vitest/mocker\": \"npm:^${NODE_AT_VITEST_MOCKER_4_PV}\"|g" "yarn.lock" || die
 		}
 		patch_lockfile
 
@@ -221,11 +237,18 @@ einfo "Fixing vulnerabilities"
 		eyarn remove "${L[@]}"
 
 		L=(
+			"body-parser@^${NODE_BODY_PARSER_2_PV}"
+		)
+		eyarn add "${L[@]}"
+
+		L=(
 			"csv-parse@^${NODE_CSV_PARSE_PV}"
 			"electron-builder@^${ELECTRON_BUILDER_PV}"
 			"electron@^${ELECTRON_APP_ELECTRON_PV}"
+			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"sharp@${NODE_SHARP_PV}"
 			"vite@^${NODE_VITE_7_PV}"
+			"@vitest/mocker@^${NODE_AT_VITEST_MOCKER_4_PV}"
 		)
 		eyarn add "${L[@]}" -D
 
@@ -379,7 +402,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
 		edo mkdirp "icon-build" "build-resources/appx"
-		gen_icon
+		#gen_icon # Broken
 	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
