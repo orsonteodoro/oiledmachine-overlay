@@ -467,7 +467,9 @@ src_install() {
 	electron-app_gen_wrapper \
 		"${MY_PN}" \
 		"${YARN_INSTALL_PATH}/${MY_PN}"
-	newicon "icon-build/app-512.png" "no.mifi.losslesscut.png"
+	if [[ -e "icon-build/app-512.png" ]] ; then
+		newicon "icon-build/app-512.png" "no.mifi.losslesscut.png"
+	fi
 	insinto "/usr/share/applications"
 	doins "no.mifi.losslesscut.desktop"
 	insinto "${YARN_INSTALL_PATH}"
