@@ -1,8 +1,8 @@
 Title: Kernel 0-day Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
-Posted: 2026-10-23
-Revision: 1
+Posted: 2026-10-24
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: virtual/linux-sources
 Display-If-Installed: virtual/dist-kernel
