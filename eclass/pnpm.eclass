@@ -245,6 +245,10 @@ einfo "Hydrating pnpm..."
 		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm"{".cjs",""} || die
 		chmod +x "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.cjs" || die
 	fi
+	if [[ -e "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.mjs" ]] ; then
+		ln -sf "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm"{".mjs",""} || die
+		chmod +x "${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin/pnpm.mjs" || die
+	fi
 	local pnpm_pv=$(pnpm --version)
 	local node_pv=$(node --version | sed -e "s|^v||g")
 einfo "pnpm version:  ${pnpm_pv}"

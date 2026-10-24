@@ -54,17 +54,17 @@ MY_PN2="Signal"
 # prebuilt-install depends on node-abi
 # Use the newer Electron to increase mitigation with vendor static libs.
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
-NPM_SLOT="3"
+NPM_SLOT="3" # Upstream CI/CD uses npm 10.9.9:3
 PNPM_AUDIT_FIX=1
 PNPM_AUDIT_FIX_ARG="override" # Avoid [ELIFECYCLE] Command failed.
-PNPM_SLOT="9"
+PNPM_SLOT="9" # Upstream CI/CD uses pnpm 11.24.0:9
 NODE_SLOT="24" # Upstream uses 24.14.0 from .nvmrc
 NODE_ENV="development"
 RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 # https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
 # https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792810879
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792844175
 VIRTUALX_REQUIRED="manual"
 
 RUST_PV="${RUST_MIN_VER}"
@@ -143,7 +143,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip mirror" # Prevent slow down and snooping
 IUSE+="
 firejail wayland +X
-ebuild_revision_113
+ebuild_revision_114
 "
 REQUIRED_USE+="
 	|| (
@@ -157,9 +157,17 @@ RDEPEND+="
 	>=media-fonts/noto-emoji-20231130:=
 	>=media-libs/libpulse-${LIBPULSE_PV}:=
 "
+# Both pnpm/npm are strict versioning because of vulnerability history and lockfile compatibility.
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[webassembly(+)]
-	>=sys-apps/pnpm-11:9
+	|| (
+		~sys-apps/pnpm-${NODE_PNPM_12_PV}:9
+		~sys-apps/pnpm-${NODE_PNPM_11_PV}:9
+	)
+	|| (
+		~sys-apps/npm-${NODE_NPM_12_PV}:3
+		~sys-apps/npm-${NODE_NPM_11_PV}:3
+	)
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
@@ -412,7 +420,11 @@ src_unpack() {
 	#############################################################
 	# Final fixes
 	#############################################################
-	# pnpm is sloppy/inconsistent.  It is fixed but missed some spots that offends Dependabot that it is strict about.
+	#
+	# pnpm is sloppy/inconsistent.  It is fixed in pnpm-lock.yaml but missed
+	# some spots in package.json that offends Dependabot that it is strict
+	# about.
+	#
 		patch_build_files() {
 			sed -i -e "s|\"@babel/core\": \"7.29.0\"|\"@babel/core\": \"${NODE_BABEL_CORE_7_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"csv-parse\": \"6.2.1\"|\"csv-parse\": \"${NODE_CSV_PARSE_PV}\"|g" "${S}/package.json" || die
@@ -421,8 +433,10 @@ src_unpack() {
 			sed -i -e "s|\"linkify-it\": \"5.0.1\"|\"linkify-it\": \"${NODE_LINKIFY_IT_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"moment\": \"2.30.1\"|\"moment\": \"${NODE_MOMENT_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"svgo\": \"4.0.1\"|\"svgo\": \"${NODE_SVGO_4_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"storybook\": \"8.6.18\"|\"storybook\": \"${NODE_SVGO_4_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"uuid\": \"13.0.0\"|\"uuid\": \"${NODE_UUID_13_PV}\"|g" "${S}/package.json" || die
 			sed -i -e "s|\"webpack\": \"5.96.1\"|\"webpack\": \"${NODE_WEBPACK_5_PV}\"|g" "${S}/package.json" || die
+			sed -i -e "s|\"vite\": \"8.0.16\"|\"vite\": \"${NODE_VITE_8_PV}\"|g" "${S}/sticker-creator/package.json" || die
 		}
 einfo "QA:  Remove react-router@<8.3.0 from pnpm-lock.yaml"
 

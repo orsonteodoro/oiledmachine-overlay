@@ -1,5 +1,5 @@
 --- a/package.json.orig	2026-10-20 09:43:53.000000000 -0700
-+++ b/package.json	2026-10-23 23:23:53.101301757 -0700
++++ b/package.json	2026-10-24 05:27:53.587924299 -0700
 @@ -343,16 +343,16 @@
      "zod": "4.3.6"
    },
@@ -29,7 +29,7 @@
    }
  }
 --- a/pnpm-workspace.yaml.orig	2026-10-20 09:43:53.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-10-23 23:24:33.313153837 -0700
++++ b/pnpm-workspace.yaml	2026-10-24 05:32:10.775298793 -0700
 @@ -1,5 +1,5 @@
  saveExact: true
 -blockExoticSubdeps: true
@@ -98,7 +98,7 @@
  
  trustPolicy: no-downgrade
  trustPolicyExclude:
-@@ -27,33 +67,94 @@ trustPolicyExclude:
+@@ -27,33 +67,95 @@ trustPolicyExclude:
    - 'reselect@5.1.1'
    - 'rollup@3.30.0'
    - 'semver@5.7.2 || 6.3.1'
@@ -151,6 +151,7 @@
 +  'fabric': '4.6.0'
 +  'electron': '@NODE_24_ELECTRON_PV@'
 +  'electron-builder': '@ELECTRON_BUILDER_PV@'
++  'sticker-creator>vite': '@NODE_VITE_8_PV@'
 +  #'electron-builder@@ELECTRON_BUILDER_PV@>tar': '@NODE_TAR_PV@'
 +  'electron-builder-squirrel-windows': '@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@'
 +  'eslint@8.38.0>js-yaml': '@NODE_JS_YAML_4_PV@'
@@ -206,7 +207,7 @@
    'thenify-all>thenify': '3.3.1'
    electron@<39.8.10: ^39.8.10
    electron@<39.8.9: ^39.8.9
-@@ -62,7 +163,7 @@ overrides:
+@@ -62,7 +164,7 @@ overrides:
    nanoid@<3.3.17: 3.3.18
    shell-quote: ^1.12.0
    source-map-js: ^1.2.2
@@ -215,7 +216,7 @@
    csv-parse@<7.0.2: ^7.0.2
    diff@>=6.0.0 <8.0.3: ^8.0.3
    serialize-javascript@>=5.0.0 <7.0.5: ^7.0.5
-@@ -71,20 +172,20 @@ overrides:
+@@ -71,20 +173,20 @@ overrides:
  allowUnusedPatches: false
  patchedDependencies:
    # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
@@ -240,7 +241,7 @@
    'qrcode-generator': 'patches/qrcode-generator.patch'
    'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
    'zod@4.3.6': 'patches/zod@4.3.6.patch'
-@@ -95,60 +196,78 @@ allowBuilds:
+@@ -95,60 +197,78 @@ allowBuilds:
    #   ex: 'package@0.0.0': true
    '@indutny/mac-screen-share@1.0.13': true
    '@indutny/simple-windows-notifications@2.0.16': true
