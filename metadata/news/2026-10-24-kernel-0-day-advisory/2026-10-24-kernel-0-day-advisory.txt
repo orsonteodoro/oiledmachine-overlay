@@ -69,7 +69,6 @@ is ON if you are using config assist `OT_KERNEL_CONFIG_MODE="assist"` and
 Config assist with auto pkgflags allows to enable all the kernel config symbols
 automatically based on packages installed.
 
-
 Short term mitigations:
 
 The first four can be mitigated by changing the kernel .config.
@@ -102,7 +101,8 @@ the kernel.
   or
 
 (ot-sources only) use the following in your per kernel
-`/etc/portage/ot-sources/<BRANCH>/<EXTRAVERSION-FLAVOR>/<ARCH>/env` file.
+`/etc/portage/ot-sources/<BRANCH>/<EXTRAVERSION-FLAVOR>/<ARCH>/env` file
+when using OT_KERNEL_CONFIG_MODE="assist"
 
   OT_KERNEL_KCONFIG[CONFIG_SMB_SERVER]=n
   OT_KERNEL_KCONFIG[CONFIG_SMB_SERVER_SMBDIRECT]=n
@@ -110,4 +110,13 @@ the kernel.
   OT_KERNEL_KCONFIG[CONFIG_NVME_TARGET]=n
 
 This is preferred for ot-sources because this is designed as the final
-config override.
+config override.  In ot-sources with assist mode, the .config are the
+fallback default, then the config assist overwrites, then the final
+OT_KERNEL_KCONFIG settings overwrite.
+
+  or
+
+(ot-sources only) For OT_KERNEL_CONFIG_MODE="custom", you can use the .config file in
+/etc/kernels/kernel-config-<KV>-<FLAVOR-NAME>-<ARCH> or the one
+associated with OT_KERNEL_CONFIG="/etc/kernels/kernel-config-<KV>-<FLAVOR_NAME>-<ARCH>"
+in `/etc/portage/ot-sources/<KV_MAJOR_MINOR>/<FLAVOR_NAME>/<ARCH>/env`
