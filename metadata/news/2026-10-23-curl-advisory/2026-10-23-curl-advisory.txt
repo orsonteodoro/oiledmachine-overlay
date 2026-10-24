@@ -2,7 +2,7 @@ Title: cURL Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-23
-Revision: 3
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: net-misc/curl
 
@@ -63,7 +63,7 @@ net-libs/curl::oiledmachine-overlay
 Then finally:
 
 emaint sync -A
-emerge -1vO "=net-libs/curl-0.23.0::gentoo"
+emerge -1vO "=net-libs/curl-8.23.0::gentoo"
 
 After updating an option, the safest option is to restart.  Alternatively,
 you need to log out to reset the client side apps and restart your daemons or
