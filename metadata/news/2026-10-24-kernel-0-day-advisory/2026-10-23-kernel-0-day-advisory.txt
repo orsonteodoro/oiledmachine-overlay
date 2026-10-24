@@ -1,0 +1,73 @@
+Title: Kernel 0-day Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-23
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: virtual/linux-sources
+Display-If-Installed: virtual/dist-kernel
+Display-If-Installed: sys-kernel/secure-kernel
+Display-If-Installed: sys-kernel/ot-sources
+Display-If-Installed: net-misc/connman
+
+Note this report uses AI.
+
+There was a recent of disclosure of 6 kernel vulnerabilities marked
+with the ZDI prefix on the Linux Kernel Mailing List (LKML)
+breaking the industry responsible disclosure guidelines.
+
+ZDI-CAN-34068 received pushback from a kernel maintainer.
+
+At this time, virtually all kernels are unpatched.
+
+For remediation, some of it has already been done.  For custom configs,
+you may need to remediate manually.
+
+For the ot-kernel home users are mostly not affected only datacenters,
+enterprises, virtual machine users, NVME users, ConnMan users.
+
+
+Vulnerability analysis with estimated severity:
+
+ZDI-CAN-33774 - RCE, RC - Critical
+ZDI-CAN-33549 - RCE, IU - Critical
+ZDI-CAN-33367 - LPE, OOB, LF, PCW/PCC - High
+ZDI-CAN-34068 - LPE, OOBW - High
+ZDI-CAN-34076 - URES, ID - Medium
+ZDI-CAN-32005 - LPE, SO - High
+
+IU - Integer Underflow
+LF - Logic Flaw
+LPE - Local Privilege Escalation
+OOB - Out of Bounds
+OOBW - Out of Bounds Write
+PCW - Page Cache Write Vulnerability (e.g. Dirty Pipe, Copy Fail)
+PCC - Page Cache Corruption Vulnerability [synonym for PCW]
+RC - Race Condition
+RCE - Remote Code Execution
+SO - Stack Overflow
+URES - Use of Uninitalized Resource
+
+
+sys-kernel/ot-kernel defaults
+
+CONFIG_SMB_SERVER - Default OFF
+CONFIG_SMB_DIRECT - Default OFF
+
+
+Mitigations:
+
+| Vulnerability ID | Mitigation                | How much mitigation with this change? | Subsystem/Device                                  |
+|------------------|---------------------------|---------------------------------------|---------------------------------------------------|
+| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n       | Full                                  | KSMBD (In kernel SMB file server)                 |
+| ZDI-CAN-33549    | CONFIG_KSMBD_SMB_DIRECT=n | Full                                  | RDMA/SMB Direct transport framework               |
+| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n       | Full                                  | VMware Graphics Driver (vmwgfx)                   |
+| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n      | Full                                  | NVMe Target Core (nvmet)                          |
+| ZDI-CAN-33367    | [1]                       | Partial                               | Network skbuff Core (skb_zerocopy)                |
+| ZDI-CAN-32005    | DNS Proxying OFF          | Partial                               | Networking Stack, not kernel but with ConnMan v2  |
+
+Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0` for systems that run untrusted code locally.
+
+Document all changes so they can be reverted back after each has been fixed.
+
+=n means it is unset, comment out, or remove in the .config file.
