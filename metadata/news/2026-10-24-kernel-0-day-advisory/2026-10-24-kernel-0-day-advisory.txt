@@ -57,6 +57,8 @@ CONFIG_SMB_DIRECT - Default OFF
 
 Mitigations:
 
+The first four can be mitigated by changing the kernel .config.
+
 | Vulnerability ID | Mitigation                | How much mitigation with this change? | Subsystem/Device                                  |
 |------------------|---------------------------|---------------------------------------|---------------------------------------------------|
 | ZDI-CAN-33774    | CONFIG_SMB_SERVER=n       | Full                                  | KSMBD (In kernel SMB file server)                 |
