@@ -2,13 +2,15 @@ Title: Kernel 0-day Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-24
-Revision: 2
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: virtual/linux-sources
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: sys-kernel/secure-kernel
 Display-If-Installed: sys-kernel/ot-sources
 Display-If-Installed: net-misc/connman
+Display-If-Installed: app-emulation/open-vm-tools
+Display-If-Installed: app-emulation/virtualbox
 
 Note this report uses AI.
 
@@ -52,24 +54,50 @@ URES - Use of Uninitalized Resource
 sys-kernel/ot-kernel defaults:
 
 CONFIG_SMB_SERVER - Default OFF
-CONFIG_SMB_DIRECT - Default OFF
+CONFIG_SMB_SERVER_SMBDIRECT - Default OFF
+CONFIG_DRM_VMWGFX - OFF if open-vm-tools or virtualbox is not installed otherwise ON
 
 
 Short term mitigations:
 
 The first four can be mitigated by changing the kernel .config.
 
-| Vulnerability ID | Mitigation                | How much mitigation with this change? | Subsystem/Device                                  |
-|------------------|---------------------------|---------------------------------------|---------------------------------------------------|
-| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n       | Full                                  | KSMBD (In kernel SMB file server)                 |
-| ZDI-CAN-33549    | CONFIG_KSMBD_SMB_DIRECT=n | Full                                  | RDMA/SMB Direct transport framework               |
-| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n       | Full                                  | VMware Graphics Driver (vmwgfx)                   |
-| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n      | Full                                  | NVMe Target Core (nvmet)                          |
-| ZDI-CAN-33367    | [1]                       | Partial                               | Network skbuff Core (skb_zerocopy)                |
-| ZDI-CAN-32005    | DNS Proxying OFF          | Partial                               | Networking Stack, not kernel but with ConnMan v2  |
+| Vulnerability ID | Mitigation                    | How much mitigation with this change? | Subsystem/Device                                  |
+|------------------|-------------------------------|---------------------------------------|---------------------------------------------------|
+| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n           | Full                                  | KSMBD (In kernel SMB file server)                 |
+| ZDI-CAN-33549    | CONFIG_SMB_SERVER_SMBDIRECT=n | Full                                  | RDMA/SMB Direct transport framework               |
+| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n           | Full                                  | VMware Graphics Driver (vmwgfx)                   |
+| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n          | Full                                  | NVMe Target Core (nvmet)                          |
+| ZDI-CAN-33367    | [1]                           | Partial                               | Network skbuff Core (skb_zerocopy)                |
+| ZDI-CAN-32005    | DNS Proxying OFF              | Partial                               | Networking Stack, not kernel but with ConnMan v2  |
 
 [1] Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0` for systems that run untrusted code locally.
 
 Document all changes so they can be reverted back after each has been fixed.
 
 =n means it is unset, comment out, or remove in the .config file.
+
+For ot-kernel or any kernel flavor, you can either modify the kernel config
+in for example `/etc/kernels/kernel-config-<arch>-<version>-gentoo` for
+newer kernel packages.
+
+  or
+
+in `/usr/src/linux/.config` per file directly in the old school way of building
+the kernel.
+
+  or
+
+(ot-sources only) use the following in your per kernel
+`/etc/portage/ot-sources/<BRANCH>/<EXTRAVERSION-FLAVOR>/<ARCH>/env` file.
+
+  OT_KERNEL_KCONFIG[CONFIG_SMB_SERVER]=n
+  OT_KERNEL_KCONFIG[CONFIG_SMB_SERVER_SMBDIRECT]=n
+  OT_KERNEL_KCONFIG[CONFIG_DRM_VMWGFX]=n
+  OT_KERNEL_KCONFIG[CONFIG_NVME_TARGET]=n
+
+  or
+
+(ot-sources only) for example set OT_KERNEL_CONFIG="/etc/kernels/kernel-config-7.3-hardened-x86_64" in
+`/etc/portage/ot-sources/<BRANCH>/<EXTRAVERSION-FLAVOR>/<ARCH>/env` file.
+and then modify `/etc/kernels/kernel-config-7.3-hardened-x86_64`.
