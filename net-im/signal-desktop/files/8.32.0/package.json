@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "8.30.0",
+  "version": "8.32.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -121,9 +121,9 @@
   "dependencies": {
     "@indutny/mac-screen-share": "1.2.5",
     "@indutny/simple-windows-notifications": "2.0.21",
-    "@signalapp/libsignal-client": "0.103.0",
+    "@signalapp/libsignal-client": "0.105.0",
     "@signalapp/mute-state-change": "workspace:*",
-    "@signalapp/ringrtc": "2.72.0",
+    "@signalapp/ringrtc": "2.72.1",
     "@signalapp/sqlcipher": "4.1.0",
     "@signalapp/types": "workspace:*",
     "@signalapp/windows-ucv": "workspace:*",
@@ -240,7 +240,7 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "44.7.2",
+    "electron": "45.0.0",
     "electron-builder": "26.15.7",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
@@ -270,6 +270,7 @@
     "lodash": "4.18.1",
     "log-symbols": "7.0.1",
     "lru-cache": "11.2.7",
+    "mediabunny": "1.61.3",
     "memoizee": "0.4.17",
     "micromatch": "4.0.8",
     "mocha": "11.7.5",
@@ -305,14 +306,14 @@
     "react-dom": "19.3.0",
     "react-intl": "10.1.0",
     "react-popper": "2.3.0",
-    "react-redux": "9.2.0",
+    "react-redux": "9.3.0",
     "react-virtualized": "9.22.6",
     "read-last-lines": "1.8.0",
     "redux": "5.0.1",
-    "redux-logger": "3.0.6",
+    "redux-logger": "4.0.0",
     "redux-promise-middleware": "6.2.0",
     "redux-thunk": "3.1.0",
-    "reselect": "5.1.1",
+    "reselect": "5.3.0",
     "rolldown": "1.0.1",
     "sass": "1.99.0",
     "sass-loader": "16.0.8",
@@ -343,12 +344,12 @@
     "zod": "4.3.6"
   },
   "engines": {
-    "node": "24.21.0"
+    "node": "24.22.1"
   },
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "24.21.0"
+      "version": "24.22.1"
     },
     "packageManager": {
       "name": "pnpm",
@@ -638,6 +639,6 @@
     ]
   },
   "volta": {
-    "node": "24.21.0"
+    "node": "24.22.1"
   }
 }

@@ -1,0 +1,338 @@
+--- a/package.json.orig	2026-10-20 09:43:53.000000000 -0700
++++ b/package.json	2026-10-23 23:23:53.101301757 -0700
+@@ -343,16 +343,16 @@
+     "zod": "4.3.6"
+   },
+   "engines": {
+-    "node": "24.22.0"
++    "node": "@NODE_PV@"
+   },
+   "devEngines": {
+     "runtime": {
+       "name": "node",
+-      "version": "24.22.0"
++      "version": "@NODE_PV@"
+     },
+     "packageManager": {
+       "name": "pnpm",
+-      "version": "11.24.0"
++      "version": "@PNPM_PV@"
+     }
+   },
+   "build": {
+@@ -639,6 +639,6 @@
+     ]
+   },
+   "volta": {
+-    "node": "24.22.0"
++    "node": "@NODE_PV@"
+   }
+ }
+--- a/pnpm-workspace.yaml.orig	2026-10-20 09:43:53.000000000 -0700
++++ b/pnpm-workspace.yaml	2026-10-23 23:24:33.313153837 -0700
+@@ -1,5 +1,5 @@
+ saveExact: true
+-blockExoticSubdeps: true
++blockExoticSubdeps: false # Needed for older electron-builder to avoid [ERR_PNPM_EXOTIC_SUBDEP] Exotic dependency "@electron/node-gyp" (resolved via git-repository) is not allowed in subdependencies when blockExoticSubdeps is enabled
+ lockfileIncludeTarballUrl: true
+ verifyDepsBeforeRun: prompt
+ verifyStoreIntegrity: true
+@@ -8,15 +8,55 @@ packages:
+   - 'packages/*'
+   - 'sticker-creator'
+ 
+-publicHoistPattern:
+-  - '*eslint-*'
++#publicHoistPattern:
++#  - '*eslint-*'
+ 
+-minimumReleaseAge: 4320
+-minimumReleaseAgeIgnoreMissingTime: false
+-minimumReleaseAgeStrict: true
++#minimumReleaseAge: 4320
++#minimumReleaseAgeIgnoreMissingTime: false
++#minimumReleaseAgeStrict: true
+ minimumReleaseAgeExclude:
++  # Upstream rules
+   - '@signalapp/*'
+   - 'electron'
++  - 'node-abi@@NODE_NODE_ABI_4_PV@'
++  # oiledmachine-overlay rules
++  - '@babel/core@@NODE_BABEL_CORE_7_PV@'
++  - '@babel/runtime@@NODE_BABEL_RUNTIME_7_PV@'
++  - '@indutny/protopiler@4.0.2'
++  - '@remix-run/router@@NODE_AT_REMIX_RUN_ROUTER_PV@'
++  - '@signalapp/libsignal-client'
++  - '@signalapp/*'
++  - 'dmg-builder@@NODE_DMG_BUILDER_PV@'
++  - '@storybook/core@@NODE_STORYBOOK_8_PV@'
++  - '@storybook/theming@@NODE_STORYBOOK_8_PV@'
++  - '@xmldom/xmldom@@NODE_AT_XMLDOM_XMLDOM_PV@'
++  - 'ajv@@NODE_AJV_PV@'
++  - 'csv-parse@@NODE_CSV_PARSE_PV@'
++  - 'tar@@NODE_TAR_PV@'
++  - 'electron@@NODE_24_ELECTRON_PV@'
++  - 'electron-builder@@ELECTRON_BUILDER_PV@'
++  - 'esbuild@@NODE_ESBUILD_PV@'
++  - 'flatted@@NODE_FLATTED_PV@'
++  - 'immutable@@NODE_IMMUTABLE_4_PV@'
++  - 'js-yaml@@NODE_JS_YAML_4_PV@'
++  - 'jws@@NODE_JWS_3_PV@'
++  - 'linkify-it@@NODE_LINKIFY_IT_5_PV@'
++  - 'moment@@NODE_MOMENT_PV@'
++  - 'picomatch@@NODE_PICOMATCH_2_PV@'
++  - 'postcss@@NODE_POSTCSS_PV@'
++  - 'react@@NODE_REACT_19_PV@'
++  - 'react-dom@@NODE_REACT_DOM_19_PV@'
++  - 'react-router@@NODE_REACT_ROUTER_8_PV@'
++  - 'rollup@@NODE_ROLLUP_3_PV@'
++  - 'qs@@NODE_QS_PV@'
++  - 'sax@@NODE_SAX_PV@'
++  - 'shell-quote@@NODE_SHELL_QUOTE_PV@'
++  - 'serialize-javascript@@NODE_SERIALIZE_JAVASCRIPT_PV@'
++  - 'storybook@@NODE_STORYBOOK_8_PV@'
++  - 'svgo@@NODE_SVGO_4_PV@'
++  - 'uuid@@NODE_UUID_13_PV@'
++  - 'vite@@NODE_VITE_8_PV@'
++  - 'webpack@@NODE_WEBPACK_5_PV@'
+ 
+ trustPolicy: no-downgrade
+ trustPolicyExclude:
+@@ -27,33 +67,94 @@ trustPolicyExclude:
+   - 'reselect@5.1.1'
+   - 'rollup@3.30.0'
+   - 'semver@5.7.2 || 6.3.1'
++  - 'storybook@@NODE_STORYBOOK_8_PV@'
+   - 'undici-types@6.21.0'
+   - 'vite@4.5.14'
+   - 'webpack-dev-middleware@7.4.6'
+ 
+-auditConfig:
+-  ignoreGhsas:
+-    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
+-    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
+-    - GHSA-vfj7-8cjw-p6xm # stylelint > fast-glob > micromatch > braces
+-    - GHSA-w22m-hvvm-xmwx # fabric
+-    - GHSA-hp3w-g68c-fv3c # @storybook/test-runner > ... > sprintf-js
++#auditConfig:
++#  ignoreGhsas:
++#    - GHSA-hfvx-25r5-qc3w # fabric (toSVG)
++#    - GHSA-7g7r-gx96-252g # electron-builder > app-builder-lib
++#    - GHSA-vfj7-8cjw-p6xm # stylelint > fast-glob > micromatch > braces
++#    - GHSA-w22m-hvvm-xmwx # fabric
++#    - GHSA-hp3w-g68c-fv3c # @storybook/test-runner > ... > sprintf-js
+ 
++# Bans or rollbacks
+ overrides:
++  # Security fixes
++  '@babel/core': '@NODE_BABEL_CORE_7_PV@'
++  '@reduxjs/toolkit@1.9.5>@babel/runtime': '@NODE_BABEL_RUNTIME_7_PV@'
++  '@signalapp/ringrtc@2.69.7>tar': '@NODE_TAR_PV@'
++  '@storybook/test-runner@0.22.0>js-yaml': '@NODE_JS_YAML_4_PV@'
++  '@typescript-eslint/eslint-plugin@5.59.0>js-yaml': '@NODE_JS_YAML_4_PV@'
++  '@typescript-eslint/eslint-plugin@5.59.0>picomatch': '@NODE_PICOMATCH_2_PV@'
++  '@typescript-eslint/parser@5.59.0>js-yaml': '@NODE_JS_YAML_4_PV@'
++  '@typescript-eslint/parser@5.59.0>picomatch': '@NODE_PICOMATCH_2_PV@'
++  '@vitejs/plugin-react@3.1.0>@babel/core': '@NODE_BABEL_CORE_7_PV@'
++  '@vitejs/plugin-react@3.1.0>esbuild': '@NODE_ESBUILD_PV@'
++  '@vitejs/plugin-react@3.1.0>immutable': '@NODE_IMMUTABLE_4_PV@'
++  '@vitejs/plugin-react@3.1.0>picomatch': '@NODE_PICOMATCH_2_PV@'
++  '@vitejs/plugin-react@3.1.0>postcss': '@NODE_POSTCSS_PV@'
++  '@vitejs/plugin-react@3.1.0>rollup': '@NODE_ROLLUP_3_PV@'
++  '@vitejs/plugin-react@3.1.0>vite': '@NODE_VITE_8_PV@'
++  'app-builder-lib': '@NODE_APP_BUILDER_LIB_PV@'
++  'app-builder-lib@26.11.1>electron-builder-squirrel-windows': '@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@'
++  'csv-parse': '@NODE_CSV_PARSE_PV@'
++  'danger@13.0.10>js-yaml': '@NODE_JS_YAML_4_PV@'
++  'danger@13.0.10>jws': '@NODE_JWS_3_PV@'
++  'danger@13.0.10>qs': '@NODE_QS_PV@'
++  'danger@13.0.10>undici': '@NODE_UNDICI_6_PV@'
++  'dmg-builder': '@NODE_DMG_BUILDER_PV@'
++  'fabric': '4.6.0'
++  'electron': '@NODE_24_ELECTRON_PV@'
++  'electron-builder': '@ELECTRON_BUILDER_PV@'
++  #'electron-builder@@ELECTRON_BUILDER_PV@>tar': '@NODE_TAR_PV@'
++  'electron-builder-squirrel-windows': '@NODE_ELECTRON_BUILDER_SQUIRREL_WINDOWS_PV@'
++  'eslint@8.38.0>js-yaml': '@NODE_JS_YAML_4_PV@'
++  'eslint-config-airbnb-typescript-prettier@5.0.0>js-yaml': '@NODE_JS_YAML_4_PV@'
++  'eslint-config-airbnb-typescript-prettier@5.0.0>picomatch': '@NODE_PICOMATCH_2_PV@'
++  'eslint-plugin-react@7.32.2>js-yaml': '@NODE_JS_YAML_4_PV@'
++  'js-yaml': '@NODE_JS_YAML_4_PV@'
++  'linkify-it': '@NODE_LINKIFY_IT_5_PV@'
++  'moment': '@NODE_MOMENT_PV@'
++  'npm-run-all2@8.0.4>shell-quote': '@NODE_SHELL_QUOTE_PV@'
++  'react': '@NODE_REACT_19_PV@'
++  'react-dom': '@NODE_REACT_DOM_19_PV@'
++  'react-popper@2.3.0>react': '@NODE_REACT_19_PV@'
++  'react-popper@2.3.0>react-dom': '@NODE_REACT_DOM_19_PV@'
++  'react-redux@8.0.5>@babel/runtime': '@NODE_BABEL_RUNTIME_7_PV@'
++  'react-router': '@NODE_REACT_ROUTER_8_PV@'
++  'react-router-dom@6.10.0>@remix-run/router': '@NODE_AT_REMIX_RUN_ROUTER_PV@'
++  'react-router@8.4.0>react': '@NODE_REACT_19_PV@'
++  'react-router@8.4.0>react-dom': '@NODE_REACT_DOM_19_PV@'
++  'redux@4.2.1>@babel/runtime': '@NODE_BABEL_RUNTIME_7_PV@'
++  'rollup-plugin-visualizer@5.9.0>rollup': '@NODE_ROLLUP_3_PV@'
++  'rollup-plugin-visualizer@5.9.0>picomatch': '@NODE_PICOMATCH_2_PV@'
++  'sass@1.62.0>immutable': '@NODE_IMMUTABLE_4_PV@'
++  'sass@1.62.0>picomatch': '@NODE_PICOMATCH_2_PV@'
++  'storybook': '@NODE_STORYBOOK_8_PV@'
++  'uuid@>=13.0.0 <@NODE_UUID_13_PV@': '@NODE_UUID_13_PV@'
++  'vite@4.5.3>esbuild': '@NODE_ESBUILD_PV@'
++  'vite@4.5.3>immutable': '@NODE_IMMUTABLE_4_PV@'
++  'vite@4.5.3>picomatch': '@NODE_PICOMATCH_2_PV@'
++  'vite@4.5.3>postcss': '@NODE_POSTCSS_PV@'
++  'vite@4.5.3>rollup': '@NODE_ROLLUP_3_PV@'
++  'webpack': '@NODE_WEBPACK_5_PV@'
++  # Deny or reject rules
++  'canvas': '-' # Required by jsdom, but both canvas and jsdom are not needed for our use case
++  'electron@39.8.1': '-' # Allow only monoslot
++  'jsdom': '-' # References canvas package
++  # Upstream pins
+   '@electron/rebuild>node-gyp': '12.4.0'
+-  '@electron/rebuild>node-abi': '4.34.0'
++  '@electron/rebuild>node-abi': '@NODE_NODE_ABI_4_PV@'
+   '@xmldom/xmldom@0.8': '^0.8.15'
+   'axios@1': '^1.20.0'
+   'brace-expansion@5': '^5.0.11'
+   'brace-expansion@2': '^2.1.6'
+   'brace-expansion@1': '^1.1.20'
+   'builder-util-runtime': '9.7.0'
+-  'canvas': '-'
+-  'danger@13.0.10>undici@<6.28.1': '^6.28.1'
+   'js-yaml@3': '^3.15.2'
+-  'jsdom': '-'
+-  'react-popper@2.3.0>react-dom': '19.2.4'
+-  'react-popper@2.3.0>react': '19.2.4'
+   'thenify-all>thenify': '3.3.1'
+   electron@<39.8.10: ^39.8.10
+   electron@<39.8.9: ^39.8.9
+@@ -62,7 +163,7 @@ overrides:
+   nanoid@<3.3.17: 3.3.18
+   shell-quote: ^1.12.0
+   source-map-js: ^1.2.2
+-  webpack-dev-middleware@<7.4.5: ^7.4.5
++  webpack-dev-middleware@<7.4.6: ^7.4.6
+   csv-parse@<7.0.2: ^7.0.2
+   diff@>=6.0.0 <8.0.3: ^8.0.3
+   serialize-javascript@>=5.0.0 <7.0.5: ^7.0.5
+@@ -71,20 +172,20 @@ overrides:
+ allowUnusedPatches: false
+ patchedDependencies:
+   # Note: Prefer adding without version so that pnpm attempts to re-apply the patch after an upgrade
+-  '@electron/universal': 'patches/@electron__universal.patch'
++  #'@electron/universal': 'patches/@electron__universal.patch'
+   '@napi-rs/canvas@0.1.61': 'patches/@napi-rs__canvas@0.1.61.patch'
+   '@types/chai': 'patches/@types__chai.patch'
+   '@types/fabric@4.5.3': 'patches/@types+fabric+4.5.3.patch'
+   '@vitest/expect@2.0.5': 'patches/@vitest+expect+2.0.5.patch'
+-  'app-builder-lib': 'patches/app-builder-lib.patch'
++  #'app-builder-lib': 'patches/app-builder-lib.patch'
+   'casual@1.6.2': 'patches/casual+1.6.2.patch'
+-  'dmg-builder': 'patches/dmg-builder.patch'
++  #'dmg-builder': 'patches/dmg-builder.patch'
+   'fabric@4.6.0': 'patches/fabric+4.6.0.patch'
+   'fs-extra@11.3.4': 'patches/fs-extra+11.3.4.patch'
+   'fs-xattr': 'patches/fs-xattr.patch'
+   'growing-file@0.1.3': 'patches/growing-file+0.1.3.patch'
+   'node-fetch@3.3.2': 'patches/node-fetch@3.3.2.patch'
+-  'playwright-core': 'patches/playwright-core.patch'
++  #'playwright-core': 'patches/playwright-core.patch'
+   'qrcode-generator': 'patches/qrcode-generator.patch'
+   'react-popper@2.3.0': 'patches/react-popper@2.3.0.patch'
+   'zod@4.3.6': 'patches/zod@4.3.6.patch'
+@@ -95,60 +196,78 @@ allowBuilds:
+   #   ex: 'package@0.0.0': true
+   '@indutny/mac-screen-share@1.0.13': true
+   '@indutny/simple-windows-notifications@2.0.16': true
+-  '@parcel/watcher@2.5.6': true
++  '@parcel/watcher@2.6.0': true
+   '@signalapp/libsignal-client@0.100.0': true # duplicate for @signalapp/mock-server
+   '@signalapp/libsignal-client@0.105.0': true
+   '@signalapp/ringrtc@2.72.1': true
+   '@signalapp/sqlcipher@4.1.0': true
+   '@signalapp/windows-ucv@1.0.1': true
+-  '@swc/core@1.10.16': true
++  '@swc/core@@NODE_AT_SWC_CORE_PV@': true
+   '@tailwindcss/oxide@4.3.0': true
++  'electron@@NODE_24_ELECTRON_PV@': true
+   'fs-xattr@0.4.0': true
+ 
+   # Disabled Builds: Use wildcard version
+   #   ex: 'package': false
+   'bufferutil': false
++  'canvas@2.11.2': false # For generating lockfile
+   'core-js': false
++  'electron@23.3.13': false # duplicate package
++  'electron@39.8.10': false # duplicate package through react-devtools
++  'electron@41.10.7': false
++  'electron@44.4.5': false
+   'electron-winstaller': false
+   'es5-ext': false
+   'esbuild': false
+   'utf-8-validate': false
+-  'electron@23.3.13': false # duplicate package
+ 
+ dedupePeers: true
+ dedupePeerDependents: true
+-strictPeerDependencies: true
++strictPeerDependencies: false # Allow dependencies @emnapi/core@2.0.0-alpha.3, @emnapi/runtime@2.0.0-alpha.3 for @napi-rs/wasm-runtime@1.2.0
+ peerDependencyRules:
+   allowedVersions:
+-    '@storybook/instrumenter@8.6.14>storybook': '8.4.4'
+-    '@storybook/instrumenter@8.6.15>storybook': '8.4.4'
+-    '@storybook/test@8.6.15>storybook': '8.4.4'
+-    '@storybook/test@8.6.14>storybook': '8.4.4'
+-    '@storybook/addon-interactions@8.6.14>storybook': '8.4.4'
++    '@storybook/instrumenter@8.6.14>storybook': '@NODE_STORYBOOK_8_PV@'
++    '@storybook/instrumenter@8.6.15>storybook': '@NODE_STORYBOOK_8_PV@'
++    '@storybook/test@8.6.15>storybook': '@NODE_STORYBOOK_8_PV@'
++    '@storybook/test@8.6.14>storybook': '@NODE_STORYBOOK_8_PV@'
++    '@storybook/addon-interactions@8.6.14>storybook': '@NODE_STORYBOOK_8_PV@'
+     '@formatjs/intl@4.1.4>typescript': '6.0.2'
+     'react-intl@10.1.0>typescript': '6.0.2'
+     '@storybook/react@8.4.4>@storybook/test': '8.6.15'
+     'stylelint-use-logical-spec@5.0.1>stylelint': '17.11.1'
+-    'react-popper@2.3.0>react': '19.3.0'
+-    'react-popper@2.3.0>react-dom': '19.3.0'
++    'react-popper@2.3.0>react': '@NODE_REACT_19_PV@'
++    'react-popper@2.3.0>react-dom': '@NODE_REACT_DOM_19_PV@'
+ 
+ allowedDeprecatedVersions:
+   '@humanwhocodes/config-array': '0.11.14'
+   '@humanwhocodes/object-schema': '2.0.3'
++  '@npmcli/move-file': '2.0.1'
++  'abab': '2.0.6'
++  'are-we-there-yet': '2.0.0'
+   'boolean': '3.2.0'
+-  'deep-diff': '0.3.8'
+   'eslint': '8.38.0'
+   'expect-playwright': '0.8.0'
+-  'glob': '10.5.0 || 7.2.3'
++  'form-data': '2.5.4'
++  'deep-diff': '0.3.8'
++  'domexception': '1.0.1'
++  'gauge': '3.0.2'
++  'glob': '7.2.3 || 8.1.0 || 10.5.0'
++  'har-validator': '5.1.5'
++  'has-own': '1.0.1'
+   'inflight': '1.0.6'
+   'jest-playwright-preset': '4.0.0'
+   'jest-process-manager': '0.4.0'
+   'lodash.isequal': '4.5.0'
+   'node-domexception': '1.0.0'
+-  'rimraf': '2.6.3 || 3.0.2'
+-  'uuid': '8.3.2 || 9.0.1'
+-  'whatwg-encoding': '2.0.0'
+-  'yaeti': '0.0.6'
++  'npmlog': '5.0.1'
++  'request': '2.88.2'
++  'request-promise-native': '1.0.9'
++  'rimraf': '3.0.2 || 2.6.3'
++#  'tar': '6.2.1'
++  'uuid': '3.4.0 || 8.3.2 || 9.0.1'
++  'w3c-hr-time': '1.0.2'
++  'whatwg-encoding': '1.0.5 || 2.0.0'
++#  'yaeti': '0.0.6'
+   '@yuku-parser/binding-win32-x64': '0.8.7'
+   '@yuku-parser/binding-darwin-x64': '0.8.7'
+   '@yuku-parser/binding-freebsd-x64': '0.8.7'

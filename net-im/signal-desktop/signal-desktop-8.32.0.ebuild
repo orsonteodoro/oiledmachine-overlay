@@ -35,7 +35,7 @@ EAPI=8
 
 # To update use:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.30.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-8.32.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -64,6 +64,7 @@ RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 # https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
 # https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792810879
 VIRTUALX_REQUIRED="manual"
 
 RUST_PV="${RUST_MIN_VER}"
@@ -74,7 +75,6 @@ PNPM_INSTALL_ARGS=(
 
 inherit secure-version secure-version-node
 
-AT_TYPES_NODE_PV="24.12.0"
 ELECTRON_BUILDER_PV="26.15.7" # 26.11.1 no longer works
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
@@ -82,7 +82,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	ELECTRON_APP_ELECTRON_PV="${NODE_24_ELECTRON_PV}"
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="44.4.5" # Chromium 152.0.7977.130, Node 24.21.0
+	ELECTRON_APP_ELECTRON_PV="44.9.1" # Chromium 152.0.7977.167, Node 24.22.0
 fi
 
 NPM_INSTALL_ARGS=(
@@ -130,13 +130,12 @@ LICENSE="
 	AGPL-3
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-	# The Electron 44.4.1 license file fingerprint is the same as 44.6.0.
 	LICENSE+="
-		electron-44.4.1-chromium.html
+		electron-45.0.0-chromium.html
 	"
 else
 	LICENSE+="
-		electron-44.4.5-chromium.html
+		electron-44.9.1-chromium.html
 	"
 fi
 SLOT="0"
@@ -203,6 +202,7 @@ get_deps() {
 }
 
 pkg_setup() {
+	secure-version-node_check_update
 	pnpm_pkg_setup
 	npm_pkg_setup
 	rust_pkg_setup
@@ -252,6 +252,9 @@ einfo "DEBUG:  Deleting non-existing extract-zip version suggested by pnpm audit
 einfo "DEBUG:  Deleting newer app-builder-lib version suggested by pnpm audit --fix"
 		sed -i -e "\|26.15.0|d" "${S}/pnpm-workspace.yaml" || die
 
+einfo "DEBUG:  Deleting newer zod version suggested by pnpm audit --fix"
+		sed -i -e "\|zod@<4.6.6|d" "${S}/pnpm-workspace.yaml" || die
+
 	# Only webpack-dev-middleware 6.x is allowed for @storybook/builder-webpack5
 #einfo "DEBUG:  Deleting newer webpack-dev-middleware version suggested by pnpm audit --fix"
 #		sed -i -e "\|webpack-dev-middleware|d" "${S}/pnpm-workspace.yaml" || die
@@ -269,7 +272,7 @@ _apply_patches() {
 		[[ -z "${PNPM_PV}" ]] && die "QA:  PNPM_PV is undefined"
 einfo "NODE_PV:  ${NODE_PV}"
 einfo "PNPM_PV:  ${PNPM_PV}"
-		eapply "${FILESDIR}/${PN}-8.30.0-project-files-changes.patch"
+		eapply "${FILESDIR}/${PN}-8.32.0-project-files-changes.patch"
 
 		sed -i -e "s|@NODE_PV@|${NODE_PV}|g" "${S}/package.json" || die
 		sed -i -e "s|@PNPM_PV@|${PNPM_PV}|g" "${S}/package.json" || die
@@ -280,6 +283,7 @@ einfo "PNPM_PV:  ${PNPM_PV}"
 		sed -i -e "s|@NODE_24_ELECTRON_PV@|${NODE_24_ELECTRON_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_AT_REMIX_RUN_ROUTER_PV@|${NODE_AT_REMIX_RUN_ROUTER_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_AT_SWC_CORE_PV@|${NODE_AT_SWC_CORE_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_AT_XMLDOM_XMLDOM_PV@|${NODE_AT_XMLDOM_XMLDOM_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_BABEL_CORE_7_PV@|${NODE_BABEL_CORE_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_BABEL_RUNTIME_7_PV@|${NODE_BABEL_RUNTIME_7_PV}|g" "${S}/pnpm-workspace.yaml" || die
@@ -291,6 +295,7 @@ einfo "PNPM_PV:  ${PNPM_PV}"
 		sed -i -e "s|@NODE_JWS_3_PV@|${NODE_JWS_3_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_LINKIFY_IT_5_PV@|${NODE_LINKIFY_IT_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_MOMENT_PV@|${NODE_MOMENT_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_NODE_ABI_4_PV@|${NODE_NODE_ABI_4_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_PICOMATCH_2_PV@|${NODE_PICOMATCH_2_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_POSTCSS_PV@|${NODE_POSTCSS_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_REACT_ROUTER_8_PV@|${NODE_REACT_ROUTER_8_PV}|g" "${S}/pnpm-workspace.yaml" || die
@@ -304,7 +309,7 @@ einfo "PNPM_PV:  ${PNPM_PV}"
 		sed -i -e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_UNDICI_6_PV@|${NODE_UNDICI_6_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_UUID_13_PV@|${NODE_UUID_13_PV}|g" "${S}/pnpm-workspace.yaml" || die
-		sed -i -e "s|@NODE_VITE_6_PV@|${NODE_VITE_6_PV}|g" "${S}/pnpm-workspace.yaml" || die
+		sed -i -e "s|@NODE_VITE_8_PV@|${NODE_VITE_8_PV}|g" "${S}/pnpm-workspace.yaml" || die
 		sed -i -e "s|@NODE_WEBPACK_5_PV@|${NODE_WEBPACK_5_PV}|g" "${S}/pnpm-workspace.yaml" || die
 
 	# Prevent:
