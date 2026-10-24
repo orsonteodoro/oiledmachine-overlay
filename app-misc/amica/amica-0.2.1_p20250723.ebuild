@@ -33,6 +33,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 RUST_MAX_VER="1.93.1"
 RUST_MIN_VER="1.93.1" # LLVM 21.1
 RUST_PV="${RUST_MIN_VER}"
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792852047
 
 AT_TYPES_NODE_PV="22.7.4"
 NODE_SHARP_PV="0.35.3"
@@ -734,6 +735,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 pkg_setup() {
+	secure-version-node_check_update
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
 	python-single-r1_pkg_setup
