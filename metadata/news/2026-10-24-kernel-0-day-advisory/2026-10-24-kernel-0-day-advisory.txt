@@ -73,14 +73,14 @@ Short term mitigations:
 
 The first four can be mitigated by changing the kernel .config.
 
-| Vulnerability ID | Mitigation                    | How much mitigation with this change? | Subsystem/Device                                  | Stakeholders affected                                  |
-|------------------|-------------------------------|---------------------------------------|---------------------------------------------------|--------------------------------------------------------|
-| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n           | Full                                  | KSMBD (In kernel SMB file server)                 | Enterprise admins, server operators                    |
-| ZDI-CAN-33549    | CONFIG_SMB_SERVER_SMBDIRECT=n | Full                                  | RDMA/SMB Direct transport framework               | Enterprise admins, network architects, cloud providers | 
-| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n           | Full                                  | VMware Graphics Driver (vmwgfx)                   | VM admins, DevOps, cloud consumers                     |
-| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n          | Full                                  | NVMe Target Core (nvmet)                          | Data center & storage admin                            |
-| ZDI-CAN-33367    | [3]                           | Partial                               | Network skbuff Core (skb_zerocopy)                | Shared hosting, multi tenant cloud, kernel devs        |
-| ZDI-CAN-32005    | DNS Proxying OFF              | Partial                               | Networking Stack, not kernel but with ConnMan v2  | Embedded/IoT, handheld linux gamers                    |
+| Vulnerability ID | Mitigation                    | How much mitigation with this change? | Subsystem/Device                                  | Stakeholders affected                                                        |
+|------------------|-------------------------------|---------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------|
+| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n           | Full                                  | KSMBD (In kernel SMB file server)                 | Enterprise admins, server operators, R&D, academics, embedded/IoT developers |
+| ZDI-CAN-33549    | CONFIG_SMB_SERVER_SMBDIRECT=n | Full                                  | RDMA/SMB Direct transport framework               | Enterprise admins, network architects, cloud providers, HPC                  | 
+| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n           | Full                                  | VMware Graphics Driver (vmwgfx)                   | VM admins, DevOps, cloud consumers                                           |
+| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n          | Full                                  | NVMe Target Core (nvmet)                          | Data center & storage admin/providers                                        |
+| ZDI-CAN-33367    | [3]                           | Partial                               | Network skbuff Core (skb_zerocopy)                | Shared hosting, multi tenant environments, kernel devs                       |
+| ZDI-CAN-32005    | DNS Proxying OFF              | Partial                               | Networking Stack, not kernel but with ConnMan v2  | Embedded/IoT, automotive linux, handheld linux gamers                        |
 
 [3] Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0`
 for systems that run untrusted code locally.  Use the AI for help.
