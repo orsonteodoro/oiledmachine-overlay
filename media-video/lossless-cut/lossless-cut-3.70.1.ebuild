@@ -55,7 +55,7 @@ PATENT_STATUS=(
 	"patent_status_nonfree"
 )
 
-inherit edo electron-app ffmpeg flag-o-matic lcnr node-sharp optfeature xdg yarn
+inherit edo electron-app ffmpeg flag-o-matic lcnr node-sharp optfeature sandbox-changes xdg yarn
 
 FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
@@ -150,6 +150,7 @@ pkg_setup() {
 	secure-version-node_check_update
 	yarn_pkg_setup
 	node-sharp_pkg_setup
+	sandbox-changes_no_network_sandbox "To download prebuilt ffmpeg for electron-builder"
 }
 
 yarn_unpack_post() {
@@ -194,6 +195,7 @@ einfo "DEBUG:  Called yarn_update_lock_yarn_import_post()"
 		patch_lockfile() {
 einfo "Called patch_lockfile"
 			sed -i -e "s|body-parser: \"npm:^2.2.1\"|body-parser: \"npm:^${NODE_BODY_PARSER_2_PV}\"|g" "yarn.lock" || die
+			sed -i -e "s|body-parser: \"npm:^2.3.0\"|body-parser: \"npm:^${NODE_BODY_PARSER_2_PV}\"|g" "yarn.lock" || die
 
 			sed -i -e "s|csv-parse: \"npm:^6.2.1\"|csv-parse: \"npm:^${NODE_CSV_PARSE_PV}\"|g" "yarn.lock" || die
 
@@ -415,11 +417,38 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 
 }
 
+get_ffmpeg_arch() {
+	if use kernel_linux && use amd64 ; then
+		echo "linux-x64"
+	elif use kernel_linux && use x86 ; then
+		echo "linux-ia32"
+	elif use kernel_linux && use arm64 ; then
+		echo "linux-arm64"
+	elif use kernel_linux && use arm ; then
+		echo "linux-arm"
+	elif use kernel_Darwin && use amd64 ; then
+		echo "darwin-x64"
+	elif use kernel_Darwin && use arm64 ; then
+		echo "darwin-arm64"
+	elif in_iuse "kernel_Winnt" && use kernel_Winnt && use amd64 ; then
+		echo "win32-x64"
+	elif in_iuse "kernel_Winnt" && use kernel_Winnt && use x86 ; then
+		echo "win32-ia32"
+	elif in_iuse "kernel_Winnt" && use kernel_Winnt && use arm64 ; then
+		echo "win32-arm64"
+	else
+eerror "ARCH=${ARCH}, ABI=${ABI} is not supported"
+		die
+	fi
+}
+
 src_compile() {
 einfo "Running src_compile"
 	yarn_hydrate
 	yarn --version || die
 	electron-app_cp_electron
+
+	node "script/downloadFfmpeg.ts" $(get_ffmpeg_arch) || die
 
 	edo electron-vite build
 	edo electron-builder \
