@@ -66,7 +66,7 @@ Mitigations:
 | ZDI-CAN-33367    | [1]                       | Partial                               | Network skbuff Core (skb_zerocopy)                |
 | ZDI-CAN-32005    | DNS Proxying OFF          | Partial                               | Networking Stack, not kernel but with ConnMan v2  |
 
-Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0` for systems that run untrusted code locally.
+[1] Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0` for systems that run untrusted code locally.
 
 Document all changes so they can be reverted back after each has been fixed.
 
