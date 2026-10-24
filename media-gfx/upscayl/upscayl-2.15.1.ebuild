@@ -149,7 +149,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_35
+	ebuild_revision_36
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
@@ -166,6 +166,10 @@ DEPEND+="
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[npm]
+	|| (
+		~sys-apps/npm-${NODE_NPM_12_PV}:3
+		~sys-apps/npm-${NODE_NPM_11_PV}:3
+	)
 	virtual/pkgconfig
 "
 PDEPEND+="
@@ -194,6 +198,7 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"@types/node\": \"^18.15.12\"|\"@types/node\": \"^${AT_TYPES_NODE_24_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"dompurify\": \"^3.3.2\"|\"dompurify\": \"^${NODE_DOMPURIFY_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"electron\": \"^39.8.10\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"fast-uri\": \"^3.0.1\"|\"fast-uri\": \"^${NODE_FAST_URI_3_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"glob\": \"^7.1.6\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"glob\": \"10.3.10\"|\"glob\": \"^${NODE_GLOB_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
@@ -243,6 +248,7 @@ einfo "QA:  Manually remove node_modules/next/node_modules/postcss from package-
 	pkgs=(
 		"@types/node@^${AT_TYPES_NODE_24_PV}"
 		"electron@^${ELECTRON_APP_ELECTRON_PV}"
+		"fast-uri@^${NODE_FAST_URI_3_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
 		"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
 		"tar@^${NODE_TAR_PV}"
