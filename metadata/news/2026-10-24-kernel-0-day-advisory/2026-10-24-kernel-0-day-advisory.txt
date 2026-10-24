@@ -2,7 +2,7 @@ Title: Kernel 0-day Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-24
-Revision: 8
+Revision: 9
 News-Item-Format: 2.0
 Display-If-Installed: virtual/linux-sources
 Display-If-Installed: virtual/dist-kernel
@@ -120,3 +120,6 @@ OT_KERNEL_KCONFIG settings overwrite.
 /etc/kernels/kernel-config-<KV>-<FLAVOR-NAME>-<ARCH> or the one
 associated with OT_KERNEL_CONFIG="/etc/kernels/kernel-config-<KV>-<FLAVOR_NAME>-<ARCH>"
 in `/etc/portage/ot-sources/<KV_MAJOR_MINOR>/<FLAVOR_NAME>/<ARCH>/env`
+
+TIP:  If using menuconfig, you can use / to do a symbol search.  For example search
+for SMB_SERVER and then press 1 for the first search result.
