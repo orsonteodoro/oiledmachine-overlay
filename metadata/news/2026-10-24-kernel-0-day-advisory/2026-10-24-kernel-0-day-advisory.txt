@@ -2,7 +2,7 @@ Title: Kernel 0-day Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-24
-Revision: 9
+Revision: 10
 News-Item-Format: 2.0
 Display-If-Installed: virtual/linux-sources
 Display-If-Installed: virtual/dist-kernel
@@ -73,14 +73,14 @@ Short term mitigations:
 
 The first four can be mitigated by changing the kernel .config.
 
-| Vulnerability ID | Mitigation                    | How much mitigation with this change? | Subsystem/Device                                  |
-|------------------|-------------------------------|---------------------------------------|---------------------------------------------------|
-| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n           | Full                                  | KSMBD (In kernel SMB file server)                 |
-| ZDI-CAN-33549    | CONFIG_SMB_SERVER_SMBDIRECT=n | Full                                  | RDMA/SMB Direct transport framework               |
-| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n           | Full                                  | VMware Graphics Driver (vmwgfx)                   |
-| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n          | Full                                  | NVMe Target Core (nvmet)                          |
-| ZDI-CAN-33367    | [3]                           | Partial                               | Network skbuff Core (skb_zerocopy)                |
-| ZDI-CAN-32005    | DNS Proxying OFF              | Partial                               | Networking Stack, not kernel but with ConnMan v2  |
+| Vulnerability ID | Mitigation                    | How much mitigation with this change? | Subsystem/Device                                  | Stakeholders affected                                  |
+|------------------|-------------------------------|---------------------------------------|---------------------------------------------------|--------------------------------------------------------|
+| ZDI-CAN-33774    | CONFIG_SMB_SERVER=n           | Full                                  | KSMBD (In kernel SMB file server)                 | Enterprise admins, server operators                    |
+| ZDI-CAN-33549    | CONFIG_SMB_SERVER_SMBDIRECT=n | Full                                  | RDMA/SMB Direct transport framework               | Enterprise admins, network architects, cloud providers | 
+| ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n           | Full                                  | VMware Graphics Driver (vmwgfx)                   | VM admins, DevOps, cloud consumers                     |
+| ZDI-CAN-34076    | CONFIG_NVME_TARGET=n          | Full                                  | NVMe Target Core (nvmet)                          | Shared hosting, multi tenant cloud                     |
+| ZDI-CAN-33367    | [3]                           | Partial                               | Network skbuff Core (skb_zerocopy)                | Data center & storage admin, kernel devs               |
+| ZDI-CAN-32005    | DNS Proxying OFF              | Partial                               | Networking Stack, not kernel but with ConnMan v2  | Embedded/IoT, handheld linux gamers                    |
 
 [3] Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0`
 for systems that run untrusted code locally.  Use the AI for help.
