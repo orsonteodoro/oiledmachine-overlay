@@ -49,7 +49,7 @@ SO - Stack Overflow
 URES - Use of Uninitalized Resource
 
 
-sys-kernel/ot-kernel defaults
+sys-kernel/ot-kernel defaults:
 
 CONFIG_SMB_SERVER - Default OFF
 CONFIG_SMB_DIRECT - Default OFF
