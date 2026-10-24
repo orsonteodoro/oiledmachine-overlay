@@ -614,6 +614,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.32.0, 20261024, Electron 45.0.0, @signalapp/ringrtc 2.72.1) CVE-2026-113380 - already remediated, firejail profile with xephyr - passed
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.30.0, 20261007, Electron 44.6.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.28.0, 20260930, Electron 44.5.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.28.0, 20260920, Electron 44.4.5)
