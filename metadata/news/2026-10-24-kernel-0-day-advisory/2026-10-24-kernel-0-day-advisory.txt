@@ -2,7 +2,7 @@ Title: Kernel 0-day Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-24
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: virtual/linux-sources
 Display-If-Installed: virtual/dist-kernel
@@ -11,6 +11,7 @@ Display-If-Installed: sys-kernel/ot-sources
 Display-If-Installed: net-misc/connman
 Display-If-Installed: app-emulation/open-vm-tools
 Display-If-Installed: app-emulation/virtualbox
+Display-If-Installed: net-fs/ksmbd-tools
 
 Note this report uses AI.
 
@@ -53,9 +54,20 @@ URES - Use of Uninitalized Resource
 
 sys-kernel/ot-kernel defaults:
 
-CONFIG_SMB_SERVER - Default OFF
+CONFIG_SMB_SERVER - OFF or ON [1]
 CONFIG_SMB_SERVER_SMBDIRECT - Default OFF
-CONFIG_DRM_VMWGFX - OFF if open-vm-tools or virtualbox is not installed otherwise ON
+CONFIG_DRM_VMWGFX - OFF or ON [2]
+
+[1] If net-fs/ksmbd-tools is not installed, it is OFF.  Otherwise, it
+is ON if you are using config assist `OT_KERNEL_CONFIG_MODE="assist"` and
+`OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1`.
+
+[2] If open-vm-tools or virtualbox is not installed, it is OFF.  Otherwise, it
+is ON if you are using config assist `OT_KERNEL_CONFIG_MODE="assist"` and
+`OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1`.
+
+Config assist with auto pkgflags allows to enable all the kernel config symbols
+automatically based on packages installed.
 
 
 Short term mitigations:
@@ -68,10 +80,10 @@ The first four can be mitigated by changing the kernel .config.
 | ZDI-CAN-33549    | CONFIG_SMB_SERVER_SMBDIRECT=n | Full                                  | RDMA/SMB Direct transport framework               |
 | ZDI-CAN-34068    | CONFIG_DRM_VMWGFX=n           | Full                                  | VMware Graphics Driver (vmwgfx)                   |
 | ZDI-CAN-34076    | CONFIG_NVME_TARGET=n          | Full                                  | NVMe Target Core (nvmet)                          |
-| ZDI-CAN-33367    | [1]                           | Partial                               | Network skbuff Core (skb_zerocopy)                |
+| ZDI-CAN-33367    | [3]                           | Partial                               | Network skbuff Core (skb_zerocopy)                |
 | ZDI-CAN-32005    | DNS Proxying OFF              | Partial                               | Networking Stack, not kernel but with ConnMan v2  |
 
-[1] Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0`
+[3] Use `sysctl -w kernel.unprivileged_userns_clone=0` or `user.max_user_namespaces = 0`
 for systems that run untrusted code locally.  Use the AI for help.
 
 Document all changes so they can be reverted back after each has been fixed.
