@@ -2,12 +2,28 @@ Title: Update Node
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 0
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: net-libs/nodejs
+Display-If-Installed: app-arch/brotli
 
 There is a defect in the vendored Brotli package that contains an RCE according
 to AI.  The Node.js package has several CVEs patched.
+
+The oiledmachine-overlay mitigated the Brolti RCE but not the other
+vulnerabilities at the time of the incident since we use the live ebuild by
+default, but the distro uses the tagged Brolti by default.  Both distro and
+oiledmachine-overlay nodejs ebuilds default using the system brolti for the
+nodejs ebuild.
+
+The brolti ebuild was switched to live as the default on Jun 17, 2026 on
+the oiledmachine-overlay.
+
+The oiledmachine-overlay will switch to live ebuilds if the project has
+code smell indicating common vulnerability fixes that the latest tagged
+releases did not address.
+
+Vulnerability analysis:
 
 CVE-2026-106069 - IV
 CVE-2026-106072 - IV
@@ -20,15 +36,22 @@ CVE-2026-106070 - RV
 CVE-2026-106071 - IV, IBC
 CVE-2026-106073 - IV
 
+ACE - Arbitrary Code Execution
 IBC - Inappropriate Boundary Conditions
 II - Inappropriate Implementation
 IV - Insufficient or Inappropriate Validation
 OOBW - Out of Bounds Write
 RCE - Remote Code Execution
 RV - Reuse Vulnerability
+UB - Undefined Behavior
 UM - Use of Uninitalized Memory
 
-Versions with the fixes:
+Brolti affected versions:
+
+<app-arch/brotli-1.2.1
+=app-arch/brotli-9999		# Before Feb 27, 2026 (0ed4268) for live
+
+Node versions with the fixes:
 
 26.12.1
 24.22.1
@@ -39,3 +62,8 @@ To update, replace the installed with one or more of the following:
 emerge -avuDN net-libs/nodejs:26::oiledmachine-overlay
 emerge -avuDN net-libs/nodejs:24::oiledmachine-overlay
 emerge -avuDN net-libs/nodejs:22::oiledmachine-overlay
+emerge ">=app-arch/brotli-1.2.1::gentoo" # if using stable brotli with BROTLI_PV="1.2.1" override in /etc/portage/make.conf
+
+The distro ebuild does not have null pointer UB protection with
+-fno-delete-null-pointer patch enablement but the oiledmachine-overlay does.
+It is recommended to use the oiledmachine-overlay to mitigate UB leading to ACE.
