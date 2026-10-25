@@ -229,7 +229,7 @@ overrides:
   danger@13.0.10>undici: 6.29.1
   dmg-builder: 26.15.7
   fabric: 4.6.0
-  electron: 46.0.0-alpha.1
+  electron: 45.0.0
   electron-builder: 26.15.7
   sticker-creator>vite: 8.3.5
   electron-builder-squirrel-windows: 26.15.7
@@ -669,8 +669,8 @@ importers:
         specifier: 0.7.1
         version: 0.7.1
       electron:
-        specifier: 46.0.0-alpha.1
-        version: 46.0.0-alpha.1(supports-color@8.1.1)
+        specifier: 45.0.0
+        version: 45.0.0(supports-color@8.1.1)
       electron-builder:
         specifier: 26.15.7
         version: 26.15.7(electron-builder-squirrel-windows@26.15.7)(supports-color@8.1.1)
@@ -7075,8 +7075,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==, tarball: https://registry.npmjs.org/electron-winstaller/-/electron-winstaller-5.4.0.tgz}
     engines: {node: '>=8.0.0'}
 
-  electron@46.0.0-alpha.1:
-    resolution: {integrity: sha512-7opvc7fyfQqYf/Oi27LHi2UDFF0vY2ci/EaGOpBEgjgGir8bc+hMXrFcWQ3uEkNTLDGoWYVb8muBZilaNh18qA==, tarball: https://registry.npmjs.org/electron/-/electron-46.0.0-alpha.1.tgz}
+  electron@45.0.0:
+    resolution: {integrity: sha512-yjz4uhMBcO6L5X7CWgRMobf2EMJPnb9j4zuf+nu/TU/6E4Sqfx7fn/a2eACo4qngjml/0JnsoZhxYroJLxLd2w==, tarball: https://registry.npmjs.org/electron/-/electron-45.0.0.tgz}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -17794,7 +17794,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@46.0.0-alpha.1(supports-color@8.1.1):
+  electron@45.0.0(supports-color@8.1.1):
     dependencies:
       '@electron-internal/extract-zip': 1.0.6
       '@electron/get': 5.1.0(supports-color@8.1.1)
