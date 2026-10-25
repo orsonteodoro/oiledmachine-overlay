@@ -1,0 +1,32 @@
+Title: Electron Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-25
+Revision: 3
+News-Item-Format: 2.0
+Display-If-Installed: app-misc/llocal
+Display-If-Installed: net-im/signal-desktop
+Display-If-Installed: media-gfx/blockbench
+Display-If-Installed: media-gfx/upscayl
+Display-If-Installed: media-video/lossless-cut
+Display-If-Installed: www-apps/LobeHub
+
+It is discovered that Electron 45 and earlier used a vendored copy
+of Node.js containing a vendored copy of Brotli with RCE.  It is recommened
+at this time to either uninstall all Electron apps or add a global deny
+rule for MAC (e.g. AppArmor or SELinux) for binaries/opt/<PKGNAME> files
+not the /usr/bin/<program-name> shell wrapper.
+
+`equery f <pkgname>` can help find locate the folder to temporary blacklist
+until the ebuild lockfiles are brought up to date with Electron 46.
+
+Affected packages:
+
+All Electron apps
+app-misc/llocal
+media-gfx/upscayl
+net-im/signal-desktop
+media-gfx/blockbench
+media-gfx/upscayl
+media-video/lossless-cut
+www-apps/LobeHub

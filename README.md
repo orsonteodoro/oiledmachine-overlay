@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-10-25 - [Electron advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-25-electron-advisory/2026-10-25-electron-advisory.txt)
 * 2026-10-25 - [signal-desktop advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-25-signal-desktop-advisory/2026-10-25-signal-desktop-advisory.txt)
 * 2026-10-24 - [kernel 0-day advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-24-kernel-0-day-advisory/2026-10-24-kernel-0-day-advisory.txt)
 * 2026-10-23 - [curl advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-23-curl-advisory/2026-10-23-curl-advisory.txt)
