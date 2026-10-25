@@ -14,7 +14,7 @@ Display-If-Installed: www-apps/LobeHub
 It is discovered that Electron 45 and earlier used a vendored copy
 of Node.js containing a vendored copy of Brotli with RCE.  It is recommened
 at this time to either uninstall all Electron apps or add a global deny
-rule for MAC (e.g. AppArmor or SELinux) for binaries/opt/<PKGNAME> files
+rule for MAC (e.g. AppArmor or SELinux) for executables in /opt/<PKGNAME>
 not the /usr/bin/<program-name> shell wrapper.
 
 `equery f <pkgname>` can help find locate the folder to temporary blacklist
