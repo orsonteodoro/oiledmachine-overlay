@@ -22,7 +22,7 @@ until the ebuild lockfiles are brought up to date with Electron 46.
 
 Affected packages:
 
-All Electron apps with
+All Electron apps
 app-misc/llocal
 media-gfx/upscayl
 net-im/signal-desktop
