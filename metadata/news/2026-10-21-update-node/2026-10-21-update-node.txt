@@ -2,7 +2,7 @@ Title: Update Node
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 2
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: net-libs/nodejs
 Display-If-Installed: app-arch/brotli
@@ -22,6 +22,21 @@ the oiledmachine-overlay.
 The oiledmachine-overlay will switch to live ebuilds if the project has
 code smell indicating common vulnerability fixes that the latest tagged
 releases did not address.
+
+Alleged vulnerabilites in Brolti that would have forced brotli as a live ebuild
+by default or would have deserved a fallback-commit bump:
+
+OOBR - Oct 5, 2026
+OOBW - Aug 21, 2026
+Fix findings for zizmor audit - Jul 3, 2026
+Rejection - Jun 16, 2026
+Rejection - Jun 6, 2026
+Validation - Jun 11, 2026
+Rejection - Jun 6, 2026
+Improper initalization - Feb 19, 2026
+RCE [missed detection because security not fully disclosed in commit message] - Feb 27, 2026
+Ob1 - Nov 24, 2025
+Tagged release - Oct 27, 2025
 
 Vulnerability analysis:
 
