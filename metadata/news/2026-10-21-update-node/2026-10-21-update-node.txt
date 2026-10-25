@@ -19,9 +19,9 @@ nodejs ebuild.
 The brolti ebuild was switched to live as the default on Jun 17, 2026 on
 the oiledmachine-overlay.
 
-The oiledmachine-overlay will switch to live ebuilds if the project has
-code smell indicating common vulnerability fixes that the latest tagged
-releases did not address.
+The oiledmachine-overlay will switch to live ebuilds if the project has a
+security disclosure hint indicating common vulnerability fixes that the latest
+tagged releases did not address.
 
 Alleged vulnerabilites in Brolti that would have forced brotli as a live ebuild
 by default or would have deserved a fallback-commit bump:
@@ -34,7 +34,7 @@ Rejection - Jun 6, 2026
 Validation - Jun 11, 2026
 Rejection - Jun 6, 2026
 Improper initalization - Feb 19, 2026
-RCE [missed detection because security not fully disclosed in commit message] - Feb 27, 2026
+RCE [missed detection because security hint not disclosed in commit message] - Feb 27, 2026
 Ob1 - Nov 24, 2025
 Tagged release - Oct 27, 2025
 
