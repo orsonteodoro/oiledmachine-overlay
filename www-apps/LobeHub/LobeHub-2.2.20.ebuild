@@ -253,7 +253,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm minio -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_120
+ebuild_revision_121
 "
 REQUIRED_USE="
 	embeddings? (
@@ -587,6 +587,7 @@ patch_lockfile() {
 		sed -i \
 			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_PV}\"|g" \
 			-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"${NODE_FAST_XML_PARSER_5_PV}\"|g" \
+			-e "s|\"next\": \"~16.3.8\"|\"next\": \"${NODE_NEXT_16_PV}\"|g" \
 			"${S}/package.json" \
 			|| die
 		sed -i \
