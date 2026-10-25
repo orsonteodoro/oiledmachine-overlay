@@ -81,11 +81,15 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792894903
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792947988
 
+# Upstream uses:
+# node:  24.11.1
+# pnpm:  12.4.1
+# npm:  11.6.2
+# yarn:  1.22.22
 ELECTRON_BUILDER_PV="26.15.7"
 NEXT_PV="${NODE_NEXT_16_PV}"
-NODE_ZOD_PV="4.4.3" # The pinned version must be used.
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -254,7 +258,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm minio -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_122
+ebuild_revision_123
 "
 REQUIRED_USE="
 	embeddings? (
@@ -332,8 +336,13 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=sys-apps/pnpm-10.20.0:${PNPM_SLOT}
-	>=sys-apps/npm-10.8.2:${NPM_SLOT}
+	|| (
+		~sys-apps/pnpm-${NODE_PNPM_12_PV}:${PNPM_SLOT}
+	)
+	|| (
+		~sys-apps/npm-${NODE_NPM_12_PV}:${NPM_SLOT}
+		~sys-apps/npm-${NODE_NPM_11_PV}:${NPM_SLOT}
+	)
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[corepack,npm]
 	|| (
 		dev-lang/rust:${RUST_PV}
@@ -789,13 +798,21 @@ pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		pkgs=(
 		)
-#		epnpm add -D "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"						# CVE-2025-24964; DoS, DT, ID; Critical
+#		epnpm add -D "${pkgs[@]}" "${PNPM_INSTALL_ARGS[@]}"
 	fi
 }
 
 pnpm_dedupe_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		local pkgs
+
+	######################
+	# Missing dependencies
+	######################
+
+		pkgs=(
+			"zod-openai@${NODE_ZOD_OPENAI_4_PV}"
+		)
 
 	######################
 	# Feature dependencies

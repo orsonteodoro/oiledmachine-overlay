@@ -2,7 +2,7 @@ Title: Next.js Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/amica
 Display-If-Installed: media-gfx/upscayl
@@ -69,4 +69,4 @@ meantime, do not use the affected apps.
 
    app-misc/amica - remediated in 0.2.1_p20250723, ebuild_revision_49
 media-gfx/upscayl - remediated in 2.15.1, ebuild_revision_36
- www-apps/LobeHub - remediated in 2.2.20, ebuild_revision_122
+ www-apps/LobeHub - remediated in 2.2.20, ebuild_revision_123
