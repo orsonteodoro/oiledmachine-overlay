@@ -33,7 +33,7 @@ Remediation
 Simply updating updating will fix the issue.  Choose one of the following to
 remediate:
 
-emerge -1vuDN ">=net-im/signal-desktop-8.32.0::oilemachine-overlay"
+emerge -1vuDN ">=net-im/signal-desktop-8.32.0::oiledmachine-overlay"
 emerge -1vuDN ">=net-im/signal-desktop-bin-8.31.0::gentoo"
 
 It is recommended to use the oiledmachine-overlay ebuild to fix and also to pick
