@@ -28,6 +28,7 @@ EAPI=8
 # 2.2.0 -> 2.2.10
 # 2.2.10 -> 2.2.13
 # 2.2.13 -> 2.2.19
+# 2.2.19 -> 2.2.20
 
 # Ebuild using React 19
 
@@ -45,7 +46,7 @@ EAPI=8
 # Generate the lockfile as follows:
 #
 #   PATH=$(realpath "../../scripts")":${PATH}"
-#   PNPM_UPDATER_VERSIONS="2.2.19" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="2.2.20" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -80,6 +81,7 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792894903
 
 ELECTRON_BUILDER_PV="26.15.7"
 NEXT_PV="${NODE_NEXT_16_PV}"
@@ -474,6 +476,7 @@ ewarn
 }
 
 pkg_setup() {
+	secure-version-node_check_update
 ewarn
 ewarn "${CATEGORY}/${PN} build warning."
 ewarn
@@ -618,7 +621,7 @@ pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	local pnpm_pv=$(pnpm --version)
-	# To update most values, see https://github.com/better-auth/better-auth/blob/v1.6.11/pnpm-lock.yaml
+	# To update most values, see https://github.com/better-auth/better-auth/blob/v1.7.12/pnpm-lock.yaml
 #	sed -i \
 #		"package.json" \
 #		|| die
@@ -641,13 +644,13 @@ pnpm_unpack_post() {
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.2.19-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.2.13-postgresjs-driver-support.patch"
-		eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch"
+		#eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # testing upstream version instead.  AI recommends this off.
 	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		eapply "${FILESDIR}/${PN}-2.2.19-build-files-changes.patch"
+		eapply "${FILESDIR}/${PN}-2.2.20-build-files-changes.patch"
 	fi
-	eapply "${FILESDIR}/${PN}-2.2.19-pnpm-workspace-changes.patch"
+	eapply "${FILESDIR}/${PN}-2.2.20-pnpm-workspace-changes.patch"
 
 	# secure-version-node changes
 	sed -i \
@@ -655,6 +658,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_AJV_PV@|${NODE_AJV_PV}|g" \
 		-e "s|@NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV@|${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}|g" \
 		-e "s|@NODE_AT_GRPC_GRPC_JS_1_14_PV@|${NODE_AT_GRPC_GRPC_JS_1_14_PV}|g" \
+		-e "s|@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@|${NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV}|g" \
 		-e "s|@NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV@|${NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV}|g" \
 		-e "s|@NODE_AT_OCTOKIT_REQUEST_PV@|${NODE_AT_OCTOKIT_REQUEST_PV}|g" \
 		-e "s|@NODE_AT_OCTOKIT_REQUEST_ERROR_PV@|${NODE_AT_OCTOKIT_REQUEST_ERROR_PV}|g" \
@@ -669,9 +673,11 @@ pnpm_unpack_post() {
 		-e "s|@NODE_FAST_XML_PARSER_5_PV@|${NODE_FAST_XML_PARSER_5_PV}|g" \
 		-e "s|@NODE_FILE_TYPE_22_PV@|${NODE_FILE_TYPE_22_PV}|g" \
 		-e "s|@NODE_FORM_DATA_4_PV@|${NODE_FORM_DATA_4_PV}|g" \
+		-e "s|@NODE_HAPPY_DOM_PV@|${NODE_HAPPY_DOM_PV}|g" \
 		-e "s|@NODE_JSONDIFFPATCH_PV@|${NODE_JSONDIFFPATCH_PV}|g" \
 		-e "s|@NODE_KATEX_PV@|${NODE_KATEX_PV}|g" \
 		-e "s|@NODE_MINIMATCH_9_PV@|${NODE_MINIMATCH_9_PV}|g" \
+		-e "s|@NODE_NODEMAILER_PV@|${NODE_NODEMAILER_PV}|g" \
 		-e "s|@NODE_PDFJS_DIST_PV@|${NODE_PDFJS_DIST_PV}|g" \
 		-e "s|@NODE_PROTOBUFJS_8_PV@|${NODE_PROTOBUFJS_8_PV}|g" \
 		-e "s|@NODE_QS_PV@|${NODE_QS_PV}|g" \
@@ -680,6 +686,9 @@ pnpm_unpack_post() {
 		-e "s|@NODE_SHARP_PV@|${NODE_SHARP_PV}|g" \
 		-e "s|@NODE_TAR_PV@|${NODE_TAR_PV}|g" \
 		-e "s|@NODE_TOUGH_COOKIE_PV@|${NODE_TOUGH_COOKIE_PV}|g" \
+		-e "s|@NODE_UNDICI_6_PV@|${NODE_UNDICI_6_PV}|g" \
+		-e "s|@NODE_UNDICI_7_PV@|${NODE_UNDICI_7_PV}|g" \
+		-e "s|@NODE_UNDICI_8_PV@|${NODE_UNDICI_8_PV}|g" \
 		-e "s|@NODE_UUID_11_PV@|${NODE_UUID_11_PV}|g" \
 		-e "s|@NODE_VITE_8_PV@|${NODE_VITE_8_PV}|g" \
 		-e "s|@NODE_VITEST_5_PV@|${NODE_VITEST_5_PV}|g" \
@@ -1206,6 +1215,7 @@ _install_pwa_webapp() {
 		insinto "${_PREFIX}"
 		doins "${S}/scripts/migrateServerDB/docker.cjs"
 		doins "${S}/scripts/migrateServerDB/errorHint.js"
+		doins "${S}/scripts/migrateServerDB/pgSearchGuard.js"
 		doins "${S}/fts-search-elasticsearch-reindex.cjs"
 		doins "${S}/fts-search-elasticsearch-sync.cjs"
 		doins "${S}/fts-search-ineligible-message-cleanup.cjs"
