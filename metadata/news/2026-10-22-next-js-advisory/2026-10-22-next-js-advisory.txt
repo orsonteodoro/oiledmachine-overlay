@@ -69,4 +69,4 @@ meantime, do not use the affected apps.
 
    app-misc/amica - remediated in 0.2.1_p20250723, ebuild_revision_49
 media-gfx/upscayl - remediated in 2.15.1, ebuild_revision_36
- www-apps/LobeHub - remediated in 2.2.20, ebuild_revision_121
+ www-apps/LobeHub - remediated in 2.2.20, ebuild_revision_122
