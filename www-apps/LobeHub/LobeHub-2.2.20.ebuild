@@ -669,6 +669,7 @@ pnpm_unpack_post() {
 		eapply "${FILESDIR}/${PN}-2.2.20-build-files-changes.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-2.2.20-pnpm-workspace-changes.patch"
+	eapply "${FILESDIR}/${PN}-2.2.20-ignore-missing-module.patch"
 
 	sed -i \
 		-e "s|lockfile: false|lockfile: true|g" \
@@ -811,8 +812,9 @@ pnpm_dedupe_post() {
 	######################
 
 		pkgs=(
-			"zod-openai@${NODE_ZOD_OPENAI_4_PV}"
+			#"zod-openai@${NODE_ZOD_OPENAI_4_PV}" # Not on npm
 		)
+		#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
 
 	######################
 	# Feature dependencies
