@@ -2,7 +2,7 @@ Title: Next.js Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 2
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/amica
 Display-If-Installed: media-gfx/upscayl
@@ -54,8 +54,6 @@ Remeditiation
 Use the current recommended mitigation at this time.  This section will
 be updated when lockfile is ready.
 
-[PLACEHOLDER - NOT READY YET]
-
 To update to remediated builds with the updated Next.js version, do the
 following for your installed package:
 
@@ -64,9 +62,10 @@ emerge -1vuDN media-gfx/upscayl		# Next 15 based
 emerge -1vuDN www-apps/LobeHub		# Next 16 based
 emerge -1vuDN www-misc/vercel
 
-[PLACEHOLDER - NOT READY YET]
-
 Remediated status
 
 When the package has been fully remediated, it will be listed below.  In the
 meantime, do not use the affected apps.
+
+app-misc/amica - remediated
+media-gfx/upscayl - remediated
