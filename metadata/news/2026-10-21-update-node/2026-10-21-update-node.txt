@@ -84,5 +84,5 @@ The distro ebuild does not have null pointer UB protection with
 -fno-delete-null-pointer patch enablement but the oiledmachine-overlay does.
 It is recommended to use the oiledmachine-overlay to mitigate UB leading to ACE.
 
-The recent Brotli 1.2.1 release address the RCE but not the other memory
+The recent Brotli 1.2.1 release addresses the RCE but not the other memory
 corruption (OOBW).  It is recommened to stick to the live ebuild.
