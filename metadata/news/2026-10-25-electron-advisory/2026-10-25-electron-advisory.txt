@@ -2,7 +2,7 @@ Title: Electron Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/llocal
 Display-If-Installed: net-im/signal-desktop
@@ -30,8 +30,9 @@ media-gfx/blockbench
 media-gfx/upscayl
 media-video/lossless-cut
 www-apps/LobeHub
-Electron 45.0.0 - with Node 24.22.0
-Electron 44.9.1 - with Node 24.22.0 [used in signal-desktop]
+Electron 45.0.0 - with Node 24.22.0 [old version used in oiledmachine-overlay]
+Electron 44.9.1 - with Node 24.22.0 [used in upstream's signal-desktop 8.32.0 release]
+Electron 44.7.2 - with Node 24.21.0 [used in the distro's signal-desktop-bin 8.31.0 ebuild]
 
 Remediated versions:
 
@@ -43,3 +44,5 @@ Node 26.12.1
 References:
 https://nodejs.org/en/blog/vulnerability/october-2026-security-releases#downloads-and-release-details
 https://releases.electronjs.org/releases.json
+https://raw.githubusercontent.com/signalapp/Signal-Desktop/refs/tags/v8.32.0/pnpm-lock.yaml
+https://raw.githubusercontent.com/signalapp/Signal-Desktop/refs/tags/v8.31.0/pnpm-lock.yaml
