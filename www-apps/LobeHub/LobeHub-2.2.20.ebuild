@@ -669,6 +669,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_DRIZZLE_KIT_PV@|${NODE_DRIZZLE_KIT_PV}|g" \
 		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
 		-e "s|@NODE_ELECTRON_PV@|${ELECTRON_APP_ELECTRON_PV}|g" \
+		-e "s|@NODE_ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" \
 		-e "s|@NODE_ESBUILD_PV@|${NODE_ESBUILD_PV}|g" \
 		-e "s|@NODE_FAST_XML_PARSER_5_PV@|${NODE_FAST_XML_PARSER_5_PV}|g" \
 		-e "s|@NODE_FILE_TYPE_22_PV@|${NODE_FILE_TYPE_22_PV}|g" \
@@ -692,7 +693,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_UUID_11_PV@|${NODE_UUID_11_PV}|g" \
 		-e "s|@NODE_VITE_8_PV@|${NODE_VITE_8_PV}|g" \
 		-e "s|@NODE_VITEST_5_PV@|${NODE_VITEST_5_PV}|g" \
-		-e "s|@NODE_ELECTRON_BUILDER_PV@|${ELECTRON_BUILDER_PV}|g" \
+		-e "s|@NODE_ZOD_PV@|${NODE_ZOD_PV}|g" \
 		"${S}/apps/desktop/package.json" \
 		"${S}/apps/desktop/pnpm-workspace.yaml" \
 		"${S}/apps/cli/package.json" \
