@@ -29,10 +29,10 @@ by default or would have deserved a fallback-commit bump:
 OOBR - Oct 5, 2026
 OOBW - Aug 21, 2026
 Fix findings for zizmor audit - Jul 3, 2026
-Rejection - Jun 16, 2026
-Rejection - Jun 6, 2026
-Validation - Jun 11, 2026
-Rejection - Jun 6, 2026
+Rejection (IV) - Jun 16, 2026
+Rejection (IV) - Jun 6, 2026
+Validation (IV) - Jun 11, 2026
+Rejection (IV) - Jun 6, 2026
 Improper initalization - Feb 19, 2026
 RCE [missed detection because security hint not disclosed in commit message] - Feb 27, 2026
 Ob1 - Nov 24, 2025
@@ -55,6 +55,7 @@ ACE - Arbitrary Code Execution
 IBC - Inappropriate Boundary Conditions
 II - Inappropriate Implementation
 IV - Insufficient or Inappropriate Validation
+Ob1 - Off-by-one
 OOBW - Out of Bounds Write
 RCE - Remote Code Execution
 RV - Reuse Vulnerability
