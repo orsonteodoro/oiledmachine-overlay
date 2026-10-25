@@ -2,7 +2,7 @@ Title: signal-desktop Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 2
+Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: net-im/signal-desktop
 
@@ -34,10 +34,10 @@ Simply updating updating will fix the issue.  Choose one of the following to
 remediate:
 
 emerge -1vuDN ">=net-im/signal-desktop-8.32.0::oiledmachine-overlay"
-emerge -1vuDN ">=net-im/signal-desktop-bin-8.31.0::gentoo"
 
 It is recommended to use the oiledmachine-overlay ebuild to fix and also to pick
 up the Electron 45 update corresponding to Chromium 156.0.8078.48.
 
 The distro's version uses Electron 44.7.2 corresponding to the insecure Chromium
-152.0.7977.149.
+152.0.7977.149.  In addition, it uses the vulnerable vendored brotli in the
+vendored Node.js.  It is recommened to switch to the oiledmachine-overlay ebuild.
