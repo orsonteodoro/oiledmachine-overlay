@@ -240,7 +240,7 @@
     "debug": "4.4.3",
     "direction": "2.0.1",
     "dom-accessibility-api": "0.7.1",
-    "electron": "45.0.0",
+    "electron": "46.0.0-alpha.1",
     "electron-builder": "26.15.7",
     "electron-mocha": "13.1.0",
     "emoji-regex-xs": "2.0.1",
