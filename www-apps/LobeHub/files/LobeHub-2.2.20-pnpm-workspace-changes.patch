@@ -1,8 +1,14 @@
 --- a/apps/cli/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/apps/cli/pnpm-workspace.yaml	2026-10-24 17:57:31.047014313 -0700
-@@ -40,5 +40,8 @@ allowBuilds:
++++ b/apps/cli/pnpm-workspace.yaml	2026-10-25 06:23:36.750381181 -0700
+@@ -39,6 +39,17 @@ publicHoistPattern:
+ allowBuilds:
    esbuild: true
  
++minimumReleaseAgeExclude:
++  - '@vitest/mocker@@NODE_AT_VITEST_MOCKER_5_PV@'
++  - 'katex@@NODE_KATEX_PV@'
++  - 'zod@@NODE_ZOD_PV@'
++
  overrides:
 -  '@types/react': 19.2.13
 -  antd: 6.3.5
@@ -10,9 +16,12 @@
 +  '@types/react': '19.2.13'
 +  'antd': '6.3.5'
 +  # Vulnerability fixes
++  'vitest@5.0.0>@vitest/mocker': '@NODE_AT_VITEST_MOCKER_5_PV@'
 +  'file-type@<@NODE_FILE_TYPE_22_PV@': '@NODE_FILE_TYPE_22_PV@'
++  'katex': '@NODE_KATEX_PV@'
++  'zod': '@NODE_ZOD_PV@'
 --- a/apps/desktop/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/apps/desktop/pnpm-workspace.yaml	2026-10-24 19:07:40.968410585 -0700
++++ b/apps/desktop/pnpm-workspace.yaml	2026-10-25 06:46:22.750042405 -0700
 @@ -48,23 +48,28 @@ publicHoistPattern:
    - 'pdfjs-dist'
  
@@ -56,7 +65,7 @@
    - '@auv-js/api-client@0.0.33'
    - '@auv-js/cli-darwin-arm64@0.0.33'
    - '@auv-js/cli-darwin-x64@0.0.33'
-@@ -74,5 +79,65 @@ minimumReleaseAgeExclude:
+@@ -74,5 +79,66 @@ minimumReleaseAgeExclude:
    - '@auv-js/cli-win32-x64-msvc@0.0.33'
    - '@auv-js/cli@0.0.33'
    - '@auv-js/sdk@0.0.33'
@@ -78,6 +87,7 @@
 +  - 'undici@@NODE_UNDICI_7_PV@'
 +  - 'undici@@NODE_UNDICI_8_PV@'
 +  - 'vite@@NODE_VITE_8_PV@'
++  - 'zod@@NODE_ZOD_PV@'
 +
 +overrides:
 +  # Upstream pinned
@@ -85,9 +95,9 @@
 +  'react': '19.2.7'
 +  'react-dom': '19.2.7'
 +  'vitest': '5.0.3'
-+  'zod@^4': '4.6.5'
 +  # Pinned versions by oiledmachine-overlay
 +  'electron': '@NODE_ELECTRON_PV@'
++  'zod': '@NODE_ZOD_PV@'
 +  # Vulnerability fixes
 +  '@auv-js/sdk@0.0.28>@grpc/grpc-js': '@NODE_AT_GRPC_GRPC_JS_1_14_PV@'
 +  '@electron-toolkit/preload@3.0.2>electron': '@NODE_ELECTRON_PV@'
@@ -124,7 +134,7 @@
 +  'vite': '@NODE_VITE_8_PV@'
 +  'vitest@5.0.3>happy-dom': '@NODE_HAPPY_DOM_PV@'
 --- a/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-10-24 18:58:58.087932588 -0700
++++ b/pnpm-workspace.yaml	2026-10-25 06:15:07.898310148 -0700
 @@ -28,6 +28,7 @@ packages:
    - apps/workbench
  
@@ -222,6 +232,7 @@
 +  'react': '@NODE_REACT_19_PV@'
 +  'react-dom': '@NODE_REACT_DOM_19_PV@'
 +  'sharp': '@NODE_SHARP_PV@'
++  'zod': '@NODE_ZOD_PV@'
 +  # Vulnerability fixes
 +  '@aws-sdk/client-s3@3.932.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  '@aws-sdk/s3-request-presigner@3.932.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
@@ -288,7 +299,6 @@
 +  'vite-tsconfig-paths@6.1.1>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  'vite-tsconfig-paths@6.1.1>qs': '@NODE_QS_PV@'
 +  'vitest': '@NODE_VITEST_5_PV@'
-+  'zod': '@NODE_ZOD_PV@'
  
  patchedDependencies:
    '@upstash/qstash': patches/@upstash__qstash.patch

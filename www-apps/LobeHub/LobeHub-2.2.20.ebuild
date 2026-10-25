@@ -85,6 +85,7 @@ SECURE_VERSION_NODE_EBUILD_UPDATE=1792894903
 
 ELECTRON_BUILDER_PV="26.15.7"
 NEXT_PV="${NODE_NEXT_16_PV}"
+NODE_ZOD_PV="4.4.3" # The pinned version must be used.
 
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
@@ -584,11 +585,19 @@ eerror "Then, restart the Postgres ${POSTGRESQL_SLOT} service."
 
 patch_lockfile() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		# pnpm will update the lockfile but not the package.json.
 		sed -i \
 			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_1_6_PV}\"|g" \
 			-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"${NODE_FAST_XML_PARSER_5_PV}\"|g" \
+			-e "s|\"happy-dom\": \"~20.11.15\"|\"happy-dom\": \"${NODE_HAPPY_DOM_PV}\"|g" \
+			-e "s|\"happy-dom\": \"^20.14.5\"|\"happy-dom\": \"${NODE_HAPPY_DOM_PV}\"|g" \
 			-e "s|\"next\": \"~16.3.8\"|\"next\": \"${NODE_NEXT_16_PV}\"|g" \
+			-e "s|\"nodemailer\": \"^9.1.1\"|\"nodemailer\": \"${NODE_NODEMAILER_PV}\"|g" \
+			-e "s|\"vite\": \"8.0.16\"|\"vite\": \"${NODE_VITE_8_PV}\"|g" \
+			-e "s|\"vite\": \"8.3.2\"|\"vite\": \"${NODE_VITE_8_PV}\"|g" \
+			-e "s|\"zod\": \"^4.4.3\"|\"zod\": \"${NODE_ZOD_PV}\"|g" \
 			"${S}/package.json" \
+			"${S}/apps/desktop/package.json" \
 			|| die
 		sed -i \
 			-e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': ${NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV}|g" \
@@ -672,6 +681,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_AT_OPENTELEMETRY_CORE_PV@|${NODE_AT_OPENTELEMETRY_CORE_PV}|g" \
 		-e "s|@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@|${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}|g" \
 		-e "s|@NODE_AT_TYPES_REACT_19_PV@|${NODE_AT_TYPES_REACT_19_PV}|g" \
+		-e "s|@NODE_AT_VITEST_MOCKER_5_PV@|${NODE_AT_VITEST_MOCKER_5_PV}|g" \
 		-e "s|@NODE_BETTER_AUTH_1_6_PV@|${NODE_BETTER_AUTH_1_6_PV}|g" \
 		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
 		-e "s|@NODE_DRIZZLE_KIT_PV@|${NODE_DRIZZLE_KIT_PV}|g" \
