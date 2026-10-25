@@ -2,7 +2,7 @@ Title: signal-desktop Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 1
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: net-im/signal-desktop
 
@@ -17,9 +17,10 @@ a habit of putting off updating signal-desktop or updates in general.
 
 Severity:  Critical, 9.3 score with CVSS 4
 
-CVE-2026-113380 - ICUC, DT, ID
+CVE-2026-113380 - ICUC, EBR, DT, ID
 
 DT - Data Tampering
+EBR - Extended Blast Radius
 ID - Information Disclosure
 ICUC - Improper Check for Unusual or Exceptional Conditions
 
