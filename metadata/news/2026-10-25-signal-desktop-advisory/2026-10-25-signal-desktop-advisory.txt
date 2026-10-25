@@ -1,0 +1,41 @@
+Title: signal-desktop Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-25
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: net-im/signal-desktop
+
+There has been a security flaw circulating in the socials and threat
+intelligence community about Signal during the PHP RCE incident.  It deals with
+improper closure of the microphone and camera after a hang up.  The AI
+said that it also affects signal-desktop.
+
+This advisory is mostly a warning aimed at FAFO users that have
+a habit of putting off updating signal-desktop or updates in general.
+
+Severity:  Critical, 9.3 score with CVSS 4
+
+CVE-2026-113380 - ICUC, DT, ID
+
+DT - Data Tampering
+ID - Information Disclosure
+ICUC - Improper Check for Unusual or Exceptional Conditions
+
+Affected versions
+
+<= 8.29.0
+
+Remediation
+
+Simply updating updating will fix the issue.  Choose one of the following to
+remediate:
+
+emerge -1vuDN ">=net-im/signal-desktop-8.32.0::oilemachine-overlay"
+emerge -1vuDN ">=net-im/signal-desktop-bin-8.31.0::gentoo"
+
+It is recommended to use the oiledmachine-overlay ebuild to fix and also to pick
+up the Electron 45 update corresponding to Chromium 156.0.8078.48.
+
+The distro's version uses Electron 44.7.2 corresponding to the insecure Chromium
+152.0.7977.149.
