@@ -1,3 +1,15 @@
+Fix use of security-critical -fno-delete-null-pointer-checks flag to avoid:
+
+With Node 24:
+../../deps/v8/third_party/abseil-cpp/absl/container/internal/raw_hash_set.h:2649:31:   required from 'std::pair<absl::container_internal::raw_hash_set<Policy, Hash, Eq, Alloc>::iterator, bool> absl::container_internal::raw_hash_set<Policy, Hash, Eq, Alloc>::emplace(Args&& ...) [with Args = {cppgc::internal::BasePage* const&, long int}; typename std::enable_if<absl::container_internal::IsDecomposable<void, absl::container_internal::hash_policy_traits<Policy>, Hash, Eq, Ts ...>::value, int>::type <anonymous> = 0; Policy = absl::container_internal::FlatHashMapPolicy<cppgc::internal::BasePage*, long int>; Hash = v8::base::hash<cppgc::internal::BasePage*>; Eq = absl::container_internal::HashEq<cppgc::internal::BasePage*, void>::Eq; Alloc = std::allocator<std::pair<cppgc::internal::BasePage* const, long int> >]'
+../../deps/v8/src/heap/base/cached-unordered-map.h:34:33:   required from 'heap::base::CachedUnorderedMap<_Key, _Value, _Hash>::Mapped& heap::base::CachedUnorderedMap<_Key, _Value, _Hash>::operator[](const Key&) [with _Key = cppgc::internal::BasePage*; _Value = long int; _Hash = v8::base::hash<cppgc::internal::BasePage*>; Mapped = long int; Key = cppgc::internal::BasePage*]'
+../../deps/v8/src/heap/cppgc/marking-state.h:354:30:   required from here
+../../deps/v8/third_party/abseil-cpp/absl/container/internal/raw_hash_set.h:3637:56:   in 'constexpr' expansion of 'absl::container_internal::hash_policy_traits<absl::container_internal::FlatHashMapPolicy<cppgc::internal::BasePage*, long int>, void>::get_hash_slot_fn<v8::base::hash<cppgc::internal::BasePage*> >()'
+../../deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h:159:54: error: '(absl::container_internal::TypeErasedApplyToSlotFn<v8::base::hash<cppgc::internal::BasePage*>, cppgc::internal::BasePage*> == 0)' is not a constant expression
+  159 |     return Policy::template get_hash_slot_fn<Hash>() == nullptr
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+
+This is an AI generated forward port fix.
 --- a/deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h.orig	2026-10-21 00:17:32.000000000 -0700
 +++ b/deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h	2026-10-23 15:14:42.528180558 -0700
 @@ -28,6 +28,16 @@

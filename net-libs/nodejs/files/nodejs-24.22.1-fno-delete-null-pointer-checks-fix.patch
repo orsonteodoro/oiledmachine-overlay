@@ -8,6 +8,7 @@ Fix use of security-critical -fno-delete-null-pointer-checks flag to avoid:
   159 |     return Policy::template get_hash_slot_fn<Hash>() == nullptr
       |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
 
+This is an AI generated fix.
 --- a/deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h.orig	2026-10-20 11:39:37.000000000 -0700
 +++ b/deps/v8/third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h	2026-10-23 15:03:41.952965822 -0700
 @@ -28,6 +28,17 @@ namespace absl {
