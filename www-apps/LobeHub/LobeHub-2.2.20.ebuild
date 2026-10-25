@@ -253,7 +253,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm minio -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_121
+ebuild_revision_122
 "
 REQUIRED_USE="
 	embeddings? (
@@ -585,7 +585,7 @@ eerror "Then, restart the Postgres ${POSTGRESQL_SLOT} service."
 patch_lockfile() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
-			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_PV}\"|g" \
+			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_1_6_PV}\"|g" \
 			-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"${NODE_FAST_XML_PARSER_5_PV}\"|g" \
 			-e "s|\"next\": \"~16.3.8\"|\"next\": \"${NODE_NEXT_16_PV}\"|g" \
 			"${S}/package.json" \
@@ -672,7 +672,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_AT_OPENTELEMETRY_CORE_PV@|${NODE_AT_OPENTELEMETRY_CORE_PV}|g" \
 		-e "s|@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@|${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}|g" \
 		-e "s|@NODE_AT_TYPES_REACT_19_PV@|${NODE_AT_TYPES_REACT_19_PV}|g" \
-		-e "s|@NODE_BETTER_AUTH_PV@|${NODE_BETTER_AUTH_PV}|g" \
+		-e "s|@NODE_BETTER_AUTH_1_6_PV@|${NODE_BETTER_AUTH_1_6_PV}|g" \
 		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
 		-e "s|@NODE_DRIZZLE_KIT_PV@|${NODE_DRIZZLE_KIT_PV}|g" \
 		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
@@ -863,7 +863,7 @@ pnpm_dedupe_post() {
 			"@opentelemetry/propagator-jaeger@${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}"
 			"ai@${NODE_AI_PV}"
 			"adm-zip@${NODE_ADM_ZIP_PV}"
-			"better-auth@${NODE_BETTER_AUTH_PV}"
+			"better-auth@${NODE_BETTER_AUTH_1_6_PV}"
 			"esbuild@${NODE_ESBUILD_PV}"
 			"fast-xml-parser@${NODE_FAST_XML_PARSER_5_PV}"
 			"file-type@${NODE_FILE_TYPE_PV}"
