@@ -6,6 +6,10 @@ Revision: 3
 News-Item-Format: 2.0
 Display-If-Installed: net-im/signal-desktop
 
+(Updated) It is discovered that the vendored Node.js in the latest Electron
+stable contains Node.js with Brotli RCE.  It is recommended to not use the
+products until it can be remediated.
+
 There has been a security flaw circulating in the socials and threat
 intelligence community about Signal during the PHP RCE incident.  It deals with
 improper closure of the microphone and camera after a hang up.  The AI
@@ -24,20 +28,30 @@ EBR - Extended Blast Radius
 ID - Information Disclosure
 ICUC - Improper Check for Unusual or Exceptional Conditions
 
-Affected versions
+Affected versions for CVE-2026-113380
 
 <= 8.29.0
 
+Affected versions for Brotli RCE.
+
+Electron 45.0.0
+Electron 44.7.2 vendors 
+
 Remediation
 
-Simply updating updating will fix the issue.  Choose one of the following to
-remediate:
+(Update) It is recommended to stop using the product until the Electron is
+updated with a more secure statically linked Node.js in Electron.  The
+lockfile has to be updated again this time to Electron 46.0.0-alpha.1.  It
+is not possible with stable release of Electron.  Either uninstall or use
+MAC (e.g. AppArmor or SELinux) for the /opt/Signal executables and
+`kill -9 $(pgrep signal-desktop)`.
 
-emerge -1vuDN ">=net-im/signal-desktop-8.32.0::oiledmachine-overlay"
+The latest Electron is ineffective for the Brolti RCE mitigation based on
+version audit.
 
-It is recommended to use the oiledmachine-overlay ebuild to fix and also to pick
-up the Electron 45 update corresponding to Chromium 156.0.8078.48.
+It is recommended to wait for the oiledmachine-overlay ebuild to upgrade the
+Electron 46 update corresponding to Chromium 158.0.8114.0, Node 24.22.1.
 
 The distro's version uses Electron 44.7.2 corresponding to the insecure Chromium
-152.0.7977.149.  In addition, it uses the vulnerable vendored brotli in the
-vendored Node.js.  It is recommened to switch to the oiledmachine-overlay ebuild.
+152.0.7977.149.  In addition, it uses the vulnerable vendored Brotli in the
+vendored Node.js.
