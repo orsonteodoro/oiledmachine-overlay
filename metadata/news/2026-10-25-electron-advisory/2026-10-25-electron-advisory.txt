@@ -42,6 +42,7 @@ Node 24.22.1
 Node 26.12.1
 
 References:
+
 https://nodejs.org/en/blog/vulnerability/october-2026-security-releases#downloads-and-release-details
 https://releases.electronjs.org/releases.json
 https://raw.githubusercontent.com/signalapp/Signal-Desktop/refs/tags/v8.32.0/pnpm-lock.yaml
