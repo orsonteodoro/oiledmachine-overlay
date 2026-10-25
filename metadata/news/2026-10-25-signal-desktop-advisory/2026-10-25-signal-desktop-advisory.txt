@@ -2,14 +2,15 @@ Title: signal-desktop Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: net-im/signal-desktop
 
 There has been a security flaw circulating in the socials and threat
 intelligence community about Signal during the PHP RCE incident.  It deals with
 improper closure of the microphone and camera after a hang up.  The AI
-said that it also affects signal-desktop.
+said that it also affects signal-desktop and allows a malicious threat actor
+to continue to snoop and still stream audio to them after hitting hang up.
 
 This advisory is mostly a warning aimed at FAFO users that have
 a habit of putting off updating signal-desktop or updates in general.
