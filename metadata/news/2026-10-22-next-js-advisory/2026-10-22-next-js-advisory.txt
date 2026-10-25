@@ -67,5 +67,6 @@ Remediated status
 When the package has been fully remediated, it will be listed below.  In the
 meantime, do not use the affected apps.
 
-app-misc/amica - remediated
+   app-misc/amica - remediated
 media-gfx/upscayl - remediated
+ www-apps/LobeHub - remediated
