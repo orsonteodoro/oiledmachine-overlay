@@ -2,7 +2,7 @@ Title: Update Node
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 3
+Revision: 4
 News-Item-Format: 2.0
 Display-If-Installed: net-libs/nodejs
 Display-If-Installed: app-arch/brotli
@@ -83,3 +83,6 @@ emerge ">=app-arch/brotli-1.2.1::gentoo" # if using stable brotli with BROTLI_PV
 The distro ebuild does not have null pointer UB protection with
 -fno-delete-null-pointer patch enablement but the oiledmachine-overlay does.
 It is recommended to use the oiledmachine-overlay to mitigate UB leading to ACE.
+
+The recent Brotli 1.2.1 release address the RCE but not the other memory
+corruption (OOBW).  It is recommened to stick to the live ebuild.
