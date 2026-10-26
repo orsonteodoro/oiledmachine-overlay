@@ -163,7 +163,7 @@ x11-wm/xpra
 [14] Live ebuild
 [15] Contains vendored memory unsafe Brotli.
 [16] Unsafe with USE=portable.
-[17] Both the zig based and rust based bun.  If you used the old ebuild, it need to be uninstalled.
+[17] Both the Zig based and Rust based bun had vendored brotli.  If you used the old ebuild, it need to be uninstalled.
 [18] Considered safe since input vectors are locked down.
 [19] Contains CVE-2026-92392 which was shared in the RCE threat intelligence posts.
 [20] Has other vulnerable cargo crates
