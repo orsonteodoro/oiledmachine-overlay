@@ -108,7 +108,7 @@ not contain build files bypass to vendored Brotli and submodules explicit
 exclusion of Brolti:
 
 app-text/ghostscript-gpl [14]
-dev-cpp/cpp-httplib [9][14]
+dev-cpp/cpp-httplib [14]
 dev-qt/qtbase [14]
 media-libs/freetype [14]
 media-libs/libheif [14]
