@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 6
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: app-arch/brotli
 Display-If-Installed: app-misc/amica
@@ -116,7 +116,7 @@ net-libs/bun [17]
 net-libs/gnutls [14]
 net-libs/libsoup [14]
 net-libs/nghttp2 [14]
-net-misc/curl [14]
+net-misc/curl [14][19]
 net-misc/wget2 [14]
 sci-libs/tensorstore [8][15]
 
@@ -163,6 +163,7 @@ x11-wm/xpra
 [16] Unsafe with USE=portable.
 [17] Both the zig based and rust based bun.  If you used the old ebuild, it need to be uninstalled.
 [18] Considered safe since input vectors are locked down.
+[19] Contains CVE-2026-92392 which was shared in the RCE threat intelligence posts.
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
