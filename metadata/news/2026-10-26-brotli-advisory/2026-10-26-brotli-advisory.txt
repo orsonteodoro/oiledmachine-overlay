@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 12
+Revision: 13
 News-Item-Format: 2.0
 Display-If-Installed: app-arch/brotli
 Display-If-Installed: app-misc/amica
@@ -21,6 +21,7 @@ Display-If-Installed: dev-python/pandas
 Display-If-Installed: dev-python/primp
 Display-If-Installed: dev-python/starlette-compress
 Display-If-Installed: dev-qt/qtbase
+Display-If-Installed: dev-util/carbon-now-cli
 Display-If-Installed: games-rpg/Risuai
 Display-If-Installed: gui-apps/windowpet
 Display-If-Installed: media-gfx/blockbench
@@ -134,6 +135,7 @@ dev-python/httpx
 dev-python/pandas
 dev-python/primp [4]
 dev-python/starlette-compress
+dev-util/carbon-now-cli [22]
 games-rpg/Risuai [4][21]
 gui-apps/windowpet [4][20]
 media-libs/libjxl [3][14]
@@ -166,6 +168,7 @@ x11-wm/xpra
 [19] Contains CVE-2026-92392 which was shared in the RCE threat intelligence posts.
 [20] Has other vulnerable cargo crates
 [21] Contains other Node vulnerabilies in the lockfile
+[22] Uses --disable-everything (disables jxl, disables network) except pipe and file in ffmpeg, uses system's brotli in Chromium; firefox triaged earlier and webkit do not use brotli according to AI
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
