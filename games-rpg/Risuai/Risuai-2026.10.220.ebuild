@@ -68,6 +68,8 @@ atk-0.18.2
 atk-sys-0.18.2
 atomic-waker-1.1.2
 autocfg-1.5.1
+aws-lc-rs-1.18.2
+aws-lc-sys-0.46.0
 base64-0.21.7
 base64-0.22.1
 base64-0.23.1
@@ -105,7 +107,9 @@ cfg-expr-0.15.8
 cfg-if-1.0.5
 chacha20-0.10.2
 chrono-0.4.45
+cidr-0.3.2
 cipher-0.4.4
+cmake-0.1.58
 combine-4.6.9
 concurrent-queue-2.5.0
 constant_time_eq-0.1.5
@@ -170,7 +174,7 @@ erased-serde-0.4.11
 errno-0.3.14
 event-listener-5.4.2
 event-listener-strategy-0.5.4
-eventsource-client-0.12.2
+eventsource-client-0.18.1
 fancy-regex-0.11.0
 fastrand-2.5.0
 fdeflate-0.3.7
@@ -186,6 +190,7 @@ foreign-types-macros-0.2.4
 foreign-types-shared-0.1.1
 foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
+fs_extra-1.3.0
 futures-0.3.34
 futures-channel-0.3.34
 futures-core-0.3.34
@@ -218,31 +223,29 @@ gobject-sys-0.18.0
 gtk-0.18.2
 gtk3-macros-0.18.2
 gtk-sys-0.18.2
-h2-0.3.27
 h2-0.4.20
 hashbrown-0.12.3
 hashbrown-0.14.5
 hashbrown-0.17.1
+headers-0.4.2
+headers-core-0.3.0
 heck-0.4.1
 heck-0.5.0
 hermit-abi-0.5.3
 hex-0.4.3
 hmac-0.12.1
 html5ever-0.39.0
-http-0.2.12
 http-1.5.0
 httparse-1.10.1
-http-body-0.4.6
 http-body-1.1.0
 http-body-util-0.1.5
 httpdate-1.0.3
 http-range-0.1.6
-hyper-0.14.32
 hyper-1.12.0
-hyper-rustls-0.24.2
+hyper-http-proxy-1.2.0
 hyper-rustls-0.27.10
-hyper-timeout-0.4.1
-hyper-tls-0.5.0
+hyper-timeout-0.5.2
+hyper-tls-0.6.0
 hyper-util-0.1.21
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
@@ -283,6 +286,7 @@ json-patch-4.2.0
 jsonptr-0.7.1
 js-sys-0.3.106
 keyboard-types-0.8.3
+launchdarkly-sdk-transport-0.1.4
 lazy_static-1.5.1
 libappindicator-0.9.0
 libappindicator-sys-0.9.0
@@ -312,6 +316,7 @@ ndk-context-0.1.1
 ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
 nix-0.31.3
+no-proxy-0.3.7
 num-conv-0.2.2
 num_enum-0.7.6
 num_enum_derive-0.7.6
@@ -339,7 +344,6 @@ once_cell-1.21.4
 open-5.4.5
 openssl-0.10.81
 openssl-macros-0.1.1
-openssl-probe-0.1.6
 openssl-probe-0.2.2
 openssl-sys-0.9.117
 option-ext-0.2.0
@@ -404,7 +408,6 @@ r-efi-6.0.0
 regex-1.13.1
 regex-automata-0.4.18
 regex-syntax-0.8.11
-reqwest-0.11.27
 reqwest-0.12.28
 reqwest-0.13.5
 rfd-0.16.1
@@ -414,15 +417,11 @@ rustc-hash-2.1.3
 rustc_version-0.4.1
 rust-ini-0.21.3
 rustix-1.1.5
-rustls-0.21.12
 rustls-0.23.46
-rustls-native-certs-0.6.3
 rustls-native-certs-0.8.5
-rustls-pemfile-1.0.4
 rustls-pki-types-1.15.1
 rustls-platform-verifier-0.7.1
 rustls-platform-verifier-android-0.2.0
-rustls-webpki-0.101.7
 rustls-webpki-0.103.16
 rustversion-1.0.23
 ryu-1.0.23
@@ -433,8 +432,6 @@ schemars-0.9.0
 schemars-1.2.3
 schemars_derive-0.8.22
 scopeguard-1.2.0
-sct-0.7.1
-security-framework-2.11.1
 security-framework-3.7.0
 security-framework-sys-2.17.0
 selectors-0.38.0
@@ -466,7 +463,6 @@ simdutf8-0.1.5
 siphasher-1.0.4
 slab-0.4.12
 smallvec-1.16.4
-socket2-0.5.10
 socket2-0.6.5
 softbuffer-0.4.8
 soup3-0.5.0
@@ -481,13 +477,10 @@ swift-rs-1.0.9
 syn-1.0.109
 syn-2.0.119
 syn-3.0.9
-sync_wrapper-0.1.2
 sync_wrapper-1.0.2
 synstructure-0.14.0
 sys-locale-0.3.2
-system-configuration-0.5.1
 system-configuration-0.7.0
-system-configuration-sys-0.5.0
 system-configuration-sys-0.6.0
 system-deps-6.2.2
 tao-0.37.2
@@ -526,10 +519,8 @@ tiny-keccak-2.0.2
 tinystr-0.8.5
 tinyvec-1.13.3
 tokio-1.54.1
-tokio-io-timeout-1.2.1
 tokio-macros-2.7.2
 tokio-native-tls-0.3.1
-tokio-rustls-0.24.1
 tokio-rustls-0.26.6
 tokio-util-0.7.20
 toml-0.8.2
@@ -541,6 +532,7 @@ toml_edit-0.20.2
 toml_edit-0.25.17+spec-1.1.0
 toml_parser-1.1.5+spec-1.1.0
 toml_writer-1.1.3+spec-1.1.0
+tower-0.4.13
 tower-0.5.3
 tower-http-0.6.11
 tower-layer-0.3.3
@@ -591,24 +583,20 @@ winapi-util-0.1.11
 winapi-x86_64-pc-windows-gnu-0.4.0
 windows-0.62.2
 windows_aarch64_gnullvm-0.42.2
-windows_aarch64_gnullvm-0.48.5
 windows_aarch64_gnullvm-0.52.6
 windows_aarch64_gnullvm-0.53.1
 windows_aarch64_msvc-0.42.2
-windows_aarch64_msvc-0.48.5
 windows_aarch64_msvc-0.52.6
 windows_aarch64_msvc-0.53.1
 windows-collections-0.3.2
 windows-core-0.62.2
 windows-future-0.3.2
 windows_i686_gnu-0.42.2
-windows_i686_gnu-0.48.5
 windows_i686_gnu-0.52.6
 windows_i686_gnu-0.53.1
 windows_i686_gnullvm-0.52.6
 windows_i686_gnullvm-0.53.1
 windows_i686_msvc-0.42.2
-windows_i686_msvc-0.48.5
 windows_i686_msvc-0.52.6
 windows_i686_msvc-0.53.1
 windows-implement-0.60.2
@@ -619,32 +607,26 @@ windows-registry-0.6.1
 windows-result-0.4.1
 windows-strings-0.5.1
 windows-sys-0.45.0
-windows-sys-0.48.0
 windows-sys-0.52.0
 windows-sys-0.60.2
 windows-sys-0.61.2
 windows-targets-0.42.2
-windows-targets-0.48.5
 windows-targets-0.52.6
 windows-targets-0.53.5
 windows-threading-0.2.1
 windows-version-0.1.7
 windows_x86_64_gnu-0.42.2
-windows_x86_64_gnu-0.48.5
 windows_x86_64_gnu-0.52.6
 windows_x86_64_gnu-0.53.1
 windows_x86_64_gnullvm-0.42.2
-windows_x86_64_gnullvm-0.48.5
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_gnullvm-0.53.1
 windows_x86_64_msvc-0.42.2
-windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.53.1
 window-vibrancy-0.8.1
 winnow-0.5.40
 winnow-1.0.4
-winreg-0.50.0
 winreg-0.56.0
 wit-bindgen-0.57.1
 writeable-0.6.4
@@ -722,7 +704,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_31
+ebuild_revision_32
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -1046,7 +1028,8 @@ eerror
 	fi
 
 	# For manual lockfile creation
-ewarn "QA:  Manually bump eventsource-client in Cargo.toml"
+ewarn "QA:  Manually bump eventsource-client from 0.12.2 to 0.18.1 in Cargo.toml"
+ewarn "QA:  Manually bump reqwest from 0.11.16 to 0.13.5 in Cargo.toml"
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	unpack ${A}
 #	die
