@@ -1,0 +1,19 @@
+This is an AI suggested fix to fix zod-openai build.
+--- a/vite.config.ts.orig	2026-10-17 20:11:49.000000000 -0700
++++ b/vite.config.ts	2026-10-25 18:55:49.268349033 -0700
+@@ -107,10 +107,14 @@ const openExternalBrowser = async (
+ };
+ 
+ export default defineConfig({
++  root: __dirname,
+   base: isDev ? '/' : process.env.VITE_CDN_BASE || (isAuth ? '/_spa-auth/' : '/_spa/'),
+   build: {
+     modulePreload: sharedModulePreload,
+-    outDir: isAuth ? 'dist/auth' : isMobile ? 'dist/mobile' : 'dist/desktop',
++    outDir: path.resolve(
++      __dirname, 
++      isAuth ? 'dist/auth' : isMobile ? 'dist/mobile' : 'dist/desktop'
++    ),
+     reportCompressedSize: false,
+     rolldownOptions: {
+       ...(enableViteDevTools && { devtools: {} }),

@@ -1,5 +1,5 @@
 --- a/apps/cli/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/apps/cli/pnpm-workspace.yaml	2026-10-25 06:23:36.750381181 -0700
++++ b/apps/cli/pnpm-workspace.yaml	2026-10-25 18:16:19.372574207 -0700
 @@ -39,6 +39,17 @@ publicHoistPattern:
  allowBuilds:
    esbuild: true
@@ -21,7 +21,7 @@
 +  'katex': '@NODE_KATEX_PV@'
 +  'zod': '@NODE_ZOD_PV@'
 --- a/apps/desktop/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/apps/desktop/pnpm-workspace.yaml	2026-10-25 06:46:22.750042405 -0700
++++ b/apps/desktop/pnpm-workspace.yaml	2026-10-25 18:16:19.372909387 -0700
 @@ -48,23 +48,28 @@ publicHoistPattern:
    - 'pdfjs-dist'
  
@@ -134,7 +134,7 @@
 +  'vite': '@NODE_VITE_8_PV@'
 +  'vitest@5.0.3>happy-dom': '@NODE_HAPPY_DOM_PV@'
 --- a/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-10-25 06:15:07.898310148 -0700
++++ b/pnpm-workspace.yaml	2026-10-25 18:16:52.505075054 -0700
 @@ -28,6 +28,7 @@ packages:
    - apps/workbench
  
@@ -177,8 +177,11 @@
  
  # Build scripts run one at a time. Several peer-variant copies of
  # @lobehub/editor resolve in this workspace and every copy's postinstall
-@@ -62,35 +88,99 @@ allowBuilds:
+@@ -60,37 +86,102 @@ allowBuilds:
+   sharp: false
+   unrs-resolver: false
    workerd: true
++  'zod-openapi@https://codeload.github.com/samchungy/zod-openapi/tar.gz/8e9ca08306760b6e0f8eb7185ff7ede5e71a9740': true # Same as v4.2.4
  
  overrides:
 -  '@lobehub/ui': ^6.0.4

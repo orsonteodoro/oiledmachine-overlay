@@ -4,6 +4,8 @@
 
 EAPI=8
 
+export RUST_BACKTRACE=1
+
 # This ebuild is partly created with AI text generation and AI generated fixes.
 # A wrapper script and some patches are based on AI generated code.
 
@@ -258,7 +260,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm minio -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_123
+ebuild_revision_124
 "
 REQUIRED_USE="
 	embeddings? (
@@ -669,7 +671,7 @@ pnpm_unpack_post() {
 		eapply "${FILESDIR}/${PN}-2.2.20-build-files-changes.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-2.2.20-pnpm-workspace-changes.patch"
-	eapply "${FILESDIR}/${PN}-2.2.20-ignore-missing-module.patch"
+#	eapply "${FILESDIR}/${PN}-2.2.20-fix-outdir.patch"
 
 	sed -i \
 		-e "s|lockfile: false|lockfile: true|g" \
@@ -812,9 +814,11 @@ pnpm_dedupe_post() {
 	######################
 
 		pkgs=(
-			#"zod-openai@${NODE_ZOD_OPENAI_4_PV}" # Not on npm
+	# https://www.npmjs.com/package/zod-openapi
+	# https://github.com/standard-community/standard-openapi/tree/0.2.11#installation
+			"github:samchungy/zod-openapi#v${NODE_ZOD_OPENAI_4_PV}"
 		)
-		#epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}"
+		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}" --ignore-scripts
 
 	######################
 	# Feature dependencies
