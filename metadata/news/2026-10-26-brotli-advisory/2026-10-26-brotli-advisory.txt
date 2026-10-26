@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 7
+Revision: 8
 News-Item-Format: 2.0
 Display-If-Installed: app-arch/brotli
 Display-If-Installed: app-misc/amica
@@ -109,6 +109,7 @@ exclusion of Brolti:
 
 app-text/ghostscript-gpl [14]
 dev-cpp/cpp-httplib [14]
+dev-python/array-record [15]
 dev-qt/qtbase [14]
 media-libs/freetype [14]
 media-libs/libheif [14]
@@ -125,7 +126,6 @@ Safe packages:
 app-misc/amica [4]
 app-arch/brotli [3][13][14]
 dev-libs/apache-arrow
-dev-python/array-record
 dev-python/chromadb [4]
 dev-python/ddgs
 dev-python/discord-py
