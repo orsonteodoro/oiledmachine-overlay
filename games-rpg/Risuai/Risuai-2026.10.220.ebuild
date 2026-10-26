@@ -18,7 +18,7 @@ EAPI=8
 
 # To generate lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_VERSIONS="2026.8.250" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_VERSIONS="2026.10.220" pnpm_updater_update_locks.sh
 
 # pnpm required because lockfile deps.  DO NOT CHANGE!
 
@@ -80,8 +80,8 @@ bit-vec-0.8.0
 block2-0.6.2
 block-buffer-0.10.4
 blocking-1.7.0
-brotli-9.0.0
-brotli-decompressor-6.0.1
+brotli-9.1.0
+brotli-decompressor-6.2.0
 bs58-0.5.1
 bstr-1.13.1
 bumpalo-3.20.3
@@ -96,7 +96,7 @@ camino-1.2.6
 cargo_metadata-0.19.2
 cargo-platform-0.1.9
 cargo_toml-1.0.1
-cc-1.6.0
+cc-1.10.0
 cesu8-1.1.0
 cfb-0.14.0
 cfg_aliases-0.2.2
@@ -104,9 +104,8 @@ cfg-expr-0.15.8
 cfg-if-1.0.5
 chacha20-0.10.2
 chrono-0.4.45
-cidr-0.3.2
 cipher-0.4.4
-combine-4.6.8
+combine-4.6.9
 concurrent-queue-2.5.0
 constant_time_eq-0.1.5
 const-random-0.1.18
@@ -121,7 +120,7 @@ core-graphics-0.25.0
 core-graphics-types-0.2.0
 cpufeatures-0.2.17
 cpufeatures-0.3.1
-crc32fast-1.5.2
+crc32fast-1.5.3
 crossbeam-channel-0.5.17
 crossbeam-utils-0.8.23
 crunchy-0.2.4
@@ -137,10 +136,10 @@ darling_macro-0.20.11
 darling_macro-0.24.1
 data-url-0.3.2
 dbus-0.9.12
-defmt-1.1.1
-defmt-macros-1.1.1
-defmt-parser-1.0.0
-deranged-0.5.8
+defmt-1.2.0
+defmt-macros-1.2.0
+defmt-parser-1.1.0
+deranged-0.5.9
 derive_arbitrary-1.5.0
 derive_more-2.1.1
 derive_more-impl-2.1.1
@@ -165,18 +164,18 @@ encoding_rs-0.8.42
 endi-1.1.1
 enumflags2-0.7.12
 enumflags2_derive-0.7.12
-equivalent-1.0.2
-erased-serde-0.4.10
+equivalent-1.0.3
+erased-serde-0.4.11
 errno-0.3.14
 event-listener-5.4.2
 event-listener-strategy-0.5.4
-eventsource-client-0.18.1
+eventsource-client-0.12.2
 fancy-regex-0.11.0
 fastrand-2.5.0
 fdeflate-0.3.7
 field-offset-0.3.6
 filetime-0.2.29
-find-msvc-tools-0.1.14
+find-msvc-tools-0.1.15
 flate2-1.1.10
 fnv-1.0.7
 foldhash-0.2.0
@@ -223,8 +222,6 @@ h2-0.4.20
 hashbrown-0.12.3
 hashbrown-0.14.5
 hashbrown-0.17.1
-headers-0.4.2
-headers-core-0.3.0
 heck-0.4.1
 heck-0.5.0
 hermit-abi-0.5.3
@@ -238,24 +235,24 @@ http-body-0.4.6
 http-body-1.1.0
 http-body-util-0.1.5
 httpdate-1.0.3
-http-range-0.1.5
+http-range-0.1.6
 hyper-0.14.32
 hyper-1.12.0
-hyper-http-proxy-1.2.0
+hyper-rustls-0.24.2
 hyper-rustls-0.27.10
-hyper-timeout-0.5.2
+hyper-timeout-0.4.1
 hyper-tls-0.5.0
 hyper-util-0.1.21
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-ico-0.5.0
-icu_collections-2.3.0
-icu_locale_core-2.3.0
-icu_normalizer-2.3.0
-icu_normalizer_data-2.3.0
-icu_properties-2.3.0
-icu_properties_data-2.3.0
-icu_provider-2.3.1
+ico-0.6.0
+icu_collections-2.4.0
+icu_locale_core-2.4.0
+icu_normalizer-2.4.0
+icu_normalizer_data-2.4.0
+icu_properties-2.4.0
+icu_properties_data-2.4.0
+icu_provider-2.4.0
 ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.2
@@ -285,17 +282,16 @@ json-patch-4.2.0
 jsonptr-0.7.1
 js-sys-0.3.106
 keyboard-types-0.8.3
-launchdarkly-sdk-transport-0.1.4
 lazy_static-1.5.1
 libappindicator-0.9.0
 libappindicator-sys-0.9.0
-libc-0.2.190
+libc-0.2.191
 libdbus-sys-0.2.7
 libloading-0.7.4
 libredox-0.1.25
 linux-raw-sys-0.12.1
 litemap-0.8.3
-litrs-1.0.0
+litrs-1.0.1
 lock_api-0.4.14
 log-0.4.34
 lru-slab-0.1.3
@@ -303,7 +299,7 @@ markup5ever-0.39.0
 memchr-2.8.3
 memoffset-0.9.1
 mime-0.3.17
-minisign-verify-0.2.5
+minisign-verify-0.3.0
 miniz_oxide-0.8.9
 miniz_oxide-0.9.1
 mio-1.2.4
@@ -315,7 +311,6 @@ ndk-context-0.1.1
 ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
 nix-0.31.3
-no-proxy-0.3.7
 num-conv-0.2.2
 num_enum-0.7.6
 num_enum_derive-0.7.6
@@ -340,10 +335,11 @@ objc2-ui-kit-0.3.2
 objc2-user-notifications-0.3.2
 objc2-web-kit-0.3.2
 once_cell-1.21.4
-open-5.4.4
+open-5.4.5
 openssl-0.10.81
 openssl-macros-0.1.1
-openssl-probe-0.2.1
+openssl-probe-0.1.6
+openssl-probe-0.2.2
 openssl-sys-0.9.117
 option-ext-0.2.0
 ordered-multimap-0.7.3
@@ -369,8 +365,7 @@ pin-project-internal-1.1.13
 pin-project-lite-0.2.17
 piper-0.2.5
 pkg-config-0.3.34
-plist-1.10.1
-png-0.17.16
+plist-1.10.3
 png-0.18.1
 polling-3.11.0
 portable-atomic-1.15.0
@@ -411,29 +406,34 @@ regex-syntax-0.8.11
 reqwest-0.11.27
 reqwest-0.12.28
 reqwest-0.13.5
-rfd-0.16.0
+rfd-0.16.1
 ring-0.17.14
 rustc-hash-1.1.0
 rustc-hash-2.1.3
 rustc_version-0.4.1
 rust-ini-0.21.3
 rustix-1.1.5
-rustls-0.23.45
-rustls-native-certs-0.8.4
+rustls-0.21.12
+rustls-0.23.46
+rustls-native-certs-0.6.3
+rustls-native-certs-0.8.5
 rustls-pemfile-1.0.4
 rustls-pki-types-1.15.1
 rustls-platform-verifier-0.7.1
 rustls-platform-verifier-android-0.2.0
-rustls-webpki-0.103.15
+rustls-webpki-0.101.7
+rustls-webpki-0.103.16
 rustversion-1.0.23
 ryu-1.0.23
 same-file-1.0.6
-schannel-0.1.29
+schannel-0.1.30
 schemars-0.8.22
 schemars-0.9.0
-schemars-1.2.2
+schemars-1.2.3
 schemars_derive-0.8.22
 scopeguard-1.2.0
+sct-0.7.1
+security-framework-2.11.1
 security-framework-3.7.0
 security-framework-sys-2.17.0
 selectors-0.38.0
@@ -442,11 +442,11 @@ serde-1.0.229
 serde_core-1.0.229
 serde_derive-1.0.229
 serde_derive_internals-0.29.1
-serde_json-1.0.151
+serde_json-1.0.154
 serde_path_to_error-0.1.20
 serde_repr-0.1.21
 serde_spanned-0.6.9
-serde_spanned-1.1.1
+serde_spanned-1.1.2
 serde-untagged-0.1.9
 serde_urlencoded-0.7.1
 serde_with-3.24.0
@@ -458,29 +458,28 @@ sha1-0.10.7
 sha2-0.10.9
 shared_child-1.1.2
 shlex-2.0.1
-sigchld-0.2.5
-signal-hook-0.4.5
 signal-hook-registry-1.4.8
 simd-adler32-0.3.10
 simd_cesu8-1.2.0
 simdutf8-0.1.5
 siphasher-1.0.4
 slab-0.4.12
-smallvec-1.16.2
+smallvec-1.16.4
 socket2-0.5.10
 socket2-0.6.5
 softbuffer-0.4.8
 soup3-0.5.0
 soup3-sys-0.5.0
 stable_deref_trait-1.2.1
+static_vcruntime-3.0.0
 string_cache-0.9.0
 string_cache_codegen-0.6.1
 strsim-0.11.1
 subtle-2.6.1
-swift-rs-1.0.8
+swift-rs-1.0.9
 syn-1.0.109
 syn-2.0.119
-syn-3.0.6
+syn-3.0.9
 sync_wrapper-0.1.2
 sync_wrapper-1.0.2
 synstructure-0.14.0
@@ -490,28 +489,28 @@ system-configuration-0.7.0
 system-configuration-sys-0.5.0
 system-configuration-sys-0.6.0
 system-deps-6.2.2
-tao-0.37.1
+tao-0.37.2
 tao-macros-0.1.4
 tar-0.4.46
 target-lexicon-0.12.16
-tauri-2.12.1
-tauri-build-2.7.1
-tauri-codegen-2.7.1
-tauri-macros-2.7.1
-tauri-plugin-2.7.1
-tauri-plugin-deep-link-2.6.1
-tauri-plugin-dialog-2.8.1
-tauri-plugin-fs-2.6.0
-tauri-plugin-http-2.8.0
+tauri-2.12.5
+tauri-build-2.7.4
+tauri-codegen-2.7.4
+tauri-macros-2.7.4
+tauri-plugin-2.7.2
+tauri-plugin-deep-link-2.6.2
+tauri-plugin-dialog-2.8.3
+tauri-plugin-fs-2.7.1
+tauri-plugin-http-2.8.3
 tauri-plugin-os-2.4.0
 tauri-plugin-process-2.4.0
-tauri-plugin-shell-2.4.0
-tauri-plugin-single-instance-2.5.2
-tauri-plugin-updater-2.13.1
-tauri-runtime-2.12.1
-tauri-runtime-wry-2.12.1
-tauri-utils-2.10.1
-tauri-winres-0.3.6
+tauri-plugin-shell-2.5.0
+tauri-plugin-single-instance-2.5.4
+tauri-plugin-updater-2.14.0
+tauri-runtime-2.12.2
+tauri-runtime-wry-2.12.3
+tauri-utils-2.10.2
+tauri-winres-0.3.7
 tempfile-3.27.0
 tendril-0.5.1
 thiserror-1.0.69
@@ -523,23 +522,24 @@ time-0.3.55
 time-core-0.1.9
 time-macros-0.2.32
 tiny-keccak-2.0.2
-tinystr-0.8.4
+tinystr-0.8.5
 tinyvec-1.13.3
-tokio-1.53.2
+tokio-1.54.1
+tokio-io-timeout-1.2.1
 tokio-macros-2.7.2
 tokio-native-tls-0.3.1
+tokio-rustls-0.24.1
 tokio-rustls-0.26.6
-tokio-util-0.7.19
+tokio-util-0.7.20
 toml-0.8.2
-toml-1.1.6+spec-1.1.0
+toml-1.1.8+spec-1.1.0
 toml_datetime-0.6.3
-toml_datetime-1.1.1+spec-1.1.0
+toml_datetime-1.1.2+spec-1.1.0
 toml_edit-0.19.15
 toml_edit-0.20.2
-toml_edit-0.25.15+spec-1.1.0
-toml_parser-1.1.3+spec-1.1.0
-toml_writer-1.1.2+spec-1.1.0
-tower-0.4.13
+toml_edit-0.25.17+spec-1.1.0
+toml_parser-1.1.5+spec-1.1.0
+toml_writer-1.1.3+spec-1.1.0
 tower-0.5.3
 tower-http-0.6.11
 tower-layer-0.3.3
@@ -552,19 +552,13 @@ try-lock-0.2.5
 typeid-1.0.3
 typenum-1.20.1
 uds_windows-1.2.1
-unic-char-property-0.9.0
-unic-char-range-0.9.0
-unic-common-0.9.0
-unicode-ident-1.0.26
+unicode-ident-1.0.27
 unicode-segmentation-1.13.3
-unic-ucd-ident-0.9.0
-unic-ucd-version-0.9.0
 untrusted-0.9.0
 url-2.5.8
-urlpattern-0.3.0
 urlpattern-0.6.0
 utf8_iter-1.0.4
-uuid-1.27.0
+uuid-1.29.0
 vcpkg-0.2.15
 version_check-0.9.5
 version-compare-0.2.1
@@ -583,8 +577,8 @@ wasm-streams-0.5.0
 web_atoms-0.2.6
 webkit2gtk-2.0.2
 webkit2gtk-sys-2.0.2
-webpki-root-certs-1.0.9
-webpki-roots-1.0.9
+webpki-root-certs-1.0.11
+webpki-roots-1.0.11
 web-sys-0.3.106
 web-time-1.1.0
 webview2-com-0.39.1
@@ -653,33 +647,33 @@ winreg-0.50.0
 winreg-0.56.0
 wit-bindgen-0.57.1
 writeable-0.6.4
-wry-0.57.0
+wry-0.57.1
 x11-2.21.0
 x11-dl-2.21.0
 xattr-1.6.1
-yoke-0.8.3
+yoke-0.8.4
 yoke-derive-0.8.4
 zbus-5.19.0
 zbus_macros-5.19.0
-zbus_names-4.3.4
+zbus_names-4.3.5
 zcheapstr-1.1.0
-zerocopy-0.8.61
-zerocopy-derive-0.8.61
+zerocopy-0.8.63
+zerocopy-derive-0.8.63
 zerofrom-0.1.8
 zerofrom-derive-0.1.8
 zeroize-1.9.1
 zerotrie-0.2.5
-zerovec-0.11.8
-zerovec-derive-0.11.6
+zerovec-0.11.9
+zerovec-derive-0.11.7
 zip-0.6.6
 zip-4.6.1
 zlib-rs-0.6.8
 zmij-1.0.23
 zstd-0.11.2+zstd.1.5.2
 zstd-safe-5.0.2+zstd.1.5.2
-zstd-sys-2.1.0+zstd.1.5.7
-zvariant-5.15.0
-zvariant_derive-5.15.0
+zstd-sys-2.1.2+zstd.1.5.7
+zvariant-5.15.1
+zvariant_derive-5.15.1
 zvariant_utils-4.2.0
 "
 
@@ -797,11 +791,16 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# Upstream uses pnpm 10.34.1
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
 	$(secure-version_gen_openssl_depends)
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}
-	sys-apps/pnpm:${PNPM_SLOT}
+	|| (
+		~sys-apps/pnpm-${NODE_PNPM_12_PV}:${PNPM_SLOT}
+		~sys-apps/pnpm-${NODE_PNPM_11_PV}:${PNPM_SLOT}
+		~sys-apps/pnpm-${NODE_PNPM_10_PV}:${PNPM_SLOT}
+	)
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-2026.4.181-replace-with-js-tiktoken.patch"
@@ -1048,7 +1047,7 @@ eerror
 ewarn "QA:  Manually bump eventsource-client in Cargo.toml"
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	unpack ${A}
-	#die
+#	die
 
 	pnpm_src_unpack
 
