@@ -2,7 +2,7 @@ Title: Next.js Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-22
-Revision: 8
+Revision: 10
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/amica
 Display-If-Installed: media-gfx/upscayl
@@ -12,8 +12,10 @@ Display-If-Installed: www-misc/vercel
 (Updated Oct 26, 2026) Due to the unpatched multiple CVEs in vendored Node in Electron 45
 and earlier, it is recommened to uninstall all Electron apps, kill processes using vendored
 Brotli/nodejs (<=22.23.0, <=24.22.0, <=and 26.12.0) with global deny rule with your MAC
-(e.g. AppArmor or SELinux) to prevent a Zero Click RCE.  The issue remains unpatched.  Some
-next apps rely on Electron.  The Next.js issue is resolved but not the Broccoli2Shell issue.
+(e.g. AppArmor or SELinux) to prevent a Zero Click RCE or Passive Click RCE.  The issue
+remains unpatched.  Some next apps rely on Electron.  The Next.js issue is resolved but not
+the Broccoli2Shell issue.  If an app automatically or passively loads an jxl image using
+metadata compressed with Brotli, the app is at risk.
 
 CVE-2025-55182 - RCE, ISD, EBR, ZC, DoS, DT, ID, critical severity at 10 score with CVSS 3.0
 CVE-2025-66478 - Rejected as duplicate of CVE-2025-55182

@@ -2,7 +2,7 @@ Title: Electron Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/llocal
 Display-If-Installed: net-im/signal-desktop
@@ -11,11 +11,12 @@ Display-If-Installed: media-gfx/upscayl
 Display-If-Installed: media-video/lossless-cut
 Display-If-Installed: www-apps/LobeHub
 
-It is discovered that Electron 45 and earlier used a vendored copy
-of Node.js containing a vendored copy of Brotli with RCE.  It is recommened
-at this time to either uninstall all Electron apps or add a global deny
-rule for MAC (e.g. AppArmor or SELinux) for executables in /opt/<PKGNAME>
-not the /usr/bin/<program-name> shell wrapper.
+It is discovered that Electron 45 and earlier used a vendored copy of Node.js
+containing a vendored copy of Brotli with RCE.  If an app automatically or
+passively loads an jxl image using metadata compressed with Brotli, the app is
+at risk.  It is recommened at this time to either uninstall all Electron apps or
+add a global deny rule for MAC (e.g. AppArmor or SELinux) for executables in
+/opt/<PKGNAME> not the /usr/bin/<program-name> shell wrapper.
 
 `equery f <pkgname>` can help find locate the folder to temporary blacklist.
 
