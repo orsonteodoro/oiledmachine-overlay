@@ -260,7 +260,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm minio -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_124
+ebuild_revision_126
 "
 REQUIRED_USE="
 	embeddings? (
@@ -664,14 +664,14 @@ pnpm_unpack_post() {
 	if use pwa ; then
 		eapply "${FILESDIR}/${MY_PN2}-2.2.19-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-2.2.13-postgresjs-driver-support.patch"
-		#eapply "${FILESDIR}/${PN}-2.2.13-docker-cjs-multidriver-support.patch" # testing upstream version instead.  AI recommends this off.
+		eapply "${FILESDIR}/${PN}-2.2.20-docker-cjs-multidriver-support.patch"
 	fi
 
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		eapply "${FILESDIR}/${PN}-2.2.20-build-files-changes.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-2.2.20-pnpm-workspace-changes.patch"
-	eapply "${FILESDIR}/${PN}-2.2.20-fix-outdir.patch"
+#	eapply "${FILESDIR}/${PN}-2.2.20-fix-outdir.patch"
 
 	sed -i \
 		-e "s|lockfile: false|lockfile: true|g" \
@@ -1673,6 +1673,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.1.52 (20260421) with sharp 0.34.3.    Tested pwa and electron login to self-hosted server
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.2.13 (20260812) with sharp 0.35.3.    Tested pwa and electron with DATABASE_DRIVER="pg" and AUTH_SSO_PROVIDERS="github"
 # OILEDMACHINE-OVERLAY-TEST:  PASS 2.2.19 (20261011) with sharp 0.35.5, Electron 44.7.0.    Tested pwa and electron with DATABASE_DRIVER="pg" and AUTH_SSO_PROVIDERS="github"
+# OILEDMACHINE-OVERLAY-TEST:  PASS 2.2.20 (20261026) with sharp 0.35.5, Electron 45.0.0.    Tested pwa and electron with DATABASE_DRIVER="pg" and AUTH_SSO_PROVIDERS="github"
 
 # E-mail login:  untested
 # Electron:  passed
