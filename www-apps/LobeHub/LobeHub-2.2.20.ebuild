@@ -671,7 +671,7 @@ pnpm_unpack_post() {
 		eapply "${FILESDIR}/${PN}-2.2.20-build-files-changes.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-2.2.20-pnpm-workspace-changes.patch"
-#	eapply "${FILESDIR}/${PN}-2.2.20-fix-outdir.patch"
+	eapply "${FILESDIR}/${PN}-2.2.20-fix-outdir.patch"
 
 	sed -i \
 		-e "s|lockfile: false|lockfile: true|g" \
@@ -816,7 +816,8 @@ pnpm_dedupe_post() {
 		pkgs=(
 	# https://www.npmjs.com/package/zod-openapi
 	# https://github.com/standard-community/standard-openapi/tree/0.2.11#installation
-			"github:samchungy/zod-openapi#v${NODE_ZOD_OPENAI_4_PV}"
+			#"github:samchungy/zod-openapi#v${NODE_ZOD_OPENAI_4_PV}"
+			"zod-openapi@${NODE_ZOD_OPENAI_4_PV}"
 		)
 		epnpm add "${pkgs[@]}" -w "${PNPM_INSTALL_ARGS[@]}" --ignore-scripts
 
