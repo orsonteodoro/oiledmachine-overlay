@@ -9,6 +9,7 @@ EAPI=8
 # Requirements:
 # https://github.com/apache/arrow/blob/apache-arrow-22.0.0/.env
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 ABSEIL_CPP_SLOT="20240722"
 CXX_STANDARD=17
 GRPC_SLOT="4"
@@ -48,9 +49,18 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
+CHKL_TIMESTAMPS=(
+	"app-arch/bzip2-9999"
+	"app-arch/brotli-9999"
+	"app-arch/lz4-9999"
+	"app-arch/snappy-9999"
+	"app-arch/zstd-9999"
+	"dev-libs/rapidjson-9999"
+)
+
 # Note: upstream meson port is incomplete.
 # https://github.com/apache/arrow/issues/45778
-inherit abseil-cpp cmake flag-o-matic grpc libcxx-slot libstdcxx-slot protobuf re2
+inherit abseil-cpp cflags-hardened chkl cmake flag-o-matic grpc libcxx-slot libstdcxx-slot protobuf secure-version re2
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~x86"
 S="${WORKDIR}/${P}/cpp"
@@ -79,7 +89,7 @@ ${CPU_FLAGS_X86[@]}
 -csv -cuda -filesystem -gandiva -dataset -gcs -hdfs +ipc -jemalloc -json -lz4
 +mimalloc +parquet +re2 -s3 -snappy -tensorflow ssl test +threads +utf8proc
 -zlib -zstd
-ebuild_revision_2
+ebuild_revision_4
 "
 # oiledmachine-overlay has strict GPU version requirements, CUDA 11.7 not supported on distro.
 REQUIRED_USE="
@@ -159,56 +169,44 @@ RESTRICT="
 "
 
 RDEPEND="
-	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_SLOT}:${ABSEIL_CPP_SLOT%%.*}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/abseil-cpp:=
-	>=dev-libs/boost-1.87.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/boost:=
+	>=dev-cpp/abseil-cpp-${ABSEIL_CPP_SLOT}:${ABSEIL_CPP_SLOT%%.*}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-libs/boost-1.87.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	arrow-flight? (
-		net-libs/grpc:${GRPC_SLOT}
-		net-libs/grpc:=
+		net-libs/grpc:${GRPC_SLOT}=
 	)
 	brotli? (
-		>=app-arch/brotli-1.1.0
-		app-arch/brotli:=
+		>=app-arch/brotli-${BROTLI_PV}:=
 	)
 	bzip2? (
-		>=app-arch/bzip2-1.0.8
-		app-arch/bzip2:=
+		>=app-arch/bzip2-${BZIP2_PV}:=
 	)
 	elibc_musl? (
-		sys-libs/timezone-data
+		sys-libs/timezone-data:=
 	)
 	lz4? (
-		>=app-arch/lz4-1.10.0
-		app-arch/lz4:=
+		>=app-arch/lz4-${LZ4_PV}:=
 	)
 	parquet? (
 		dev-libs/libutf8proc:=
-		>=dev-libs/thrift-0.20.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/thrift:=
+		>=dev-libs/thrift-0.20.0:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		ssl? (
-			>=dev-libs/openssl-3.0.8
-			dev-libs/openssl:=
+			$(secure-version_gen_openssl_depends)
 		)
 	)
 	re2? (
-		>=dev-libs/re2-0.2023.03.01:${RE2_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/re2:=
+		>=dev-libs/re2-0.2023.03.01:${RE2_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	snappy? (
-		>=app-arch/snappy-1.1.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		app-arch/snappy:=
+		>=app-arch/snappy-${SNAPPY_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	utf8proc? (
 		dev-libs/libutf8proc:=
 	)
 	zlib? (
-		>=virtual/zlib-1.3.1
-		virtual/zlib:=
+		>=virtual/zlib-${ZLIB_PV}:=
 	)
 	zstd? (
-		>=app-arch/zstd-1.5.7
-		app-arch/zstd:=
+		>=app-arch/zstd-${ZSTD_PV}:=
 	)
 "
 # rapidjson version relaxed from live (9999)
@@ -216,16 +214,13 @@ DEPEND="
 	${RDEPEND}
 	dev-cpp/xsimd:=
 	json? (
-		dev-libs/rapidjson
-		dev-libs/rapidjson:=
+		>=dev-libs/rapidjson-${RAPIDJSON_PV}:=
 	)
 "
 BDEPEND="
 	test? (
-		>=dev-cpp/gflags-2.2.2[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/gtest[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-cpp/gflags:=
-		dev-cpp/gtest:=
+		>=dev-cpp/gflags-2.2.2:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		dev-cpp/gtest:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -277,6 +272,8 @@ get_runtime_simd_level() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
+	cflags-hardened_append
 	local libdir=$(get_libdir)
 
 	local use_gold="OFF"
