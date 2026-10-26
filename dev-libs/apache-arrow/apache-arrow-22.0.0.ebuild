@@ -50,8 +50,8 @@ LLVM_COMPAT=(
 )
 
 CHKL_TIMESTAMPS=(
-	"app-arch/bzip2-9999"
 	"app-arch/brotli-9999"
+	"app-arch/bzip2-9999"
 	"app-arch/lz4-9999"
 	"app-arch/snappy-9999"
 	"app-arch/zstd-9999"
