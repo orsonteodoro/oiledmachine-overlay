@@ -51,9 +51,9 @@ Display-If-Installed: www-client/chromium
 Display-If-Installed: x11-wm/xpra
 
 It is discovered that multiple packages have vendored Brotli.  If an
-app is capable of automatically loading, passively click loading, a loading or
-clicking of a URL to a JPEG XL (jxl) image using metadata compressed with
-Brotli, the app is at risk.  It is recommened at this time to either uninstall
+app is capable of automatically loading, passively click loading, or loading or
+clicking a URL to a JPEG XL (jxl) image using metadata compressed with Brotli,
+then the app is at risk.  It is recommened at this time to either uninstall
 all affected apps or add a global deny rule for MAC (e.g. AppArmor or SELinux)
 for executables and to kill all running apps that used an old vendored copy of
 Brotli.  The init daemon services need to be disabled temporarily until the
