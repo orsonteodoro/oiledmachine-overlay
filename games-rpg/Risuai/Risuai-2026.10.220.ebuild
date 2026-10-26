@@ -34,6 +34,7 @@ PYTHON_COMPAT=( "python3_12" )
 RUST_MAX_VER="1.98.1" # Inclusive
 RUST_MIN_VER="1.98.1" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792956356
 TARBALL="${P}.tar.gz"
 
 CPU_FLAGS_X86=(
@@ -815,6 +816,7 @@ _PATCHES=(
 DOCS=( "README.md" )
 
 pkg_setup() {
+	secure-version-node_check_update
 	use server && ewarn "The server USE flag is in development/testing"
 	pnpm_pkg_setup
 	node-sharp_pkg_setup
