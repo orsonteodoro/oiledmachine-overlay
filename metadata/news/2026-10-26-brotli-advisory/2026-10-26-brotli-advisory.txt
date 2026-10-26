@@ -64,7 +64,7 @@ Vulnerability analysis:
 Alleged vulnerabilites in Brolti that would have forced brotli as a live ebuild
 by default or would have deserved a fallback-commit bump:
 
-Threat intelligence name:  broccoli2shell
+Threat intelligence name:  Broccoli2Shell
 
 CVE-2026-111497 - RCE, OOBW
 
