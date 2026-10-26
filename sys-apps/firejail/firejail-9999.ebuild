@@ -288,8 +288,7 @@ gen_clang_bdepend() {
 if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FALLBACK_COMMIT="9cb0def5269881665db41954da431dbdc5e61c82"
-	#FALLBACK_COMMIT="13bb0f4eb64502f451fd40a45cf24444bc205d99" # working
+	FALLBACK_COMMIT="afd261d922326f593220ee053c221751193b00bc"
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -312,9 +311,9 @@ ${FIREJAIL_PROFILES_IUSE[@]}
 ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
-landlock +network +private-home -private-lib -selinux +suid
+landlock +network +private-home -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xcsecurity xvfb
-ebuild_revision_147
+ebuild_revision_148
 "
 REQUIRED_USE+="
 	!test
@@ -414,11 +413,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.80-manpage-nocompress.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 #	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"${FILESDIR}/extra-patches/${PN}-13bb0f4-profile-fixes.patch"
+	"${FILESDIR}/extra-patches/${PN}-9cb0def-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
-	"${FILESDIR}/extra-patches/${PN}-13bb0f4-default-res.patch"
-	"${FILESDIR}/extra-patches/${PN}-0.9.80-inc-profile-changes.patch"
-	"${FILESDIR}/extra-patches/${PN}-13bb0f4-fix-private-lib-for-multilslot.patch"
+	"${FILESDIR}/extra-patches/${PN}-9cb0def-default-res.patch"
+	"${FILESDIR}/extra-patches/${PN}-9cb0def-inc-profile-changes.patch"
 	"${FILESDIR}/extra-patches/${PN}-0.9.80-chown-warning.patch"
 )
 
@@ -896,12 +894,6 @@ einfo "Processing:  ${file}"
 		fi
 	fi
 
-	if use private-lib ; then
-		sed -i -e "s|# private-lib no|private-lib yes|" \
-			"etc/firejail.config" \
-			|| die
-	fi
-
 	# Common symbol replacements
 	local L=(
 		$(find "etc" -type f)
@@ -977,7 +969,6 @@ _src_configure() {
 		$(use_enable landlock)
 		$(use_enable network)
 		$(use_enable private-home)
-		$(use_enable private-lib)
 		$(use_enable selinux)
 		$(use_enable suid)
 		$(use_enable userns)
@@ -1186,7 +1177,6 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 	misc_tests=()
 	# Mixes test-github and test-noprofiles with exclusions.
 	local basic_tests=(
-		test-private-lib
 		test-fnetfilter
 		test-fs
 		test-utils
@@ -1208,13 +1198,6 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 #		>> \
 #		"${ED}/etc/firejail/globals.local" \
 #		|| die
-
-	# Add globals for ricers
-	echo \
-		"private-lib gcc/*/*/libgomp.so.*" \
-		>> \
-		"${ED}/etc/firejail/globals.local" \
-		|| die
 
 	# Temporary enable list
 	echo \
@@ -2188,12 +2171,6 @@ einfo "Updating config for non-suid mode"
 }
 
 pkg_postinst() {
-einfo
-einfo "Note to ricers and optimization fanatics:"
-einfo
-einfo "You may need to update /etc/firejail/globals.local to add"
-einfo "private-lib gcc/*/*/libgomp.so.*"
-einfo
 ewarn
 ewarn "The /usr/local/firejail-bin has been removed.  You should remove"
 ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
