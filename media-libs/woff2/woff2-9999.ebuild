@@ -12,6 +12,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_SUBMODULES=( '-brotli' ) # Mitigate Brotli RCE, the logs say it doesn't build vendored but links to external.
 	FALLBACK_COMMIT="fb9c3379f2605b10f3e8f1d9636664ab5576775c"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/google/woff2.git"
@@ -30,7 +31,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris"
 IUSE+="
-ebuild_revision_10
+ebuild_revision_12
 "
 
 RDEPEND=">=app-arch/brotli-9999:="
