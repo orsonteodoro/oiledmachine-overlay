@@ -164,7 +164,7 @@ x11-wm/xpra
 [17] Both the zig based and rust based bun.  If you used the old ebuild, it need to be uninstalled.
 [18] Considered safe since input vectors are locked down.
 [19] Contains CVE-2026-92392 which was shared in the RCE threat intelligence posts.
-[20] Has other vulnerabile cargo crates
+[20] Has other vulnerable cargo crates
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
