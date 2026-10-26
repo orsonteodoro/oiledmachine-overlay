@@ -12,7 +12,12 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_SUBMODULES=( '-brotli' ) # Mitigate Brotli RCE, the logs say it doesn't build vendored but links to external.
+	# Mitigate Brotli RCE, the logs say it doesn't build vendored but links to external.
+	# Prevent future possibility of build files override.
+	# If properly done it should say "Skipping submodule brotli" (verified)
+	EGIT_SUBMODULES=(
+		'-brotli'
+	)
 	FALLBACK_COMMIT="fb9c3379f2605b10f3e8f1d9636664ab5576775c"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/google/woff2.git"
