@@ -3,8 +3,12 @@
 
 EAPI=8
 
-# 22 - gnu++17
-# 23 - gnu++20
+# This package must be updated at the same as dev-python/pyarrow.
+# It is purposely not bumped because it could break compatibility for c++17 on the AI stack.
+# We do not want compile time bugs.
+
+# Version 22 - gnu++17
+# Version 23 and newer - gnu++20
 
 # Requirements:
 # https://github.com/apache/arrow/blob/apache-arrow-22.0.0/.env
@@ -17,9 +21,9 @@ PROTOBUF_CPP_SLOT="4"
 RE2_SLOT="20220623"
 
 # arrow.git: testing
-ARROW_TESTING_COMMIT="9a02925d1ba80bd493b6d4da6e8a777588d57ac4"
+ARROW_TESTING_COMMIT="9ff285c88565f0f6abc855918c6a342e70e4909c"
 # arrow.git: cpp/submodules/parquet-testing
-PARQUET_TESTING_COMMIT="a3d96a65e11e2bbca7d22a894e8313ede90a33a3"
+PARQUET_TESTING_COMMIT="56653c437c8092f704a092d0d1d4e600124cd49f"
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
