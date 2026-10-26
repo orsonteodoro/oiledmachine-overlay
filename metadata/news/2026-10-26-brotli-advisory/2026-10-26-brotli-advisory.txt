@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 9
+Revision: 11
 News-Item-Format: 2.0
 Display-If-Installed: app-arch/brotli
 Display-If-Installed: app-misc/amica
@@ -121,7 +121,7 @@ net-misc/curl [14][19]
 net-misc/wget2 [14]
 sci-libs/tensorstore [8][15]
 
-Safe packages:
+Safe against Broccoli2Shell:
 
 app-misc/amica [4]
 app-arch/brotli [3][13][14]
@@ -135,7 +135,7 @@ dev-python/pandas
 dev-python/primp [4]
 dev-python/starlette-compress
 games-rpg/Risuai [4]
-gui-apps/windowpet [4]
+gui-apps/windowpet [4][20]
 media-libs/libjxl [3][14]
 media-libs/woff2 [3][14]
 media-sound/spotify [15][18]
@@ -164,6 +164,7 @@ x11-wm/xpra
 [17] Both the zig based and rust based bun.  If you used the old ebuild, it need to be uninstalled.
 [18] Considered safe since input vectors are locked down.
 [19] Contains CVE-2026-92392 which was shared in the RCE threat intelligence posts.
+[20] Has other vulnerabile cargo crates
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
