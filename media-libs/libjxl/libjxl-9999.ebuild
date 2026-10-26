@@ -31,7 +31,17 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib gnome2-utils libcxx-slot libstdcxx-slot secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="f23e813be793fa5cd15c0eeca4ae32c2ed7c6add"
+	# Explicit removal of submodules as a precaution against build files override.
+	# Mitigation against Brotli RCE or future incidents.
+	# It should say "Skipping submodule third_party/brotli" if done correctly.
+	EGIT_SUBMODULES=(
+		'*'
+		'-third_party/brotli'
+		'-third_party/lcms'
+		'-third_party/highway'
+		'-third_party/googletest'
+	)
+	FALLBACK_COMMIT="ee558e954094079fdac63c96cde6f11b962dfde1"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/libjxl/libjxl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
