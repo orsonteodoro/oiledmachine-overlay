@@ -5,16 +5,18 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
-inherit distutils-r1 pypi
+inherit pypi secure-version secure-version-python distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ollama/ollama-python.git"
-	FALLBACK_COMMIT="dbccf192ac6baf85d1566b711cadca2cacb34c0c" # Jan 23, 2026
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="8785556559ec1d045d27a1ba9d9cc7330c3d3cb1"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -39,9 +41,9 @@ RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE+=" dev"
 RDEPEND+="
-	>=dev-lang/python-3.8
+	$(secure-version_gen_python_depends)
 	>=dev-python/anyio-4.5.2[${PYTHON_USEDEP}]
-	>=dev-python/certifi-2025.1.31[${PYTHON_USEDEP}]
+	>=dev-python/certifi-${PYTHON_CERTIFI_PV}[${PYTHON_USEDEP}]
 	>=dev-python/h11-0.14.0[${PYTHON_USEDEP}]
 	>=dev-python/httpcore-1.0.7[${PYTHON_USEDEP}]
 	>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
@@ -68,7 +70,9 @@ DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else

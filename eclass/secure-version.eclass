@@ -951,7 +951,7 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 	)
 	local x
 	for x in "${L[@]}" ; do
-		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+		if [[ "${PYTHON_COMPAT[@]}" =~ "python${x/./_}" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
 			local u="PYTHON_${x/./_}_PV"
 #einfo "${u} ${x} ${!u}"
 			t+="
