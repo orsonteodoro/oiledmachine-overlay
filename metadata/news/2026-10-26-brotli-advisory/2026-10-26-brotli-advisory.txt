@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 8
+Revision: 9
 News-Item-Format: 2.0
 Display-If-Installed: app-arch/brotli
 Display-If-Installed: app-misc/amica
@@ -97,6 +97,7 @@ List of packages at high risk:
 
 app-misc/llocal [5][10][15]
 dev-games/godot-editor [15][16]
+dev-python/array-record [15]
 media-gfx/blockbench [5][10][15]
 media-gfx/upscayl [5][10][15]
 media-video/lossless-cut [5]
@@ -109,7 +110,6 @@ exclusion of Brolti:
 
 app-text/ghostscript-gpl [14]
 dev-cpp/cpp-httplib [14]
-dev-python/array-record [15]
 dev-qt/qtbase [14]
 media-libs/freetype [14]
 media-libs/libheif [14]
