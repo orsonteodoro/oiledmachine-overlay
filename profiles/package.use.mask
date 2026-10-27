@@ -294,3 +294,11 @@ sci-ml/ollama unrestrict
 # Vulnerable
 media-plugins/gst-plugins-rs spotify # DoS:High, DT:High
 media-plugins/gst-plugins-rs webrtc-aws # DoS:High, DT:High
+
+# Block eMudhra intermediate CA to mitigate phishing and MITM
+# The NSS (ESR) may be slow as a marketing stunt.  The industry has rejected the intermediate CA but the ESR version is delayed.
+app-misc/ca-certificates certdata-esr
+
+# Protect Godot built apps (e.g. chat or messenger apps) that use certs and to mitigate MITM from eMudhra intermediate CA.
+dev-games/godot-editor portable
+

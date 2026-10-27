@@ -196,3 +196,6 @@ gui-apps/noctalia-shell
 
 # EOL
 app-arch/zopfli
+
+# For liability protection, mitigate distributing Brotli RCE and eMudhra intermediate CA
+dev-games/godot-export-templates-bin

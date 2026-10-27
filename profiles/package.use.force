@@ -77,3 +77,9 @@ net-misc/curl psl
 
 # Last update of the dependency was in 2021
 dev-lang/php argon2
+
+# Mitigate Brotli RCE
+dev-games/godot-editor system-brotli
+
+# Mitigate IO, UB
+dev-games/godot-editor system-zlib
