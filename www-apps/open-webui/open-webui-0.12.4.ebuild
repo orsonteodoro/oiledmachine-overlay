@@ -29,6 +29,7 @@ NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{11..12} )
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792956356
 
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.5-debug.patch"
@@ -334,6 +335,7 @@ ewarn
 }
 
 pkg_setup() {
+	secure-version-node_check_update
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local subslot=$(ver_cut "1-2" "${PV}") # 0.9
 	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${subslot}"
