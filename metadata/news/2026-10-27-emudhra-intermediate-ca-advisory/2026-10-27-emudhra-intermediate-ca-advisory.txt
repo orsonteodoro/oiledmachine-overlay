@@ -14,8 +14,8 @@ Display-If-Installed: dev-python/pip
 Display-If-Installed: dev-python/uv
 Display-If-Installed: dev-python/sigstore
 Display-If-Installed: dev-python/conda
-Display-If-Installed: dev-util/pixi
 Display-If-Installed: dev-python/virtualenv
+Display-If-Installed: dev-util/pixi
 Display-If-Installed: www-client/chromium
 Display-If-Installed: www-client/firefox
 Display-If-Installed: www-client/firefox-bin
@@ -54,8 +54,8 @@ others were found in the "See more" link
 >=dev-python/uv-0.13.4
 >=dev-python/sigstore-4.5.1
 >=dev-python/conda-26.9.4
->=dev-util/pixi-0.82.1
 >=dev-python/virtualenv-21.14.12
+>=dev-util/pixi-0.82.1
 
 An additional post said that the pip will combine the [compromised] vendored
 certificate bundle with the system's certificate bundle.
