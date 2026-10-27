@@ -13,9 +13,12 @@ MY_PN="Firejail"
 
 CFLAGS_HARDENED_USE_CASES="security-critical sandbox sensitive-data untrusted-data"
 CXX_STANDARD="ignore"
-FIREJAIL_DEFAULT_WIDTH=${FIREJAIL_DEFAULT_WIDTH:-1920}
-FIREJAIL_DEFAULT_HEIGHT=${FIREJAIL_DEFAULT_HEIGHT:-1080}
+
+# Adjust for dwm
+FIREJAIL_DEFAULT_WIDTH=${FIREJAIL_DEFAULT_WIDTH:-1918}
+FIREJAIL_DEFAULT_HEIGHT=${FIREJAIL_DEFAULT_HEIGHT:-1058}
 FIREJAIL_DEFAULT_BPP=${FIREJAIL_DEFAULT_BBP:-24}
+
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 for testing only, the 512 is needed when building with firejail inside ebuild.
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
 PYTHON_COMPAT=( "python3_"{9..12} )
@@ -313,7 +316,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xcsecurity xvfb
-ebuild_revision_150
+ebuild_revision_152
 "
 REQUIRED_USE+="
 	!test
@@ -912,7 +915,6 @@ einfo "Processing:  ${file}"
 }
 
 _src_configure_default_res() {
-	use test || return
 	sed -i \
 		-e "s|@WIDTH@|${FIREJAIL_DEFAULT_WIDTH}|g" \
 		-e "s|@HEIGHT@|${FIREJAIL_DEFAULT_HEIGHT}|g" \
