@@ -34,7 +34,7 @@ phishing attacks or MITM (Man In The Middle) attacks that lead to stolen crown
 jewels, stolen keys to the crown jewels, or harm.
 
 This advisory was initially targeted for vendored bundled certificates packages.
-It also applies users who have just returned to to their machine but haven't
+It also applies users who have just returned to their machine but haven't
 updated or are putting off updates.
 
 Affected packages
