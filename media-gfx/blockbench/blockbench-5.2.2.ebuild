@@ -21,6 +21,7 @@ ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
 NODE_SLOT="24" # Same as Electron
 NPM_AUDIT_FATAL=0
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792956356
 
 ELECTRON_APP_AT_TYPES_NODE_PV="22.14.0"
 ELECTRON_BUILDER_PV="26.15.7"
@@ -171,11 +172,23 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_30"
+IUSE+=" ebuild_revision_31"
+# Upstream uses:
+# node:  24.21.0
+# npm:  11.19.0
 BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}[webassembly(+)]
 	>=net-libs/nodejs-${NODEJS_24_PV}[npm,webassembly(+)]
+	|| (
+		~sys-apps/npm-${NODE_NPM_12_PV}:3
+		~sys-apps/npm-${NODE_NPM_11_PV}:3
+	)
 "
+
+pkg_setup() {
+	secure-version-node_check_update
+	npm_pkg_setup
+}
 
 src_unpack() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -201,10 +214,15 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 		patch_lockfile() {
 			[[ -e "package-lock.json" ]] || return
 			sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"electron\": \"^44.7.2\"|\"electron\": \"^${NODE_24_ELECTRON_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"electron\": \">= 13.0.0\"|\"electron\": \"^${NODE_24_ELECTRON_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"electron\": \">=1.8.1\"|\"electron\": \"^${NODE_24_ELECTRON_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"fast-uri\": \"^3.0.1\"|\"fast-uri\": \"^${NODE_FAST_URI_3_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"json5\": \"^0.5.0\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"json5\": \"^1.0.1\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"json5\": \"^2.2.3\"|\"json5\": \"^${NODE_JSON5_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"loader-utils\": \"^0.2.16\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"markdown-it\": \"^14.3.0\"|\"markdown-it\": \"^${NODE_MARKDOWN_IT_14_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^5.2.5\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^6.0.1\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.36\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
@@ -214,9 +232,12 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^7.0.3\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^7.1.1\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^7.1.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"source-map-js\": \">=0.6.2 <2.0.0\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^7.24.4\"|\"undici\": \"^${NODE_UNDICI_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
 		}
 
 		patch_lockfile
@@ -238,12 +259,16 @@ einfo "QA:  Change \"postcss\": \"^6.0.1\" and others to \"postcss\": \"^8.5.28\
 		local L
 		L=(
 			"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
+			"electron@^${NODE_24_ELECTRON_PV}"
+			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"json5@^${NODE_JSON5_PV}"
 			"loader-utils@^${NODE_LOADER_UTILS_1_PV}"
+			"markdown-it@^${NODE_MARKDOWN_IT_14_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
 			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 			"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
+			"undici@^${NODE_UNDICI_7_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
