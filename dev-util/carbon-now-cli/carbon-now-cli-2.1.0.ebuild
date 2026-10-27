@@ -14,6 +14,7 @@ NODE_ENV="development"
 NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
 NODE_SLOT="22"
+SECURE_VERSION_NODE_EBUILD_UPDATE=1792956356
 
 AT_TYPES_NODE_PV="18.16.3"
 NODE_PHIN_PV="3.7.1"
@@ -335,6 +336,7 @@ npm_unpack_install_post() {
 }
 
 pkg_setup() {
+	secure-version-node_check_update
 	npm_pkg_setup
 }
 
