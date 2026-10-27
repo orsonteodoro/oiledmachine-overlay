@@ -6,7 +6,7 @@ EAPI=8
 # arrow.git: testing
 # arrow.git: cpp/submodules/parquet-testing
 
-CXX_STANDARD=17
+CXX_STANDARD=20
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -39,12 +39,12 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
 inherit cython distutils-r1 libcxx-slot libstdcxx-slot multiprocessing
@@ -74,7 +74,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +parquet +snappy ssl test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
