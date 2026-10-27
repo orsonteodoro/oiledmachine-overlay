@@ -11,7 +11,7 @@ EAPI=8
 # Version 23 and newer - gnu++20
 
 # Requirements:
-# https://github.com/apache/arrow/blob/apache-arrow-22.0.0/.env
+# https://github.com/apache/arrow/blob/apache-arrow-26.0.0/.env
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 ABSEIL_CPP_SLOT="20240722"
@@ -311,7 +311,7 @@ src_configure() {
 		re2_src_configure
 	fi
 
-	# See https://github.com/apache/arrow/blob/apache-arrow-22.0.0/cpp/cmake_modules/DefineOptions.cmake
+	# See https://github.com/apache/arrow/blob/apache-arrow-26.0.0/cpp/cmake_modules/DefineOptions.cmake
 	local mycmakeargs=(
 		-DARROW_ALTIVEC=$(usex cpu_flags_ppc_altivec ON OFF)
 		-DARROW_BUILD_STATIC=OFF
