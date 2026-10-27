@@ -153,6 +153,7 @@ einfo "PUPPETEER_CACHE_FOLDER:  ${PUPPETEER_CACHE_FOLDER}"
 }
 
 pkg_setup() {
+	secure-version-node_check_update
 	npm_pkg_setup
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
@@ -161,7 +162,6 @@ pkg_setup() {
 		rust_prepend_path "${RUST_PV}" "source"
 	fi
 	node-sharp_pkg_setup
-	secure-version-node_check_update
 }
 
 npm_unpack_post() {
@@ -183,6 +183,10 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		node-sharp_npm_lockfile_add_sharp
 
 		patch_lockfile() {
+			sed -i -e "s|\"electron\": \"^44.7.2\"|\"electron\": \"^${NODE_24_ELECTRON_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"electron\": \">=13.0.0\"|\"electron\": \"^${NODE_24_ELECTRON_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"fast-uri\": \"^3.0.1\"|\"fast-uri\": \"^${NODE_FAST_URI_3_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"fast-uri\": \"^3.0.1\"|\"fast-uri\": \"^${NODE_FAST_URI_3_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"file-type\": \"^16.5.4\"|\"file-type\": \"^${NODE_FILE_TYPE_22_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"handlebars\": \"^4.7.9\"|\"handlebars\": \"^${NODE_HANDLEBARS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"ip-address\": \"^10.1.1\"|\"ip-address\": \"^${NODE_IP_ADDRESS_PV}\"|g" "package-lock.json" || die
@@ -204,6 +208,17 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			sed -i -e "s|\"uuid\": \"^10.0.0\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^11.1.1\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"undici\": \"^6.25.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^6.28.1\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^6.29.0\"|\"undici\": \"^${NODE_UNDICI_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^7.24.4\"|\"undici\": \"^${NODE_UNDICI_7_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \"^8.4.1\"|\"undici\": \"^${NODE_UNDICI_8_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"undici\": \">=5 <9\"|\"undici\": \"^${NODE_UNDICI_8_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"zod\": \"^3.23.8\"|\"zod\": \"^${NODE_ZOD_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"zod\": \"^4.6.5\"|\"zod\": \"^${NODE_ZOD_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s#\"zod\": \"^3.25.76 || ^4\"#\"zod\": \"^${NODE_ZOD_PV}\"#g" "package-lock.json" || die
+			sed -i -e "s#\"zod\": \"^3.25.28 || ^4\"#\"zod\": \"^${NODE_ZOD_PV}\"#g" "package-lock.json" || die
+			sed -i -e "s#\"zod\": \"^3.25.32 || ^4.2.0\"#\"zod\": \"^${NODE_ZOD_PV}\"#g" "package-lock.json" || die
+			sed -i -e "s#\"zod\": \"^3.25 || ^4.0\"#\"zod\": \"^${NODE_ZOD_PV}\"#g" "package-lock.json" || die
 		}
 		patch_lockfile
 
@@ -261,6 +276,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 	# Security fixes
 		L=(
 			"brace-expansion@^${NODE_BRACE_EXPANSION_2_PV}"
+			"electron@^${NODE_24_ELECTRON_PV}"
 			"file-type@^${NODE_FILE_TYPE_22_PV}"
 			"handlebars@^${NODE_HANDLEBARS_PV}"
 			"ip-address@^${NODE_IP_ADDRESS_PV}"
@@ -270,9 +286,11 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			"tar@^${NODE_TAR_PV}"
 			"undici@^${NODE_UNDICI_6_PV}"
 			"uuid@^${NODE_UUID_11_PV}"
+			"zod@^${NODE_ZOD_PV}"
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		L=(
+			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"minimatch@^${NODE_MINIMATCH_9_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
