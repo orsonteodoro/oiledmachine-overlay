@@ -2,7 +2,7 @@ Title: eMudhra intermediate Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-27
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/ca-certificates
 Display-If-Installed: dev-games/godot-editor
@@ -14,12 +14,13 @@ Display-If-Installed: www-client/firefox
 Display-If-Installed: www-client/firefox-bin
 Display-If-Installed: www-client/google-chrome
 
-Due to various quirks in the software ecosystem, the eMudhra intermediate CA may
-not be consistently applied.  The overlay has used hard masks to ensure
-consistent security.  The industry as a whole has decided to reject or remove
-eMudhra intermediate CA from the cert database due to insecure private
-keys, obtained by brute forcing.  In social media, they gave the example "4" as
-the private key.  The AI said that the private keys were under 256.
+Due to various quirks in the software ecosystem, the eMudhra intermediate
+Certificate Authority (CA) removal may not be consistently applied.  The overlay
+has used hard masks to ensure consistent security.  The industry as a whole has
+decided to reject or remove eMudhra intermediate CA from the cert database due
+to insecure private keys, obtained by brute forcing.  In social media, they gave
+the example "4" as the private key.  The AI said that the private keys were
+under 256 can be discovered in less than a second.
 
 The benefit of rejecting this intermediate CA is to mitigate gullible users from
 phishing attacks or MITM (Man In The Middle) attacks that lead to stolen crown
