@@ -17,7 +17,7 @@ CXX_STANDARD="ignore"
 # Adjust for dwm
 FIREJAIL_DEFAULT_WIDTH=${FIREJAIL_DEFAULT_WIDTH:-1918}
 FIREJAIL_DEFAULT_HEIGHT=${FIREJAIL_DEFAULT_HEIGHT:-1058}
-FIREJAIL_DEFAULT_BPP=${FIREJAIL_DEFAULT_BBP:-24}
+FIREJAIL_DEFAULT_BPP=${FIREJAIL_DEFAULT_BPP:-24}
 
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512} # 2048 for testing only, the 512 is needed when building with firejail inside ebuild.
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
@@ -316,7 +316,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xcsecurity xvfb
-ebuild_revision_152
+ebuild_revision_153
 "
 REQUIRED_USE+="
 	!test
@@ -918,7 +918,7 @@ _src_configure_default_res() {
 	sed -i \
 		-e "s|@WIDTH@|${FIREJAIL_DEFAULT_WIDTH}|g" \
 		-e "s|@HEIGHT@|${FIREJAIL_DEFAULT_HEIGHT}|g" \
-		-e "s|@BBP@|${FIREJAIL_DEFAULT_BBP}|g" \
+		-e "s|@BPP@|${FIREJAIL_DEFAULT_BPP}|g" \
 		"etc/firejail.config" \
 		"src/firejail/checkcfg.c" \
 		"src/firejail/usage.c" \
