@@ -2,7 +2,7 @@ Title: Update PHP (Updated Oct 23, 3 CVEs)
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-21
-Revision: 6
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: dev-lang/php
 
@@ -23,14 +23,17 @@ the previous 2 CVEs:
 
 Researcher vulnerability name:  PHP2Shell
 
-CVE-2026-109618 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
-CVE-2026-109619 - RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
+CVE-2026-109618 - KEV, RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
+CVE-2026-109619 - KEV, RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
 CVE-2026-115560 - (NEW) Reserved
+
+KEV deadline:  Oct 29, 2926
 
 DoS - Denial of Service
 DT - Data Tampering
 ID - Information Disclosure
 IEH - Improper Exception Handling
+KEV - Known Exploited Vulnerability (U.S. Gov Advisory)
 RCE - Remote Code Execution
 UAF - Use After Free
 UBMA - Unbounded Memory Allocation
