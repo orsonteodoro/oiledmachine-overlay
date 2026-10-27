@@ -93,7 +93,7 @@ ${CPU_FLAGS_X86[@]}
 -bzip2 -compute -csv -cuda -filesystem -gandiva -dataset -gcs -hdfs +ipc
 -jemalloc -json -lz4 +mimalloc +parquet +re2 -s3 -snappy -tensorflow ssl test
 +threads +utf8proc -zlib -zstd
-ebuild_revision_4
+ebuild_revision_5
 "
 # oiledmachine-overlay has strict GPU version requirements, CUDA 11.7 not supported on distro.
 REQUIRED_USE="
@@ -264,7 +264,13 @@ get_buildtime_simd_level() {
 }
 
 get_runtime_simd_level() {
-	if use cpu_flags_x86_avx512 ; then
+	if use cpu_flags_arm_sve512 ; then
+		echo "SVE512"
+	elif use cpu_flags_arm_sve256 ; then
+		echo "SVE256"
+	elif use cpu_flags_arm_sve ; then
+		echo "SVE"
+	elif use cpu_flags_x86_avx512 ; then
 		echo "AVX512"
 	elif use cpu_flags_x86_avx2 ; then
 		echo "AVX2"
