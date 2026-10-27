@@ -43,7 +43,7 @@ app-misc/ca-certificates with USE=certdata-esr
 dev-games/godot-editor with USE=portable
 dev-games/godot-export-templates-bin with embedded fallback certificate bundle
 
-Recommended update by pypi
+Recommended update by PyPi
 
 The first 3 were requested updated by PyPi to mitigate a MITM attack.  The
 others were found in the "See more" link
