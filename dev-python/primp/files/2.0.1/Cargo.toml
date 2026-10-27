@@ -1,0 +1,21 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/primp",
+    "crates/primp-rustls/rustls",
+    "crates/primp-h2",
+    "crates/primp-python",
+]
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = 3
+# Required for the `primp-python` cdylib so panics become Python exceptions.
+# Workspace-wide (cdylib deps must share the strategy); OOM/stack still abort.
+panic = "unwind"
+strip = "symbols"
+
+[profile.bench]
+lto = false
+codegen-units = 256
