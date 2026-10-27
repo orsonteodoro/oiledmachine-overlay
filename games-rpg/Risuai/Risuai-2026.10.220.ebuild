@@ -785,6 +785,7 @@ BDEPEND+="
 		~sys-apps/pnpm-${NODE_PNPM_10_PV}:${PNPM_SLOT}
 	)
 "
+
 _PATCHES=(
 	"${FILESDIR}/${PN}-2026.4.181-replace-with-js-tiktoken.patch"
 
@@ -795,6 +796,11 @@ _PATCHES=(
 
 	"${FILESDIR}/${PN}-2026.4.181-hardcoded-paths.patch"
 )
+
+_WORKDIR_PATCHES=(
+	"${FILESDIR}/${PN}-2026.8.250-fix-tauri-plugin-deep-link-2.6.2.patch"
+)
+
 DOCS=( "README.md" )
 
 pkg_setup() {
@@ -1079,6 +1085,13 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${_PATCHES[@]}"
+	# Patch cargo packages
+	pushd "${WORKDIR}" >/dev/null 2>&1 || die
+		if (( ${#_WORKDIR_PATCHES[@]} > 0 )) ; then
+			eapply "${_WORKDIR_PATCHES[@]}"
+		fi
+	popd >/dev/null 2>&1 || die
+
 }
 
 src_configure() {

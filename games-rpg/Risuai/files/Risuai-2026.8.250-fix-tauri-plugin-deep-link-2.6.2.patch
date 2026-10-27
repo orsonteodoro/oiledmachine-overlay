@@ -1,0 +1,11 @@
+# This is an AI suggested fix.
+--- a/cargo_home/gentoo/tauri-plugin-deep-link-2.6.2/src/lib.rs.orig	2006-07-23 18:21:28.000000000 -0700
++++ b/cargo_home/gentoo/tauri-plugin-deep-link-2.6.2/src/lib.rs	2026-10-26 17:18:54.191839556 -0700
+@@ -539,6 +539,7 @@ mod imp {
+             ini::ParseOption {
+                 enabled_quote: false,
+                 enabled_escape: false,
++                ..Default::default()
+             },
+         )
+     }
