@@ -4,7 +4,7 @@
 EAPI=8
 
 # This package must be updated at the same as dev-python/pyarrow.
-# It is purposely not bumped because it could break compatibility for c++17 on the AI stack.
+# The 26.x ebuild series is provided for those what prefer security/adventure over compatibility on the rolling AI stack.
 # We do not want compile time bugs.
 
 # Version 22 - gnu++17
