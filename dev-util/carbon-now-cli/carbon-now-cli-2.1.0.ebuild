@@ -13,10 +13,10 @@ MY_PN="${PN//-cli/}"
 NODE_ENV="development"
 NPM_AUDIT_FATAL=0
 NPM_INSTALL_PATH="/opt/${PN}"
+NODE_SLOT="22"
 
 AT_TYPES_NODE_PV="18.16.3"
-PLAYWRIGHT_PV="1.63.0"
-NODE_SLOT="22"
+NODE_PHIN_PV="3.7.1"
 
 NPM_INSTALL_ARGS=(
 	"--force"
@@ -36,21 +36,21 @@ NPM_DEDUPE_ARGS=(
 # 1.56.1 works
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1243"
-	["chromium-headless-shell-linux-glibc-amd64"]="1243"
-	["ffmpeg-linux-glibc-amd64"]="1011"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1543"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2359"
+# See https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1248"
+	["chromium-headless-shell-linux-glibc-amd64"]="1248"
+	["ffmpeg-linux-glibc-amd64"]="1013"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1555"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2370"
 )
 
 declare -A DL_VER=(
-# See https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/browsers.json
-	["chromium-linux-glibc-amd64"]="153.0.8010.12"
-	["chromium-headless-shell-linux-glibc-amd64"]="153.0.8010.12"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="155.0"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="26.6"
+# See https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/browsers.json
+	["chromium-linux-glibc-amd64"]="156.0.8078.4"
+	["chromium-headless-shell-linux-glibc-amd64"]="156.0.8078.4"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="157.0"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="27.2"
 )
 
 EPLAYRIGHT_ALLOW_BROWSERS=(
@@ -191,6 +191,10 @@ DEPEND="
 BDEPEND="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
 	>=net-libs/nodejs-${NODE_SLOT}[npm]
+	|| (
+		~sys-apps/npm-${NODE_NPM_12_PV}:3
+		~sys-apps/npm-${NODE_NPM_11_PV}:3
+	)
 "
 
 enpx() {
@@ -203,26 +207,35 @@ npm_update_lock_install_pre() {
 	sed -i -e "s|npx playwright|true npx playwright|g" "package.json" || die
 }
 
+
 npm_update_lock_audit_post() {
 einfo "Applying mitigation"
 	patch_edits() {
-		sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-		sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^${NODE_BABEL_RUNTIME_7_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^${NODE_BABEL_RUNTIME_7_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@vitest/mocker\": \"4.1.11\"|\"@vitest/mocker\": \"^${NODE_AT_VITEST_MOCKER_4_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"esbuild\": \"~0.23.0\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
-		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
-		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"follow-redirects\": \"^1.15.6\"|\"follow-redirects\": \"^${NODE_FOLLOW_REDIRECTS_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^${NODE_PHIN_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^${NODE_PHIN_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^6.4.3\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^6.0.0 || ^7.0.0 || ^8.0.0\"#\"vite\": \"^${NODE_VITE_6_PV}\"#g" "package-lock.json" || die
 		sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"vitest\": \"2.1.9\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"vitest\": \"^3.2.7\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"vitest\": \"^4.1.11\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^${NODE_TMP_PV}\"|g" "package-lock.json" || die
+		sed -i -e "s|\"zod\": \"^3.23.8\"|\"zod\": \"^${NODE_ZOD_PV}\"|g" "package-lock.json" || die
 	}
 	patch_edits
 
 	pkgs=(
+		"@vitest/mocker@^${NODE_AT_VITEST_MOCKER_4_PV}"
 		"esbuild@^${NODE_ESBUILD_PV}"
+		"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 		"vite@^${NODE_VITE_6_PV}"
 		"vitest@^${NODE_VITEST_4_PV}"
 	)
@@ -232,11 +245,13 @@ einfo "Applying mitigation"
 
 	local pkgs
 	pkgs=(
-		"phin@^3.7.1" # EOL
-		"@babel/runtime@^7.26.10"
-		"playwright@${PLAYWRIGHT_PV}"
-		"@playwright/test@${PLAYWRIGHT_PV}"
+		"follow-redirects@^${NODE_FOLLOW_REDIRECTS_PV}"
+		"phin@^${NODE_PHIN_PV}" # EOL
+		"@babel/runtime@^${NODE_BABEL_RUNTIME_7_PV}"
+		"playwright@${NODE_PLAYWRIGHT_PV}"
+		"@playwright/test@${NODE_PLAYWRIGHT_PV}"
 		"tmp@^${NODE_TMP_PV}"
+		"zod@^${NODE_ZOD_PV}"
 	)
 	enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
 
@@ -263,10 +278,10 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.63.0/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.64.1/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/browsers.json
 
 	eapply "${FILESDIR}/${PN}-2.1.0-imports-fix.patch"
 
@@ -280,7 +295,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.63.0/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.64.1/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
