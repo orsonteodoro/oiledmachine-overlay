@@ -39,7 +39,7 @@ Reasons per package
 
 The version for NSS (ESR) hasn't been bumped preventing certdata.txt update on
 eMudhra intermediate CA removal.  The browser gets first class treatment but the
-ESR is a third class citizen.  It is like last place in certs update.  Users
+NSS ESR is a third class citizen.  It is like last place in certs update.  Users
 will be forced temporarily into picking one of certdata-live, certdata-live-af,
 certdata-latest (ebuild default).  The USE flag temporary ban for certdata-esr
 will be lifted when the ESR is version bumped with a certdata.txt update.
