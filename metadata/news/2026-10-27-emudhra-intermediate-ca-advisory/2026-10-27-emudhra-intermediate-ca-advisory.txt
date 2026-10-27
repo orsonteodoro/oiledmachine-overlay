@@ -57,8 +57,9 @@ certificate bundle by setting the settings in the link
 (https://docs.godotengine.org/en/stable/tutorials/networking/ssl_certificates.html).
 The engine looks at the override certificate bundle first, then system
 certificate bundle store, then the fallback vendored certificate bundle.  The
-scenario where the certificate override applies is where a user runs the game/app in
-an older computer with older OS release.
+scenario where the certificate override applies is where a user runs the portable
+game/app in an older computer with older operating system long term support (LTS)
+release version.
 
 Already remediated
 
