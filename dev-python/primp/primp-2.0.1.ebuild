@@ -8,6 +8,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{11..14} "pypy3_11" )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
+TARBALL_PROVIDER="gh" # pypi or gh
 
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1" # LLVM 22.1
@@ -440,12 +441,20 @@ inherit lcnr pypi rustflags-hardened secure-version-python distutils-r1 cargo
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
-# The repo is missing the pyproject.toml
 SRC_URI="
-$(cargo_crate_uris ${CRATES})
+	$(cargo_crate_uris ${CRATES})
+"
+if [[ "${TARBALL_PROVIDER}" == "pypi" ]] ; then
+	SRC_URI+="
+https://files.pythonhosted.org/packages/c7/01/c2a43378aaaf29539971766a007f3185fbe3f208f431b0969fa85c5a2111/primp-${PV}.tar.gz
+	-> ${P}.pypi.tar.gz
+	"
+else
+	SRC_URI+="
 https://github.com/deedy5/primp/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.gh.tar.gz
-"
+	"
+fi
 
 DESCRIPTION="HTTP client that can impersonate web browsers, mimicking their headers and \`TLS/JA3/JA4/HTTP2\` fingerprints"
 HOMEPAGE="
@@ -460,7 +469,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND+="
 "
@@ -490,7 +499,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-#	die
+	#die
 	cargo_src_unpack
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
@@ -499,6 +508,13 @@ src_unpack() {
 }
 
 src_prepare() {
+	if [[ "${TARBALL_PROVIDER}" == "gh" ]] ; then
+	# Try to reconstruct PyPi tarball
+		mv "${S}/crates/primp-python/pyproject.toml" "${S}" || die
+		local ln=$(grep -n "tool.maturin" "${S}/pyproject.toml" | cut -f 1 -d ":")
+		ln=$((${ln} + 1))
+		sed -i -e "${ln}a manifest-path = \"crates/primp-python/Cargo.toml\"" "${S}/pyproject.toml" || die
+	fi
 	distutils-r1_src_prepare
 }
 
@@ -549,7 +565,7 @@ python_install() {
 src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
-	dodoc "LICENSE-MIT"
+	dodoc "LICENSE"
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party"
