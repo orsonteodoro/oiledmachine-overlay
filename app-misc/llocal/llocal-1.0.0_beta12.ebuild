@@ -384,6 +384,7 @@ pkg_postinst() {
 ewarn "The ollama service must be started from init system in order to list models."
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20261027 with electron 45.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260928 with electron 44.7.0 with --use-gl=desktop)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta12 (20260928 with electron 44.4.5)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (with bugs) 1.0.0_beta12 (20260922 with electron 44.4.1)
