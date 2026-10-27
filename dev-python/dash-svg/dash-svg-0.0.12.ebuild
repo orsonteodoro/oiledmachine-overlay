@@ -56,7 +56,7 @@ RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
 IUSE="
 test
-ebuild_revision_16
+ebuild_revision_17
 "
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
@@ -118,6 +118,7 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"^${NODE_CHEERIO_PV}\"|g" "${S}/package-lock.json" || die # 0 -> 1 may be a breaking change
 #		sed -i -e "s|\"decode-uri-component\": \"^0.2.0\"|\"decode-uri-component\": \"^${NODE_DECODE_URI_COMPONENT_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"flatted\": \"^2.0.0\"|\"flatted\": \"^${NODE_FLATTED_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"follow-redirects\": \"^1.0.0\"|\"follow-redirects\": \"^${NODE_FOLLOW_REDIRECTS_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^0.19.0\"|\"http-proxy-middleware\": \"^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^${NODE_LOADER_UTILS_1_PV}\"|g" "${S}/package-lock.json" || die
@@ -131,7 +132,11 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"postcss\": \"^8.5.23\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^7.1.1\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^7.1.2\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"tmp\": \"^0.0.33\"|\"tmp\": \"^${NODE_TMP_PV}\"|g" "${S}/package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^7.19.0\"|\"undici\": \"^${NODE_UNDICI_7_PV}\"|g" "${S}/package-lock.json" || die
 		sed -i -e "s|\"webpack-serve\": \"3.1.0\"|\"webpack-serve\": \"^${NODE_WEBPACK_SERVE_PV}\"|g" "${S}/package-lock.json" || die
 	}
 
@@ -143,12 +148,15 @@ npm_update_lock_audit_post() {
 		"cheerio@^${NODE_CHEERIO_PV}"
 #		"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
 		"flatted@^${NODE_FLATTED_PV}"
+		"follow-redirects@^${NODE_FOLLOW_REDIRECTS_PV}"
 		"http-proxy-middleware@^${NODE_HTTP_PROXY_MIDDLEWARE_2_PV}"
 		"loader-utils@^${NODE_LOADER_UTILS_1_PV}"
 		"nanoid@^${NODE_NANOID_3_PV}"
 		"postcss@^${NODE_POSTCSS_PV}"
 		"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
+		"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 		"tmp@^${NODE_TMP_PV}"
+		"undici@^${NODE_UNDICI_7_PV}"
 		"webpack-serve@^${NODE_WEBPACK_SERVE_PV}"
 	)
 	enpm install "${pkgs[@]}" -D "${NPM_INSTALL_ARGS[@]}"
