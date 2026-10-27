@@ -10,20 +10,21 @@ EAPI=8
 # google-re2
 
 # 0.9.6 -> 0.11.4
+# 0.11.4 -> 0.12.4
 
-# For requirements, see https://github.com/open-webui/open-webui/blob/v0.11.4/backend/requirements.txt
+# For requirements, see https://github.com/open-webui/open-webui/blob/v0.12.4/backend/requirements.txt
 # For telemetry, see https://docs.openwebui.com/reference/monitoring/otel/
 
 # To update lockfile:
 # PATH="$(realpath ../../scripts):${PATH}"
-# NPM_UPDATER_VERSIONS="0.11.4" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="0.12.4" npm_updater_update_locks.sh
 
 MY_PN="Open WebUI"
 
 AT_TYPES_NODE_PV="25.5.0"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.11.4/Dockerfile#L27
+NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.12.4/Dockerfile#L27
 NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
@@ -147,11 +148,12 @@ gen_torch_rdepend() {
 RDEPEND+="
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		>=app-arch/brotli-1.2.0[${PYTHON_USEDEP}]
+		>=app-arch/brotli-1.2.1[${PYTHON_USEDEP}]
 		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
 		<dev-python/aiodns-4[${PYTHON_USEDEP}]
 		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
-		>=dev-python/aiohttp-3.13.5[${PYTHON_USEDEP}]
+		!=dev-python/aiohttp-3.13.3[${PYTHON_USEDEP}]
+		>=dev-python/aiohttp-3.14.5[${PYTHON_USEDEP}]
 		>=dev-python/aiosqlite-0.22.1[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.18.4[${PYTHON_USEDEP}]
 		>=dev-python/anthropic-0.86.0[${PYTHON_USEDEP}]
@@ -165,9 +167,9 @@ RDEPEND+="
 		>=dev-python/beautifulsoup4-4.14.3[${PYTHON_USEDEP}]
 		>=dev-python/black-26.5.1[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.42.62[${PYTHON_USEDEP}]
-		>=dev-python/brotlicffi-1.2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/brotlicffi-1.2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/chardet-7.4.3[${PYTHON_USEDEP}]
-		>=dev-python/cryptography-48.0.0[${PYTHON_USEDEP}]
+		>=dev-python/cryptography-48.0.1[${PYTHON_USEDEP}]
 		>=dev-python/ddgs-9.14.4[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.9[${PYTHON_USEDEP}]
 		>=dev-python/einops-0.8.2[${PYTHON_USEDEP}]
@@ -177,8 +179,9 @@ RDEPEND+="
 		>=dev-python/google-cloud-storage-3.9.0[${PYTHON_USEDEP}]
 		>=dev-python/google-re2-1.1.20251105[${PYTHON_USEDEP}]
 		>=dev-python/googleapis-common-protos-1.75.0[${PYTHON_USEDEP}]
-		>=dev-python/hiredis-3.4.0[${PYTHON_USEDEP}]
+		>=dev-python/hiredis-3.4.2[${PYTHON_USEDEP}]
 		>=dev-python/httpx-0.28.1[${PYTHON_USEDEP},brotli,cli,http2,socks,zstd]
+		>=dev-python/httpx2-2.16.0[${PYTHON_USEDEP}]
 		>=dev-python/itsdangerous-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/lxml-6.1.1[${PYTHON_USEDEP}]
 		>=dev-python/joserfc-1.7.4[${PYTHON_USEDEP}]
@@ -188,7 +191,7 @@ RDEPEND+="
 		>=dev-python/loguru-0.7.3[${PYTHON_USEDEP}]
 		>=dev-python/markdown-3.10.2[${PYTHON_USEDEP}]
 		>=dev-python/msoffcrypto-tool-6.0.0[${PYTHON_USEDEP}]
-		>=dev-python/mcp-1.27.2[${PYTHON_USEDEP}]
+		>=dev-python/mcp-2.3.0[${PYTHON_USEDEP}]
 		>=dev-python/openai-2.29.0[${PYTHON_USEDEP}]
 		>=dev-python/openpyxl-3.1.5[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-3.2.0[${PYTHON_USEDEP}]
@@ -197,13 +200,14 @@ RDEPEND+="
 		>=dev-python/psutil-7.2.2[${PYTHON_USEDEP}]
 		>=dev-python/psycopg-3.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pyarrow-20.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pycrdt-0.13.1[${PYTHON_USEDEP}]
+		>=dev-python/pycrdt-0.14.8[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-2.13.4[${PYTHON_USEDEP}]
 		>=dev-python/pydub-0.25.1[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.13.0[${PYTHON_USEDEP},crypto(+)]
 		>=dev-python/pymysql-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pyotp-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/pypandoc-1.17[${PYTHON_USEDEP}]
-		>=dev-python/pypdf-6.7.5[${PYTHON_USEDEP}]
+		>=dev-python/pypdf-6.21.2[${PYTHON_USEDEP}]
 		>=dev-python/python-docx-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/python-mimeparse-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/python-multipart-0.0.32[${PYTHON_USEDEP}]
@@ -211,13 +215,14 @@ RDEPEND+="
 		>=dev-python/python-socketio-5.16.2[${PYTHON_USEDEP}]
 		>=dev-python/pytz-2026.2[${PYTHON_USEDEP}]
 		>=dev-python/pyxlsb-1.0.10[${PYTHON_USEDEP}]
+		>=dev-python/qrcode-8.2[${PYTHON_USEDEP}]
 		>=dev-python/rank-bm25-0.2.2[${PYTHON_USEDEP}]
 		>=dev-python/redis-8.0.1[${PYTHON_USEDEP}]
 		>=dev-python/regex-2026.5.9[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.13.1[${PYTHON_USEDEP}]
 		>=dev-python/starlette-compress-1.7.1[${PYTHON_USEDEP}]
 		>=dev-python/starsessions-2.2.1[${PYTHON_USEDEP},redis]
-		>=dev-python/uvicorn-0.51.0[${PYTHON_USEDEP},standard]
+		>=dev-python/uvicorn-0.54.0[${PYTHON_USEDEP},standard]
 		>=dev-python/requests-2.34.2[${PYTHON_USEDEP}]
 		>=dev-python/sqlalchemy-2.0.50[${PYTHON_USEDEP},asyncio(+)]
 		>=dev-python/tiktoken-0.13.0[${PYTHON_USEDEP}]
@@ -225,7 +230,7 @@ RDEPEND+="
 		>=dev-python/xlrd-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/youtube-transcript-api-1.2.4[${PYTHON_USEDEP}]
 		>=sci-ml/sentencepiece-0.2.1[${PYTHON_USEDEP}]
-		>=virtual/pillow-12.2.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-13.0.0[${PYTHON_USEDEP}]
 		all? (
 			>=dev-python/azure-search-documents-12.0.0[${PYTHON_USEDEP}]
 			>=dev-python/elasticsearch-9.4.1[${PYTHON_USEDEP}]
@@ -257,15 +262,18 @@ RDEPEND+="
 			>=dev-python/opentelemetry-instrumentation-aiohttp-client-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
 			>=dev-python/opentelemetry-instrumentation-system-metrics-0.63_beta1:'"${PROTOBUF_CPP_SLOT}"'=[${PYTHON_USEDEP}]
 		)
+		unstructured? (
+			>=dev-python/preshed-3.0.13[${PYTHON_USEDEP}]
+		)
 		valkey? (
-			>=dev-python/valkey-glide-sync-2.3.1[${PYTHON_USEDEP}]
+			>=dev-python/valkey-glide-sync-2.5.2[${PYTHON_USEDEP}]
 		)
 	')
 	>=dev-python/accelerate-1.13.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/av-14.0.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/chromadb-1.5.9[${PYTHON_SINGLE_USEDEP},protobuf_python_5]
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/rapidocr-3.9.2[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/rapidocr-3.10.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-5.5.1[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.13.0[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-ml/transformers-5.5.4[${PYTHON_SINGLE_USEDEP}]
