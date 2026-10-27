@@ -31,7 +31,7 @@ updated or are putting off updates.
 
 Affected packages
 
-app-misc/ca-certificates with certdata-esr
+app-misc/ca-certificates with USE=certdata-esr
 dev-games/godot-editor with USE=portable
 dev-games/godot-export-templates-bin with embedded fallback certificate bundle
 
