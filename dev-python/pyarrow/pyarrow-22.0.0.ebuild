@@ -74,7 +74,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +parquet +snappy ssl test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -146,13 +146,7 @@ src_prepare() {
 	cd "${WORKDIR}/apache-arrow-${PV}" || die
 }
 
-python_configure() {
-	cython_set_cython_slot 3.1
-	cython_python_configure
-
-	local mycmakeargs=()
-	local simd_level=""
-	local altivec=$(usex cpu_flags_ppc_altivec "ON" "OFF")
+get_simd_level() {
 	if use cpu_flags_arm_sve512 ; then
 		simd_level="SVE512"
 	elif use cpu_flags_arm_sve256 ; then
@@ -180,11 +174,74 @@ python_configure() {
 	else
 		simd_level="NONE"
 	fi
+}
+
+get_runtime_simd_level() {
+	if use cpu_flags_arm_sve512 ; then
+		simd_level="SVE512"
+	elif use cpu_flags_arm_sve256 ; then
+		simd_level="SVE256"
+	elif use cpu_flags_arm_sve128 ; then
+		simd_level="SVE128"
+	elif use cpu_flags_arm_sve ; then
+		simd_level="SVE"
+	elif use cpu_flags_arm_neon ; then
+		simd_level="NEON"
+	elif \
+		   use cpu_flags_x86_avx512bw \
+		|| use cpu_flags_x86_avx512dq \
+		|| use cpu_flags_x86_avx512f \
+		|| use cpu_flags_x86_avx512vl \
+	; then
+	# Upstream uses -march=skylake-avx512 which is why you may see illegal instruction.
+		simd_level="AVX512"
+	elif use cpu_flags_x86_avx2 ; then
+		simd_level="AVX2"
+	elif use cpu_flags_x86_avx ; then
+		simd_level="AVX"
+	elif use cpu_flags_x86_sse4_2 ; then
+		simd_level="SSE4_2"
+	else
+		simd_level="NONE"
+	fi
+	echo "${simd_level}"
+}
+
+get_runtime_simd_level() {
+	if \
+		   use cpu_flags_x86_avx512bw \
+		|| use cpu_flags_x86_avx512dq \
+		|| use cpu_flags_x86_avx512f \
+		|| use cpu_flags_x86_avx512vl \
+	; then
+	# Upstream uses -march=skylake-avx512 which is why you may see illegal instruction.
+		simd_level="AVX512"
+	elif use cpu_flags_x86_avx2 ; then
+		simd_level="AVX2"
+	elif use cpu_flags_x86_avx ; then
+		simd_level="AVX"
+	elif use cpu_flags_x86_sse4_2 ; then
+		simd_level="SSE4_2"
+	else
+		simd_level="NONE"
+	fi
+	echo "${simd_level}"
+}
+
+python_configure() {
+	cython_set_cython_slot 3.1
+	cython_python_configure
+
+	local mycmakeargs=()
+	local simd_level=$(get_simd_level)
+	local runtime_simd_level=$(get_runtime_simd_level)
+	local altivec=$(usex cpu_flags_ppc_altivec "ON" "OFF")
 einfo "SIMD level:  ${simd_level}"
+einfo "Runtime SIMD level:  ${runtime_simd_level}"
 	mycmakeargs+=(
 		-DARROW_ALTIVEC="${altivec}"
 		-DARROW_SIMD_LEVEL="${simd_level}"
-		-DARROW_RUNTIME_SIMD_LEVEL="${simd_level}"
+		-DARROW_RUNTIME_SIMD_LEVEL="${runtime_simd_level}"
 	)
 	export PYARROW_CMAKE_OPTIONS="${mycmakeargs[@]}"
 }
