@@ -509,7 +509,7 @@ src_unpack() {
 
 src_prepare() {
 	if [[ "${TARBALL_PROVIDER}" == "gh" ]] ; then
-	# Try to reconstruct PyPi tarball
+	# Try to reconstruct the PyPi tarball.
 		mv "${S}/crates/primp-python/pyproject.toml" "${S}" || die
 		local ln=$(grep -n "tool.maturin" "${S}/pyproject.toml" | cut -f 1 -d ":")
 		ln=$((${ln} + 1))
