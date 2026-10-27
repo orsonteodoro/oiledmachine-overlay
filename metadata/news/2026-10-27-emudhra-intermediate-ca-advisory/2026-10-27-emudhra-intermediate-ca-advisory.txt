@@ -52,7 +52,7 @@ certificates.  The other reason for the package mask is because it is affected
 by Brotli2Shell.
 
 Godot games or Godot app projects (e.g. chat or messengers) can override
-certificate bundle by setting the settins in the link
+certificate bundle by setting the settings in the link
 (https://docs.godotengine.org/en/stable/tutorials/networking/ssl_certificates.html).
 The engine looks at the override certificate bundle first, then system
 certificate bundle store, then the fallback vendored certificate bundle.  The
