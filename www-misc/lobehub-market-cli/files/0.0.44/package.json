@@ -1,6 +1,6 @@
 {
   "name": "@lobehub/market-cli",
-  "version": "0.0.28",
+  "version": "0.0.44",
   "description": "LobeHub Marketplace CLI",
   "keywords": [
     "lobehub",
@@ -11,19 +11,26 @@
   "bugs": {
     "url": "https://github.com/lobehub/lobehub/issues/new/choose"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lobehub-biz/lobehub-market.git",
+    "directory": "packages/cli"
+  },
   "license": "MIT",
   "author": "LobeHub <i@lobehub.com>",
   "type": "module",
   "bin": {
-    "lhm": "./dist/cli.js"
+    "lhm": "dist/cli.js"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
-    "@lobehub/market-sdk": "^0.31.8",
+    "@lobehub/market-sdk": "0.45.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "adm-zip": "^0.6.1",
-    "commander": "^13.1.0"
+    "commander": "^13.1.0",
+    "zod": "^4.6.7"
   },
   "engines": {
     "node": ">=22.0.0"

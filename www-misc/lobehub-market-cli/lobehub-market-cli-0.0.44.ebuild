@@ -8,7 +8,7 @@ EAPI=8
 
 # To update lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# NPM_UPDATER_VERSIONS="0.0.28" npm_updater_update_locks.sh
+# NPM_UPDATER_VERSIONS="0.0.44" npm_updater_update_locks.sh
 
 NODE_SLOT="24"
 NPM_AUDIT_FATAL=0
@@ -32,7 +32,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 	>=app-admin/sudo-${SUDO_PV}:=
@@ -54,12 +54,14 @@ einfo "Called npm_update_lock_install_post()"
 einfo "npm_update_lock_install_post():  Updating lockfile"
 		patch_lockfile() {
 			sed -i -e "s|\"adm-zip\": \"^0.5.16\"|\"adm-zip\": \"^${NODE_ADM_ZIP_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"zod\": \"^3.24.4\"|\"zod\": \"^${NODE_ZOD_PV}\"|g" "package-lock.json" || die
 		}
 
 		patch_lockfile
 
 		local pkgs=(
 			"adm-zip@^${NODE_ADM_ZIP_PV}"
+			"zod@^${NODE_ZOD_PV}"
 		)
 		enpm add "${pkgs[@]}" -P "${pkgs[@]}"
 
