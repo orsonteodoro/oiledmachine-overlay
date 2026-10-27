@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_35"
+IUSE+=" ebuild_revision_36"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -213,6 +213,8 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 			sed -i -e "s|\"undici\": \"^7.24.4\"|\"undici\": \"^${NODE_UNDICI_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"undici\": \"^8.4.1\"|\"undici\": \"^${NODE_UNDICI_8_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"undici\": \">=5 <9\"|\"undici\": \"^${NODE_UNDICI_8_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"tailwindcss\": \"^3.4.3\"|\"zod\": \"^${NODE_TAILWINDCSS_4_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"tailwindcss\": \"4.3.3\"|\"zod\": \"^${NODE_TAILWINDCSS_4_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"zod\": \"^3.23.8\"|\"zod\": \"^${NODE_ZOD_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"zod\": \"^4.6.5\"|\"zod\": \"^${NODE_ZOD_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s#\"zod\": \"^3.25.76 || ^4\"#\"zod\": \"^${NODE_ZOD_PV}\"#g" "package-lock.json" || die
@@ -313,6 +315,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		L=(
 			"@tailwindcss/postcss@^4.3.3"
 			"postcss@^${NODE_POSTCSS_PV}"
+			"tailwindcss@^${NODE_TAILWINDCSS_4_PV}"
 		)
 		enpm install "${L[@]}" -D "${NPM_INSTALL_ARGS[@]}"
 
