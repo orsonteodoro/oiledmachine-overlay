@@ -399,3 +399,4 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20260301 with USE=chromium and Playwright 1.58.2)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20260301 with USE=chromium and Playwright 1.59.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20260917 with USE=chromium and Playwright 1.63.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20260917 with USE=chromium and Playwright 1.64.1)
