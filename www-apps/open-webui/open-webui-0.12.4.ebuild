@@ -21,7 +21,7 @@ EAPI=8
 
 MY_PN="Open WebUI"
 
-AT_TYPES_NODE_PV="25.5.0"
+AT_TYPES_NODE_PV="26.6.5"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
 NODE_SLOT="22" # From https://github.com/open-webui/open-webui/blob/v0.12.4/Dockerfile#L27
@@ -29,8 +29,6 @@ NPM_AUDIT_FATAL=0
 NPM_SLOT="3"
 PROTOBUF_CPP_SLOT="5"
 PYTHON_COMPAT=( "python3_"{11..12} )
-SHARP_PV="0.34.5"
-VIPS_PV="8.18.0"
 
 NODE_SHARP_PATCHES=(
 	"${FILESDIR}/sharp-0.34.5-debug.patch"
@@ -53,8 +51,11 @@ NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 
+CHKL_TIMESTAMPS=(
+	"app-arch/brotli-9999"
+)
 
-inherit desktop distutils-r1 node-sharp pypi npm xdg
+inherit chkl desktop distutils-r1 node-sharp pypi npm secure-version secure-version-node secure-version-python xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -89,7 +90,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all cuda dev +firejail mariadb ollama +openrc postgres rag-ocr -telemetry unstructured systemd
 valkey
-ebuild_revision_14
+ebuild_revision_16
 "
 REQUIRED_USE="
 	all? (
@@ -130,16 +131,16 @@ TORCH_TRIPLES=(
 )
 gen_torch_rdepend() {
 	local r
-	for r in ${TORCH_TRIPLES[@]} ; do
+	for r in "${TORCH_TRIPLES[@]}" ; do
 		local torch_pv="${r%%:*}"
 		local torchaudio_pv="${r%%:*}"
 		torchaudio_pv="${torchaudio_pv##*:}"
 		local torchvision_pv="${r##*:}"
 		echo "
 			(
-				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
-				~sci-ml/torchaudio-${torchaudio_pv}[${PYTHON_SINGLE_USEDEP}]
-				~sci-ml/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+				~sci-ml/pytorch-${torch_pv}:=[${PYTHON_SINGLE_USEDEP},cuda?]
+				~sci-ml/torchaudio-${torchaudio_pv}:=[${PYTHON_SINGLE_USEDEP}]
+				~sci-ml/torchvision-${torchvision_pv}:=[${PYTHON_SINGLE_USEDEP},cuda?]
 			)
 		"
 	done
@@ -148,7 +149,7 @@ gen_torch_rdepend() {
 RDEPEND+="
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		>=app-arch/brotli-1.2.1[${PYTHON_USEDEP}]
+		>=app-arch/brotli-'${BROTLI_PV}':=[${PYTHON_USEDEP}]
 		>=dev-python/aiocache-0.12.3[${PYTHON_USEDEP}]
 		<dev-python/aiodns-4[${PYTHON_USEDEP}]
 		>=dev-python/aiofiles-25.1.0[${PYTHON_USEDEP}]
@@ -229,8 +230,8 @@ RDEPEND+="
 		>=dev-python/validators-0.35.0[${PYTHON_USEDEP}]
 		>=dev-python/xlrd-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/youtube-transcript-api-1.2.4[${PYTHON_USEDEP}]
-		>=sci-ml/sentencepiece-0.2.1[${PYTHON_USEDEP}]
-		>=virtual/pillow-13.0.0[${PYTHON_USEDEP}]
+		>=sci-ml/sentencepiece-0.2.1:=[${PYTHON_USEDEP}]
+		>=virtual/pillow-'${PYTHON_PILLOW_PV}'[${PYTHON_USEDEP}]
 		all? (
 			>=dev-python/azure-search-documents-12.0.0[${PYTHON_USEDEP}]
 			>=dev-python/elasticsearch-9.4.1[${PYTHON_USEDEP}]
@@ -275,12 +276,12 @@ RDEPEND+="
 	>=dev-python/faster-whisper-1.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-3.10.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-5.5.1[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/opencv-4.13.0[${PYTHON_SINGLE_USEDEP},python]
-	>=sci-ml/transformers-5.5.4[${PYTHON_SINGLE_USEDEP}]
-	>=sci-ml/onnxruntime-1.26.0[${PYTHON_SINGLE_USEDEP},python]
-	acct-group/${PN}
-	acct-user/${PN}
-	x11-misc/xdg-utils
+	>=media-libs/opencv-4.13.0:=[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/transformers-5.5.4:=[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.26.0:=[${PYTHON_SINGLE_USEDEP},python]
+	acct-group/${PN}:*
+	acct-user/${PN}:*
+	x11-misc/xdg-utils:=
 	all? (
 		>=dev-python/colbert-ai-0.2.22[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/pymilvus-2.6.14[${PYTHON_SINGLE_USEDEP}]
@@ -293,9 +294,15 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# Upstream uses
+# node 22.23.3
+# npm 10.9.9
 BDEPEND+="
-	net-libs/nodejs:${NODE_SLOT}[npm]
-	net-libs/nodejs:=
+	net-libs/nodejs:${NODE_SLOT}=[npm]
+	|| (
+		~sys-apps/npm-${NODE_NPM_11_PV}:${NPM_SLOT}
+		~sys-apps/npm-${NODE_NPM_12_PV}:${NPM_SLOT}
+	)
 	dev? (
 		$(python_gen_cond_dep '
 			>=dev-python/pytest-asyncio-1.0.0[${PYTHON_USEDEP}]
@@ -341,9 +348,16 @@ npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #ewarn "QA:  Manually remove node_modules/vite-node/node_modules/vite in package-lock.json."
 		patch_lockfile() {
+			sed -i -e "s|\"@sveltejs/kit\": \"^2.21.0\"|\"@sveltejs/kit\": \"^${NODE_AT_SVELTEJS_KIT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@sveltejs/kit\": \"^2.5.27\"|\"@sveltejs/kit\": \"^${NODE_AT_SVELTEJS_KIT_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@sveltejs/kit\": \"^2.0.0\"|\"@sveltejs/kit\": \"^${NODE_AT_SVELTEJS_KIT_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"^${NODE_COOKIE_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^${NODE_ESBUILD_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"katex\": \"^0.16.47\"|\"katex\": \"^${NODE_KATEX_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"katex\": \"^0.16.22\"|\"katex\": \"^${NODE_KATEX_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"pdfjs-dist\": \"^5.4.149\"|\"pdfjs-dist\": \"^${NODE_PDFJS_DIST_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.1.0\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"6.0.10\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_6_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"qs\": \"~6.14.1\"|\"qs\": \"^${NODE_QS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"sharp\": \"^0.34.1\"|\"sharp\": \"^${NODE_SHARP_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"uuid\": \"^8.3.2\"|\"uuid\": \"^${NODE_UUID_11_PV}\"|g" "package-lock.json" || die
@@ -359,9 +373,11 @@ npm_dedupe_post() {
 
 		local pkgs
 		pkgs=(
+			"@sveltejs/kit@^${NODE_AT_SVELTEJS_KIT_PV}"
 			"cookie@^${NODE_COOKIE_PV}"
 			"esbuild@^${NODE_ESBUILD_PV}"
 			"pdfjs-dist@^${NODE_PDFJS_DIST_PV}"
+			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_6_PV}"
 			"qs@^${NODE_QS_PV}"
 			"uuid@^${NODE_UUID_11_PV}"
 			"vite@^${NODE_VITE_6_PV}"
@@ -372,6 +388,7 @@ npm_dedupe_post() {
 		patch_lockfile
 
 		pkgs=(
+			"katex@^${NODE_KATEX_PV}"
 			"sharp@^${NODE_SHARP_PV}"
 		)
 		enpm install -P "${pkgs[@]}" "${NPM_INSTALL_ARGS[@]}"
@@ -513,6 +530,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	if use firejail ; then
 		if [[ -e "/etc/firejail/open-webui.profile" ]] ; then
 eerror "The open-webui.profile is missing.  emerge sys-apps/firejail::oiledmachine-overlay to continue or disable the firejail USE flag."
