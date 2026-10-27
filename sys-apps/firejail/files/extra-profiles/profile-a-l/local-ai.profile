@@ -98,23 +98,6 @@ private-dev
 private-etc ld.so.cache,hosts,conf.d/local-ai
 #private-etc conf.d/local-ai # Don't enable unless you need it
 
-# Dependencies
-private-lib abseil-cpp/20240722,grpc/5,protobuf/5,re2/20250512,protobuf-python/5
-
-# For libstdc++ systems:
-private-lib gcc/*/*/libstdc++.so*,gcc/*/*/libgcc_s.so*,gcc/*/*/libgomp.so*
-
-# TODO:  libc++ systems:
-
-# For Vulkan support
-private-lib libvulkan.so*
-
-# For GPU Vulkan support
-private-lib libvulkan*.so*,llvm/*/lib*/libLLVM.so*
-
-# For grpc depends
-private-lib libcares.so*,libcrypto.so*,libssl.so*
-
 private-tmp
 
 dbus-user none

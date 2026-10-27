@@ -313,7 +313,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 -apparmor +chroot clang contrib +dbusproxy +file-transfer +globalcfg
 landlock +network +private-home -selinux +suid
 test-profiles test-x11 +userns vanilla wrapper X xephyr xcsecurity xvfb
-ebuild_revision_148
+ebuild_revision_150
 "
 REQUIRED_USE+="
 	!test
@@ -2310,6 +2310,9 @@ ewarn
 ewarn "Keep GPU acceleration off in untrusted contexts to mitigate sandbox"
 ewarn "escape, information disclosure, code execution, privilege escalation."
 ewarn "Use GPU acceleration selectively."
+ewarn
+ewarn "You must manually remove private-lib from /etc/firejail/firejail.config"
+ewarn "or do an etc-update."
 ewarn
 }
 

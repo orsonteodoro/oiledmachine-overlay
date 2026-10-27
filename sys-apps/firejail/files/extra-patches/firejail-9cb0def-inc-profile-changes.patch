@@ -1,9 +1,3 @@
-Only in firejail-9999/etc/inc: allow-aocc.inc
-Only in firejail-9999/etc/inc: allow-binutils.inc
-Only in firejail-9999/etc/inc: allow-chromium-toolchain.inc
-Only in firejail-9999/etc/inc: allow-clang.inc
-Only in firejail-9999/etc/inc: allow-cython.inc
-Only in firejail-9999/etc/inc: allow-gcc.inc
 diff '--color=auto' -urp firejail-9999.orig/etc/inc/allow-gjs.inc firejail-9999/etc/inc/allow-gjs.inc
 --- firejail-9999.orig/etc/inc/allow-gjs.inc	2026-10-26 09:23:18.577995891 -0700
 +++ firejail-9999/etc/inc/allow-gjs.inc	2026-10-26 09:23:34.335919955 -0700
@@ -15,11 +9,6 @@ diff '--color=auto' -urp firejail-9999.orig/etc/inc/allow-gjs.inc firejail-9999/
  noblacklist ${PATH}/gjs
  noblacklist ${PATH}/gjs-console
  noblacklist /usr/lib/gjs
-Only in firejail-9999/etc/inc: allow-go.inc
-Only in firejail-9999/etc/inc: allow-gpu-acceleration.inc
-Only in firejail-9999/etc/inc: allow-hip-clang.inc
-Only in firejail-9999/etc/inc: allow-icc.inc
-Only in firejail-9999/etc/inc: allow-icx.inc
 diff '--color=auto' -urp firejail-9999.orig/etc/inc/allow-java.inc firejail-9999/etc/inc/allow-java.inc
 --- firejail-9999.orig/etc/inc/allow-java.inc	2026-10-26 09:23:18.577995891 -0700
 +++ firejail-9999/etc/inc/allow-java.inc	2026-10-26 09:23:34.336537229 -0700
@@ -9011,3 +9000,225 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/zulip.profile fireja
  
  include disable-common.inc
  include disable-devel.inc
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-aocc.inc firejail-0.9.80/etc/inc/allow-aocc.inc
+--- firejail-0.9.80.orig/etc/inc/allow-aocc.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-aocc.inc	2026-06-08 15:20:43.147562148 -0700
+@@ -0,0 +1,17 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-aocc.local
++
++# AOCC
++noblacklist ${PATH}/analyze-build*
++noblacklist ${PATH}/asan_symbolize*
++noblacklist ${PATH}/bugpoint*
++noblacklist ${PATH}/c-index-test*
++noblacklist ${PATH}/clang*
++noblacklist ${PATH}/flang*
++noblacklist ${PATH}/llc*
++noblacklist ${PATH}/lldb*
++noblacklist ${PATH}/lli*
++noblacklist ${PATH}/llvm*
++noblacklist ${PATH}/scan-build
++noblacklist /opt/aocc
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-binutils.inc firejail-0.9.80/etc/inc/allow-binutils.inc
+--- firejail-0.9.80.orig/etc/inc/allow-binutils.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-binutils.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,12 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-binutils.local
++
++# Binutils
++noblacklist ${PATH}/objdump
++noblacklist ${PATH}/readelf
++noblacklist ${PATH}/elfedit
++noblacklist ${PATH}/ld.gold
++noblacklist ${PATH}/ld.bfd
++noblacklist /usr/lib*/binutils/* # Libs
++noblacklist /usr/*/binutils-bin  # Exes
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-chromium-toolchain.inc firejail-0.9.80/etc/inc/allow-chromium-toolchain.inc
+--- firejail-0.9.80.orig/etc/inc/allow-chromium-toolchain.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-chromium-toolchain.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,20 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-chromium-toolchain.local
++
++# Chromium toolchain
++noblacklist ${PATH}/analyze-build*
++noblacklist ${PATH}/asan_symbolize*
++noblacklist ${PATH}/bugpoint*
++noblacklist ${PATH}/c-index-test*
++noblacklist ${PATH}/clang*
++noblacklist ${PATH}/flang*
++noblacklist ${PATH}/llc*
++noblacklist ${PATH}/lldb*
++noblacklist ${PATH}/lli*
++noblacklist ${PATH}/llvm*
++noblacklist ${PATH}/scan-build
++noblacklist /usr/share/chromium/*/toolchain
++noblacklist /usr/share/chromium/*/toolchain/clang
++noblacklist /usr/share/chromium/*/toolchain/gn
++noblacklist /usr/share/chromium/*/toolchain/rust
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-clang.inc firejail-0.9.80/etc/inc/allow-clang.inc
+--- firejail-0.9.80.orig/etc/inc/allow-clang.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-clang.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,17 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-clang.local
++
++# Clang / LLVM
++noblacklist ${PATH}/analyze-build*
++noblacklist ${PATH}/asan_symbolize*
++noblacklist ${PATH}/bugpoint*
++noblacklist ${PATH}/c-index-test*
++noblacklist ${PATH}/clang*
++noblacklist ${PATH}/llc*
++noblacklist ${PATH}/lldb*
++noblacklist ${PATH}/lli*
++noblacklist ${PATH}/llvm*
++noblacklist ${PATH}/scan-build
++noblacklist ${PATH}/flang*
++noblacklist /usr/lib/llvm
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-cython.inc firejail-0.9.80/etc/inc/allow-cython.inc
+--- firejail-0.9.80.orig/etc/inc/allow-cython.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-cython.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,11 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-cython.local
++
++# Cython
++noblacklist ${PATH}/cygdb
++noblacklist ${PATH}/cython*
++noblacklist ${PATH}/cythonize
++
++# Multislot Cython
++noblacklist /usr/lib/cython/*/lib/python*/site-packages/Cython
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-gcc.inc firejail-0.9.80/etc/inc/allow-gcc.inc
+--- firejail-0.9.80.orig/etc/inc/allow-gcc.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-gcc.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,25 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-gcc.local
++
++# GCC
++noblacklist ${PATH}/*-g++*
++noblacklist ${PATH}/*-gcc*
++noblacklist ${PATH}/as
++noblacklist ${PATH}/c++*
++noblacklist ${PATH}/c++filt
++noblacklist ${PATH}/c8*
++noblacklist ${PATH}/c9*
++noblacklist ${PATH}/cc
++noblacklist ${PATH}/cpp*
++noblacklist ${PATH}/elfedit
++noblacklist ${PATH}/g++*
++noblacklist ${PATH}/gcc*
++noblacklist ${PATH}/gcov*
++noblacklist ${PATH}/gdb
++noblacklist ${PATH}/gmake
++noblacklist ${PATH}/ld
++noblacklist ${PATH}/make
++noblacklist ${PATH}/make-first-existing-target
++noblacklist ${PATH}/x86_64-linux-gnu-*
++noblacklist /usr/lib/gcc
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-go.inc firejail-0.9.80/etc/inc/allow-go.inc
+--- firejail-0.9.80.orig/etc/inc/allow-go.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-go.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,9 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-go.local
++
++# Go
++noblacklist ${PATH}/gccgo
++noblacklist ${PATH}/go
++noblacklist ${PATH}/gofmt
++noblacklist /usr/lib/go
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-gpu-acceleration.inc firejail-0.9.80/etc/inc/allow-gpu-acceleration.inc
+--- firejail-0.9.80.orig/etc/inc/allow-gpu-acceleration.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-gpu-acceleration.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,19 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-gpu-acceleration.local
++
++# For Mesa dependencies
++noblacklist /usr/lib/llvm
++noblacklist /usr/lib/llvm/*/lib*/libLLVM.so*
++noblacklist /usr/lib/gcc/*/*/libstdc++.so*
++noblacklist /usr/lib/gcc/*/*/libgcc_s.so*
++
++blacklist /usr/lib/llvm/*/bin
++blacklist /usr/lib/llvm/*/include
++blacklist /usr/lib/llvm/*/libexec
++blacklist /usr/lib/llvm/*/share
++
++whitelist /usr/lib/llvm/*/lib*/libLLVM.so*
++whitelist /usr/lib/gcc/*/*/libstdc++.so*
++whitelist /usr/lib/gcc/*/*/libgcc_s.so*
++
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-hip-clang.inc firejail-0.9.80/etc/inc/allow-hip-clang.inc
+--- firejail-0.9.80.orig/etc/inc/allow-hip-clang.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-hip-clang.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,17 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-amdllvm.local
++
++# HIP-Clang
++noblacklist ${PATH}/analyze-build*
++noblacklist ${PATH}/asan_symbolize*
++noblacklist ${PATH}/bugpoint*
++noblacklist ${PATH}/c-index-test*
++noblacklist ${PATH}/clang*
++noblacklist ${PATH}/flang*
++noblacklist ${PATH}/llc*
++noblacklist ${PATH}/lldb*
++noblacklist ${PATH}/lli*
++noblacklist ${PATH}/llvm*
++noblacklist ${PATH}/scan-build
++noblacklist /opt/rocm/lib/llvm
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-icc.inc firejail-0.9.80/etc/inc/allow-icc.inc
+--- firejail-0.9.80.orig/etc/inc/allow-icc.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-icc.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,15 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-icc.local
++
++# ICC
++noblacklist ${PATH}/icc
++noblacklist ${PATH}/icpc
++
++# Systemwide install
++noblacklist /opt/intel
++
++# Home install
++noblacklist ${HOME}/intel
++noblacklist ${HOME}/.intel
++noblacklist ${HOME}/inteloneapi
+diff '--color=auto' -urpN firejail-0.9.80.orig/etc/inc/allow-icx.inc firejail-0.9.80/etc/inc/allow-icx.inc
+--- firejail-0.9.80.orig/etc/inc/allow-icx.inc	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.80/etc/inc/allow-icx.inc	2026-06-08 15:20:43.151562026 -0700
+@@ -0,0 +1,16 @@
++# This file is overwritten during software install.
++# Persistent customizations should go in a .local file.
++include allow-icx.local
++
++# ICX
++noblacklist ${PATH}/icx
++noblacklist ${PATH}/icpx
++noblacklist ${PATH}/ifx
++
++# Systemwide install
++noblacklist /opt/intel
++
++# Home install
++noblacklist ${HOME}/intel
++noblacklist ${HOME}/.intel
++noblacklist ${HOME}/inteloneapi

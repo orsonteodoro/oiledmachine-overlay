@@ -4,5 +4,3 @@ ignore private-bin
 writable-var
 read-write /var/tmp/portage
 whitelist /var/tmp/portage
-
-private-lib libsandbox.so*

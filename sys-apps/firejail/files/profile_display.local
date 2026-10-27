@@ -1,2 +1,1 @@
-private-lib gcc/*/*/libgcc_s.so.*,gcc/*/*/libgomp.so.*,libMagickWand-*.so.*,libfreetype.so.*,libXext.so.*,libltdl.so.*,ImageMagick*
 private-etc ImageMagick-7

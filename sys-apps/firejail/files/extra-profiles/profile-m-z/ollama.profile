@@ -165,21 +165,6 @@ private-cache
 private-cwd /usr/lib/ollama/@LIBDIR@
 private-dev
 private-etc ld.so.cache
-private-lib ollama
-
-# For libstdc++ systems:
-private-lib gcc/*/*/libstdc++.so*,gcc/*/*/libgcc_s.so*
-
-# TODO:  libc++ systems:
-
-# For Vulkan support
-private-lib libvulkan.so*
-
-# For GPU Vulkan support
-private-lib libvulkan*.so*,llvm/*/lib*/libLLVM.so*
-
-# For --help
-private-lib libreadline.so*,libtinfo.so*
 
 private-tmp
 
