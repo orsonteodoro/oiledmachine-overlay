@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_36"
+IUSE+=" ebuild_revision_37"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
@@ -278,7 +278,6 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 	# Security fixes
 		L=(
 			"brace-expansion@^${NODE_BRACE_EXPANSION_2_PV}"
-			"electron@^${NODE_24_ELECTRON_PV}"
 			"file-type@^${NODE_FILE_TYPE_22_PV}"
 			"handlebars@^${NODE_HANDLEBARS_PV}"
 			"ip-address@^${NODE_IP_ADDRESS_PV}"
@@ -292,6 +291,7 @@ ewarn "QA:  Remove node_modules/npm/node_modules/ip-address in package-lock.json
 		)
 		enpm install "${L[@]}" -P "${NPM_INSTALL_ARGS[@]}"
 		L=(
+			"electron@^${NODE_24_ELECTRON_PV}"
 			"fast-uri@^${NODE_FAST_URI_3_PV}"
 			"minimatch@^${NODE_MINIMATCH_9_PV}"
 		)
