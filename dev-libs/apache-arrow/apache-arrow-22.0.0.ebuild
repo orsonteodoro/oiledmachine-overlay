@@ -15,9 +15,9 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 ABSEIL_CPP_SLOT="20240722"
-CXX_STANDARD=17
-GRPC_SLOT="4"
-PROTOBUF_CPP_SLOT="4"
+CXX_STANDARD=17 # See https://github.com/apache/arrow/blob/apache-arrow-22.0.0/cpp/cmake_modules/SetupCxxFlags.cmake#L144
+GRPC_SLOT="4" # See https://github.com/apache/arrow/blob/apache-arrow-22.0.0/cpp/subprojects/grpc.wrap
+PROTOBUF_CPP_SLOT="4" # See https://github.com/apache/arrow/blob/apache-arrow-22.0.0/cpp/subprojects/protobuf.wrap
 RE2_SLOT="20220623"
 
 # arrow.git: testing
@@ -89,10 +89,10 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
--arrow-flight -arrow-flight-sql -arrow-flight-sql-odbc -brotli -bzip2 -compute
--csv -cuda -filesystem -gandiva -dataset -gcs -hdfs +ipc -jemalloc -json -lz4
-+mimalloc +parquet +re2 -s3 -snappy -tensorflow ssl test +threads +utf8proc
--zlib -zstd
+-arrow-flight -arrow-flight-sql -arrow-flight-sql-odbc -arrow-substrait -brotli
+-bzip2 -compute -csv -cuda -filesystem -gandiva -dataset -gcs -hdfs +ipc
+-jemalloc -json -lz4 +mimalloc +parquet +re2 -s3 -snappy -tensorflow ssl test
++threads +utf8proc -zlib -zstd
 ebuild_revision_4
 "
 # oiledmachine-overlay has strict GPU version requirements, CUDA 11.7 not supported on distro.
@@ -339,6 +339,7 @@ src_configure() {
 		-DARROW_RUNTIME_SIMD_LEVEL=$(get_runtime_simd_level)
 		-DARROW_S3=$(usex s3 ON OFF)
 		-DARROW_SIMD_LEVEL=$(get_buildtime_simd_level)
+		-DARROW_SUBSTRAIT=$(usex arrow-substrait)
 		-DARROW_TENSORFLOW=$(usex tensorflow ON OFF)
 		-DARROW_USE_CCACHE="${use_ccache}"
 		-DARROW_USE_GOLD="${use_mold}"
