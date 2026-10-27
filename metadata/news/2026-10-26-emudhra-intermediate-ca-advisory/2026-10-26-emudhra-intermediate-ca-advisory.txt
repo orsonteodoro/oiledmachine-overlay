@@ -1,0 +1,75 @@
+Title: eMudhra intermediate Advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-10-27
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: app-misc/ca-certificates
+Display-If-Installed: dev-games/godot-editor
+Display-If-Installed: dev-games/godot-export-templates-bin
+Display-If-Installed: dev-lang/go
+Display-If-Installed: dev-lang/python
+Display-If-Installed: www-client/chromium
+Display-If-Installed: www-client/firefox
+Display-If-Installed: www-client/firefox-bin
+Display-If-Installed: www-client/google-chrome
+
+Due to various quirks in the software ecosystem, the eMudhra intermediate CA may
+not be consistently applied.  The overlay has used hard masks to ensure
+consistent security.  The industry as a whole has decided to reject or remove
+eMudhra intermediate CA from the cert database due to insecure private
+keys, obtained by brute forcing.  In social media, they gave the example "4" as
+the private key.  The AI said that the private keys were under 256.
+
+The benefit of rejecting this intermediate CA is to mitigate gullible users from
+phishing attacks or MITM (Man In The Middle) attacks that lead to stolen crown
+jewels, stolen keys to the crown jewels, or harm.
+
+This advisory was initially targeted for vendored bundled certificates packages.
+It also applies users who have just returned to to their machine but haven't
+updated or are putting off updates.
+
+Affected packages
+
+app-misc/ca-certificates with certdata-esr
+dev-games/godot-editor with USE=portable
+dev-games/godot-export-templates-bin with embedded fallback certificate bundle
+
+Reasons per package
+
+The version for NSS (ESR) hasn't been bumped preventing certdata.txt update on
+eMudhra intermediate CA removal.  The browser gets first class treatment but the
+ESR is a third class citizen.  It is like last place in certs update.  Users
+will be forced temporarily into picking one of certdata-live, certdata-live-af,
+certdata-latest (ebuild default).  The USE flag temporary ban for certdata-esr
+will be lifted when the ESR is version bumped with a certdata.txt update.
+
+The godot-editor if using portable will use a vendored copy of bundled
+certificates if the system certificate bundle is accidently removed.
+
+Projects godot-export-templates-bin may likely embed vendored copy of older
+certificates.  The other reason for the package mask is because it is affected
+by Brotli2Shell.
+
+Godot games or Godot app projects (e.g. chat or messengers) can override
+certificate bundle by setting the settins in the link
+(https://docs.godotengine.org/en/stable/tutorials/networking/ssl_certificates.html).
+The engine looks at the override certificate bundle first, then system
+certificate bundle store, then the fallback vendored certificate bundle.  The
+scenario where the certificate override applies is were a user runs the game/app in
+an older computer with older OS release.
+
+Already remediated
+
+>=dev-lang/go-1.27.3
+>=dev-lang/python-3.15.2
+>=dev-lang/python-3.14.10
+>=dev-lang/python-3.13.18
+>=dev-lang/python-3.12.16
+>=dev-lang/python-3.11.18
+>=www-client/chromium-156.0.8078.47
+>=www-client/firefox-bin-158.0.1
+>=www-client/firefox-bin-153.5.1
+>=www-client/firefox-158.0.1
+>=www-client/firefox-153.5.1
+>=www-client/google-chrome-156.0.8078.47
