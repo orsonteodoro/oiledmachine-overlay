@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 25
+Revision: 26
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -117,7 +117,6 @@ dev-python/array-record [15]
 media-gfx/blockbench [5][10][15]
 media-gfx/upscayl [5][10][15]
 media-video/lossless-cut [5]
-net-im/signal-desktop [5][9]
 net-libs/bun [17][25][26]
 sci-libs/tensorstore [8][15]
 sci-ml/openclaw-docker [15]
@@ -148,6 +147,7 @@ media-libs/libheif [14][24]
 media-libs/libjxl [3][14][24]
 media-libs/woff2 [3][14][24]
 media-sound/spotify [15][18]
+net-im/signal-desktop [5][9][27]
 net-libs/gnutls [14][24]
 net-libs/libsoup [14][24]
 net-libs/nghttp2 [14][24]
@@ -185,6 +185,7 @@ x11-wm/xpra
 [24] Verified not to add Brotli submodule via git, monolithic tarball, or in source files to mitigate vendored copy bypass in oiledmachine-overlay ebuilds.
 [25] It uses C bindings for bun in both zig Bun and the newer Rust Bun.
 [26] Removal is recommended for Zig based Bun.  The Rust based Bun >= 1.4.4 is recommended for remediation.
+[27] Updated to Electron 45.1.0 (Node.js 24.22.1) which resolves the Brotli RCE and Node.js CVEs, but not the newer announced Chromium CVEs
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
