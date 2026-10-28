@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 27
+Revision: 28
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -115,7 +115,6 @@ dev-games/godot-editor [15][16]
 dev-games/godot-export-templates-bin [15]
 dev-python/array-record [15]
 media-gfx/blockbench [5][10][15]
-media-gfx/upscayl [5][10][15]
 media-video/lossless-cut [5]
 net-libs/bun [17][25][26]
 sci-libs/tensorstore [8][15]
@@ -142,6 +141,7 @@ dev-qt/qtbase [14][24]
 dev-util/carbon-now-cli [22]
 games-rpg/Risuai [4][21]
 gui-apps/windowpet [4][20]
+>=media-gfx/upscayl-2.15.1 (ebuild_revision_37) [5][10][15][27]
 media-libs/freetype [14][24]
 media-libs/libheif [14][24]
 media-libs/libjxl [3][14][24]

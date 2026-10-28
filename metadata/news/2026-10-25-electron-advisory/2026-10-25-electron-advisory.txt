@@ -2,7 +2,7 @@ Title: Electron Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 8
+Revision: 9
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/llocal
 Display-If-Installed: net-im/signal-desktop
@@ -29,7 +29,6 @@ Affected packages:
 
 All Electron apps
 app-misc/llocal
-media-gfx/upscayl
 media-gfx/blockbench
 media-gfx/upscayl
 media-video/lossless-cut
@@ -40,6 +39,7 @@ Electron 44.7.2 - with Node 24.21.0 [used in the distro's signal-desktop-bin 8.3
 
 Remediated versions:
 
+>=media-gfx/upscayl-2.15.1 (ebuild_revision_37) [1]
 >=net-im/signal-desktop-8.32.0 (ebuild_revision_117) [1]
 Electron 46.0.0-alpha.1 - with Node 24.22.1
 Node 22.23.4
