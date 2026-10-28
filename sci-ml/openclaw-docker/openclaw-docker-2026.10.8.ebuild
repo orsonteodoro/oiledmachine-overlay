@@ -42,8 +42,8 @@ LICENSE="MIT"
 SLOT="0"
 IUSE+=" ebuild_revision_8"
 RDEPEND="
-	acct-group/openclaw
-	acct-user/openclaw
+	acct-group/openclaw:*
+	acct-user/openclaw:*
 	>=app-containers/docker-${DOCKER_PV}[container-init]
 	>=app-containers/docker-compose-${DOCKER_COMPOSE_PV}
 "
