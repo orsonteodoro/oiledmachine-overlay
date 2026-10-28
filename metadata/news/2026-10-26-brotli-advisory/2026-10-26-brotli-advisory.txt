@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 16
+Revision: 17
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -68,8 +68,11 @@ Alleged vulnerabilites in Brolti that would have forced brotli as a live ebuild
 by default or would have deserved a fallback-commit bump:
 
 Threat intelligence names:  Broccoli2Shell, Brotli2Shell, or Node2Shell
+Severity:  Critical, 9.2 CVSS 4
 
-CVE-2026-111497 - RCE, OOBW
+CVE-2026-111497 - KEV, RCE, OOBW, DoS, DT, ID, ZC
+
+KEV deadline:  Nov 10, 2026
 
 Commits that would triggered fallback-commit bump or conversion to live ebuild
 as the default on the oiledmachine-overlay:
@@ -87,12 +90,17 @@ RCE [missed detection because security hint not disclosed in commit message] - F
 Ob1 - Nov 24, 2025 [1]
 Tagged release - Oct 27, 2025
 
+DoS - Denial of Service
+DT - Data Tampering
+ID - Information Disclosure
+KEV - Known Exploited Vulnerability (U.S. Gov Advisory)
 MC - Memory Corruption
 OOBR - Out of Bounds Read
 OOBW - Out of Bounds Write
 IV - Insufficient Validation
 Ob1 - Off-by-one
 RCE - Remote Code Execution
+ZC - Zero Click Vulnerability (AV:N, PR:N, UI:N)
 
 [1] Not triaged in Brotli 1.2.1
 
