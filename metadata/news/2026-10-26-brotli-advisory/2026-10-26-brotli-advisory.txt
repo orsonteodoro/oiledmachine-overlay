@@ -130,7 +130,6 @@ exclusion of Brolti:
 app-text/ghostscript-gpl [14]
 dev-qt/qtbase [14]
 net-libs/bun [17]
-net-libs/libsoup [14]
 
 Safe against Broccoli2Shell:
 
@@ -155,6 +154,7 @@ media-libs/libjxl [3][14][24]
 media-libs/woff2 [3][14][24]
 media-sound/spotify [15][18]
 net-libs/gnutls [14][24]
+net-libs/libsoup [14][24]
 net-libs/nghttp2 [14][24]
 net-libs/nodejs [3]
 net-misc/curl [14][19][24]
