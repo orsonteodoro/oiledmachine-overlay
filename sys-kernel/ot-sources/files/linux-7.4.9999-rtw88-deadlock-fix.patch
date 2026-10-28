@@ -1,5 +1,5 @@
---- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-10-28 08:53:10.592947200 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-10-28 09:04:12.692530925 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.h.orig	2026-10-28 09:32:44.564955372 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.h	2026-10-28 09:34:32.413388274 -0700
 @@ -14,6 +14,7 @@
  #include <linux/iopoll.h>
  #include <linux/interrupt.h>
@@ -29,8 +29,8 @@
  	/* watch dog every 2 sec */
  	struct delayed_work watch_dog_work;
  	u32 watch_dog_cnt;
---- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-10-28 08:53:10.592947200 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-10-28 09:04:12.693052037 -0700
+--- a/drivers/net/wireless/realtek/rtw88/main.c.orig	2026-10-28 09:32:44.564955372 -0700
++++ b/drivers/net/wireless/realtek/rtw88/main.c	2026-10-28 09:34:32.413934366 -0700
 @@ -3,6 +3,7 @@
   */
  
@@ -206,8 +206,8 @@
  	init_waitqueue_head(&rtwdev->coex.wait);
  	init_completion(&rtwdev->lps_leave_check);
  	init_completion(&rtwdev->fw_scan_density);
---- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-10-28 08:53:10.656945278 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-10-28 09:05:35.906731130 -0700
+--- a/drivers/net/wireless/realtek/rtw88/usb.c.orig	2026-10-28 09:32:44.596954393 -0700
++++ b/drivers/net/wireless/realtek/rtw88/usb.c	2026-10-28 09:35:01.395707795 -0700
 @@ -29,6 +29,26 @@ struct rtw_usb_txcb {
  	struct sk_buff_head tx_ack_queue;
  };
@@ -464,8 +464,46 @@
  	rtw_usb_intf_deinit(rtwdev, intf);
  	rtw_core_deinit(rtwdev);
  	ieee80211_free_hw(hw);
---- a/drivers/net/wireless/realtek/rtw88/ps.c.orig	2026-10-28 08:53:10.592947200 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/ps.c	2026-10-28 09:04:12.695970031 -0700
+--- a/net/mac80211/mlme.c.orig	2026-10-28 09:33:08.848213101 -0700
++++ b/net/mac80211/mlme.c	2026-10-28 09:34:32.415874219 -0700
+@@ -3702,14 +3702,32 @@ static u64 ieee80211_handle_pwr_constr(s
+ 		has_80211h_pwr = ieee80211_find_80211h_pwr_constr(
+ 			channel, country_ie, country_ie_len,
+ 			pwr_constr_ie, &chan_pwr, &pwr_reduction_80211h);
+-		pwr_level_80211h =
+-			max_t(int, 0, chan_pwr - pwr_reduction_80211h);
++
++		/* FIX: 127 is invalid, AP <redacted> advertises 127 as "no limit"
++		 * This wedges rtw88 -> read 0x770 fails -110
++		 */
++		if (chan_pwr == 127 || chan_pwr > 30) {
++			sdata_dbg(sdata,
++				  "Ignore invalid TX power %d as advertised by %pM\n",
++				  chan_pwr, link->u.mgd.bssid);
++			has_80211h_pwr = false;
++		} else {
++			pwr_level_80211h =
++				max_t(int, 0, chan_pwr - pwr_reduction_80211h);
++			if (pwr_level_80211h == 127 || pwr_level_80211h > 30) {
++				has_80211h_pwr = false;
++			}
++		}
+ 	}
+ 
+ 	if (cisco_dtpc_ie) {
+ 		ieee80211_find_cisco_dtpc(
+ 			channel, cisco_dtpc_ie, &pwr_level_cisco);
+-		has_cisco_pwr = true;
++		/* same for Cisco */
++		if (pwr_level_cisco == 127 || pwr_level_cisco > 30)
++			has_cisco_pwr = false;
++		else
++			has_cisco_pwr = true;
+ 	}
+ 
+ 	if (!has_80211h_pwr && !has_cisco_pwr)
+--- a/drivers/net/wireless/realtek/rtw88/ps.c.orig	2026-10-28 09:32:44.568955250 -0700
++++ b/drivers/net/wireless/realtek/rtw88/ps.c	2026-10-28 09:34:32.416923100 -0700
 @@ -26,6 +26,9 @@ static int rtw_ips_pwr_up(struct rtw_dev
  
  int rtw_enter_ips(struct rtw_dev *rtwdev)
@@ -506,50 +544,8 @@
  	lockdep_assert_held(&rtwdev->mutex);
  
  	__rtw_leave_lps_deep(rtwdev);
---- a/drivers/net/wireless/realtek/rtw88/ps.c.orig	2026-10-28 08:53:10.592947200 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/ps.c	2026-10-28 09:04:12.695970031 -0700
-@@ -26,6 +26,9 @@ static int rtw_ips_pwr_up(struct rtw_dev
- 
- int rtw_enter_ips(struct rtw_dev *rtwdev)
- {
-+	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
-+		return 0;
-+
- 	if (!test_bit(RTW_FLAG_POWERON, rtwdev->flags))
- 		return 0;
- 
-@@ -50,6 +53,9 @@ int rtw_leave_ips(struct rtw_dev *rtwdev
- {
- 	int ret;
- 
-+	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
-+		return 0; // <- return 0, not error, to stop "leave idle state failed" spam
-+
- 	if (test_bit(RTW_FLAG_POWERON, rtwdev->flags))
- 		return 0;
- 
-@@ -276,6 +282,9 @@ static void __rtw_leave_lps(struct rtw_d
- 
- void rtw_enter_lps(struct rtw_dev *rtwdev, u8 port_id)
- {
-+	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
-+		return;
-+
- 	lockdep_assert_held(&rtwdev->mutex);
- 
- 	if (rtwdev->coex.stat.wl_force_lps_ctrl)
-@@ -287,6 +296,9 @@ void rtw_enter_lps(struct rtw_dev *rtwde
- 
- void rtw_leave_lps(struct rtw_dev *rtwdev)
- {
-+	if (unlikely(rtwdev->fail || rtwdev->disconnecting))
-+		return;
-+
- 	lockdep_assert_held(&rtwdev->mutex);
- 
- 	__rtw_leave_lps_deep(rtwdev);
---- a/drivers/net/wireless/realtek/rtw88/fw.c.orig	2026-10-28 08:53:10.588947320 -0700
-+++ b/drivers/net/wireless/realtek/rtw88/fw.c	2026-10-28 09:04:12.696340591 -0700
+--- a/drivers/net/wireless/realtek/rtw88/fw.c.orig	2026-10-28 09:32:44.564955372 -0700
++++ b/drivers/net/wireless/realtek/rtw88/fw.c	2026-10-28 09:34:32.417328948 -0700
 @@ -399,6 +399,9 @@ static void rtw_fw_send_h2c_command_regi
  	u8 box_state, box;
  	int ret;
