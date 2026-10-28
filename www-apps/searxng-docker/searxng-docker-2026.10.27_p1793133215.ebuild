@@ -3,18 +3,38 @@
 
 EAPI=8
 
+# Tag from https://hub.docker.com/r/searxng/searxng/tags
+
+# For the _p<unix-timestamp>, get the Unix timestamp from GitHub from
+# https://github.com/searxng/searxng/commit/b5ed73fcb6c6bda5d4e8b13d1472aa3917f784dc.patch
+# date --date="Tue, 27 Oct 2026 21:33:35 +0100" +%s
+
 # AI generated ebuild/artifacts + human edited ebuild
 
-EGIT_REPO_URI="https://github.com/searxng/searxng.git"
-EGIT_BRANCH="master"
-FALLBACK_COMMIT="e12b722ddc0ce75980e639246bdce83ceebdd102" # Apr 6, 2026
-FALLBACK_TAG="2026.4.6-e12b722dd"
-IUSE+=" fallback-commit"
+FALLBACK_COMMIT="b5ed73fcb6c6bda5d4e8b13d1472aa3917f784dc"
+FALLBACK_TAG="2026.10.27-b5ed73fcb"
 
-inherit git-r3
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/searxng/searxng.git"
+	EGIT_BRANCH="master"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	S="${WORKDIR}/searxng-${FALLBACK_COMMIT}"
+	SRC_URI="
+https://github.com/searxng/searxng/archive/${FALLBACK_COMMIT}.tar.gz
+	-> searxng-docker-${FALLBACK_COMMIT:0:7}.tar.gz
+	"
+fi
 
 DESCRIPTION="Official SearXNG container setup (docker-compose) for local CLI use with searxngr"
-HOMEPAGE="https://docs.searxng.org/admin/installation-docker.html"
+HOMEPAGE="
+	https://docs.searxng.org/
+	https://github.com/searxng/searxng
+	https://docs.searxng.org/admin/installation-docker.html
+"
 
 LICENSE="AGPL-3"
 SLOT="0"
@@ -31,12 +51,18 @@ BDEPEND="
 	dev-libs/openssl
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-20260328-docker-compose-changes.patch"
+	"${FILESDIR}/${PN}-2026.10.27-b5ed73fcb-docker-compose-changes.patch"
 )
 
 src_unpack() {
-	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
-	git-r3_src_unpack
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
@@ -45,7 +71,9 @@ src_prepare() {
 
 src_configure() {
 	cat "${FILESDIR}/searxng.env" > "${T}/searxng.env" || die
-	if use fallback-commit ; then
+	if in_iuse fallback-commit && use fallback-commit ; then
+		sed -i -e "s|@SEARXNG_VERSION@|${FALLBACK_TAG}|g" "${T}/searxng.env" || die
+	elif [[ -n "${FALLBACK_TAG}" ]] ; then
 		sed -i -e "s|@SEARXNG_VERSION@|${FALLBACK_TAG}|g" "${T}/searxng.env" || die
 	else
 		sed -i -e "s|@SEARXNG_VERSION@|latest|g" "${T}/searxng.env" || die
