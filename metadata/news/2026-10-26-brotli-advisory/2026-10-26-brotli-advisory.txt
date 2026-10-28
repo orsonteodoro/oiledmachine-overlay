@@ -117,7 +117,7 @@ media-gfx/blockbench [5][10][15]
 media-gfx/upscayl [5][10][15]
 media-video/lossless-cut [5]
 net-im/signal-desktop [5][9]
-sci-ml/openclaw-docker
+sci-ml/openclaw-docker [15]
 www-apps/LobeHub [5][10][15]
 
 List of packages that use the system's brotli ebuild but need to be verified to
