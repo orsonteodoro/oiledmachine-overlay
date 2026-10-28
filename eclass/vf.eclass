@@ -105,6 +105,9 @@ einfo "AB = Authentication Bypass"
 # BO is taken so ABO is used
 einfo "ABO = Adjacent Buffer Overrun"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AC"($|" "|";"|",") ]] ; then
+einfo "AC = Algorithmic Complexity Vulnerability"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ACB"($|" "|";"|",") ]] ; then
 einfo "ACB = Access Control Bypass"
 		fi
@@ -146,12 +149,21 @@ einfo "AIOOR = Array Index Out Of Range"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ASLRBP"($|" "|";"|",") ]] ; then
+einfo "ASLRBP = ASLR Bypass"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
 einfo "AW = Arbitrary Write"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BGC"($|" "|";"|",") ]] ; then
 # See also JITM, MISCOMP, PGC
 einfo "BGC = Badly Generated Code"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BLA"($|" "|";"|",") ]] ; then
+# Same as XML Bomb (XMLBOMB) [by intuition]
+# Same as Expodential Entity Expansion Attack (EEE) [in commit messages]
+# BLA is particular example but used interchangably with this class of attack.
+einfo "BLA = Billion Laughs Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BO"($|" "|";"|",") ]] ; then
 # Stack size insufficient
@@ -177,6 +189,9 @@ einfo "CB = Container Breakout"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CE"($|" "|";"|",") ]] ; then
 # Alias for ACE, RCE
 einfo "CE = Code Execution"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CEA"($|" "|";"|",") ]] ; then
+einfo "CEA = CPU Exhaustion Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CBHJ"($|" "|";"|",") ]] ; then
 einfo "CBHJ = Clipboard Hijacking"
@@ -213,6 +228,9 @@ einfo "DbZ = Divide by Zero"
 # Not the same as Memory Corruption
 # Use for HDD/SSD/filesystem storage
 einfo "DC = Data Corruption"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DECBOMB"($|" "|";"|",") ]] ; then
+einfo "DECBOMB = Decompression Bomb"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"DF"($|" "|";"|",") ]] ; then
 einfo "DF = Double Free"
@@ -255,6 +273,12 @@ einfo "DZ = Drop Zone"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EBR")($|" "|";"|",") ]] ; then
 einfo "EBR = Extended Blast Radius"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EEEA"($|" "|";"|",") ]] ; then
+# Same as XML Bomb (XMLBOMB) [by intuition]
+# Same as Billion Laughs Attack (BLA) [in AI chat]
+# EEEA is used in commit messages.
+einfo "EEEA = Expodential Entity Expansion Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EM"|"EMA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
@@ -584,6 +608,9 @@ einfo "RC = Race Condition"
 # Alias for ACE
 einfo "RCE = Remote Code Execution"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"RE"($|" "|";"|",") ]] ; then
+einfo "RE = Resource Exhaustion Attack"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ReDoS"|"REDOS")($|" "|";"|",") ]] ; then
 einfo "ReDoS = Regular Expression Denial of Service"
 		fi
@@ -598,10 +625,10 @@ einfo "REFLEAK = Reference Leak"
 einfo "RL = Resource Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SA"($|" "|";"|",") ]] ; then
-# Deprecated use SAV
 einfo "SA = Spoofing Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SAV"($|" "|";"|",") ]] ; then
+# Deprecated use SA
 einfo "SAV = Spoofing Attack Vulnerability"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SB"($|" "|";"|",") ]] ; then
@@ -797,6 +824,11 @@ einfo "WSD = Weak Security Design"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WWWC"($|" "|";"|",") ]] ; then
 einfo "WWWC = Write What Where Condition"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"XMLBOMB"($|" "|";"|",") ]] ; then
+# Same as Billion Laughs Attack (BLA) [in AI chat, particular example]
+# Same as Expodential Entity Expansion Attack (EEEA) [in commit messages]
+einfo "XMLBOMB = XML Bomb"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"XSRF"($|" "|";"|",") ]] ; then
 einfo "XSRF = Cross Site Request Forgery"
 		fi
@@ -812,6 +844,9 @@ einfo "ZCA = Zero Click Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZCV")($|" "|";"|",") ]] ; then
 einfo "ZCV = Zero Click Vulnerability"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ZSA"($|" "|";"|",") ]] ; then
+einfo "ZSA = Zip Slip Attack"
 		fi
 
 einfo
