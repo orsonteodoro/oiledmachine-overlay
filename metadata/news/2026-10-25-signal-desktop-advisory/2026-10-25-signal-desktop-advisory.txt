@@ -2,7 +2,7 @@ Title: signal-desktop Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: net-im/signal-desktop
 
@@ -37,7 +37,9 @@ Remediation
 
 emerge -a ">=net-im/signal-desktop-8.32.0" (ebuild_revision_117)
 
-The remediation for the Brotli RCE is completed for the oiledmachine-overlay.
+The remediation for the hang up snooping issue, Brotli RCE, and Node.js CVEs
+are completed for the oiledmachine-overlay.  However, the newer CVEs for
+Chromium are not remediated.
 
 The distro's version uses Electron 44.7.2 corresponding to the insecure Chromium
 152.0.7977.149.  In addition, it uses the vulnerable vendored Brotli in the
