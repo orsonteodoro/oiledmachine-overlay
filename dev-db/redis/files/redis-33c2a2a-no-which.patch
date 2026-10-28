@@ -1,0 +1,65 @@
+diff '--color=auto' -urp redis-9999.orig/runtest redis-9999/runtest
+--- redis-9999.orig/runtest	2026-10-27 20:46:38.110284575 -0700
++++ redis-9999/runtest	2026-10-27 20:46:54.798688576 -0700
+@@ -8,7 +8,7 @@ TCL_VERSIONS="8.5 8.6 8.7 9.0"
+ TCLSH=""
+ 
+ for VERSION in $TCL_VERSIONS; do
+-	TCL=`which tclsh$VERSION 2>/dev/null` && TCLSH=$TCL
++	TCL=`command -v tclsh$VERSION 2>/dev/null` && TCLSH=$TCL
+ done
+ 
+ if [ -z $TCLSH ]
+diff '--color=auto' -urp redis-9999.orig/runtest-moduleapi redis-9999/runtest-moduleapi
+--- redis-9999.orig/runtest-moduleapi	2026-10-27 20:46:38.110284575 -0700
++++ redis-9999/runtest-moduleapi	2026-10-27 20:46:56.499750703 -0700
+@@ -9,7 +9,7 @@ TCLSH=""
+ [ -z "$MAKE" ] && MAKE=make
+ 
+ for VERSION in $TCL_VERSIONS; do
+-	TCL=`which tclsh$VERSION 2>/dev/null` && TCLSH=$TCL
++	TCL=`command -v tclsh$VERSION 2>/dev/null` && TCLSH=$TCL
+ done
+ 
+ if [ -z $TCLSH ]
+Only in redis-9999: runtest-moduleapi.orig
+Only in redis-9999: runtest.orig
+diff '--color=auto' -urp redis-9999.orig/runtest-sentinel redis-9999/runtest-sentinel
+--- redis-9999.orig/runtest-sentinel	2026-10-27 20:46:38.110284575 -0700
++++ redis-9999/runtest-sentinel	2026-10-27 20:46:56.499888713 -0700
+@@ -8,7 +8,7 @@ TCL_VERSIONS="8.5 8.6 8.7 9.0"
+ TCLSH=""
+ 
+ for VERSION in $TCL_VERSIONS; do
+-	TCL=`which tclsh$VERSION 2>/dev/null` && TCLSH=$TCL
++	TCL=`command -v tclsh$VERSION 2>/dev/null` && TCLSH=$TCL
+ done
+ 
+ if [ -z $TCLSH ]
+Only in redis-9999: runtest-sentinel.orig
+diff '--color=auto' -urp redis-9999.orig/src/Makefile redis-9999/src/Makefile
+--- redis-9999.orig/src/Makefile	2026-10-27 20:46:39.204379020 -0700
++++ redis-9999/src/Makefile	2026-10-27 20:46:56.500237536 -0700
+@@ -75,7 +75,7 @@ INSTALL=install
+ PKG_CONFIG?=pkg-config
+ 
+ ifndef PYTHON
+-PYTHON := $(shell which python3 || which python)
++PYTHON := $(shell command -v python3 || command -v python)
+ endif
+ 
+ # Default allocator defaults to Jemalloc on Linux and libc otherwise
+Only in redis-9999/src: Makefile.orig
+diff '--color=auto' -urp redis-9999.orig/utils/generate-module-api-doc.rb redis-9999/utils/generate-module-api-doc.rb
+--- redis-9999.orig/utils/generate-module-api-doc.rb	2026-10-27 20:46:38.371767886 -0700
++++ redis-9999/utils/generate-module-api-doc.rb	2026-10-27 20:46:56.500025496 -0700
+@@ -154,7 +154,7 @@ end
+ # Populate the 'since' map (name => version) if we're in a git repo.
+ $since = {}
+ git_dir = File.dirname(__FILE__) ++ "/../.git"
+-if File.directory?(git_dir) && `which git` != ""
++if File.directory?(git_dir) && `comamnd -v git` != ""
+     `git --git-dir="#{git_dir}" tag --sort=v:refname`.each_line do |version|
+         next if version !~ /^(\d+)\.\d+\.\d+?$/ || $1.to_i < 4
+         version.chomp!
+Only in redis-9999/utils: generate-module-api-doc.rb.orig

@@ -10,7 +10,7 @@ EAPI=8
 # or https://github.com/redis/redis/blob/unstable/00-RELEASENOTES
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	MY_PV="8.10.9999" # >= 58d0fb9, but src/version.h is incorrect
+	MY_PV="8.11.9999" # Based on src/version.h or modules/modules.yaml or latest numbered branch
 else
 	MY_PV="${PV}"
 fi
@@ -87,7 +87,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-7.2.0-system-jemalloc.patch
 	"${FILESDIR}"/${PN}-6.2.3-ppc-atomic.patch
 	"${FILESDIR}"/${PN}-sentinel-7.2.0-config.patch
-	"${FILESDIR}"/${PN}-7.0.4-no-which.patch
+	"${FILESDIR}"/${PN}-33c2a2a-no-which.patch
 	"${FILESDIR}"/${PN}-8.2.6-tcmalloc-deprecated.patch
 )
 
@@ -101,7 +101,10 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	local actual_slot=$(head -n 1 "${S}/00-RELEASENOTES" | cut -f 4 -d " ")
+	local actual_slot=$(grep "ref: v" "${S}/modules/modules.yaml" \
+		| head -n 1 \
+		| grep -E -o -e "[0-9.]+" \
+		| cut -f "1-2" -d ".")
 	local expected_slot="${SUBSLOT}"
 	if ver_test "${actual_slot}" "-ne" "${expected_slot}" ; then
 eerror "QA:  Update MY_PV"
