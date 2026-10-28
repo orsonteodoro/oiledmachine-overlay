@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 20
+Revision: 21
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -127,21 +127,17 @@ exclusion of Brolti:
 app-text/ghostscript-gpl [14]
 dev-cpp/cpp-httplib [14]
 dev-qt/qtbase [14]
-media-libs/freetype [14]
 media-libs/libheif [14]
 net-libs/bun [17]
-net-libs/gnutls [14]
 net-libs/libsoup [14]
 net-libs/nghttp2 [14]
-net-misc/curl [14][19]
-net-misc/wget2 [14]
 sci-libs/tensorstore [8][15]
 
 Safe against Broccoli2Shell:
 
 app-misc/amica [4]
 app-arch/brotli [3][13][14]
-dev-libs/apache-arrow
+dev-libs/apache-arrow [24]
 dev-python/chromadb [4]
 dev-python/ddgs
 dev-python/discord-py
@@ -153,10 +149,14 @@ dev-python/starlette-compress
 dev-util/carbon-now-cli [22]
 games-rpg/Risuai [4][21]
 gui-apps/windowpet [4][20]
-media-libs/libjxl [3][14]
-media-libs/woff2 [3][14]
+media-libs/freetype [14][24]
+media-libs/libjxl [3][14][24]
+media-libs/woff2 [3][14][24]
 media-sound/spotify [15][18]
+net-libs/gnutls [14][24]
 net-libs/nodejs [3]
+net-misc/curl [14][19][24]
+net-misc/wget2 [14][24]
 sci-ml/tensorflow
 sys-apps/coolercontrold [4]
 >=www-client/google-chrome-156.0.8078.47 [12][15]
@@ -185,6 +185,7 @@ x11-wm/xpra
 [21] Contains other Node vulnerabilies in the lockfile
 [22] Uses --disable-everything (disables jxl, disables network) except pipe and file in ffmpeg, uses system's brotli in Chromium; firefox triaged earlier and webkit do not use brotli according to AI
 [23] For brotli4j, the AI suggested the cloud hosted or exposed at risk but the internal network at sufficiently protected.  AI said that JNI is a wrapper around native.
+[24] Verified not to add Brotli submodule via git, monolithic tarball, or in source files to mitigate vendored copy bypass in oiledmachine-overlay ebuilds.
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
