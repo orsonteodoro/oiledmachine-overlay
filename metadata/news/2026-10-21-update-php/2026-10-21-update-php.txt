@@ -27,7 +27,7 @@ CVE-2026-109618 - KEV, RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
 CVE-2026-109619 - KEV, RCE, UAF, UPTR, UBMA, IEH, ZC, DoS, DT, ID
 CVE-2026-115560 - (NEW) Reserved
 
-KEV deadline:  Oct 29, 2926
+KEV deadline:  Oct 29, 2026
 
 DoS - Denial of Service
 DT - Data Tampering
