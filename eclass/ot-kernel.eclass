@@ -3299,7 +3299,9 @@ ot-kernel_apply_fixes() {
 # @DESCRIPTION:
 # Apply additional patch fixes to fix deadlocks and forced reboot less than 30 day uptime
 ot-kernel_apply_rtw88_fixes() {
-	if ver_test "${KV_MAJOR_MINOR}" "-ge" "7.1" ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
+		_fpatch "${FILESDIR}/linux-7.4.9999-rtw88-deadlock-fix.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "7.1" ; then
 		_fpatch "${FILESDIR}/linux-7.1.9-rtw88-deadlock-fix.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
 		_fpatch "${FILESDIR}/linux-6.18.45-rtw88-deadlock-fix.patch"
