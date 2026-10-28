@@ -163,7 +163,7 @@ sys-apps/coolercontrold [4]
 >=www-client/google-chrome-156.0.8078.47 [12][15]
 >=www-client/chromium-156.0.8078.47 [11][15]
 www-apps/open-webui [21]
->=www-apps/searxng-docker-
+www-apps/searxng-docker
 www-apps/xpra-html5
 x11-wm/xpra
 
