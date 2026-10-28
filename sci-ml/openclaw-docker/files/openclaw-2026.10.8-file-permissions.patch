@@ -1,0 +1,36 @@
+--- a/scripts/docker/setup.sh.orig	2026-10-26 21:14:13.000000000 -0700
++++ b/scripts/docker/setup.sh	2026-10-27 19:57:55.296167693 -0700
+@@ -788,8 +788,8 @@ fi
+ # differ, causing EACCES when the container tries to mkdir/write.
+ # Running a brief root container to chown is the portable Docker idiom --
+ # it works regardless of the host uid and doesn't require host-side root.
+-echo ""
+-echo "==> Fixing data-directory permissions"
++#echo ""
++#echo "==> Fixing data-directory permissions"
+ # Prune workspace descendants explicitly: -xdev still crosses bind mounts on
+ # the same filesystem. Repair the mount point itself so node can write there,
+ # but leave user project file ownership unchanged.
+@@ -798,14 +798,14 @@ echo "==> Fixing data-directory permissi
+ # redirecting the root operation outside the mounted tree.
+ # After fixing the config dir, only the OpenClaw metadata subdirectory
+ # (.openclaw/) inside the workspace gets chowned, not the user's project files.
+-run_prestart_gateway --user root --entrypoint sh openclaw-gateway -c \
+-  'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; export PATH; \
+-   /usr/bin/find -P /home/node/.openclaw -xdev \( ! -path /home/node/.openclaw/workspace -o -prune \) -execdir /usr/bin/chown -h node:node {} +; \
+-   /usr/bin/chown -h node:node /home/node/.config; \
+-   /usr/bin/find -P /home/node/.config/openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
+-   if [ -d /home/node/.openclaw/workspace/.openclaw ] && [ ! -L /home/node/.openclaw/workspace/.openclaw ]; then \
+-     /usr/bin/find -P /home/node/.openclaw/workspace/.openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
+-   fi || true'
++#run_prestart_gateway --user root --entrypoint sh openclaw-gateway -c \
++#  'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin; export PATH; \
++#   /usr/bin/find -P /home/node/.openclaw -xdev \( ! -path /home/node/.openclaw/workspace -o -prune \) -execdir /usr/bin/chown -h node:node {} +; \
++#   /usr/bin/chown -h node:node /home/node/.config; \
++#   /usr/bin/find -P /home/node/.config/openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
++#   if [ -d /home/node/.openclaw/workspace/.openclaw ] && [ ! -L /home/node/.openclaw/workspace/.openclaw ]; then \
++#     /usr/bin/find -P /home/node/.openclaw/workspace/.openclaw -xdev -execdir /usr/bin/chown -h node:node {} +; \
++#   fi || true'
+ 
+ echo ""
+ if [[ -n "$SKIP_ONBOARDING" ]]; then

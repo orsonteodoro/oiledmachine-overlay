@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# For current tag, see
+# https://github.com/openclaw/openclaw/releases
+# https://github.com/openclaw/openclaw/pkgs/container/openclaw
+
 # For packagers, do not convert the ebuild to native (aka split ebuilds).
 # It will increase the blast radius effectively giving attacker privileged mode.
 
@@ -11,12 +15,26 @@ EAPI=8
 # This ebuild contains AI synthetic data.
 
 # See https://github.com/openclaw/openclaw/pkgs/container/openclaw
-EGIT_REPO_URI="https://github.com/openclaw/openclaw.git"
-FALLBACK_COMMIT="4eb716062250cabc25bc3b5591994ce00e5c3f9e"
-FALLBACK_TAG="2026.4.9"
-#KEYWORDS="~amd64" # Need to fix file ownership/permissions issue
-IUSE+=" fallback-commit"
-inherit git-r3
+
+FALLBACK_COMMIT="5a94eab2146e558b3ebcd41cb174fc5adc469c2a" # Always update this to the corresponding tag
+FALLBACK_TAG="${PV}"
+
+inherit secure-version
+
+if [[ "${PV}" == "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/openclaw/openclaw.git"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	#KEYWORDS="~amd64" # We need to fix the UID issue.  We need the agent on a seperate UID from real users to prevent catastropic data loss or the AI deleted my data scenario.
+	S="${WORKDIR}/openclaw-${FALLBACK_TAG}"
+	SRC_URI="
+https://github.com/openclaw/openclaw/archive/refs/tags/v${PV}.tar.gz
+	-> openclaw-${PV}.tar.gz
+	"
+fi
 
 DESCRIPTION="OpenClaw - Personal AI assistant gateway (Docker Compose + OpenRC)"
 HOMEPAGE="https://github.com/openclaw/openclaw"
@@ -26,8 +44,8 @@ IUSE+=" ebuild_revision_8"
 RDEPEND="
 	acct-group/openclaw
 	acct-user/openclaw
-	app-containers/docker[container-init]
-	app-containers/docker-compose
+	>=app-containers/docker-${DOCKER_PV}[container-init]
+	>=app-containers/docker-compose-${DOCKER_COMPOSE_PV}
 "
 DEPEND="
 	${RDEPEND}
@@ -35,7 +53,7 @@ DEPEND="
 BDEPEND="
 "
 
-src_unpack() {
+pkg_setup() {
 #
 # For the security, some of it could be disinformation, psyops, or marketing smears.
 #
@@ -69,20 +87,29 @@ ewarn
 ewarn "| Rank of sensitivity | Type of data                          |"
 ewarn "| ---                 | ---                                   |"
 ewarn "| 1                   | Top secret                            |"
-ewarn "| 2                   | HIPPA                                 |"
+ewarn "| 2                   | HIPAA                                 |"
 ewarn "| 3                   | DSS                                   |"
 ewarn "| 4                   | Confidential / internal business data |"
 ewarn "| 5                   | Public data                           |"
 ewarn
-	git-r3_src_unpack || die
+}
+
+src_unpack() {
+	if [[ "${PV}" == "9999" ]] ; then
+		git-r3_src_unpack
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
-	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+	if in_iuse fallback-commit && use fallback-commit ; then
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
+	fi
 	default
 
-	eapply "${FILESDIR}/openclaw-4eb7160-docker-compose.patch"
-	eapply "${FILESDIR}/openclaw-2d126fc-file-permissions.patch"
+	eapply "${FILESDIR}/openclaw-2026.10.8-docker-compose.patch"
+	eapply "${FILESDIR}/openclaw-2026.10.8-file-permissions.patch"
 
 	# === PLACEHOLDER REPLACEMENT (you can manually patch before this) ===
 	# Fallback sed replacement
@@ -90,7 +117,11 @@ src_prepare() {
 	local openclaw_gid=$(id -g "openclaw")
 	local openclaw_tag="latest"
 	local docker_gid=48
-	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
+	if [[ "${PV}" != "9999" ]] ; then
+		openclaw_tag="${FALLBACK_TAG}"
+	elif in_iuse fallback-commit && use fallback-commit ; then
+		openclaw_tag="${FALLBACK_TAG}"
+	fi
 	sed -i \
 		-e "s|@OPENCLAW_UID@|${openclaw_uid}|g" \
 		-e "s|@OPENCLAW_GID@|${openclaw_gid}|g" \
@@ -139,7 +170,11 @@ src_install() {
 	exeinto "/usr/bin"
 	cat "${FILESDIR}/openclaw" > "${T}/openclaw"
 	local openclaw_tag="latest"
-	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
+	if [[ "${PV}" != "9999" ]] ; then
+		openclaw_tag="${FALLBACK_TAG}"
+	elif in_iuse fallback-commit && use fallback-commit ; then
+		openclaw_tag="${FALLBACK_TAG}"
+	fi
 	sed -i -e "s|@OPENCLAW_TAG@|${openclaw_tag}|g" "${T}/openclaw" || die
 	doexe "${T}/openclaw"
 
@@ -162,7 +197,11 @@ pkg_postinst() {
 	fi
 
 	local openclaw_tag="latest"
-	use fallback-commit && openclaw_tag="${FALLBACK_TAG}"
+	if [[ "${PV}" != "9999" ]] ; then
+		openclaw_tag="${FALLBACK_TAG}"
+	elif in_iuse fallback-commit && use fallback-commit ; then
+		openclaw_tag="${FALLBACK_TAG}"
+	fi
 einfo "OpenClaw has been installed."
 einfo
 einfo "First run the official setup script (/usr/bin/openclaw)."

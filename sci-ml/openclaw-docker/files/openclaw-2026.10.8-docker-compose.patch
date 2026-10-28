@@ -1,0 +1,19 @@
+--- openclaw-2026.10.8.orig/docker-compose.yml	2026-10-26 21:14:13.000000000 -0700
++++ openclaw-2026.10.8/docker-compose.yml	2026-10-27 19:53:54.135572578 -0700
+@@ -1,6 +1,7 @@
+ services:
+   openclaw-gateway:
+-    image: ${OPENCLAW_IMAGE:-openclaw:local}
++    image: ghcr.io/openclaw/openclaw:@OPENCLAW_TAG@
++    user: "@OPENCLAW_UID@:@OPENCLAW_GID@"
+     build: .
+     env_file:
+       - path: .env
+@@ -47,6 +48,7 @@ services:
+       - "${OPENCLAW_CONFIG_DIR:-${HOME:-/tmp}/.openclaw}:/home/node/.openclaw"
+       - "${OPENCLAW_WORKSPACE_DIR:-${HOME:-/tmp}/.openclaw/workspace}:/home/node/.openclaw/workspace"
+       - "${OPENCLAW_AUTH_PROFILE_SECRET_DIR:-${HOME:-/tmp}/.openclaw-auth-profile-secrets}:/home/node/.config/openclaw"
++      - /var/lib/openclaw:/home/node/.openclaw
+       ## Uncomment the lines below to enable sandbox isolation
+       ## (agents.defaults.sandbox). Requires Docker CLI in the image
+       ## (build with --build-arg OPENCLAW_INSTALL_DOCKER_CLI=1) or use
