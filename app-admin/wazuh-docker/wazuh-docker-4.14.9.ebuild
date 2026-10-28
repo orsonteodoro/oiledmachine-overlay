@@ -63,6 +63,9 @@ RDEPEND="
 	>=app-containers/docker-compose-2.20:=
 	>=sys-apps/openrc-${OPENRC_PV}:=
 "
+BDEPEND="
+	>=sys-process/procps-${PROCPS_PV}
+"
 # docker-compose may be provided by docker itself on some systems
 
 src_prepare() {
