@@ -5,14 +5,16 @@ EAPI=8
 
 # Tag from https://hub.docker.com/r/searxng/searxng/tags
 
-# For the _p<unix-timestamp>, get the Unix timestamp from GitHub from
-# https://github.com/searxng/searxng/commit/b5ed73fcb6c6bda5d4e8b13d1472aa3917f784dc.patch
+# For the _p<unix-timestamp>, see the date field in the link below
+# https://github.com/searxng/searxng/commit/<FALLBACK_COMMIT>.patch
 # date --date="Tue, 27 Oct 2026 21:33:35 +0100" +%s
 
 # AI generated ebuild/artifacts + human edited ebuild
 
 FALLBACK_COMMIT="b5ed73fcb6c6bda5d4e8b13d1472aa3917f784dc"
 FALLBACK_TAG="2026.10.27-b5ed73fcb"
+
+inherit secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/searxng/searxng.git"
@@ -40,15 +42,15 @@ LICENSE="AGPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64"
 RDEPEND="
-	acct-group/searxng
-	acct-group/searxng-valkey
-	acct-user/searxng
-	acct-user/searxng-valkey
-	app-containers/docker
-	app-containers/docker-compose
+	acct-group/searxng:*
+	acct-group/searxng-valkey:*
+	acct-user/searxng:*
+	acct-user/searxng-valkey:*
+	>=app-containers/docker-${DOCKER_PV}
+	>=app-containers/docker-compose-${DOCKER_COMPOSE_PV}
 "
 BDEPEND="
-	dev-libs/openssl
+	$(secure-version_gen_openssl_depends)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2026.10.27-b5ed73fcb-docker-compose-changes.patch"
