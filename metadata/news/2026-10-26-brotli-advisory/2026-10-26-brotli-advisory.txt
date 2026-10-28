@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 28
+Revision: 29
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -115,7 +115,6 @@ dev-games/godot-editor [15][16]
 dev-games/godot-export-templates-bin [15]
 dev-python/array-record [15]
 media-gfx/blockbench [5][10][15]
-media-video/lossless-cut [5]
 net-libs/bun [17][25][26]
 sci-libs/tensorstore [8][15]
 sci-ml/openclaw-docker [15]
@@ -147,6 +146,7 @@ media-libs/libheif [14][24]
 media-libs/libjxl [3][14][24]
 media-libs/woff2 [3][14][24]
 media-sound/spotify [15][18]
+>=media-video/lossless-cut-3.70.2 (ebuild_revision_52) [5][27]
 >=net-im/signal-desktop-8.32.0 (ebuild_revision_117) [5][9][27]
 net-libs/gnutls [14][24]
 net-libs/libsoup [14][24]
