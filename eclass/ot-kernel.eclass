@@ -3775,7 +3775,12 @@ einfo "Copying disable_debug to ${BUILD_DIR}"
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
 	fi
 
-	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
+	# It needs review because profile-arcs was removed in Makefile.
+		:
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "7.3" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-7.2.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.18" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-7.2.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" "-ge" "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.6.patch"

@@ -416,6 +416,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		!genpatches_1510
 		!nest
 		!orca
+		!pgo
 		!tresor
 		!tresor_prompt
 		!tresor_sysfs
