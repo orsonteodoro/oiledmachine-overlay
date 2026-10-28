@@ -184,7 +184,7 @@ x11-wm/xpra
 [23] For brotli4j, the AI suggested the cloud hosted or exposed at risk but the internal network at sufficiently protected.  AI said that JNI is a wrapper around native.
 [24] Verified not to add Brotli submodule via git, monolithic tarball, or in source files to mitigate vendored copy bypass in oiledmachine-overlay ebuilds.
 [25] It uses C bindings for bun in both zig Bun and the newer Rust Bun.
-[26] Removal is recommended if using Zig Bun.  The Rust version is recommended to use a local repo and use the prebuilt Bun >= 1.4.4 for remediation.
+[26] Removal is recommended for Zig based Bun.  The Rust based Bun >= 1.4.4 is recommended for remediation.
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
