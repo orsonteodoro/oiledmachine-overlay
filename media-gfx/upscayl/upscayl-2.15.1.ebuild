@@ -352,3 +352,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.15.1 (20260920, Electron 44.4.3) with upscale test
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20260920, Electron 39.8.10) with upscayl button test
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20261003, Electron 44.5.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20261028, Electron 45.1.0)
