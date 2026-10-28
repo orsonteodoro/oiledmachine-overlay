@@ -164,7 +164,7 @@ x11-wm/xpra
 
 [3] Uses live oiledmachine-overlay brotli ebuild to triage RCE, MC (OOBW), and others.
 [4] Contains Rust mitigated cargo crate (brotli-decompressor or brotli)
-[5] Uses vendored Brotli in vendored Node.js in Electron 45 or earlier.
+[5] Uses vendored Brotli in vendored Node.js in Electron 45.0.0 or earlier.
 [7] Uses the system's Brotli but needs to be verified to not contain build scripts override/bypass.
 [8] Live/snapshot ebuild containing vendored Brotli
 [9] Contains known vulnerabilities in RingRTC (CVE-2026-113380) in older releases
