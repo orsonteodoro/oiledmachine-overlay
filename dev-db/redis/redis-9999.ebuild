@@ -26,7 +26,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened chkl edo multiprocessing systemd tmpfiles toolchain-funcs secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="8f365337d48c8a264bc9f3381c7b8cc12ffb51d2"
+	FALLBACK_COMMIT="33c2a2a145d3f09b42503df27d3ffbc76f34e32c"
 	EGIT_BRANCH="unstable"
 	EGIT_REPO_URI="https://github.com/redis/redis.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -50,7 +50,10 @@ LICENSE="|| ( AGPL-3 RSAL-2 SSPL-1 ) Boost-1.0 MIT"
 SUBSLOT=$(ver_cut "1-2" "${MY_PV}")
 SLOT="0/${SUBSLOT}"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-IUSE="jemalloc selinux ssl systemd tcmalloc test"
+IUSE="
+jemalloc selinux ssl systemd tcmalloc test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="
