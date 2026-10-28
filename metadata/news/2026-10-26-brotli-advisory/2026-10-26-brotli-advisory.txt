@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 22
+Revision: 23
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -119,6 +119,7 @@ media-video/lossless-cut [5]
 net-im/signal-desktop [5][9]
 sci-libs/tensorstore [8][15]
 sci-ml/openclaw-docker [15]
+sci-ml/tensorflow
 www-apps/LobeHub [5][10][15]
 
 List of packages that use the system's brotli ebuild but need to be verified to
@@ -157,7 +158,6 @@ net-libs/gnutls [14][24]
 net-libs/nodejs [3]
 net-misc/curl [14][19][24]
 net-misc/wget2 [14][24]
-sci-ml/tensorflow
 sys-apps/coolercontrold [4]
 >=www-client/google-chrome-156.0.8078.47 [12][15]
 >=www-client/chromium-156.0.8078.47 [11][15]
