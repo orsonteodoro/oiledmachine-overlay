@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 17
+Revision: 19
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -71,6 +71,7 @@ Threat intelligence names:  Broccoli2Shell, Brotli2Shell, or Node2Shell
 Severity:  Critical, 9.2 CVSS 4
 
 CVE-2026-111497 - KEV, RCE, OOBW, DoS, DT, ID, ZC
+SSVC - Active [exploitation], Total [full control, total disclosure]
 
 KEV deadline:  Nov 10, 2026
 
