@@ -64,7 +64,7 @@ RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1.  Rust is required for @swc/core@1.10.16
 # https://github.com/rust-lang/rust/commits/main/src/version		# nightly-2024-10-07
 # https://github.com/swc-project/swc/blob/v1.10.16/rust-toolchain	# Find date at or before 2024-10-07
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792844175
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793204443
 VIRTUALX_REQUIRED="manual"
 
 RUST_PV="${RUST_MIN_VER}"
@@ -628,6 +628,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.32.0, 20261025, Electron 45.1.0, @signalapp/ringrtc 2.72.1)
 # OILEDMACHINE-OVERLAY-TEST:  failed (8.32.0, 20261025, Electron 46.0.0-alpha.1, @signalapp/ringrtc 2.72.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.32.0, 20261024, Electron 45.0.0, @signalapp/ringrtc 2.72.1) CVE-2026-113380 - already remediated, firejail profile with xephyr - passed
 # OILEDMACHINE-OVERLAY-TEST:  passed (8.30.0, 20261007, Electron 44.6.0)
