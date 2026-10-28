@@ -50,6 +50,7 @@ Display-If-Installed: sys-apps/coolercontrold
 Display-If-Installed: sys-apps/firejail
 Display-If-Installed: www-apps/LobeHub
 Display-If-Installed: www-apps/open-webui
+Display-If-Installed: www-apps/searxng-docker
 Display-If-Installed: www-apps/xpra-html5
 Display-If-Installed: www-client/chromium
 Display-If-Installed: x11-wm/xpra
@@ -131,7 +132,6 @@ dev-qt/qtbase [14]
 media-libs/libheif [14]
 net-libs/bun [17]
 net-libs/libsoup [14]
-net-libs/nghttp2 [14]
 
 Safe against Broccoli2Shell:
 
@@ -155,6 +155,7 @@ media-libs/libjxl [3][14][24]
 media-libs/woff2 [3][14][24]
 media-sound/spotify [15][18]
 net-libs/gnutls [14][24]
+net-libs/nghttp2 [14][24]
 net-libs/nodejs [3]
 net-misc/curl [14][19][24]
 net-misc/wget2 [14][24]
@@ -162,6 +163,7 @@ sys-apps/coolercontrold [4]
 >=www-client/google-chrome-156.0.8078.47 [12][15]
 >=www-client/chromium-156.0.8078.47 [11][15]
 www-apps/open-webui [21]
+>=www-apps/searxng-docker-
 www-apps/xpra-html5
 x11-wm/xpra
 
