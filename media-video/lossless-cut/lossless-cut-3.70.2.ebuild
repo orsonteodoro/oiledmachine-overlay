@@ -13,7 +13,7 @@ EAPI=8
 
 # To update:
 # PATH=$(realpath "../../scripts")":${PATH}"
-# YARN_UPDATER_VERSIONS="3.70.1" yarn_updater_update_locks.sh
+# YARN_UPDATER_VERSIONS="3.70.2" yarn_updater_update_locks.sh
 
 MY_PN="${PN/-/}"
 
@@ -22,7 +22,7 @@ NPM_AUDIT_FIX=0 # Breaks build
 #export NODE_SHARP_DEBUG=1
 NODE_SHARP_USE="png svg"
 NODE_SLOT="24"
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792852047
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793204443
 YARN_AUDIT_FIX=0
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -104,7 +104,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${PATENT_STATUS[@]}
 lame opus svt-av1 theora vorbis vpx x264
-ebuild_revision_49
+ebuild_revision_52
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -404,7 +404,7 @@ einfo "NODE_ENV:  ${NODE_ENV}"
 	node-sharp_verify_dedupe
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
-		gen_icon
+		: #gen_icon # Segfaults
 	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
@@ -529,7 +529,8 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260725 with Electron 42.3.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260921 with Electron 42.3.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.69.0, 20260921 with Electron 44.5.1)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.71.1, 20261024 with Electron 45.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.70.1, 20261024 with Electron 45.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.70.1, 20261028 with Electron 45.1.0)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
