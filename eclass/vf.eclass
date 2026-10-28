@@ -140,6 +140,9 @@ einfo "AFR = Arbitrary File Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFW"($|" "|";"|",") ]] ; then
 einfo "AFW = Arbitrary File Write"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AIOOR"($|" "|";"|",") ]] ; then
+einfo "AIOOR = Array Index Out Of Range"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
 		fi
@@ -398,6 +401,7 @@ einfo "INTRINJ = Interrupt Injection"
 einfo "IO = Integer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOOB"($|" "|";"|",") ]] ; then
+# Deprecated.  Use AIOOR
 einfo "IOOB = Index Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IOV"($|" "|";"|",") ]] ; then
