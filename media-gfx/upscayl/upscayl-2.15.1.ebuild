@@ -28,6 +28,7 @@ ELECTRON_APP_MODE="npm"
 ELECTRON_APP_REACT_PV="ignore"
 NODE_ENV="development"
 NODE_SLOT="24" # Same as Electron 42.4.1
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793204443
 
 AT_TYPES_NODE_24_PV="24.19.0"
 ELECTRON_BUILDER_PV="26.16.1"
@@ -149,7 +150,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models firejail
-	ebuild_revision_36
+	ebuild_revision_37
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-${VULKAN_PV}:=
@@ -180,6 +181,7 @@ PDEPEND+="
 
 pkg_setup() {
 	export NEXT_TELEMETRY_DISABLED=1
+	secure-version-node_check_update
 	npm_pkg_setup
 }
 
