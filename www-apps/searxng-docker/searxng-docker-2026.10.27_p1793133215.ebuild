@@ -178,6 +178,7 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED searxng-docker-9999 (e12b722, 20260406)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED searxng-docker-2026.10.27_p1793133215 (b5ed73f, 20261027)
 # JSON test with searxngr:  passed
 # Web interface test:  passed
 # Testing:  searxngr --searxng-url http://127.0.0.1:8080 "gentoo"
