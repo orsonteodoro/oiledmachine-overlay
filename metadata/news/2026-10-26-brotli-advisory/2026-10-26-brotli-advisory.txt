@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 23
+Revision: 24
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -127,14 +127,13 @@ List of packages that use the system's brotli ebuild but need to be verified to
 not contain build files bypass to vendored Brotli and submodules explicit
 exclusion of Brolti:
 
-app-text/ghostscript-gpl [14]
-dev-qt/qtbase [14]
 net-libs/bun [17]
 
 Safe against Broccoli2Shell:
 
 app-misc/amica [4]
 app-arch/brotli [3][13][14]
+=app-text/ghostscript-gpl-9999 [14][15] (>= Oct 27, 2026 6:44 AM PDT; 14b98b1)
 dev-libs/apache-arrow [24]
 dev-cpp/cpp-httplib [14][24]
 dev-python/chromadb [4]
@@ -145,6 +144,7 @@ dev-python/httpx
 dev-python/pandas
 dev-python/primp [4]
 dev-python/starlette-compress
+dev-qt/qtbase [14][24]
 dev-util/carbon-now-cli [22]
 games-rpg/Risuai [4][21]
 gui-apps/windowpet [4][20]
