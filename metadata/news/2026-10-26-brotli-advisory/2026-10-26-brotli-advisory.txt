@@ -105,8 +105,6 @@ Ob1 - Off-by-one
 RCE - Remote Code Execution
 ZC - Zero Click Vulnerability (AV:N, PR:N, UI:N)
 
-[1] Not triaged in Brotli 1.2.1
-
 List of packages at high risk:
 
 app-admin/wazuh-docker [23]
@@ -162,30 +160,45 @@ www-apps/searxng-docker
 www-apps/xpra-html5
 x11-wm/xpra
 
-[3] Uses live oiledmachine-overlay brotli ebuild to triage RCE, MC (OOBW), and others.
-[4] Contains Rust mitigated cargo crate (brotli-decompressor or brotli)
-[5] Uses vendored Brotli in vendored Node.js in Electron 45.0.0 or earlier.
-[7] Uses the system's Brotli but needs to be verified to not contain build scripts override/bypass.
-[8] Live/snapshot ebuild containing vendored Brotli
-[9] Contains known vulnerabilities in RingRTC (CVE-2026-113380) in older releases
-[10] Contains 10 known vulnerabilities in Node.js (https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+ [1] Not triaged in Brotli 1.2.1
+ [3] Uses live oiledmachine-overlay brotli ebuild to triage RCE, MC (OOBW), and
+     others.
+ [4] Contains Rust mitigated cargo crate (brotli-decompressor or brotli)
+ [5] Uses vendored Brotli in vendored Node.js in Electron 45.0.0 or earlier.
+ [7] Uses the system's Brotli but needs to be verified to not contain build
+     scripts override/bypass.
+ [8] Live/snapshot ebuild containing vendored Brotli
+ [9] Contains known vulnerabilities in RingRTC (CVE-2026-113380) in older releases
+[10] Contains 10 known vulnerabilities in Node.js
+     (https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
 [11] Uses the live vendored Brotli (Mar 18, 2026; cfa184a)
 [12] Can use the live vendored Brotli or system-brotli.
-[13] Uses the live vendored Brotli (Oct 21, 2026, 1260a29) as the fallback-commit and timestamp verification on the oiledmachine-overlay.
+[13] Uses the live vendored Brotli (Oct 21, 2026, 1260a29) as the
+     fallback-commit and timestamp verification on the oiledmachine-overlay.
 [14] Live ebuild
 [15] Contains vendored memory unsafe Brotli.
 [16] Unsafe with USE=portable.
-[17] Both the Zig based and Rust based bun had vendored brotli.  If you used the old ebuild, it need to be uninstalled.
+[17] Both the Zig based and Rust based bun had vendored brotli.  If you used the
+     old ebuild, it need to be uninstalled.
 [18] Considered safe since input vectors are locked down.
 [19] Contains CVE-2026-92392 which was shared in the RCE threat intelligence posts.
 [20] Has other vulnerable cargo crates
 [21] Contains other Node vulnerabilies in the lockfile
-[22] Uses --disable-everything (disables jxl, disables network) except pipe and file in ffmpeg, uses system's brotli in Chromium; firefox triaged earlier and webkit do not use brotli according to AI
-[23] For brotli4j, the AI suggested the cloud hosted or exposed at risk but the internal network at sufficiently protected.  AI said that JNI is a wrapper around native.
-[24] Verified not to add Brotli submodule via git, monolithic tarball, or in source files to mitigate vendored copy bypass in oiledmachine-overlay ebuilds.
+[22] Uses --disable-everything (disables jxl, disables network) except pipe and
+     file in ffmpeg, uses system's brotli in Chromium; firefox triaged earlier
+     and webkit do not use brotli according to AI
+[23] For brotli4j, the AI suggested the cloud hosted or exposed at risk but the
+     internal network at sufficiently protected.  AI said that JNI is a wrapper
+     around native.
+[24] Verified not to add Brotli submodule via git, monolithic tarball, or in
+     source files to mitigate vendored copy bypass in oiledmachine-overlay
+     ebuilds.
 [25] It uses C bindings for bun in both zig Bun and the newer Rust Bun.
-[26] Removal is recommended for Zig based Bun.  The Rust based Bun >= 1.4.4 is recommended for remediation.
-[27] Updated to Electron 45.1.0 (Node.js 24.22.1, Chromium 156.0.8078.49) which resolves the Brotli RCE and Node.js CVEs, but not the newer announced Chromium CVEs
+[26] Removal is recommended for Zig based Bun.  The Rust based Bun >= 1.4.4 is
+     recommended for remediation.
+[27] Updated to Electron 45.1.0 (Node.js 24.22.1, Chromium 156.0.8078.49) which
+     resolves the Brotli RCE and Node.js CVEs, but not the newer announced
+     Chromium CVEs
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
