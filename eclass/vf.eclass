@@ -52,7 +52,7 @@ einfo "Patched vulnerabilities:"
 			if [[ "${severity}" =~ [Rr]"ejected" ]] ; then
 				_severity=" (${severity})"
 			elif [[ -n "${severity}" ]] ; then
-				_severity=" (${SEVERITY_LABEL} ${severity})"
+				_severity=" (${severity_label} ${severity})"
 			fi
 			if [[ -n "${_severity}" || -n "${vulnerability_classes}" ]] ; then
 				_delimiter=":"
