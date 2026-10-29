@@ -203,6 +203,10 @@ einfo "CI = Code Injection"
 # It means to be tricked into clicking button
 einfo "CJ = Clickjack"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CLOAK"($|" "|";"|",") ]] ; then
+# General threat actor technique or fallback catch all
+einfo "CLOAK = Cloaking"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CP"($|" "|";"|",") ]] ; then
 einfo "CP = Corrupt Pointer"
 		fi
@@ -695,6 +699,9 @@ einfo "SQLCMDI = SQL Code Injection"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SQLI"($|" "|";"|",") ]] ; then
 einfo "SQLI = SQL Injection"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SSRF"($|" "|";"|",") ]] ; then
+einfo "SSRF = Server Side Request Forgery"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"SUF"($|" "|";"|",") ]] ; then
 einfo "SUF = Shift Underflow"
 		fi
@@ -844,6 +851,9 @@ einfo "ZCA = Zero Click Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ZCV")($|" "|";"|",") ]] ; then
 einfo "ZCV = Zero Click Vulnerability"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ZCLOAK"($|" "|";"|",") ]] ; then
+einfo "ZCLOAK = Zip Cloaking"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ZSA"($|" "|";"|",") ]] ; then
 einfo "ZSA = Zip Slip Attack"
