@@ -282,7 +282,7 @@ einfo "DT = Data Tampering"
 #
 einfo "DZ = Drop Zone"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EBR")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EBR"($|" "|";"|",") ]] ; then
 einfo "EBR = Extended Blast Radius"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EEEA"($|" "|";"|",") ]] ; then
@@ -295,13 +295,13 @@ einfo "EEEA = Expodential Entity Expansion Attack"
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EoP")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EoP"($|" "|";"|",") ]] ; then
 einfo "EoP = Escalation of Privileges"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EP")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EP"($|" "|";"|",") ]] ; then
 einfo "EP = Escalated Privileges"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("FS")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"FS"($|" "|";"|",") ]] ; then
 einfo "FS = Format String"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"GPF"($|" "|";"|",") ]] ; then
@@ -457,7 +457,7 @@ einfo "IR = Infinite Recursion"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IRCSN"($|" "|";"|",") ]] ; then
 einfo "IRCSN = Infinite Recursion"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRMEM")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IRMEM"($|" "|";"|",") ]] ; then
 einfo "IRMEM = Improper Release of Memory"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRoM"|"IROM")($|" "|";"|",") ]] ; then
@@ -466,7 +466,7 @@ einfo "IRoM = Improper Release of Memory"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRoR"|"IROR")($|" "|";"|",") ]] ; then
 einfo "IRoR = Improper Release of Resources"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("IRMEM")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IRRES"($|" "|";"|",") ]] ; then
 einfo "IRRES = Improper Release of Resources"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IS"($|" "|";"|",") ]] ; then
@@ -476,6 +476,7 @@ einfo "IS = Insufficient Sanitiation"
 einfo "ISI = Improper Secure Implementation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ISoI"|"ISOI")($|" "|";"|",") ]] ; then
+# Deprecated, use USI
 einfo "ISoI = Insufficient Sanitiation of Input"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EEITW"($|" "|";"|",") ]] ; then
@@ -575,7 +576,7 @@ einfo "OOBR = Out Of Bounds Read"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOBW"($|" "|";"|",") ]] ; then
 einfo "OOBW = Out Of Bounds Write"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("OOPS")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOPS"($|" "|";"|",") ]] ; then
 einfo "OOPS = Panic On Oops"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"OOOI"($|" "|";"|",") ]] ; then
@@ -588,7 +589,7 @@ einfo "OORA = Out Of Range Access"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PC"($|" "|";"|",") ]] ; then
 einfo "PC = Pointer Corruption"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("PE")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PE"($|" "|";"|",") ]] ; then
 # Also includes LPE
 einfo "PE = Privilege Escalation"
 		fi
@@ -809,7 +810,7 @@ einfo "UVAR = Use of Uninitialized Variable"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"VME"($|" "|";"|",") ]] ; then
 einfo "VME = Virtual Machine Escape"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("WARN")($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WARN"($|" "|";"|",") ]] ; then
 einfo "WARN = Panic On Warning"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WC"($|" "|";"|",") ]] ; then
@@ -828,7 +829,7 @@ einfo "WBUU = Web Browser Uninitialized Use"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WPP2BWBUI"($|" "|";"|",") ]] ; then
 einfo "WPP2BWBUI = Web Page Pretends to be Web Browser UI"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WR"($|" "|";"|",") ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WRNG"($|" "|";"|",") ]] ; then
 einfo "WRNG = Weak CSRNG"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"WSD"($|" "|";"|",") ]] ; then
