@@ -2,7 +2,7 @@ Title: Brotli Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-26
-Revision: 30
+Revision: 31
 News-Item-Format: 2.0
 Display-If-Installed: app-admin/wazuh-docker
 Display-If-Installed: app-arch/brotli
@@ -37,6 +37,7 @@ Display-If-Installed: media-video/lintv
 Display-If-Installed: media-video/lossless-cut
 Display-If-Installed: net-im/signal-desktop
 Display-If-Installed: net-libs/bun
+Display-If-Installed: net-libs/cef-bin
 Display-If-Installed: net-libs/gnutls
 Display-If-Installed: net-libs/libsoup
 Display-If-Installed: net-libs/nghttp2
@@ -108,7 +109,6 @@ ZC - Zero Click Vulnerability (AV:N, PR:N, UI:N)
 List of packages at high risk:
 
 app-admin/wazuh-docker [23]
-app-misc/llocal [5][10][15]
 dev-games/godot-editor [15][16]
 dev-games/godot-export-templates-bin [15]
 dev-python/array-record [15]
@@ -121,6 +121,7 @@ www-apps/LobeHub [5][10][15]
 Safe against Broccoli2Shell:
 
 app-misc/amica [4]
+>=app-misc/llocal-1.0.0_beta12 (ebuild_revision_39) [5][10][15][27]
 app-arch/brotli [3][13][14]
 =app-text/ghostscript-gpl-9999 [14][15] (>= Oct 27, 2026 6:44 AM PDT; 14b98b1)
 dev-libs/apache-arrow [24]
@@ -150,6 +151,7 @@ net-libs/gnutls [14][24]
 net-libs/libsoup [14][24]
 net-libs/nghttp2 [14][24]
 net-libs/nodejs [3]
+>=net-libs/cef-bin-156.0.14
 net-misc/curl [14][19][24]
 net-misc/wget2 [14][24]
 sys-apps/coolercontrold [4]

@@ -2,7 +2,7 @@ Title: Electron Advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-10-25
-Revision: 12
+Revision: 13
 News-Item-Format: 2.0
 Display-If-Installed: app-misc/llocal
 Display-If-Installed: net-im/signal-desktop
@@ -28,7 +28,6 @@ apps.
 Affected packages:
 
 All Electron apps
-app-misc/llocal
 www-apps/LobeHub
 Electron 45.0.0 - with Node 24.22.0 [old version used in oiledmachine-overlay]
 Electron 44.9.1 - with Node 24.22.0 [used in upstream's signal-desktop 8.32.0 release]
@@ -36,6 +35,7 @@ Electron 44.7.2 - with Node 24.21.0 [used in the distro's signal-desktop-bin 8.3
 
 Remediated versions:
 
+>=app-misc/llocal-1.0.0_beta12 (ebuild_revision_39) [1]
 >=media-gfx/blockbench-5.2.2 (ebuild_revision_32) [1]
 >=media-gfx/upscayl-2.15.1 (ebuild_revision_37) [1]
 >=media-video/lossless-cut-3.70.2 (ebuild_revision_53) [1]
