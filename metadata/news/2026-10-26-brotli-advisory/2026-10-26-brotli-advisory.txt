@@ -185,7 +185,7 @@ x11-wm/xpra
 [24] Verified not to add Brotli submodule via git, monolithic tarball, or in source files to mitigate vendored copy bypass in oiledmachine-overlay ebuilds.
 [25] It uses C bindings for bun in both zig Bun and the newer Rust Bun.
 [26] Removal is recommended for Zig based Bun.  The Rust based Bun >= 1.4.4 is recommended for remediation.
-[27] Updated to Electron 45.1.0 (Node.js 24.22.1) which resolves the Brotli RCE and Node.js CVEs, but not the newer announced Chromium CVEs
+[27] Updated to Electron 45.1.0 (Node.js 24.22.1, Chromium 156.0.8078.49) which resolves the Brotli RCE and Node.js CVEs, but not the newer announced Chromium CVEs
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
