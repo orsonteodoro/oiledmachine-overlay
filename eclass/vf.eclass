@@ -168,7 +168,7 @@ einfo "BGC = Badly Generated Code"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BLA"($|" "|";"|",") ]] ; then
 # Same as XML Bomb (XMLBOMB) [by intuition]
-# Same as Expodential Entity Expansion Attack (EEE) [in commit messages]
+# Same as Expodential Entity Expansion Attack (EEEA) [in commit messages]
 # BLA is particular example but used interchangably with this class of attack.
 einfo "BLA = Billion Laughs Attack"
 		fi
