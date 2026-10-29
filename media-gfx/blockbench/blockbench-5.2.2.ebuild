@@ -84,7 +84,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-44.4.1-chromium.html
+		electron-45.1.0-chromium.html
 	)
 	GPL-3+
 "
@@ -172,7 +172,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_31"
+IUSE+=" ebuild_revision_32"
 # Upstream uses:
 # node:  24.21.0
 # npm:  11.19.0
@@ -336,6 +336,7 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.2.2 (20261028 with Electron 45.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.2.2 (20261027 with Electron 45.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.2.1 (20260928 with Electron 44.4.5)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.6 (20260917 with Electron 44.4.1)
