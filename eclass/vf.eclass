@@ -97,6 +97,9 @@ einfo
 # Same as DoS
 einfo "A = Availability Impacted"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AAL"($|" "|";"|",") ]] ; then
+einfo "AAL = Arbitrary Account Login"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AB"($|" "|";"|",") ]] ; then
 einfo "AB = Authentication Bypass"
 		fi
@@ -151,6 +154,9 @@ einfo "AR = Arbitrary Read"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ASLRBP"($|" "|";"|",") ]] ; then
 einfo "ASLRBP = ASLR Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ATO"($|" "|";"|",") ]] ; then
+einfo "ATO = Account Takeover"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
 einfo "AW = Arbitrary Write"
