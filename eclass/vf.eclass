@@ -26,6 +26,7 @@ _VULNERABILITIES_FIXED_ECLASS=1
 #
 # Example:
 # VULNERABILITIES_FIXED=(
+#	"<vuln-id>;<vuln-classes|vuln-types>;<misc|severity|message>"
 #	"CVE-2024-50262;DoS, DT, ID;High"
 #	"CVE-2024-50260;DoS;Medium"
 #	"CVE-2024-50083;ZC, DoS;High"
@@ -41,28 +42,19 @@ _VULNERABILITIES_FIXED_ECLASS=1
 vf_show() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Patched vulnerabilities:"
-		local severity_label=${SEVERITY_LABEL:-"CVSS 3.1"} # Can be CVSS 4.0 or a custom severity label
+		local severity_label=${SEVERITY_LABEL:-"; CVSS 3.1 "} # Can be CVSS 4.0 or a custom severity label
 		IFS=$'\n'
 		local x
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
 			local id=$(echo "${x}" | cut -f 1 -d ";")
 			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 3 -d ";")
-			local _severity=""
-			if [[ "${severity}" =~ [Rr]"ejected" ]] ; then
-				_severity=" (${severity})"
-			elif [[ -n "${severity}" ]] ; then
-				_severity=" (${severity_label} ${severity})"
-			fi
-			if [[ -n "${_severity}" || -n "${vulnerability_classes}" ]] ; then
+			local misc=$(echo "${x}" | cut -f 3 -d ";")
+
+			if [[ -n "${misc}" || -n "${vulnerability_classes}" ]] ; then
 				_delimiter=":"
 			fi
 
-			if [[ "${_severity}" =~ [Rr]"ejected" ]] ; then
-echo -e " \033[0;32m*\033[0m \e[9m${id}\e[0m${_delimiter}  ${vulnerability_classes}${_severity}"
-			else
-einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
-			fi
+einfo "${id}${_delimiter}  ${vulnerability_classes}${_misc}"
 		done
 		IFS=$' \t\n'
 	#
