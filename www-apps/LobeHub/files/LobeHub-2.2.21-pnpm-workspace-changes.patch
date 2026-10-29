@@ -186,7 +186,7 @@
  
  # Build scripts run one at a time. Several peer-variant copies of
  # @lobehub/editor resolve in this workspace and every copy's postinstall
-@@ -61,40 +91,108 @@ allowBuilds:
+@@ -61,40 +91,110 @@ allowBuilds:
    sharp: false
    unrs-resolver: false
    workerd: true
@@ -246,6 +246,8 @@
 +  '@better-auth/core': '@NODE_BETTER_AUTH_1_7_PV@'
 +  '@better-auth/expo': '@NODE_BETTER_AUTH_1_7_PV@'
 +  '@better-auth/passkey': '@NODE_BETTER_AUTH_1_7_PV@'
++  '@lexical/rich-text': '0.42.0'
++  '@lexical/utils': '0.42.0'
 +  'drizzle-kit@<@NODE_DRIZZLE_KIT_PV@': '@NODE_DRIZZLE_KIT_PV@'
 +  'drizzle-orm': '@NODE_DRIZZLE_ORM_PV@'
 +  'react': '@NODE_REACT_19_PV@'
