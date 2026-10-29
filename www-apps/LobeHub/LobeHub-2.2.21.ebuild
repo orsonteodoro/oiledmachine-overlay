@@ -125,7 +125,7 @@ VULNERABILITIES_FIXED=(
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
-inherit chkl dhms desktop edo electron-app lcnr node-sharp npm pnpm rust secure-version xdg
+inherit chkl dhms desktop edo electron-app lcnr node-sharp npm pnpm rust secure-version vf xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
