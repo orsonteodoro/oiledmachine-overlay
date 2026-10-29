@@ -121,7 +121,7 @@ MITIGATION_DATE="Oct 29, 2026" # Official annoucement (advisories)
 MITIGATION_LAST_UPDATE=1793262240 # From `date +%s -d "Oct 29,2026 1:24 AM PDT"`
 MITIGATION_URI="https://github.com/lobehub/lobehub/releases/tag/v2.2.21"
 VULNERABILITIES_FIXED=(
-	"CVE-2026-114607;AAL, ATO, IA, DT, ID;Critical"
+	"CVE-2026-114607, GHSA-965c-763c-88jm;AAL, ATO, IA, DT, ID;Critical"
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
@@ -701,6 +701,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_AT_TYPES_REACT_19_PV@|${NODE_AT_TYPES_REACT_19_PV}|g" \
 		-e "s|@NODE_AT_VITEST_MOCKER_5_PV@|${NODE_AT_VITEST_MOCKER_5_PV}|g" \
 		-e "s|@NODE_BETTER_AUTH_1_7_PV@|${NODE_BETTER_AUTH_1_7_PV}|g" \
+		-e "s|@NODE_BODY_PARSER_2_PV@|${NODE_BODY_PARSER_2_PV}|g" \
 		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
 		-e "s|@NODE_DRIZZLE_KIT_PV@|${NODE_DRIZZLE_KIT_PV}|g" \
 		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
