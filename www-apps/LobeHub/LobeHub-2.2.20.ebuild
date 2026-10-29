@@ -83,7 +83,7 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792947988
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793244053
 
 # Upstream uses:
 # node:  24.11.1
@@ -598,7 +598,7 @@ patch_lockfile() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		# pnpm will update the lockfile but not the package.json.
 		sed -i \
-			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_1_6_PV}\"|g" \
+			-e "s|\"better-auth\": \"1.6.15\"|\"better-auth\": \"${NODE_BETTER_AUTH_1_7_PV}\"|g" \
 			-e "s|\"fast-xml-parser\": \"5.4.2\"|\"fast-xml-parser\": \"${NODE_FAST_XML_PARSER_5_PV}\"|g" \
 			-e "s|\"happy-dom\": \"~20.11.15\"|\"happy-dom\": \"${NODE_HAPPY_DOM_PV}\"|g" \
 			-e "s|\"happy-dom\": \"^20.14.5\"|\"happy-dom\": \"${NODE_HAPPY_DOM_PV}\"|g" \
@@ -694,7 +694,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@|${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}|g" \
 		-e "s|@NODE_AT_TYPES_REACT_19_PV@|${NODE_AT_TYPES_REACT_19_PV}|g" \
 		-e "s|@NODE_AT_VITEST_MOCKER_5_PV@|${NODE_AT_VITEST_MOCKER_5_PV}|g" \
-		-e "s|@NODE_BETTER_AUTH_1_6_PV@|${NODE_BETTER_AUTH_1_6_PV}|g" \
+		-e "s|@NODE_BETTER_AUTH_1_7_PV@|${NODE_BETTER_AUTH_1_7_PV}|g" \
 		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
 		-e "s|@NODE_DRIZZLE_KIT_PV@|${NODE_DRIZZLE_KIT_PV}|g" \
 		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
@@ -897,7 +897,7 @@ pnpm_dedupe_post() {
 			"@opentelemetry/propagator-jaeger@${NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV}"
 			"ai@${NODE_AI_PV}"
 			"adm-zip@${NODE_ADM_ZIP_PV}"
-			"better-auth@${NODE_BETTER_AUTH_1_6_PV}"
+			"better-auth@${NODE_BETTER_AUTH_1_7_PV}"
 			"esbuild@${NODE_ESBUILD_PV}"
 			"fast-xml-parser@${NODE_FAST_XML_PARSER_5_PV}"
 			"file-type@${NODE_FILE_TYPE_PV}"

@@ -9,17 +9,18 @@ overrides:
   react: 19.2.7
   react-dom: 19.2.7
   vitest: 5.0.3
-  electron: 45.0.0
+  electron: 45.1.0
   zod: 4.6.7
   '@auv-js/sdk@0.0.28>@grpc/grpc-js': 1.14.5
-  '@electron-toolkit/preload@3.0.2>electron': 45.0.0
+  '@electron-toolkit/preload@3.0.2>electron': 45.1.0
   '@electron-toolkit/preload@3.0.2>undici': 7.30.1
-  '@electron-toolkit/utils@4.0.0>electron': 45.0.0
+  '@electron-toolkit/utils@4.0.0>electron': 45.1.0
   '@electron-toolkit/utils@4.0.0>undici': 7.30.1
   '@grpc/grpc-js': 1.14.5
   '@lobehub/i18n-cli@1.27.0>fast-uri': 3.1.9
   '@modelcontextprotocol/sdk': 1.32.2
-  '@modelcontextprotocol/sdk@1.31.0>fast-uri': 3.1.9
+  '@modelcontextprotocol/sdk@1.32.2>fast-uri': 3.1.9
+  '@modelcontextprotocol/sdk@1.32.2>qs': 6.16.0
   '@vanilla-extract/vite-plugin@5.2.6>vite': 8.3.5
   dompurify: 3.4.17
   drizzle-kit@0.31.10>esbuild: 0.28.2
@@ -30,7 +31,7 @@ overrides:
   electron@44.7.2>undici: 7.30.1
   electron-builder@26.16.1>fast-uri: 3.1.9
   electron-builder@26.16.1>undici: 6.29.1
-  electron-sparkle-updater@0.5.2>electron: 45.0.0
+  electron-sparkle-updater@0.5.2>electron: 45.1.0
   electron-sparkle-updater@0.5.2>undici: 7.30.1
   electron-store@11.0.2>fast-uri: 3.1.9
   fast-uri: 3.1.9
@@ -39,6 +40,7 @@ overrides:
   get-windows@9.3.0>undici: 6.29.1
   happy-dom: 21.0.4
   katex: 0.19.1
+  qs: 6.16.0
   stylelint@17.16.0>fast-uri: 3.1.9
   tar: 7.5.21
   undici: 8.12.3
@@ -69,7 +71,7 @@ importers:
         version: 5.4.4
       electron-sparkle-updater:
         specifier: 0.5.3
-        version: 0.5.3(electron@45.0.0(supports-color@9.4.0))
+        version: 0.5.3(electron@45.1.0(supports-color@9.4.0))
       font-list:
         specifier: ^2.1.0
         version: 2.1.0
@@ -97,13 +99,13 @@ importers:
         version: 4.0.0(eslint@10.11.0(jiti@2.7.0)(supports-color@9.4.0))(supports-color@9.4.0)(typescript@6.0.3)
       '@electron-toolkit/preload':
         specifier: ^3.0.2
-        version: 3.0.2(electron@45.0.0(supports-color@9.4.0))
+        version: 3.0.2(electron@45.1.0(supports-color@9.4.0))
       '@electron-toolkit/tsconfig':
         specifier: ^2.0.0
         version: 2.0.0(@types/node@24.19.1)
       '@electron-toolkit/utils':
         specifier: ^4.0.0
-        version: 4.0.0(electron@45.0.0(supports-color@9.4.0))
+        version: 4.0.0(electron@45.1.0(supports-color@9.4.0))
       '@lobechat/chat-adapter-imessage':
         specifier: workspace:*
         version: link:../../packages/chat-adapter-imessage
@@ -204,8 +206,8 @@ importers:
         specifier: ^0.45.3
         version: 0.45.3(@opentelemetry/api@1.9.1)
       electron:
-        specifier: 45.0.0
-        version: 45.0.0(supports-color@9.4.0)
+        specifier: 45.1.0
+        version: 45.1.0(supports-color@9.4.0)
       electron-builder:
         specifier: 26.16.1
         version: 26.16.1(electron-builder-squirrel-windows@26.16.1)(supports-color@9.4.0)
@@ -457,8 +459,8 @@ importers:
         version: 2.2.0
     devDependencies:
       electron:
-        specifier: 45.0.0
-        version: 45.0.0(supports-color@9.4.0)
+        specifier: 45.1.0
+        version: 45.1.0(supports-color@9.4.0)
 
   ../../packages/electron-mac-notifications:
     dependencies:
@@ -1327,7 +1329,7 @@ packages:
   '@electron-toolkit/preload@3.0.2':
     resolution: {integrity: sha512-TWWPToXd8qPRfSXwzf5KVhpXMfONaUuRAZJHsKthKgZR/+LqX1dZVSSClQ8OTAEduvLGdecljCsoT2jSshfoUg==}
     peerDependencies:
-      electron: 45.0.0
+      electron: 45.1.0
 
   '@electron-toolkit/tsconfig@2.0.0':
     resolution: {integrity: sha512-AdPsP770WhW7b260h13SHMdmjEEHJL6xFtgi3jwgdsSQbJOkJLeNnnpZW9qxTPCvmRI6vmdzWz5K3gibFS6SNg==}
@@ -1337,7 +1339,7 @@ packages:
   '@electron-toolkit/utils@4.0.0':
     resolution: {integrity: sha512-qXSntwEzluSzKl4z5yFNBknmPGjPa3zFhE4mp9+h0cgokY5ornAeP+CJQDBhKsL1S58aOQfcwkD3NwLZCl+64g==}
     peerDependencies:
-      electron: 45.0.0
+      electron: 45.1.0
 
   '@electron/asar@3.4.1':
     resolution: {integrity: sha512-i4/rNPRS84t0vSRa2HorerGRXWyF4vThfHesw0dmcWHp+cspK743UanA0suA5Q5y8kzY2y6YKrvbIUn69BCAiA==}
@@ -4168,7 +4170,7 @@ packages:
     engines: {node: '>=20.19'}
     hasBin: true
     peerDependencies:
-      electron: 45.0.0
+      electron: 45.1.0
     peerDependenciesMeta:
       electron:
         optional: true
@@ -4191,8 +4193,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@45.0.0:
-    resolution: {integrity: sha512-yjz4uhMBcO6L5X7CWgRMobf2EMJPnb9j4zuf+nu/TU/6E4Sqfx7fn/a2eACo4qngjml/0JnsoZhxYroJLxLd2w==}
+  electron@45.1.0:
+    resolution: {integrity: sha512-i7qKVAh/KR5v1pf56NhGGX2QYHcdjvLgS7koL6ui50c+zUDGLRunR95nXcTpHPURKOQ4GDBG8BmXiDgOQ8DD0A==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -6304,8 +6306,8 @@ packages:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postcss@8.5.31:
-    resolution: {integrity: sha512-YUbWYCgErwnMAVkjUnYa+KlMBzGpHwiIt/DE7f0G33AuX2LH9UcTk6KgWxd3zRU+pN3u/C+Xl3EnMLM4Hea7Sg==}
+  postcss@8.5.32:
+    resolution: {integrity: sha512-LJlKCCAUFKOuZxipUdYw1NzIITEsPcgyOG9LkvRJvuKj/bRzbuRY0ARXvL0pWGpsZvn8jku+LMep2eU0seHp8g==}
     engines: {node: ^10 || ^12 || >=14}
 
   postject@1.0.0-alpha.6:
@@ -8243,17 +8245,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electron-toolkit/preload@3.0.2(electron@45.0.0(supports-color@9.4.0))':
+  '@electron-toolkit/preload@3.0.2(electron@45.1.0(supports-color@9.4.0))':
     dependencies:
-      electron: 45.0.0(supports-color@9.4.0)
+      electron: 45.1.0(supports-color@9.4.0)
 
   '@electron-toolkit/tsconfig@2.0.0(@types/node@24.19.1)':
     dependencies:
       '@types/node': 24.19.1
 
-  '@electron-toolkit/utils@4.0.0(electron@45.0.0(supports-color@9.4.0))':
+  '@electron-toolkit/utils@4.0.0(electron@45.1.0(supports-color@9.4.0))':
     dependencies:
-      electron: 45.0.0(supports-color@9.4.0)
+      electron: 45.1.0(supports-color@9.4.0)
 
   '@electron/asar@3.4.1':
     dependencies:
@@ -11047,12 +11049,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron-sparkle-updater@0.5.3(electron@45.0.0(supports-color@9.4.0)):
+  electron-sparkle-updater@0.5.3(electron@45.1.0(supports-color@9.4.0)):
     dependencies:
       node-addon-api: 8.9.2
       node-gyp: 12.4.0
     optionalDependencies:
-      electron: 45.0.0(supports-color@9.4.0)
+      electron: 45.1.0(supports-color@9.4.0)
 
   electron-store@11.0.2:
     dependencies:
@@ -11091,7 +11093,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@45.0.0(supports-color@9.4.0):
+  electron@45.1.0(supports-color@9.4.0):
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0(supports-color@9.4.0)
@@ -13621,7 +13623,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.2
 
-  postcss@8.5.31:
+  postcss@8.5.32:
     dependencies:
       nanoid: 3.3.20
       picocolors: 1.1.1
@@ -15059,7 +15061,7 @@ snapshots:
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
-      postcss: 8.5.31
+      postcss: 8.5.32
       rolldown: 1.2.15
       tinyglobby: 0.2.17
     optionalDependencies:

@@ -1,5 +1,5 @@
 --- a/apps/cli/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/apps/cli/pnpm-workspace.yaml	2026-10-25 18:16:19.372574207 -0700
++++ b/apps/cli/pnpm-workspace.yaml	2026-10-28 21:03:37.348857661 -0700
 @@ -39,6 +39,17 @@ publicHoistPattern:
  allowBuilds:
    esbuild: true
@@ -21,7 +21,7 @@
 +  'katex': '@NODE_KATEX_PV@'
 +  'zod': '@NODE_ZOD_PV@'
 --- a/apps/desktop/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/apps/desktop/pnpm-workspace.yaml	2026-10-25 18:16:19.372909387 -0700
++++ b/apps/desktop/pnpm-workspace.yaml	2026-10-28 21:06:38.819322629 -0700
 @@ -48,23 +48,28 @@ publicHoistPattern:
    - 'pdfjs-dist'
  
@@ -65,7 +65,7 @@
    - '@auv-js/api-client@0.0.33'
    - '@auv-js/cli-darwin-arm64@0.0.33'
    - '@auv-js/cli-darwin-x64@0.0.33'
-@@ -74,5 +79,66 @@ minimumReleaseAgeExclude:
+@@ -74,5 +79,69 @@ minimumReleaseAgeExclude:
    - '@auv-js/cli-win32-x64-msvc@0.0.33'
    - '@auv-js/cli@0.0.33'
    - '@auv-js/sdk@0.0.33'
@@ -82,6 +82,7 @@
 +  - 'fast-uri@@NODE_FAST_URI_3_PV@'
 +  - 'happy-com@@NODE_HAPPY_DOM_PV@'
 +  - 'katex@@NODE_KATEX_PV@'
++  - 'qs@@NODE_QS_PV@'
 +  - 'tar@@NODE_TAR_PV@'
 +  - 'undici@@NODE_UNDICI_6_PV@'
 +  - 'undici@@NODE_UNDICI_7_PV@'
@@ -107,7 +108,8 @@
 +  '@grpc/grpc-js': '@NODE_AT_GRPC_GRPC_JS_1_14_PV@'
 +  '@lobehub/i18n-cli@1.27.0>fast-uri': '@NODE_FAST_URI_3_PV@'
 +  '@modelcontextprotocol/sdk': '@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@'
-+  '@modelcontextprotocol/sdk@1.31.0>fast-uri': '@NODE_FAST_URI_3_PV@'
++  '@modelcontextprotocol/sdk@@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@>fast-uri': '@NODE_FAST_URI_3_PV@'
++  '@modelcontextprotocol/sdk@@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@>qs': '@NODE_QS_PV@'
 +  '@vanilla-extract/vite-plugin@5.2.6>vite': '@NODE_VITE_8_PV@'
 +  'dompurify': '@NODE_DOMPURIFY_PV@'
 +  'drizzle-kit@0.31.10>esbuild': '@NODE_ESBUILD_PV@'
@@ -128,13 +130,14 @@
 +  'get-windows@9.3.0>undici': '@NODE_UNDICI_6_PV@'
 +  'happy-dom': '@NODE_HAPPY_DOM_PV@'
 +  'katex': '@NODE_KATEX_PV@'
++  'qs': '@NODE_QS_PV@'
 +  'stylelint@17.16.0>fast-uri': '@NODE_FAST_URI_3_PV@'
 +  'tar': '@NODE_TAR_PV@'
 +  'undici': '@NODE_UNDICI_8_PV@'
 +  'vite': '@NODE_VITE_8_PV@'
 +  'vitest@5.0.3>happy-dom': '@NODE_HAPPY_DOM_PV@'
 --- a/pnpm-workspace.yaml.orig	2026-10-17 20:11:49.000000000 -0700
-+++ b/pnpm-workspace.yaml	2026-10-25 18:16:52.505075054 -0700
++++ b/pnpm-workspace.yaml	2026-10-28 21:09:37.723494829 -0700
 @@ -28,6 +28,7 @@ packages:
    - apps/workbench
  
@@ -143,7 +146,7 @@
    - '@auv-js/api-client@0.0.25'
    - '@auv-js/cli-darwin-arm64@0.0.25'
    - '@auv-js/cli-darwin-x64@0.0.25'
-@@ -37,7 +38,32 @@ minimumReleaseAgeExclude:
+@@ -37,7 +38,36 @@ minimumReleaseAgeExclude:
    - '@auv-js/cli@0.0.25'
    - '@auv-js/sdk@0.0.25'
    - '@lobehub/*'
@@ -151,13 +154,17 @@
 +  - 'virtua@0.53.5'
 +  # oiledmachine-overlay changes
 +  - '@apidevtools/json-schema-ref-parser@@NODE_AT_APIDEVTOOLS_JSON_SCHEMA_REF_PARSER_11_PV@'
++  - '@better-auth/core@@NODE_BETTER_AUTH_1_7_PV@'
++  - '@better-auth/drizzle-adapter@@NODE_BETTER_AUTH_1_7_PV@'
++  - '@better-auth/expo@@NODE_BETTER_AUTH_1_7_PV@'
++  - '@better-auth/passkey@@NODE_BETTER_AUTH_1_7_PV@'
 +  - '@octokit/plugin-paginate-rest@@NODE_AT_OCTOKIT_PLUGIN_PAGINATE_REST_PV@'
 +  - '@octokit/request@@NODE_AT_OCTOKIT_REQUEST_PV@'
 +  - '@octokit/request-error@@NODE_AT_OCTOKIT_REQUEST_ERROR_PV@'
 +  - '@opentelemetry/core@@NODE_AT_OPENTELEMETRY_CORE_PV@'
 +  - '@opentelemetry/propagator-jaeger@@NODE_AT_OPENTELEMETRY_PROPAGATOR_JAEGER_PV@'
 +  - 'adm-zip@@NODE_ADM_ZIP_PV@'
-+  - 'better-auth@@NODE_BETTER_AUTH_1_6_PV@'
++  - 'better-auth@@NODE_BETTER_AUTH_1_7_PV@'
 +  - 'esbuild@@NODE_ESBUILD_PV@'
 +  - 'fast-xml-parser@@NODE_FAST_XML_PARSER_5_PV@'
 +  - 'file-type@@NODE_FILE_TYPE_22_PV@'
@@ -177,7 +184,7 @@
  
  # Build scripts run one at a time. Several peer-variant copies of
  # @lobehub/editor resolve in this workspace and every copy's postinstall
-@@ -60,37 +86,102 @@ allowBuilds:
+@@ -60,37 +90,106 @@ allowBuilds:
    sharp: false
    unrs-resolver: false
    workerd: true
@@ -230,6 +237,9 @@
 +  'typescript': '6.0.3'
 +  'url-join': '5.0.0'
 +  # Pinned versions by oiledmachine-overlay
++  '@better-auth/core': '@NODE_BETTER_AUTH_1_7_PV@'
++  '@better-auth/expo': '@NODE_BETTER_AUTH_1_7_PV@'
++  '@better-auth/passkey': '@NODE_BETTER_AUTH_1_7_PV@'
 +  'drizzle-kit@<@NODE_DRIZZLE_KIT_PV@': '@NODE_DRIZZLE_KIT_PV@'
 +  'drizzle-orm': '@NODE_DRIZZLE_ORM_PV@'
 +  'react': '@NODE_REACT_19_PV@'
@@ -239,6 +249,7 @@
 +  # Vulnerability fixes
 +  '@aws-sdk/client-s3@3.932.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  '@aws-sdk/s3-request-presigner@3.932.0>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
++  '@better-auth/drizzle-adapter': '@NODE_BETTER_AUTH_1_7_PV@'
 +  '@better-auth/expo@1.6.15>esbuild': '@NODE_ESBUILD_PV@'
 +  '@better-auth/passkey@1.6.15>esbuild': '@NODE_ESBUILD_PV@'
 +  '@google/genai@1.50.1>qs': '@NODE_QS_PV@'
@@ -265,8 +276,8 @@
 +  '@vitejs/plugin-react@6.0.5>ajv': '@NODE_AJV_PV@'
 +  '@vitejs/plugin-react@6.0.5>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  '@vitejs/plugin-react@6.0.5>qs': '@NODE_QS_PV@'
-+  'better-auth@<@NODE_BETTER_AUTH_1_6_PV@': '@NODE_BETTER_AUTH_1_6_PV@'
-+  'better-auth@@NODE_BETTER_AUTH_1_6_PV@>esbuild': '@NODE_ESBUILD_PV@'
++  'better-auth@<@NODE_BETTER_AUTH_1_7_PV@': '@NODE_BETTER_AUTH_1_7_PV@'
++  'better-auth@@NODE_BETTER_AUTH_1_7_PV@>esbuild': '@NODE_ESBUILD_PV@'
 +  'dbdocs@0.16.2>fast-xml-parser': '@NODE_FAST_XML_PARSER_5_PV@'
 +  'drizzle-kit@@NODE_DRIZZLE_KIT_PV@>esbuild': '@NODE_ESBUILD_PV@'
 +  'epub2@3.0.2>adm-zip': '@NODE_ADM_ZIP_PV@'
