@@ -42,7 +42,6 @@ _VULNERABILITIES_FIXED_ECLASS=1
 vf_show() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Patched vulnerabilities:"
-		local severity_label=${SEVERITY_LABEL:-"; CVSS 3.1 "} # Can be CVSS 4.0 or a custom severity label
 		IFS=$'\n'
 		local x
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
