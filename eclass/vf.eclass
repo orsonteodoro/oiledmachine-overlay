@@ -48,12 +48,17 @@ einfo "Patched vulnerabilities:"
 			local id=$(echo "${x}" | cut -f 1 -d ";")
 			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
 			local misc=$(echo "${x}" | cut -f 3 -d ";")
+			local _misc=""
 
-			if [[ -n "${misc}" || -n "${vulnerability_classes}" ]] ; then
+			if [[ -n "${misc}" ]] ; then
+				_misc="; ${misc}"
+			fi
+
+			if [[ -n "${_misc}" || -n "${vulnerability_classes}" ]] ; then
 				_delimiter=":"
 			fi
 
-einfo "${id}${_delimiter}  ${vulnerability_classes}${misc}"
+einfo "${id}${_delimiter}  ${vulnerability_classes}${_misc}"
 		done
 		IFS=$' \t\n'
 	#
