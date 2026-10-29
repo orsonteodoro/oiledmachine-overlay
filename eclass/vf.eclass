@@ -156,6 +156,7 @@ einfo "AR = Arbitrary Read"
 einfo "ASLRBP = ASLR Bypass"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ATO"($|" "|";"|",") ]] ; then
+# Same as Account Hijack
 einfo "ATO = Account Takeover"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AW"($|" "|";"|",") ]] ; then
