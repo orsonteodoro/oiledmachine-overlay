@@ -25,7 +25,8 @@ _SECURE_VERSION_NODE_ECLASS=1
 # Use NODE_ for version agnostic
 
 # This timestamp was generated from `date +%s`.
-SECURE_VERSION_NODE_ECLASS_UPDATE=1793244053
+# This is a quick and simplified check to see if the secure lockfile versions are up to date in O(1) time.
+SECURE_VERSION_NODE_ECLASS_UPDATE=1793250673
 
 #
 # Security note:
@@ -93,7 +94,7 @@ NODE_POSTCSS_PV=${NODE_POSTCSS_PV:-"8.5.31"}
 NODE_POSTGRES_PV=${NODE_POSTGRES_PV:-"3.4.9"}
 NODE_PROXY_ADDR_PV=${NODE_PROXY_ADDR_PV:-"2.0.8"}
 NODE_OPENTELEMETRY_CORE_PV=${NODE_OPENTELEMETRY_CORE_PV:-"2.8.0"}
-NODE_QS_PV=${NODE_QS_PV:-"6.16.0"}
+NODE_QS_PV=${NODE_QS_PV:-"6.17.1"}
 NODE_TAR_PV=${NODE_TAR_PV:-"7.5.21"}
 NODE_TMP_PV=${NODE_TMP_PV:-"0.2.6"}
 NODE_TOUGH_COOKIE_PV=${NODE_TOUGH_COOKIE_PV:-"4.1.3"}

@@ -83,7 +83,7 @@ RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0
 # Obtained from commit from committer-date:2025-05-06 GH search \
 # Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
-SECURE_VERSION_NODE_EBUILD_UPDATE=1793244053
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793250673
 
 # Upstream uses:
 # node:  24.11.1
