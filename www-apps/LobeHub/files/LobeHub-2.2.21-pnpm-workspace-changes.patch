@@ -65,7 +65,7 @@
    - '@auv-js/api-client@0.0.38'
    - '@auv-js/cli-darwin-arm64@0.0.38'
    - '@auv-js/cli-darwin-x64@0.0.38'
-@@ -74,5 +79,70 @@ minimumReleaseAgeExclude:
+@@ -74,5 +79,73 @@ minimumReleaseAgeExclude:
    - '@auv-js/cli-win32-x64-msvc@0.0.38'
    - '@auv-js/cli@0.0.38'
    - '@auv-js/sdk@0.0.38'
@@ -75,6 +75,7 @@
 +  # oiledmachine-overlay rules
 +  - '@grpc/grpc-js@@NODE_AT_GRPC_GRPC_JS_1_14_PV@'
 +  - '@modelcontextprotocol/sdk@@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@'
++  - 'decode-uri-component@@NODE_DECODE_URI_COMPONENT_PV@'
 +  - 'dompurify@@NODE_DOMPURIFY_PV@'
 +  - 'electron@@NODE_ELECTRON_PV@'
 +  - 'electron-builder@@NODE_ELECTRON_BUILDER_PV@'
@@ -109,6 +110,7 @@
 +  '@modelcontextprotocol/sdk@@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@>fast-uri': '@NODE_FAST_URI_3_PV@'
 +  '@modelcontextprotocol/sdk@@NODE_AT_MODELCONTEXTPROTOCOL_SDK_1_PV@>qs': '@NODE_QS_PV@'
 +  '@vanilla-extract/vite-plugin@5.2.6>vite': '@NODE_VITE_8_PV@'
++  'decode-uri-component': '@NODE_DECODE_URI_COMPONENT_PV@'
 +  'dompurify': '@NODE_DOMPURIFY_PV@'
 +  'drizzle-kit@0.31.10>esbuild': '@NODE_ESBUILD_PV@'
 +  #'drizzle-kit@0.31.11>esbuild': '@NODE_ESBUILD_PV@'
@@ -122,7 +124,7 @@
 +  'electron-sparkle-updater@0.5.2>electron': '@NODE_ELECTRON_PV@'
 +  'electron-sparkle-updater@0.5.2>undici': '@NODE_UNDICI_7_PV@' # Requires undici 6 and undici 7 but 7 chosen
 +  'electron-store@11.0.2>fast-uri': '@NODE_FAST_URI_3_PV@'
-+  'express>body-parser': @NODE_BODY_PARSER_2_PV@
++  'express@5.2.1>body-parser': @NODE_BODY_PARSER_2_PV@
 +  'fast-uri': '@NODE_FAST_URI_3_PV@'
 +  'fetch-socks@1.3.3>undici': '@NODE_UNDICI_8_PV@'
 +  'file-type@<@NODE_FILE_TYPE_22_PV@': '@NODE_FILE_TYPE_22_PV@'
@@ -130,6 +132,7 @@
 +  'happy-dom': '@NODE_HAPPY_DOM_PV@'
 +  'katex': '@NODE_KATEX_PV@'
 +  'qs': '@NODE_QS_PV@'
++  'query-string@9.5.1>decode-uri-component': '@NODE_DECODE_URI_COMPONENT_PV@'
 +  'stylelint@17.16.0>fast-uri': '@NODE_FAST_URI_3_PV@'
 +  'tar': '@NODE_TAR_PV@'
 +  'undici': '@NODE_UNDICI_8_PV@'

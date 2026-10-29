@@ -268,7 +268,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_132
+ebuild_revision_133
 "
 REQUIRED_USE="
 	embeddings? (
@@ -702,6 +702,7 @@ pnpm_unpack_post() {
 		-e "s|@NODE_AT_VITEST_MOCKER_5_PV@|${NODE_AT_VITEST_MOCKER_5_PV}|g" \
 		-e "s|@NODE_BETTER_AUTH_1_7_PV@|${NODE_BETTER_AUTH_1_7_PV}|g" \
 		-e "s|@NODE_BODY_PARSER_2_PV@|${NODE_BODY_PARSER_2_PV}|g" \
+		-e "s|@NODE_DECODE_URI_COMPONENT_PV@|${NODE_DECODE_URI_COMPONENT_PV}|g" \
 		-e "s|@NODE_DOMPURIFY_PV@|${NODE_DOMPURIFY_PV}|g" \
 		-e "s|@NODE_DRIZZLE_KIT_PV@|${NODE_DRIZZLE_KIT_PV}|g" \
 		-e "s|@NODE_DRIZZLE_ORM_PV@|${NODE_DRIZZLE_ORM_PV}|g" \
