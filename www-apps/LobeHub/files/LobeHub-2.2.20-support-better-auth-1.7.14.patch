@@ -1,4 +1,21 @@
 # This is an AI assisted patch.
+--- a/src/libs/better-auth/auth-client.desktop.ts.orig	2026-10-29 01:23:11.000000000 -0700
++++ b/src/libs/better-auth/auth-client.desktop.ts	2026-10-29 15:40:14.204556886 -0700
+@@ -1,6 +1,5 @@
+ import {
+   adminClient,
+-  genericOAuthClient,
+   inferAdditionalFields,
+   magicLinkClient,
+ } from 'better-auth/client/plugins';
+@@ -26,7 +25,6 @@ function getClient() {
+       plugins: [
+         adminClient(),
+         inferAdditionalFields<typeof auth>(),
+-        genericOAuthClient(),
+         magicLinkClient(),
+       ],
+     });
 --- a/src/libs/better-auth/auth-client.ts.orig	2026-10-17 20:11:49.000000000 -0700
 +++ b/src/libs/better-auth/auth-client.ts	2026-10-29 06:50:46.892030516 -0700
 @@ -1,7 +1,6 @@
