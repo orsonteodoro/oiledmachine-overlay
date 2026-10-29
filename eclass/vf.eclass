@@ -53,7 +53,7 @@ einfo "Patched vulnerabilities:"
 				_delimiter=":"
 			fi
 
-einfo "${id}${_delimiter}  ${vulnerability_classes}${_misc}"
+einfo "${id}${_delimiter}  ${vulnerability_classes}${misc}"
 		done
 		IFS=$' \t\n'
 	#
