@@ -151,9 +151,6 @@ host    all             all             ::1/128                 md5
       Note:  Installing skills with lhm did not work previously but verified
       working with lh.
     </flag>
-    <flag name="minio">
-      Use MinIO as S3 compatible locally hosted storage.
-    </flag>
     <flag name="postgres">
       Store information server-side in PostgresDB.
     </flag>

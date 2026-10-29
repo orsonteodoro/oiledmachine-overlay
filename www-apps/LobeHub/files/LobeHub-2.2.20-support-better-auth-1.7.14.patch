@@ -1,0 +1,81 @@
+# This is an AI assisted patch.
+--- a/src/libs/better-auth/auth-client.ts.orig	2026-10-17 20:11:49.000000000 -0700
++++ b/src/libs/better-auth/auth-client.ts	2026-10-29 06:50:46.892030516 -0700
+@@ -1,7 +1,6 @@
+ import { CLIENT_VERSION_HEADER, CURRENT_VERSION } from '@lobechat/const';
+ import {
+   adminClient,
+-  genericOAuthClient,
+   inferAdditionalFields,
+   magicLinkClient,
+ } from 'better-auth/client/plugins';
+@@ -32,7 +31,6 @@ export const {
+   plugins: [
+     adminClient(),
+     inferAdditionalFields<typeof auth>(),
+-    genericOAuthClient(),
+     // Always include magicLinkClient - server will reject if not enabled
+     magicLinkClient(),
+   ],
+--- a/src/features/Auth/SignIn/useSignIn.test.ts.orig	2026-10-17 20:11:49.000000000 -0700
++++ b/src/features/Auth/SignIn/useSignIn.test.ts	2026-10-29 06:56:56.328093697 -0700
+@@ -384,7 +384,7 @@ describe('useSignIn', () => {
+       expect(mockMessageError).not.toHaveBeenCalled();
+     });
+ 
+-    it('should call signIn.oauth2 for custom providers', async () => {
++    it('should call signIn.social for custom providers', async () => {
+       mockSignInOauth2.mockResolvedValue({ url: 'https://custom.com/auth' });
+ 
+       const { result } = renderHook(() => useSignIn());
+--- a/src/features/Auth/SignIn/useSignIn.ts.orig	2026-10-17 20:11:49.000000000 -0700
++++ b/src/features/Auth/SignIn/useSignIn.ts	2026-10-29 07:01:38.159736157 -0700
+@@ -295,19 +295,12 @@ export const useSignIn = () => {
+       );
+       const additionalData = await getAdditionalData();
+       const signInWithAdditionalData = async () =>
+-        isBuiltinProvider(normalizedProvider)
+-          ? await signIn.social({
+-              additionalData,
+-              callbackURL,
+-              newUserCallbackURL,
+-              provider: normalizedProvider,
+-            })
+-          : await signIn.oauth2({
+-              additionalData,
+-              callbackURL,
+-              newUserCallbackURL,
+-              providerId: normalizedProvider,
+-            });
++        await signIn.social({
++          additionalData,
++          callbackURL,
++          newUserCallbackURL,
++          provider: normalizedProvider,
++        });
+ 
+       const result = await signInWithAdditionalData();
+ 
+--- a/src/libs/better-auth/sso/index.ts.orig	2026-10-17 20:11:49.000000000 -0700
++++ b/src/libs/better-auth/sso/index.ts	2026-10-29 07:04:28.570699996 -0700
+@@ -105,8 +105,7 @@ export const initBetterAuthSSOProviders
+     const config = definition.build(env);
+ 
+     if (config) {
+-      // the generic oidc callback url is /api/auth/oauth2/callback/{providerId}
+-      // different from builtin providers' /api/auth/callback/{providerId}
++      // both the generic oidc callback url and builtin providers are /api/auth/callback/{providerId}
+       config.redirectURI = `${appEnv.APP_URL}/api/auth/callback/${definition.id}`;
+       genericOAuthProviders.push(config);
+     }
+--- a/packages/database/src/models/__tests__/oidcClient.test.ts.orig	2026-10-17 20:11:49.000000000 -0700
++++ b/packages/database/src/models/__tests__/oidcClient.test.ts	2026-10-29 07:07:32.755858412 -0700
+@@ -373,7 +373,7 @@ describe('OidcClientModel', () => {
+     });
+   });
+   describe('create web app', () => {
+-    const redirectUris = ['https://dc.lobehub.com/api/auth/oauth2/callback/lobehub'];
++    const redirectUris = ['https://dc.lobehub.com/api/auth/callback/lobehub'];
+ 
+     it('should create a confidential client that can run the authorization code flow', async () => {
+       const { client } = await oidcClientModel.create({
