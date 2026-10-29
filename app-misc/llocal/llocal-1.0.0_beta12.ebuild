@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_37"
+IUSE+=" ebuild_revision_38"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
