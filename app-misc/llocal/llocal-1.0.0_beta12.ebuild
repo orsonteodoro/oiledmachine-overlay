@@ -27,7 +27,7 @@ RUST_MAX_VER="1.93.1" # Inclusive
 RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 ELECTRON_BUILDER_PV="26.18.1" # 24.13.3 used upstream.  Old pinned version required
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792956356
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793204443
 
 inherit secure-version secure-version-node
 
@@ -107,7 +107,7 @@ LICENSE="
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-44.4.1-chromium.html
+		electron-45.1.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -116,7 +116,7 @@ else
 fi
 RESTRICT="mirror" # Speed up downloads
 SLOT="0"
-IUSE+=" ebuild_revision_38"
+IUSE+=" ebuild_revision_39"
 RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
