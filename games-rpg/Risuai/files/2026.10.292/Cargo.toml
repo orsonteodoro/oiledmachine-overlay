@@ -19,7 +19,7 @@ tiktoken-rs = "0.4.0"
 base64 = "0.21.0"
 reqwest = { version = "0.13.5", features = ["json"] }
 darling = "0.20.3"
-zip = "0.6.6"
+zip = "9.1.3"
 tar = "0.4.40"
 eventsource-client = "0.18.1"
 futures = "0.3.30"
@@ -33,7 +33,6 @@ tauri-plugin-shell = "2.3.3"
 tauri-plugin-http = "2.5.5"
 oauth2 = "5.0.0"
 tokio = { version = "1.47.1", features = ["time"] }
-hyper-tls = "0.6.0"
 [target."cfg(any(target_os = \"macos\", windows, target_os = \"linux\"))".dependencies]
 tauri-plugin-deep-link = "2.4.6"
 

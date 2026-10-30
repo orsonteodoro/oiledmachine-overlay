@@ -86,7 +86,7 @@
     "protobufjs": "7.6.6",
     "proxy-addr": "2.0.8",
     "pyodide": "^0.27.7",
-    "qs": "6.16.0",
+    "qs": "6.17.1",
     "rfdc": "^1.4.1",
     "sharp": "0.35.5",
     "sortablejs": "^1.15.6",

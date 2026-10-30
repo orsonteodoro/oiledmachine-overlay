@@ -18,7 +18,7 @@ EAPI=8
 
 # To generate lockfile
 # PATH=$(realpath "../../scripts")":${PATH}"
-# PNPM_UPDATER_VERSIONS="2026.10.220" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_VERSIONS="2026.10.292" pnpm_updater_update_locks.sh
 
 # pnpm required because lockfile deps.  DO NOT CHANGE!
 
@@ -47,13 +47,12 @@ risuai-0.0.0
 
 CRATES="
 adler2-2.0.1
-aes-0.8.4
+aes-0.9.3
 aho-corasick-1.1.5
 alloc-no-stdlib-3.0.0
 alloc-stdlib-0.3.0
 android_system_properties-0.1.6
 anyhow-1.0.104
-arbitrary-1.5.0
 async-broadcast-0.7.2
 async-channel-2.5.0
 async-executor-1.14.0
@@ -68,12 +67,11 @@ atk-0.18.2
 atk-sys-0.18.2
 atomic-waker-1.1.2
 autocfg-1.5.1
-aws-lc-rs-1.18.2
-aws-lc-sys-0.46.0
+aws-lc-rs-1.19.0
+aws-lc-sys-0.47.0
 base64-0.21.7
 base64-0.22.1
 base64-0.23.1
-base64ct-1.8.3
 bitflags-1.3.2
 bitflags-2.13.2
 bit-set-0.5.3
@@ -82,8 +80,9 @@ bit-vec-0.6.3
 bit-vec-0.8.0
 block2-0.6.2
 block-buffer-0.10.4
+block-buffer-0.12.1
 blocking-1.7.0
-brotli-9.1.0
+brotli-9.1.1
 brotli-decompressor-6.2.0
 bs58-0.5.1
 bstr-1.13.1
@@ -91,8 +90,7 @@ bumpalo-3.20.3
 bytemuck-1.25.2
 byteorder-1.5.0
 bytes-1.12.1
-bzip2-0.4.4
-bzip2-sys-0.1.13+1.0.8
+bzip2-0.6.1
 cairo-rs-0.18.5
 cairo-sys-rs-0.18.2
 camino-1.2.6
@@ -108,11 +106,13 @@ cfg-if-1.0.5
 chacha20-0.10.2
 chrono-0.4.45
 cidr-0.3.2
-cipher-0.4.4
+cipher-0.5.2
 cmake-0.1.58
+cmov-0.5.4
 combine-4.6.9
 concurrent-queue-2.5.0
-constant_time_eq-0.1.5
+constant_time_eq-0.6.1
+const-oid-0.10.2
 const-random-0.1.18
 const-random-macro-0.1.16
 cookie-0.18.2
@@ -123,6 +123,7 @@ core-foundation-0.9.4
 core-foundation-sys-0.8.7
 core-graphics-0.25.0
 core-graphics-types-0.2.0
+cpubits-0.1.1
 cpufeatures-0.2.17
 cpufeatures-0.3.1
 crc32fast-1.5.3
@@ -130,9 +131,11 @@ crossbeam-channel-0.5.17
 crossbeam-utils-0.8.23
 crunchy-0.2.4
 crypto-common-0.1.7
+crypto-common-0.2.2
 cssparser-0.37.0
 cssparser-macros-0.7.1
 ctor-1.0.13
+ctutils-0.4.7
 darling-0.20.11
 darling-0.24.1
 darling_core-0.20.11
@@ -141,14 +144,15 @@ darling_macro-0.20.11
 darling_macro-0.24.1
 data-url-0.3.2
 dbus-0.9.12
+deflate64-0.1.12
 defmt-1.2.0
 defmt-macros-1.2.0
 defmt-parser-1.1.0
 deranged-0.5.9
-derive_arbitrary-1.5.0
 derive_more-2.1.1
 derive_more-impl-2.1.1
 digest-0.10.7
+digest-0.11.3
 dirs-7.0.0
 dirs-sys-0.5.0
 dispatch2-0.3.1
@@ -165,7 +169,7 @@ dunce-1.0.5
 dyn-clone-1.0.20
 embed_plist-1.2.2
 embed-resource-3.0.12
-encoding_rs-0.8.42
+encoding_rs-0.8.44
 endi-1.1.1
 enumflags2-0.7.12
 enumflags2_derive-0.7.12
@@ -184,10 +188,8 @@ find-msvc-tools-0.1.15
 flate2-1.1.10
 fnv-1.0.7
 foldhash-0.2.0
-foreign-types-0.3.2
 foreign-types-0.5.0
 foreign-types-macros-0.2.4
-foreign-types-shared-0.1.1
 foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
 fs_extra-1.3.0
@@ -233,7 +235,7 @@ heck-0.4.1
 heck-0.5.0
 hermit-abi-0.5.3
 hex-0.4.3
-hmac-0.12.1
+hmac-0.13.0
 html5ever-0.39.0
 http-1.5.0
 httparse-1.10.1
@@ -241,11 +243,11 @@ http-body-1.1.0
 http-body-util-0.1.5
 httpdate-1.0.3
 http-range-0.1.6
+hybrid-array-0.4.15
 hyper-1.12.0
 hyper-http-proxy-1.2.0
 hyper-rustls-0.27.10
 hyper-timeout-0.5.2
-hyper-tls-0.6.0
 hyper-util-0.1.21
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
@@ -263,7 +265,7 @@ idna_adapter-1.2.2
 indexmap-1.9.3
 indexmap-2.14.2
 infer-0.22.0
-inout-0.1.4
+inout-0.2.5
 ipnet-2.12.2
 is-docker-0.2.0
 is-wsl-0.4.0
@@ -284,12 +286,13 @@ jni-sys-macros-0.4.1
 jobserver-0.1.35
 json-patch-4.2.0
 jsonptr-0.7.1
-js-sys-0.3.106
+js-sys-0.3.107
 keyboard-types-0.8.3
 launchdarkly-sdk-transport-0.1.4
 lazy_static-1.5.1
 libappindicator-0.9.0
 libappindicator-sys-0.9.0
+libbz2-rs-sys-0.2.6
 libc-0.2.191
 libdbus-sys-0.2.7
 libloading-0.7.4
@@ -300,6 +303,7 @@ litrs-1.0.1
 lock_api-0.4.14
 log-0.4.34
 lru-slab-0.1.3
+lzma-rust2-0.23.0
 markup5ever-0.39.0
 memchr-2.8.3
 memoffset-0.9.1
@@ -310,7 +314,6 @@ miniz_oxide-0.9.1
 mio-1.2.4
 muda-0.20.0
 multiversion_no_op-1.0.0
-native-tls-0.2.18
 ndk-0.9.0
 ndk-context-0.1.1
 ndk-sys-0.6.0+11769913
@@ -342,10 +345,7 @@ objc2-user-notifications-0.3.2
 objc2-web-kit-0.3.2
 once_cell-1.21.4
 open-5.4.5
-openssl-0.10.81
-openssl-macros-0.1.1
 openssl-probe-0.2.2
-openssl-sys-0.9.117
 option-ext-0.2.0
 ordered-multimap-0.7.3
 ordered-stream-0.2.0
@@ -357,8 +357,7 @@ pango-sys-0.18.0
 parking-2.2.1
 parking_lot-0.12.5
 parking_lot_core-0.9.12
-password-hash-0.4.2
-pbkdf2-0.11.0
+pbkdf2-0.13.0
 percent-encoding-2.3.2
 phf-0.13.1
 phf_codegen-0.13.1
@@ -377,6 +376,7 @@ portable-atomic-1.15.0
 portable-atomic-util-0.2.8
 potential_utf-0.1.6
 powerfmt-0.2.1
+ppmd-rust-1.5.2
 ppv-lite86-0.2.21
 precomputed-hash-0.1.1
 proc-macro2-1.0.107
@@ -410,13 +410,13 @@ regex-automata-0.4.18
 regex-syntax-0.8.11
 reqwest-0.12.28
 reqwest-0.13.5
-rfd-0.16.1
+rfd-0.17.2
 ring-0.17.14
 rustc-hash-1.1.0
 rustc-hash-2.1.3
 rustc_version-0.4.1
 rust-ini-0.21.3
-rustix-1.1.5
+rustix-1.1.6
 rustls-0.23.46
 rustls-native-certs-0.8.5
 rustls-pki-types-1.15.1
@@ -453,7 +453,9 @@ serialize-to-javascript-0.1.2
 serialize-to-javascript-impl-0.1.2
 servo_arc-0.4.3
 sha1-0.10.7
+sha1-0.11.0
 sha2-0.10.9
+sha2-0.11.1
 shared_child-1.1.2
 shlex-2.0.1
 signal-hook-registry-1.4.8
@@ -492,15 +494,15 @@ tauri-build-2.7.4
 tauri-codegen-2.7.4
 tauri-macros-2.7.4
 tauri-plugin-2.7.2
-tauri-plugin-deep-link-2.6.2
-tauri-plugin-dialog-2.8.3
+tauri-plugin-deep-link-2.6.3
+tauri-plugin-dialog-2.8.4
 tauri-plugin-fs-2.7.1
 tauri-plugin-http-2.8.3
 tauri-plugin-os-2.4.0
 tauri-plugin-process-2.4.0
-tauri-plugin-shell-2.5.0
-tauri-plugin-single-instance-2.5.4
-tauri-plugin-updater-2.14.0
+tauri-plugin-shell-2.6.0
+tauri-plugin-single-instance-2.5.5
+tauri-plugin-updater-2.14.1
 tauri-runtime-2.12.2
 tauri-runtime-wry-2.12.3
 tauri-utils-2.10.2
@@ -520,7 +522,6 @@ tinystr-0.8.5
 tinyvec-1.13.3
 tokio-1.54.1
 tokio-macros-2.7.2
-tokio-native-tls-0.3.1
 tokio-rustls-0.26.6
 tokio-util-0.7.20
 toml-0.8.2
@@ -542,6 +543,7 @@ tracing-attributes-0.1.31
 tracing-core-0.1.36
 tray-icon-0.25.1
 try-lock-0.2.5
+typed-path-0.13.0
 typeid-1.0.3
 typenum-1.20.1
 uds_windows-1.2.1
@@ -550,9 +552,9 @@ unicode-segmentation-1.13.3
 untrusted-0.9.0
 url-2.5.8
 urlpattern-0.6.0
-utf8_iter-1.0.4
+utf8_iter-1.1.0
+utf_types-1.0.0
 uuid-1.29.0
-vcpkg-0.2.15
 version_check-0.9.5
 version-compare-0.2.1
 vswhom-0.1.0
@@ -561,18 +563,18 @@ walkdir-2.5.0
 want-0.3.2
 wasi-0.11.1+wasi-snapshot-preview1
 wasip2-1.0.4+wasi-0.2.12
-wasm-bindgen-0.2.129
-wasm-bindgen-futures-0.4.79
-wasm-bindgen-macro-0.2.129
-wasm-bindgen-macro-support-0.2.129
-wasm-bindgen-shared-0.2.129
+wasm-bindgen-0.2.130
+wasm-bindgen-futures-0.4.80
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
 wasm-streams-0.5.0
 web_atoms-0.2.6
 webkit2gtk-2.0.2
 webkit2gtk-sys-2.0.2
 webpki-root-certs-1.0.11
 webpki-roots-1.0.11
-web-sys-0.3.106
+web-sys-0.3.107
 web-time-1.1.0
 webview2-com-0.39.1
 webview2-com-macros-0.8.1
@@ -633,13 +635,13 @@ writeable-0.6.4
 wry-0.57.1
 x11-2.21.0
 x11-dl-2.21.0
-xattr-1.6.1
+xattr-1.7.0
 yoke-0.8.4
 yoke-derive-0.8.4
 zbus-5.19.0
 zbus_macros-5.19.0
 zbus_names-4.3.5
-zcheapstr-1.1.0
+zcheapstr-1.2.0
 zerocopy-0.8.63
 zerocopy-derive-0.8.63
 zerofrom-0.1.8
@@ -648,12 +650,12 @@ zeroize-1.9.1
 zerotrie-0.2.5
 zerovec-0.11.9
 zerovec-derive-0.11.7
-zip-0.6.6
-zip-4.6.1
+zip-9.1.3
 zlib-rs-0.6.8
 zmij-1.0.23
-zstd-0.11.2+zstd.1.5.2
-zstd-safe-5.0.2+zstd.1.5.2
+zopfli-0.8.4
+zstd-0.14.3
+zstd-safe-8.2.0
 zstd-sys-2.1.2+zstd.1.5.7
 zvariant-5.15.1
 zvariant_derive-5.15.1
@@ -1036,6 +1038,7 @@ eerror
 	# For manual lockfile creation
 ewarn "QA:  Manually bump eventsource-client from 0.12.2 to 0.18.1 in Cargo.toml"
 ewarn "QA:  Manually bump reqwest from 0.11.16 to 0.13.5 in Cargo.toml"
+ewarn "QA:  Manually bump zip from 0.6.6 to 9.1.3 in Cargo.toml"
 ewarn "QA:  Manually \`cargo add \"hyper-tls@0.6.0\"\` for the cargo lockfile."
 	unpack ${A}
 #	die
