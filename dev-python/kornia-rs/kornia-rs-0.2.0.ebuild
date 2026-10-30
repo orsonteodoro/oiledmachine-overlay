@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# When bumping the version, you need to delete the examples references in Cargo.toml.
+# Delete examples folder in files/${PV}
+# Remove example lines in members in files/${PV}/Cargo.toml
+
 GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
 #DISTUTILS_ARGS=(
@@ -25,7 +29,6 @@ apriltag_board_multicam-0.2.0
 apriltag-pose-0.2.0
 bag-of-words-0.1.0
 binarize-0.2.0
-candle-transformers-0.10.2
 colmap_rerun-0.2.0
 color_detector-0.2.0
 color_spaces-0.2.0
@@ -259,6 +262,7 @@ candle-flash-attn-0.10.2
 candle-kernels-0.10.2
 candle-metal-kernels-0.10.2
 candle-nn-0.10.2
+candle-transformers-0.10.2
 candle-ug-0.10.2
 cargo_metadata-0.23.1
 cargo-platform-0.3.3
@@ -1807,10 +1811,6 @@ einfo "Fixing vulnerabilities"
 _production_unpack() {
 	unpack "${P}.tar.gz"
 #	die # For manual lockfile updates
-	# Lockfile upgrade steps:
-
-	# Delete examples folder in files/${PV}
-	# Remove example lines in members in files/${PV}/Cargo.toml
 }
 
 pkg_setup() {
