@@ -81,6 +81,13 @@ einfo "npm_update_lock_install_post():  Updating lockfile"
 			sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.5.23\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss\": \"^8.5.28\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.0\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_6_PV}\"|g" "package-lock.json" || die
+			sed -i -e "s|\"postcss-selector-parser\": \"^6.0.2\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_6_PV}\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"qs\": \"^6.4.0\"|\"qs\": \"^${NODE_QS_PV}\"|g" "package-lock.json" || die
 
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^${NODE_SERIALIZE_JAVASCRIPT_PV}\"|g" "package-lock.json" || die
 
@@ -92,6 +99,8 @@ einfo "npm_update_lock_install_post():  Updating lockfile"
 			"braces@^${NODE_BRACES_PV}"
 			"decode-uri-component@^${NODE_DECODE_URI_COMPONENT_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
+			"postcss-selector-parser@^${NODE_POSTCSS_SELECTOR_PARSER_6_PV}"
+			"qs@^${NODE_QS_PV}"
 			"serialize-javascript@^${NODE_SERIALIZE_JAVASCRIPT_PV}"
 			"uuid@^${NODE_UUID_11_PV}"
 		)
