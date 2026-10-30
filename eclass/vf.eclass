@@ -487,7 +487,7 @@ einfo "IU = Integer Underflow"
 einfo "IUIR = Improper UI Restriction"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IV"($|" "|";"|",") ]] ; then
-einfo "IV = Insufficient Validation of Input or Data"
+einfo "IV = Insufficient Validation of Input or Attack Vectors"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"JITM"($|" "|";"|",") ]] ; then
 # See also MISCOMP, BGC, PGC
