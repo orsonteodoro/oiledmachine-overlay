@@ -28,7 +28,6 @@ apps.
 Affected packages:
 
 All Electron apps
-www-apps/LobeHub
 Electron 45.0.0 - with Node 24.22.0 [old version used in oiledmachine-overlay]
 Electron 44.9.1 - with Node 24.22.0 [used in upstream's signal-desktop 8.32.0 release]
 Electron 44.7.2 - with Node 24.21.0 [used in the distro's signal-desktop-bin 8.31.0 ebuild]
@@ -40,6 +39,7 @@ Remediated versions:
 >=media-gfx/upscayl-2.15.1 (ebuild_revision_37) [1]
 >=media-video/lossless-cut-3.70.2 (ebuild_revision_53) [1]
 >=net-im/signal-desktop-8.32.0 (ebuild_revision_117) [1]
+>=www-apps/LobeHub-2.2.21 (ebuild_revision_137) [1][2]
 Electron 46.0.0-alpha.1 - with Node 24.22.1
 Node 22.23.4
 Node 24.22.1
@@ -48,6 +48,8 @@ Node 26.12.1
 [1] Updated to Electron 45.1.0 (Node.js 24.22.1, Chromium 156.0.8078.49) which
     resolves the Brotli RCE and Node.js CVEs, but not the newer announced
     Chromium CVEs
+[2] The version bump may require WASM enabled in web browser.  A fix is still
+     being investigated for a backwards compatible workaround/fix.
 
 References:
 

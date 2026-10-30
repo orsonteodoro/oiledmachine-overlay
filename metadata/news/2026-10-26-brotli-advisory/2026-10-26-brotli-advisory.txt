@@ -116,7 +116,6 @@ net-libs/bun [17][25][26]
 sci-libs/tensorstore [8][15]
 sci-ml/openclaw-docker [15]
 sci-ml/tensorflow
-www-apps/LobeHub [5][10][15]
 
 Safe against Broccoli2Shell:
 
@@ -157,6 +156,7 @@ net-misc/wget2 [14][24]
 sys-apps/coolercontrold [4]
 >=www-client/google-chrome-156.0.8078.47 [12][15]
 >=www-client/chromium-156.0.8078.47 [11][15]
+>=www-apps/LobeHub-2.2.21 (ebuild_revision_137) [5][10][15][27][28]
 www-apps/open-webui [21]
 www-apps/searxng-docker
 www-apps/xpra-html5
@@ -201,6 +201,8 @@ x11-wm/xpra
 [27] Updated to Electron 45.1.0 (Node.js 24.22.1, Chromium 156.0.8078.49) which
      resolves the Brotli RCE and Node.js CVEs, but not the newer announced
      Chromium CVEs
+[28] The version bump may require WASM enabled in web browser.  A fix is still
+     being investigated for a backwards compatible workaround/fix.
 
 It is recommended to use the *live* Brotli not the stable tagged to mitigate the
 MC.  The tagged version of Brotli is considered a FAFO rushed release not a
