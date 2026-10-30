@@ -651,6 +651,8 @@ pnpm_unpack_post() {
 #		"package.json" \
 #		|| die
 
+	# We don't support bun because it breaks compatibility with pre SSE4.
+
 	sed -i -e "s|bun scripts|tsx scripts|g" "apps/cli/package.json" || die
 	sed -i -e "s|bun src|tsx src|g" "apps/cli/package.json" || die
 	sed -i -e "s|bunx|npx|g" "apps/cli/package.json" || die
