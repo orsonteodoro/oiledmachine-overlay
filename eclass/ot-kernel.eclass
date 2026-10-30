@@ -482,7 +482,7 @@ VULNERABILITIES_FIXED=(
 	# For the current month
 
 	# Pinned vulnerabilities covered by threat intelligence or independent media:
-	"CVE-2026-46300;Fragnesia, AEITW, PCC, LPE, UVAR, DoS, DT, ID;7.8 High on CVSS 3"
+	"CVE-2026-46300;Fragnesia, AEITW, ACP, PCC, LPE, UVAR, DoS, DT, ID;7.8 High on CVSS 3, ACP in PHP RCE"
 	"CVE-2026-99999;PwnEscape, EBR, VME, CE, IV, DoS, DT, ID;9.3 Critical on CVSS 3"
 	"CVE-2026-98432;ZC, RC, UAF, RCE, DoS, DT, ID;9.8 Critical on CVSS 3"
 
