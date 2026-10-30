@@ -572,6 +572,7 @@ proc-macro-error3-3.1.1
 proc-macro-error-attr3-3.1.1
 profiling-1.0.18
 profiling-procmacros-1.0.18
+proptest-1.11.0
 proptest-derive-0.8.0
 prost-0.14.4
 prost-derive-0.14.4
