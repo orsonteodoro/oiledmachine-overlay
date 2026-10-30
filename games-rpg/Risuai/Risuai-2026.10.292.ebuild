@@ -34,7 +34,7 @@ PYTHON_COMPAT=( "python3_12" )
 RUST_MAX_VER="1.98.1" # Inclusive
 RUST_MIN_VER="1.98.1" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
-SECURE_VERSION_NODE_EBUILD_UPDATE=1792956356
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793303487
 TARBALL="${P}.tar.gz"
 
 CPU_FLAGS_X86=(
@@ -706,7 +706,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_32
+ebuild_revision_33
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
