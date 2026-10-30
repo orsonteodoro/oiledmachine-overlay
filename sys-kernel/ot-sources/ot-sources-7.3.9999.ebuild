@@ -9,15 +9,15 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="65ba8f34ec886ec72b2c07ddc8cf3d815c32869d" # 2026-10-27 15:09:02 -1000 @ Merge tag 'xtensa-20261027'
+LINUX_SOURCES_FALLBACK_COMMIT="abf8c33470f78e2226ee3dcdc69004660020ab47" # 2026-10-30 08:27:10 -1000 @ Merge tag 'spi-fix-v7.4-merge-window'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.3
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_61"
-GENPATCHES_VER="1" # can be live only when 9999
+EBUILD_REV="ebuild_revision_62"
+GENPATCHES_VER="2" # can be live only when 9999
 PATCH_PROJC_VER="7.3-r0"
 PATCH_RT_VER="7.3-rt2"
 

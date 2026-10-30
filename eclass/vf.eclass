@@ -585,6 +585,9 @@ einfo "OORA = Out Of Range Access"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PC"($|" "|";"|",") ]] ; then
 einfo "PC = Pointer Corruption"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PCC"($|" "|";"|",") ]] ; then
+einfo "PCC = Page Cache Corruption"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"PE"($|" "|";"|",") ]] ; then
 # Also includes LPE
 einfo "PE = Privilege Escalation"
