@@ -268,7 +268,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ceph -electron +embeddings +file-management lh lhm -online-search +openrc
 -proxychains +pwa +postgres +rag redis +s3 searxng systemd
-ebuild_revision_135
+ebuild_revision_136
 "
 REQUIRED_USE="
 	embeddings? (
@@ -651,15 +651,18 @@ pnpm_unpack_post() {
 #		"package.json" \
 #		|| die
 
-	sed -i -e "s|bunx scripts|tsx scripts|g" "apps/cli/package.json" || die
-	sed -i -e "s|bunx src|tsx src|g" "apps/cli/package.json" || die
+	sed -i -e "s|bun scripts|tsx scripts|g" "apps/cli/package.json" || die
+	sed -i -e "s|bun src|tsx src|g" "apps/cli/package.json" || die
 	sed -i -e "s|bunx|npx|g" "apps/cli/package.json" || die
 	sed -i -e "s|bun run|pnpm run|g" "apps/cli/package.json" || die
 	sed -i -e "s|bun link|pnpm link|g" "apps/cli/package.json" || die
 	sed -i -e "s|bun unlink|pnpm unlink|g" "apps/cli/package.json" || die
+	sed -i -e "s| npm run | pnpm run |g" "apps/cli/package.json" || die
 
 	sed -i -e "s|bun run|pnpm run|g" "apps/desktop/package.json" || die
 	sed -i -e "s|bunx|npx|g" "apps/desktop/package.json" || die
+	sed -i -e "s| npm run | pnpm run |g" "apps/desktop/package.json" || die
+	sed -i -e "s|\"npm run |\"pnpm run |g" "apps/desktop/package.json" || die
 
 	sed -i -e "s|bun packages|tsx packages|g" "package.json" || die
 	sed -i -e "s|bun run .agents|tsx .agents|g" "package.json" || die
@@ -667,6 +670,8 @@ pnpm_unpack_post() {
 	sed -i -e "s|bun run|pnpm run|g" "package.json" || die
 	sed -i -e "s|bun --bun next dev -p 3010|pnpm next dev -p 3010|g" "package.json" || die
 	sed -i -e "s|bun --check --tsconfig-override tsconfig.type-check.json|pnpm tsc --noEmit --project tsconfig.type-check.json|g" "package.json" || die
+	sed -i -e "s| npm run | pnpm run |g" "package.json" || die
+	sed -i -e "s|\"npm run |\"pnpm run |g" "package.json" || die
 
 	setup_cn_mirror_env
 
