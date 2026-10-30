@@ -59,6 +59,7 @@ declare -A CARGO_PATHS=(
 [tantivy-common]="tantivy-%commit%/common"
 [tantivy-fst]="fst-%commit%"
 [tantivy]="tantivy-%commit%"
+[tantivy-quant]="tantivy-%commit%/quant"
 [tantivy-query-grammar]="tantivy-%commit%/query-grammar"
 [tantivy-sstable]="tantivy-%commit%/sstable"
 [tantivy-stacker]="tantivy-%commit%/stacker"
