@@ -1,0 +1,41 @@
+[package]
+name = "kornia-apriltag"
+authors = ["Aditya Kumar <git@adityais.dev>", "kornia.org <edgar@kornia.org>"]
+description = "AprilTag marker detection and decoding in Rust"
+categories = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+publish = true
+repository = { workspace = true }
+rust-version = { workspace = true }
+version = { workspace = true }
+
+[[test]]
+harness = true
+name = "parity"
+path = "tests/parity.rs"
+
+[[bench]]
+harness = false
+name = "bench_decoding"
+
+[[bench]]
+harness = false
+name = "bench_tagfamily"
+
+[dependencies]
+kornia-3d = { workspace = true }
+kornia-algebra = { workspace = true }
+kornia-image = { workspace = true }
+kornia-imgproc = { workspace = true }
+rayon = { workspace = true }
+rustc-hash = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+aprilgrid = "0.8"
+apriltag = "0.4"
+criterion = { workspace = true }
+image = { workspace = true }
+kornia-io = { workspace = true }

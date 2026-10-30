@@ -1,0 +1,44 @@
+[package]
+name = "kornia-image"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+description = "Image types and traits for generating and manipulating images"
+homepage = { workspace = true }
+repository = { workspace = true }
+license = { workspace = true }
+publish = true
+
+[[bench]]
+harness = false
+name = "bench_image"
+
+[dependencies]
+arrow = { workspace = true, optional = true }
+cudarc = { version = "0.19.0", default-features = false, features = [
+  "cuda-version-from-build-system",
+  "driver",
+  "fallback-dynamic-loading",
+  "fallback-latest",
+  "nvrtc",
+  "std",
+], optional = true }
+dlpack-rs = { version = "0.3.3", default-features = false, optional = true }
+kornia-tensor = { workspace = true }
+num-traits = { workspace = true }
+rayon = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+half = { workspace = true }
+
+[features]
+default = []
+arrow = ["dep:arrow"]
+# CUDA device-memory integration (via the cudarc crate) — default OFF.
+# Enables Image::to_cuda for H2D uploads.
+# Verify absence: `cargo tree -p kornia-image -e features | grep -i cudarc`
+cuda = ["dep:cudarc", "kornia-tensor/cuda"]
+dlpack = ["dep:dlpack-rs", "kornia-tensor/dlpack"]

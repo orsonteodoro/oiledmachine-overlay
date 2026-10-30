@@ -1,0 +1,16 @@
+[package]
+name = "exif_auto_orient"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+description = "EXIF auto orientation example for kornia-io"
+homepage = { workspace = true }
+repository = { workspace = true }
+license = { workspace = true }
+categories = { workspace = true }
+include = { workspace = true }
+publish = false
+
+[dependencies]
+kornia-io = { workspace = true }

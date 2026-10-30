@@ -12,6 +12,12 @@ MY_PV="${1}" # right version in ${S}
 # - has ambiguous means
 declare -A CARGO_PATHS=(
 	[onenote_parser]="onenote.rs-%commit%"
+
+	[hiroz-cdr]="hiroz-%commit%/crates/hiroz-cdr"
+	[hiroz-derive]="hiroz-%commit%/crates/hiroz-derive"
+	[hiroz]="hiroz-%commit%/crates/hiroz"
+	[hiroz-protocol]="hiroz-%commit%/crates/hiroz-protocol"
+	[hiroz-schema]="hiroz-%commit%/crates/hiroz-schema"
 )
 
 main() {
@@ -91,12 +97,12 @@ main() {
 	echo
 	echo "Live:"
 	echo
-	echo -e "${s_live}" | sort
+	echo -e "${s_live}" | sort | uniq
 
 	echo
 	echo "Non-live:"
 	echo
-	echo -e "${s_nlive}" | sort
+	echo -e "${s_nlive}" | sort | uniq
 
 	echo ""
 

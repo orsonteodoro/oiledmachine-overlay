@@ -1,0 +1,35 @@
+[package]
+name = "kornia-algebra"
+description = "Algebraic types for kornia-rs"
+authors = ["kornia.org <christie@kornia.org>"]
+categories = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+publish = true
+repository = { workspace = true }
+rust-version = { workspace = true }
+version = { workspace = true }
+
+[[bench]]
+harness = false
+name = "bench_linalg"
+
+[[bench]]
+harness = false
+name = "bench_l2_line"
+
+[dependencies]
+approx = { workspace = true, optional = true }
+glam = { workspace = true }
+nalgebra = { workspace = true }
+rand = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+approx = { workspace = true }
+criterion = { workspace = true }
+faer = { workspace = true }
+
+[features]
+approx = ["dep:approx"]
