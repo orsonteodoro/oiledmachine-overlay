@@ -38,7 +38,7 @@
     "package:mac": "npm run build:main && electron-builder --mac --config electron-builder.mjs  --publish never",
     "package:mac:local": "npm run build:main && cross-env UPDATE_CHANNEL=nightly electron-builder --mac --config electron-builder.mjs --publish never --c.mac.notarize=false -c.mac.identity=null",
     "package:win": "npm run build:main && electron-builder --win --config electron-builder.mjs  --publish never",
-    "react-devtools": "pnpmx react-devtools@7",
+    "react-devtools": "npx react-devtools@7",
     "shell:abi": "node scripts/shellAbi.mjs --write",
     "shell:vendor": "node scripts/vendorShellUpdater.mjs",
     "start": "npm run build:main && electron .",

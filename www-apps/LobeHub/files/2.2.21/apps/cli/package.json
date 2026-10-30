@@ -17,12 +17,12 @@
     "man"
   ],
   "scripts": {
-    "build": "pnpm exec tsx scripts/ensureWorkspaceLinks.ts && tsdown && tsdown src/daemon/maintenanceWorker.ts --no-config --no-clean --format esm --target node22 && pnpm scripts/copyReportTemplate.ts",
+    "build": "bun scripts/ensureWorkspaceLinks.ts && tsdown && tsdown src/daemon/maintenanceWorker.ts --no-config --no-clean --format esm --target node22 && bun scripts/copyReportTemplate.ts",
     "cli:link": "pnpm link",
     "cli:unlink": "pnpm unlink",
-    "dev": "LOBEHUB_CLI_HOME=.lobehub-dev pnpm src/index.ts",
-    "man:generate": "pnpm src/man/generate.ts",
-    "prepublishOnly": "pnpm run --cwd ../workbench build:report && npm run build && pnpm scripts/copyReportTemplate.ts --require && npm run man:generate",
+    "dev": "LOBEHUB_CLI_HOME=.lobehub-dev bun src/index.ts",
+    "man:generate": "bun src/man/generate.ts",
+    "prepublishOnly": "pnpm run --cwd ../workbench build:report && npm run build && bun scripts/copyReportTemplate.ts --require && npm run man:generate",
     "test": "npx vitest run --config vitest.config.mts --silent='passed-only'",
     "test:coverage": "npx vitest run --config vitest.config.mts --coverage",
     "test:e2e": "npx vitest run --config vitest.e2e.config.mts --silent='passed-only'",

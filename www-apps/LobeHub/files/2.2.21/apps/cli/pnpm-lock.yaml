@@ -64,7 +64,7 @@ importers:
         version: link:../../packages/utils
       '@trpc/client':
         specifier: ^11.18.0
-        version: 11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3)
+        version: 11.22.1(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3)
       '@types/node':
         specifier: ^24.13.2
         version: 24.19.2
@@ -1796,15 +1796,15 @@ packages:
   '@tokenizer/token@0.3.0':
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
 
-  '@trpc/client@11.19.0':
-    resolution: {integrity: sha512-0MKkPq6MejsKB5Opca1Rl22KVIaqo2+A1EiXyZ8EGUsl9TLrPdpGn+Usux20TZKFwnSC2+wI/WilqNJaP4ODfw==}
+  '@trpc/client@11.22.1':
+    resolution: {integrity: sha512-flkAwF8bzzNCVJ5xcTMS+Az6Go/XK30ZIOGT94UJBYAmMq1w2tY7gk7+CIMiRUdvHzOYAVPitX2H+20qcIIomA==}
     hasBin: true
     peerDependencies:
-      '@trpc/server': 11.19.0
+      '@trpc/server': 11.22.1
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.19.0':
-    resolution: {integrity: sha512-7C1goiDurz82yFKtZUbEzjXd0Rg/jyisaIZQhdvus+1l7E6mwcEYZXjZ1US/HF8kOyz1LERL8UN3bcboJtjcyQ==}
+  '@trpc/server@11.22.1':
+    resolution: {integrity: sha512-9SjWTS5iwENHOVPqpTjm0I1Os/CtuT6p8kDlovyEm00pXhpHX55tQM2vszJTEpcQhm/JfUz4ut/7Y9JZZQZo6A==}
     hasBin: true
     peerDependencies:
       typescript: '>=5.7.2'
@@ -2231,8 +2231,8 @@ packages:
     resolution: {integrity: sha512-AnfC1ATldl49/cvZdLPDjBfrRNwbDO05aibiOtzQu3qtlbJtomNLhF30HEtn/7iBz50dlMECqATo3fG0LrdEgw==}
     engines: {node: '>=14'}
 
-  encodeurl@2.0.0:
-    resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
+  encodeurl@2.0.1:
+    resolution: {integrity: sha512-Ev/hIyePLZtpL98x562lvPtenrUfGr0lfaf44HFZ+hDEwso7ccV9QAZrEVLg0hxNAzygaAFxy2dYaAKKM0G06A==}
     engines: {node: '>= 0.8'}
 
   entities@6.0.1:
@@ -3325,8 +3325,8 @@ packages:
   pure-rand@7.0.1:
     resolution: {integrity: sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ==}
 
-  qs@6.17.0:
-    resolution: {integrity: sha512-5LK5BZ2XDHMvcUJaf0CQ5HL3aVgKbpklvByC7qLSxYkfE8COEEbJg5xCHWCTqzqi0Gs4Jn5Mv5v3R38W6edscA==}
+  qs@6.17.1:
+    resolution: {integrity: sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==}
     engines: {node: '>=0.6'}
 
   quansync@1.0.0:
@@ -5268,12 +5268,12 @@ snapshots:
 
   '@tokenizer/token@0.3.0': {}
 
-  '@trpc/client@11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3)':
+  '@trpc/client@11.22.1(@trpc/server@11.22.1(typescript@6.0.3))(typescript@6.0.3)':
     dependencies:
-      '@trpc/server': 11.19.0(typescript@6.0.3)
+      '@trpc/server': 11.22.1(typescript@6.0.3)
       typescript: 6.0.3
 
-  '@trpc/server@11.19.0(typescript@6.0.3)':
+  '@trpc/server@11.22.1(typescript@6.0.3)':
     dependencies:
       typescript: 6.0.3
 
@@ -5452,7 +5452,7 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.7.3
       on-finished: 2.4.2
-      qs: 6.17.0
+      qs: 6.17.1
       raw-body: 3.0.2
       type-is: 2.1.0
     transitivePeerDependencies:
@@ -5629,7 +5629,7 @@ snapshots:
 
   empathic@2.1.0: {}
 
-  encodeurl@2.0.0: {}
+  encodeurl@2.0.1: {}
 
   entities@6.0.1: {}
 
@@ -5788,7 +5788,7 @@ snapshots:
       cookie-signature: 1.2.2
       debug: 4.4.3
       depd: 2.0.0
-      encodeurl: 2.0.0
+      encodeurl: 2.0.1
       escape-html: 1.0.3
       etag: 1.8.1
       finalhandler: 2.1.1
@@ -5800,7 +5800,7 @@ snapshots:
       once: 1.4.0
       parseurl: 1.3.3
       proxy-addr: 2.0.8
-      qs: 6.17.0
+      qs: 6.17.1
       range-parser: 1.3.0
       router: 2.2.0
       send: 1.2.1
@@ -5879,7 +5879,7 @@ snapshots:
   finalhandler@2.1.1:
     dependencies:
       debug: 4.4.3
-      encodeurl: 2.0.0
+      encodeurl: 2.0.1
       escape-html: 1.0.3
       on-finished: 2.4.2
       parseurl: 1.3.3
@@ -7106,7 +7106,7 @@ snapshots:
 
   pure-rand@7.0.1: {}
 
-  qs@6.17.0:
+  qs@6.17.1:
     dependencies:
       es-define-property: 1.0.1
       side-channel: 1.1.1
@@ -7474,7 +7474,7 @@ snapshots:
   send@1.2.1:
     dependencies:
       debug: 4.4.3
-      encodeurl: 2.0.0
+      encodeurl: 2.0.1
       escape-html: 1.0.3
       etag: 1.8.1
       fresh: 2.0.0
@@ -7489,7 +7489,7 @@ snapshots:
 
   serve-static@2.2.1:
     dependencies:
-      encodeurl: 2.0.0
+      encodeurl: 2.0.1
       escape-html: 1.0.3
       parseurl: 1.3.3
       send: 1.2.1
