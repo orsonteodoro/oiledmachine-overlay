@@ -16,7 +16,7 @@ RUST_PV="${RUST_MIN_VER}"
 
 DATAFUSION_COMMIT="41b058cc278eb497a2ffc6b41a323f056d3ef568"
 FST_COMMIT="1d2e473c6de63d17749030eb8538ba4d647f3430"
-TANTIVY_COMMIT="63e0c241cfd330381aebd5893f188fa858acbf45"
+TANTIVY_COMMIT="3e38ac089a1740fa0c9b69775b71feaee82e3636"
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse"
@@ -81,12 +81,12 @@ CPU_FLAGS_X86_ISA4=(
 )
 
 DISABLED_CRATES="
-benchmarks-0.26.1
-macros-0.26.1
-pg_search-0.26.1
-stressgres-0.26.1
-tokenizers-0.26.1
-dst-0.26.1
+benchmarks-0.26.4
+macros-0.26.4
+stressgres-0.26.4
+tokenizers-0.26.4
+dst-0.26.4
+tests-0.26.4
 "
 
 # Manually add proptest-1.11.0
@@ -104,40 +104,40 @@ anstyle-1.0.14
 anstyle-parse-1.0.0
 anstyle-query-1.1.5
 anstyle-wincon-3.0.11
-antithesis-instrumentation-0.1.0
+antithesis-instrumentation-0.1.1
 antithesis_sdk-0.2.9
-antithesis_sdk-0.3.0
 anyhow-1.0.104
 approx-0.5.1
 arbitrary-1.5.0
-arc-swap-1.9.2
+arc-swap-1.9.3
 arg_enum_proc_macro-0.3.4
 arrayvec-0.7.8
-arrow-58.4.0
-arrow-59.3.0
-arrow-arith-58.4.0
-arrow-arith-59.3.0
-arrow-array-58.4.0
-arrow-array-59.3.0
-arrow-buffer-58.4.0
-arrow-buffer-59.3.0
-arrow-cast-58.4.0
-arrow-cast-59.3.0
-arrow-csv-59.3.0
-arrow-data-58.4.0
-arrow-data-59.3.0
-arrow-ipc-59.3.0
-arrow-json-59.3.0
-arrow-ord-58.4.0
-arrow-ord-59.3.0
-arrow-row-58.4.0
-arrow-row-59.3.0
-arrow-schema-58.4.0
-arrow-schema-59.3.0
-arrow-select-58.4.0
-arrow-select-59.3.0
-arrow-string-58.4.0
-arrow-string-59.3.0
+arrow-59.3.2
+arrow-60.1.0
+arrow-arith-59.3.2
+arrow-arith-60.1.0
+arrow-array-59.3.2
+arrow-array-60.1.0
+arrow-buffer-59.3.2
+arrow-buffer-60.1.0
+arrow-cast-59.3.2
+arrow-cast-60.1.0
+arrow-cmp-60.1.0
+arrow-csv-59.3.2
+arrow-data-59.3.2
+arrow-data-60.1.0
+arrow-ipc-59.3.2
+arrow-json-59.3.2
+arrow-ord-59.3.2
+arrow-ord-60.1.0
+arrow-row-59.3.2
+arrow-row-60.1.0
+arrow-schema-59.3.2
+arrow-schema-60.1.0
+arrow-select-59.3.2
+arrow-select-60.1.0
+arrow-string-59.3.2
+arrow-string-60.1.0
 as-slice-0.2.1
 async-attributes-1.1.2
 async-channel-1.9.0
@@ -153,6 +153,7 @@ async-stream-impl-0.3.6
 async-task-4.7.1
 async-trait-0.1.92
 atoi-2.0.0
+atoi-3.1.1
 atomic-waker-1.1.2
 autocfg-1.5.1
 av1-grain-0.2.5
@@ -168,15 +169,17 @@ bit_field-0.10.3
 bitflags-1.3.2
 bitflags-2.13.2
 bitpacking-0.9.3
+bit-set-0.11.1
 bit-set-0.8.0
 bitstream-io-4.10.0
+bit-vec-0.10.1
 bit-vec-0.8.0
 bitvec-1.1.1
 block-buffer-0.10.4
 block-buffer-0.12.1
 blocking-1.7.0
-bon-3.10.2
-bon-macros-3.10.2
+bon-3.10.3
+bon-macros-3.10.3
 borsh-1.8.1
 borsh-derive-1.8.1
 built-0.8.1
@@ -195,7 +198,7 @@ cargo-platform-0.3.3
 cargo_toml-0.22.3
 cast-0.3.0
 castaway-0.2.4
-cc-1.7.0
+cc-1.10.0
 cedarwood-0.5.0
 cee-scape-0.2.0
 census-0.4.2
@@ -218,7 +221,8 @@ cobs-0.3.0
 codepage-0.1.3
 colorchoice-1.0.5
 color_quant-1.1.0
-comfy-table-7.1.4
+comfy-table-7.2.2
+comfy-table-8.0.1
 compact_str-0.9.1
 concurrent-queue-2.5.0
 const-oid-0.10.2
@@ -235,7 +239,7 @@ core-text-20.1.0
 cpufeatures-0.2.17
 cpufeatures-0.3.1
 crawdad-0.4.1
-crc32fast-1.5.2
+crc32fast-1.5.3
 crc-3.4.0
 crc-catalog-2.5.0
 crossbeam-channel-0.5.17
@@ -250,13 +254,13 @@ crypto-common-0.1.6
 crypto-common-0.2.2
 csv-1.4.0
 csv-core-0.1.13
-ctutils-0.4.3
+ctutils-0.4.7
 cursive-0.21.1
 cursive_core-0.4.7
 cursive-macros-0.1.0
 cursive-multiplex-0.7.0
 cursive_table_view-0.15.0
-daachorse-5.0.0
+daachorse-5.1.0
 darling-0.21.3
 darling-0.24.1
 darling_core-0.21.3
@@ -267,13 +271,12 @@ dary_heap-0.3.9
 dashmap-6.2.1
 datasketches-0.3.0
 decimal-bytes-0.6.0
-defmt-1.1.1
-defmt-macros-1.1.1
-defmt-parser-1.0.0
+defmt-1.2.0
+defmt-macros-1.2.0
+defmt-parser-1.1.0
 delegate-0.13.5
 deranged-0.4.0
-deranged-0.5.8
-derive_arbitrary-1.5.0
+deranged-0.5.9
 diff-0.1.13
 digest-0.10.7
 digest-0.11.3
@@ -285,24 +288,24 @@ distrs-0.2.3
 dlib-0.5.3
 dotenvy-0.15.7
 downcast-rs-2.0.2
-duckdb-1.10506.0
+duckdb-1.20000.1
 dwrote-0.11.5
 either-1.19.0
 embedded-io-0.4.0
 embedded-io-0.6.1
-emojis-0.9.0
+emojis-0.9.1
 encoding_rs-0.8.42
 encoding_rs_io-0.1.8
 enum-map-2.7.3
 enum-map-derive-0.17.0
-enumset-1.1.14
-enumset_derive-0.15.0
+enumset-1.1.15
+enumset_derive-0.15.1
 env_filter-2.0.0
 env_logger-0.11.11
 equator-0.4.2
 equator-macro-0.4.2
-equivalent-1.0.2
-erased-serde-0.4.10
+equivalent-1.0.3
+erased-serde-0.4.11
 errno-0.3.14
 etcetera-0.11.0
 event-listener-2.5.3
@@ -319,7 +322,7 @@ fastrand-2.5.0
 fax-0.2.7
 fdeflate-0.3.7
 filetime-0.2.29
-find-msvc-tools-0.1.14
+find-msvc-tools-0.1.15
 fixedbitset-0.5.7
 flatbuffers-25.12.19
 flate2-1.1.10
@@ -336,7 +339,7 @@ foreign-types-shared-0.1.1
 foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
 freetype-sys-0.20.1
-frostem-1.20260821.7
+frostem-1.20260821.8
 funty-2.0.0
 futures-0.3.34
 futures-channel-0.3.34
@@ -379,17 +382,17 @@ humantime-2.4.0
 hybrid-array-0.4.15
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-icu_collections-2.3.0
-icu_locale_core-2.3.0
-icu_locale_fallback-2.3.0
-icu_locale_fallback_data-2.3.0
-icu_normalizer-2.3.0
-icu_normalizer_data-2.3.0
-icu_properties-2.3.0
-icu_properties_data-2.3.0
-icu_provider-2.3.1
-icu_segmenter-2.3.0
-icu_segmenter_data-2.3.0
+icu_collections-2.4.0
+icu_locale_core-2.4.0
+icu_locale_fallback-2.4.0
+icu_locale_fallback_data-2.4.0
+icu_normalizer-2.4.0
+icu_normalizer_data-2.4.0
+icu_properties-2.4.0
+icu_properties_data-2.4.0
+icu_provider-2.4.0
+icu_segmenter-2.4.0
+icu_segmenter_data-2.4.0
 ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.2
@@ -397,9 +400,9 @@ image-0.24.9
 image-0.25.10
 image-webp-0.2.4
 imgref-1.12.3
-include-flate-0.3.4
-include-flate-codegen-0.3.4
-include-flate-compress-0.3.4
+include-flate-0.3.5
+include-flate-codegen-0.3.5
+include-flate-compress-0.3.5
 indenter-0.3.4
 indexmap-2.14.2
 indextree-4.9.2
@@ -421,7 +424,7 @@ jiff-tzdb-0.1.9
 jiff-tzdb-platform-0.1.3
 jobserver-0.1.35
 jpeg-decoder-0.3.2
-js-sys-0.3.106
+js-sys-0.3.107
 kanaria-0.2.0
 kv-log-macro-1.0.7
 lazy_static-1.5.1
@@ -433,8 +436,8 @@ lexical-parse-integer-1.0.6
 lexical-util-1.0.7
 lexical-write-float-1.0.6
 lexical-write-integer-1.0.6
-libc-0.2.190
-libduckdb-sys-1.10506.0
+libc-0.2.191
+libduckdb-sys-1.20000.1
 libflate-2.3.2
 libflate_lz77-2.3.0
 libfuzzer-sys-0.4.13
@@ -465,7 +468,7 @@ md-5-0.11.0
 md5-0.8.1
 measure_time-0.9.0
 memchr-2.8.3
-memmap2-0.9.11
+memmap2-0.9.12
 minimal-lexical-0.2.1
 miniz_oxide-0.8.9
 miniz_oxide-0.9.1
@@ -508,7 +511,7 @@ openssl-0.10.81
 openssl-macros-0.1.1
 openssl-sys-0.9.117
 option-ext-0.2.0
-ordered-float-5.5.0
+ordered-float-5.5.1
 os_pipe-1.2.3
 owo-colors-4.4.0
 parking-2.2.1
@@ -569,7 +572,6 @@ proc-macro-error3-3.1.1
 proc-macro-error-attr3-3.1.1
 profiling-1.0.18
 profiling-procmacros-1.0.18
-proptest-1.11.0
 proptest-derive-0.8.0
 prost-0.14.4
 prost-derive-0.14.4
@@ -594,7 +596,6 @@ rand_core-0.10.1
 rand_core-0.6.4
 rand_core-0.9.5
 rand_distr-0.4.3
-rand_xorshift-0.4.0
 rand_xorshift-0.5.0
 rav1e-0.8.1
 ravif-0.13.0
@@ -625,10 +626,10 @@ rustc_version-0.4.1
 rustc_version_runtime-0.3.0
 rust_decimal-1.43.0
 rustix-0.38.44
-rustix-1.1.5
-rustls-0.23.45
+rustix-1.1.6
+rustls-0.23.46
 rustls-pki-types-1.15.1
-rustls-webpki-0.103.15
+rustls-webpki-0.103.16
 rustversion-1.0.23
 rusty-fork-0.3.1
 ryu-1.0.23
@@ -640,13 +641,13 @@ serde-1.0.229
 serde_cbor-0.11.2
 serde_core-1.0.229
 serde_derive-1.0.229
-serde_json-1.0.151
+serde_json-1.0.154
 serde_path_to_error-0.1.20
 serde_spanned-1.1.2
 serde_yaml_ng-0.10.0
 sha1-0.11.0
 sha2-0.10.9
-sha2-0.11.0
+sha2-0.11.1
 shlex-1.3.0
 shlex-2.0.1
 shutdown_hooks-0.1.0
@@ -657,10 +658,10 @@ simd-adler32-0.3.10
 simd_helpers-0.1.0
 simdutf8-0.1.5
 siphasher-1.0.4
-sketches-ddsketch-0.3.1
-sketches-ddsketch-0.4.1
+sketches-ddsketch-0.3.2
+sketches-ddsketch-0.4.2
 slab-0.4.12
-smallvec-1.16.3
+smallvec-1.16.4
 socket2-0.6.5
 spin-0.9.9
 sqlparser-0.62.0
@@ -684,7 +685,7 @@ subtle-2.6.1
 supports-color-3.0.2
 syn-1.0.109
 syn-2.0.119
-syn-3.0.7
+syn-3.0.9
 synstructure-0.14.0
 sysinfo-0.39.6
 tagptr-0.2.0
@@ -703,9 +704,9 @@ time-0.3.55
 time-core-0.1.9
 time-macros-0.2.32
 tiny-keccak-2.0.2
-tinystr-0.8.4
+tinystr-0.8.5
 tinyvec-1.13.3
-tokio-1.53.2
+tokio-1.54.1
 tokio-macros-2.7.2
 tokio-openssl-0.6.5
 tokio-postgres-0.7.18
@@ -732,24 +733,25 @@ unarray-0.1.4
 unescape-0.1.0
 unicode-bidi-0.3.18
 unicode-blocks-0.1.10
-unicode-ident-1.0.26
-unicode-normalization-0.1.25
+unicode-ident-1.0.27
+unicode-normalization-0.1.26
 unicode-properties-0.1.4
 unicode-segmentation-1.13.3
 unicode-width-0.1.14
-unicode-width-0.2.2
+unicode-width-0.2.3
 unsafe-libyaml-0.2.11
 untrusted-0.9.0
 unty-0.0.4
 unwrap-infallible-1.0.0
-ureq-3.4.2
-ureq-proto-0.6.4
+ureq-3.5.0
+ureq-proto-0.6.5
 url-2.5.8
-utf8_iter-1.0.4
+utf8_iter-1.1.0
 utf8parse-0.2.2
 utf8-ranges-1.0.5
 utf8-zero-0.8.1
-uuid-1.28.0
+utf_types-1.0.0
+uuid-1.29.0
 value-bag-1.14.1
 vcpkg-0.2.15
 version_check-0.9.5
@@ -760,13 +762,13 @@ wasi-0.11.1+wasi-snapshot-preview1
 wasi-0.14.7+wasi-0.2.4
 wasip2-1.0.4+wasi-0.2.12
 wasite-1.0.2
-wasm-bindgen-0.2.129
-wasm-bindgen-futures-0.4.79
-wasm-bindgen-macro-0.2.129
-wasm-bindgen-macro-support-0.2.129
-wasm-bindgen-shared-0.2.129
-webpki-roots-1.0.9
-web-sys-0.3.106
+wasm-bindgen-0.2.130
+wasm-bindgen-futures-0.4.80
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
+webpki-roots-1.0.11
+web-sys-0.3.107
 web-time-1.1.0
 weezl-0.1.12
 whoami-2.1.3
@@ -803,28 +805,28 @@ wio-0.2.2
 wit-bindgen-0.57.1
 writeable-0.6.4
 wyz-0.5.1
-xattr-1.6.1
+xattr-1.7.0
 xi-unicode-0.3.0
 y4m-0.8.0
 yansi-1.0.1
 yeslogic-fontconfig-sys-6.0.1
-yoke-0.8.3
+yoke-0.8.4
 yoke-derive-0.8.4
-zerocopy-0.8.62
-zerocopy-derive-0.8.62
+zerocopy-0.8.63
+zerocopy-derive-0.8.63
 zerofrom-0.1.8
 zerofrom-derive-0.1.8
 zeroize-1.9.1
 zerotrie-0.2.5
-zerovec-0.11.8
-zerovec-derive-0.11.6
-zip-6.0.0
+zerovec-0.11.9
+zerovec-derive-0.11.7
 zlib-rs-0.6.8
 zmij-1.0.23
-zopfli-0.8.3
 zstd-0.13.3
+zstd-0.14.3
 zstd-safe-7.3.0
-zstd-sys-2.1.1+zstd.1.5.7
+zstd-safe-8.2.0
+zstd-sys-2.1.2+zstd.1.5.7
 zune-core-0.5.3
 zune-inflate-0.2.54
 zune-jpeg-0.5.15
@@ -835,7 +837,9 @@ declare -A GIT_CRATES=(
 # Remove [tests] row
 # Remove ?tag=snapshot-main-2026-10-06-224907
 # Manually disable [proptest] row
-[cascade]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/cascade" # 0.1.0
+# Replace tantivy-<VER> with tantivy
+# Comment out or delete [_pgsearch] row
+
 [datafusion-catalog]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/catalog" # 55.1.0
 [datafusion-catalog-listing]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/catalog-listing" # 55.1.0
 [datafusion-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/common" # 55.1.0
@@ -844,7 +848,7 @@ declare -A GIT_CRATES=(
 [datafusion-datasource-csv]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/datasource-csv" # 55.1.0
 [datafusion-datasource]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/datasource" # 55.1.0
 [datafusion-datasource-json]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/datasource-json" # 55.1.0
-[datafusion-distributed]="https://github.com/paradedb/datafusion-distributed;2b82e8d2af32a6b15fb301be858ef47d7b629a3c;datafusion-distributed-%commit%/" # 4.0.0
+[datafusion-distributed]="https://github.com/paradedb/datafusion-distributed;a37869c70636f4bbd1d44f270fea146550537802;datafusion-distributed-%commit%/" # 4.0.0
 [datafusion-doc]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/doc" # 55.1.0
 [datafusion-execution]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/execution" # 55.1.0
 [datafusion-expr-common]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/expr-common" # 55.1.0
@@ -870,24 +874,23 @@ declare -A GIT_CRATES=(
 [datafusion-pruning]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/pruning" # 55.1.0
 [datafusion-session]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/session" # 55.1.0
 [datafusion-sql]="https://github.com/paradedb/datafusion;41b058cc278eb497a2ffc6b41a323f056d3ef568;datafusion-%commit%/datafusion/sql" # 55.1.0
-[fht]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/fht" # 0.1.0
-[grid-plane]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/grid-plane" # 0.1.0
-[opencc-jieba-rs]="https://github.com/paradedb/opencc-jieba-rs;75453c464ff30201aeef3c1211482406b66b2e38;opencc-jieba-rs-%commit%/" # 0.8.1
-[ownedbytes]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/ownedbytes" # 0.9.0
-#[proptest]="https://github.com/antithesishq/proptest;6061eb48d67ff76f882e709677308816d5791ce7;proptest-%commit%/proptest" # 1.11.0
-[quant-model]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/quant-model" # 0.1.0
-[sign-plane]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/quant-kernels/sign-plane" # 0.1.0
-[superkmeans-rs]="https://github.com/paradedb/superkmeans-rs;c06dc2b6e9bd15fb5c4a0627178bebbe1fb37a64;superkmeans-rs-%commit%" # 0.2.0
-[tantivy-bitpacker]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/bitpacker" # 0.10.0
-[tantivy-columnar]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/columnar" # 0.7.0
-[tantivy-common]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/common" # 0.11.0
+[opencc-jieba-rs]="https://github.com/paradedb/opencc-jieba-rs;c315d79b5f80c3cf3a4521cc5d4366c67e0c44ba;opencc-jieba-rs-%commit%/" # 0.9.0
+[ownedbytes]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/ownedbytes" # 0.9.0
+#[pg_search]=";" # 0.26.4
+[proptest]="https://github.com/antithesishq/proptest;6061eb48d67ff76f882e709677308816d5791ce7;proptest-%commit%/proptest" # 1.11.0
+[superkmeans-rs]="https://github.com/paradedb/superkmeans-rs;28d7f26eec11548bb0b7435b36df6383b116c9b0;superkmeans-rs-%commit%" # 0.3.0
+[superkmeans-rs]="https://github.com/paradedb/superkmeans-rs;ced81ac6f010ff79e74b161df9454e51bc1a8d0e;superkmeans-rs-%commit%" # 0.3.0
+[tantivy-bitpacker]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/bitpacker" # 0.10.0
+[tantivy-columnar]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/columnar" # 0.7.0
+[tantivy-common]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/common" # 0.11.0
 [tantivy-fst]="https://github.com/paradedb/fst;1d2e473c6de63d17749030eb8538ba4d647f3430;fst-%commit%" # 0.5.0
-[tantivy]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%" # 0.27.0
-[tantivy-query-grammar]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/query-grammar" # 0.26.0
-[tantivy-sstable]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/sstable" # 0.7.0
-[tantivy-stacker]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/stacker" # 0.7.0
-[tantivy-tokenizer-api]="https://github.com/paradedb/tantivy;63e0c241cfd330381aebd5893f188fa858acbf45;tantivy-%commit%/tokenizer-api" # 0.7.0
-#[tests]=";" # 0.26.1
+[tantivy]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%" # 0.27.0
+[tantivy-quant]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;" # 0.1.0
+[tantivy-query-grammar]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/query-grammar" # 0.26.0
+[tantivy-sstable]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/sstable" # 0.7.0
+[tantivy-stacker]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/stacker" # 0.7.0
+[tantivy-tokenizer-api]="https://github.com/paradedb/tantivy;3e38ac089a1740fa0c9b69775b71feaee82e3636;tantivy-%commit%/tokenizer-api" # 0.7.0
+
 )
 
 inherit cargo lcnr postgres-multi rust sandbox-changes
@@ -937,7 +940,7 @@ LICENSE="
 	)
 "
 # Third party licenses:
-# AGPL-3+ - ./paradedb-0.22.2/LICENSE
+# AGPL-3+ - ./paradedb-0.26.4/LICENSE
 # Apache-2.0 - ./cargo_home/gentoo/windows-sys-0.61.0/license-apache-2.0
 # Apache-2.0-with-LLVM-exceptions - ./cargo_home/gentoo/linux-raw-sys-0.3.8/LICENSE-Apache-2.0_WITH_LLVM-exception
 # Boost-1.0 - ./cargo_home/gentoo/lockfree-object-pool-0.1.6/LICENSE_1_0.txt
@@ -975,7 +978,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-# Requirement in https://github.com/paradedb/paradedb/blob/v0.26.1/Cargo.toml#L67
+# Requirement in https://github.com/paradedb/paradedb/blob/v0.26.3/Cargo.toml#L67
 BDEPEND="
 	=dev-util/cargo-pgrx-0.19*:=
 "

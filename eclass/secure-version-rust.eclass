@@ -19,6 +19,7 @@ _SECURE_VERSION_RUST_ECLASS=1
 
 # You must prefix your entry with RUST_
 
+RUST_RUSTLS_PV=${RUST_RUSTLS_PV:-"0.23.46"} # Do not use directly.  For info only.  Update the problematic dependent (depender) first.
 RUST_ZIP_PV=${RUST_ZIP_PV:-"9.0.5"}
 
 fi
