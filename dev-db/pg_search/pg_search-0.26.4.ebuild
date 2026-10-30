@@ -89,7 +89,7 @@ dst-0.26.4
 tests-0.26.4
 "
 
-# Manually add proptest-1.11.0
+# Manually add proptest-1.12.0 based on error message
 CRATES="
 adler2-2.0.1
 adler32-1.2.0
@@ -572,7 +572,7 @@ proc-macro-error3-3.1.1
 proc-macro-error-attr3-3.1.1
 profiling-1.0.18
 profiling-procmacros-1.0.18
-proptest-1.11.0
+proptest-1.12.0
 proptest-derive-0.8.0
 prost-0.14.4
 prost-derive-0.14.4
