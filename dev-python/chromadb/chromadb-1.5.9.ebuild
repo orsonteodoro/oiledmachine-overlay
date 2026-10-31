@@ -1567,6 +1567,7 @@ elog "DT - Data Tampering"
 elog "EBR - Extended Blast Radius"
 elog "ID - Information Disclosure"
 elog "IV - Insufficient Validation"
+elog "RCE - Remote Code Execution"
 elog "ZC - Zero Click Vulnerability"
 elog
 elog "Partial ChromaToast remediation:"
