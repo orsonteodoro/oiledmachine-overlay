@@ -1,3 +1,4 @@
+This patch uses AI assistant fixes.
 --- a/rust/cache/src/bin/cops-memory-cache-config-writer.rs.orig	2026-05-04 16:34:47.000000000 -0700
 +++ b/rust/cache/src/bin/cops-memory-cache-config-writer.rs	2026-10-08 15:48:04.165672099 -0700
 @@ -7,6 +7,6 @@ use chroma_cache::{CacheConfig, FoyerCac

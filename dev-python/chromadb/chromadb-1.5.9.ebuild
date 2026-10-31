@@ -32,6 +32,7 @@ EAPI=8
 # Change ratatui to 0.30.2 in rust/cli/Cargo.toml
 # Change parquet to 60.1.0 in Cargo.toml
 # Change kube to 4.2.0 in rust/memberlist/Cargo.toml
+# Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml
 
 
 
@@ -213,7 +214,6 @@ axum-macros-0.5.1
 backon-1.6.0
 backtrace-0.3.77
 base16ct-1.0.0
-base64-0.21.7
 base64-0.22.1
 base64-0.23.1
 base64ct-1.8.3
@@ -556,7 +556,6 @@ jsonpath-rust-1.0.12
 jsonptr-0.7.1
 jsonwebtoken-10.4.0
 js-sys-0.3.107
-k8s-openapi-0.20.0
 k8s-openapi-0.28.0
 kasuari-0.4.13
 keccak-0.1.6
@@ -1210,6 +1209,11 @@ zune-core-0.5.3
 zune-jpeg-0.5.15
 "
 
+KUBERNETES_TARGETS=(
+	kubernetes_target_1_35
+	kubernetes_target_1_36
+)
+
 # Cargo must go after distutils-r1
 inherit abseil-cpp distutils-r1 cargo grpc pypi re2
 
@@ -1238,14 +1242,24 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
+${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
-dev
+dev helm kubectl kubernetes
 ebuild_revision_16
 "
 REQUIRED_USE+="
 	^^ (
 		protobuf_python_4
 		protobuf_python_5
+	)
+	kubernetes? (
+		^^ (
+			${KUBERNETES_TARGETS[@]}
+		)
+		|| (
+			helm
+			kubectl
+		)
 	)
 "
 
@@ -1313,6 +1327,20 @@ RDEPEND+="
 		>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
+		kubernetes? (
+			>=dev-python/kubernetes-36.0.0[${PYTHON_USEDEP}]
+			helm? (
+				app-admin/helm:=
+			)
+			kubectl? (
+				kubernetes_target_1_35? (
+					=sys-cluster/kubectl-1.35*:=
+				)
+				kubernetes_target_1_36? (
+					=sys-cluster/kubectl-1.36*:=
+				)
+			)
+		)
 		protobuf_python_4? (
 			dev-python/opentelemetry-api:4[${PYTHON_USEDEP}]
 			dev-python/opentelemetry-exporter-otlp-proto-grpc:4[${PYTHON_USEDEP}]
@@ -1467,6 +1495,12 @@ src_unpack() {
 
 src_prepare() {
 	distutils-r1_src_prepare
+	if use kubernetes_target_1_35 ; then
+		sed -i -e "s|v1_36|v1_35|g" "${S}/rust/memberlist/Cargo.toml" || die
+	fi
+	if use kubernetes_target_1_36 ; then
+		sed -i -e "s|v1_36|v1_36|g" "${S}/rust/memberlist/Cargo.toml" || die
+	fi
 }
 
 python_configure() {

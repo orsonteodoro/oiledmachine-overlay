@@ -1,3 +1,4 @@
+This patch uses AI assistant fixes.
 --- a/rust/types/src/metadata.rs.orig	2026-05-04 16:34:47.000000000 -0700
 +++ b/rust/types/src/metadata.rs	2026-10-30 20:45:13.310312625 -0700
 @@ -286,11 +286,12 @@ impl<'py> pyo3::IntoPyObject<'py> for Sp
@@ -58,3 +59,25 @@
              // Empty lists are not allowed
              if list.is_empty()? {
                  return Err(pyo3::exceptions::PyValueError::new_err(
+--- a/rust/sqlite/src/config.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/sqlite/src/config.rs	2026-10-31 00:56:58.444588354 -0700
+@@ -58,7 +58,7 @@ pub enum MigrationMode {
+ /// - SHA256: Use SHA256 hash
+ /// - MD5: Use MD5 hash
+ #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+-#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int))]
++#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int, from_py_object))]
+ #[serde(rename_all = "lowercase")]
+ pub enum MigrationHash {
+     SHA256,
+--- a/rust/sqlite/src/config.rs.orig	2026-10-31 00:59:54.056261748 -0700
++++ b/rust/sqlite/src/config.rs	2026-10-31 01:19:11.941300367 -0700
+@@ -47,7 +47,7 @@ impl Default for SqliteDBConfig {
+ /// - Apply: Apply the migrations
+ /// - Validate: Validate the applied migrations and ensure none are unappliued
+ #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
+-#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int))]
++#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int, from_py_object))]
+ #[serde(rename_all = "lowercase")]
+ pub enum MigrationMode {
+     Apply,
