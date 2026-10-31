@@ -1,0 +1,54 @@
+--- a/rust/storage/src/s3.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/storage/src/s3.rs	2026-10-30 22:05:53.791159784 -0700
+@@ -1400,7 +1400,7 @@ pub async fn s3_client_for_test_with_buc
+ }
+ 
+ pub async fn s3_client_for_test_with_new_bucket() -> crate::Storage {
+-    s3_client_for_test_with_bucket_name(&format!("test-{}", rand::thread_rng().gen::<u64>())).await
++    s3_client_for_test_with_bucket_name(&format!("test-{}", rand::rng().gen::<u64>())).await
+ }
+ 
+ #[cfg(test)]
+@@ -1465,7 +1465,7 @@ mod tests {
+         let client = get_s3_client();
+ 
+         let storage = S3Storage {
+-            bucket: format!("test-{}", rand::thread_rng().gen::<u64>()),
++            bucket: format!("test-{}", rand::rng().gen::<u64>()),
+             client,
+             upload_part_size_bytes: 1024 * 1024 * 8,
+             download_part_size_bytes: 1024 * 1024 * 8,
+@@ -1491,7 +1491,7 @@ mod tests {
+         let client = get_s3_client();
+ 
+         let storage = S3Storage {
+-            bucket: format!("test-{}", rand::thread_rng().gen::<u64>()),
++            bucket: format!("test-{}", rand::rng().gen::<u64>()),
+             client,
+             upload_part_size_bytes,
+             download_part_size_bytes,
+@@ -1539,7 +1539,7 @@ mod tests {
+         let client = get_s3_client();
+ 
+         let storage = S3Storage {
+-            bucket: format!("test-{}", rand::thread_rng().gen::<u64>()),
++            bucket: format!("test-{}", rand::rng().gen::<u64>()),
+             client,
+             upload_part_size_bytes: 1024 * 1024 * 8,
+             download_part_size_bytes: 1024 * 1024 * 8,
+@@ -1548,13 +1548,13 @@ mod tests {
+         storage.create_bucket().await.unwrap();
+ 
+         // Randomly generate a 16 byte utf8 string.
+-        let test_data_key: String = rand::thread_rng()
++        let test_data_key: String = rand::rng()
+             .sample_iter(Alphanumeric)
+             .take(16)
+             .map(char::from)
+             .collect();
+         // Randomly generate data of size equaling value_size.
+-        let test_data_value_string: String = rand::thread_rng()
++        let test_data_value_string: String = rand::rng()
+             .sample_iter(Alphanumeric)
+             .take(value_size)
+             .map(char::from)

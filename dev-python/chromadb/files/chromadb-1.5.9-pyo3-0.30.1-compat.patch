@@ -1,0 +1,60 @@
+--- a/rust/types/src/metadata.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/types/src/metadata.rs	2026-10-30 20:45:13.310312625 -0700
+@@ -286,11 +286,12 @@ impl<'py> pyo3::IntoPyObject<'py> for Sp
+ }
+ 
+ #[cfg(feature = "pyo3")]
+-impl<'py> pyo3::FromPyObject<'py> for SparseVector {
+-    fn extract_bound(ob: &pyo3::Bound<'py, pyo3::PyAny>) -> pyo3::PyResult<Self> {
++impl<'py> pyo3::FromPyObject<'_, 'py> for SparseVector {
++    type Error = pyo3::PyErr;
++    fn extract(ob: pyo3::Borrowed<'_, 'py, pyo3::PyAny>) -> Result<Self, Self::Error> {
+         use pyo3::types::PyDict;
+ 
+-        let dict = ob.downcast::<PyDict>()?;
++        let dict = ob.cast::<PyDict>()?;
+         let indices_obj = dict.get_item("indices")?;
+         if indices_obj.is_none() {
+             return Err(pyo3::exceptions::PyKeyError::new_err(
+@@ -354,8 +355,9 @@ pub enum UpdateMetadataValue {
+ }
+ 
+ #[cfg(feature = "pyo3")]
+-impl<'py> pyo3::FromPyObject<'py> for UpdateMetadataValue {
+-    fn extract_bound(ob: &pyo3::Bound<'py, pyo3::PyAny>) -> pyo3::PyResult<Self> {
++impl<'py> pyo3::FromPyObject<'_, 'py> for UpdateMetadataValue {
++    type Error = pyo3::PyErr;
++    fn extract(ob: pyo3::Borrowed<'_, 'py, pyo3::PyAny>) -> Result<Self, Self::Error> {
+         use pyo3::types::PyList;
+ 
+         if ob.is_none() {
+@@ -370,7 +372,7 @@ impl<'py> pyo3::FromPyObject<'py> for Up
+             Ok(UpdateMetadataValue::Str(value))
+         } else if let Ok(value) = ob.extract::<SparseVector>() {
+             Ok(UpdateMetadataValue::SparseVector(value))
+-        } else if let Ok(list) = ob.downcast::<PyList>() {
++        } else if let Ok(list) = ob.cast::<PyList>() {
+             // Empty lists are not allowed
+             if list.is_empty()? {
+                 return Err(pyo3::exceptions::PyValueError::new_err(
+@@ -646,8 +648,9 @@ pub enum MetadataValue {
+ }
+ 
+ #[cfg(feature = "pyo3")]
+-impl<'py> pyo3::FromPyObject<'py> for MetadataValue {
+-    fn extract_bound(ob: &pyo3::Bound<'py, pyo3::PyAny>) -> pyo3::PyResult<Self> {
++impl<'py> pyo3::FromPyObject<'_, 'py> for MetadataValue {
++    type Error = pyo3::PyErr;
++    fn extract(ob: pyo3::Borrowed<'_, 'py, pyo3::PyAny>) -> Result<Self, Self::Error> {
+         use pyo3::types::PyList;
+ 
+         if let Ok(value) = ob.extract::<bool>() {
+@@ -660,7 +663,7 @@ impl<'py> pyo3::FromPyObject<'py> for Me
+             Ok(MetadataValue::Str(value))
+         } else if let Ok(value) = ob.extract::<SparseVector>() {
+             Ok(MetadataValue::SparseVector(value))
+-        } else if let Ok(list) = ob.downcast::<PyList>() {
++        } else if let Ok(list) = ob.cast::<PyList>() {
+             // Empty lists are not allowed
+             if list.is_empty()? {
+                 return Err(pyo3::exceptions::PyValueError::new_err(

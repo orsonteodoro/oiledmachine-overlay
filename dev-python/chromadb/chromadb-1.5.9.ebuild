@@ -23,10 +23,10 @@ EAPI=8
 # Change reqwest to 0.13.5 in Cargo.toml
 # Change hf-hub to 1.0.0 and removing tokio feature in rust/benchmark/Cargo.toml
 # Change serde_yml to 0.0.13 in Cargo.toml
-# Change opentelemetry_sdk to 0.33.1 in Cargo.toml
-# Change opentelemetry-http to 0.33.1 in Cargo.toml
-# Change opentelemetry-otlp to 0.33.1 in Cargo.toml
-# Change opentelemetry to 0.33.1 in Cargo.toml
+# Skip change opentelemetry_sdk to 0.33.1 in Cargo.toml
+# Skip change opentelemetry-http to 0.33.1 in Cargo.toml
+# Skip change opentelemetry-otlp to 0.33.1 in Cargo.toml
+# Skip change opentelemetry to 0.33.1 in Cargo.toml
 # Change rand to 0.10.3 in Cargo.toml
 # Change tantivy to 0.27.0 in Cargo.toml
 # Change ratatui to 0.30.2 in rust/cli/Cargo.toml
@@ -205,7 +205,9 @@ aws-smithy-schema-1.1.2
 aws-smithy-types-1.9.1
 aws-smithy-xml-0.64.1
 aws-types-1.7.0
+axum-0.7.9
 axum-0.8.9
+axum-core-0.4.5
 axum-core-0.5.6
 axum-macros-0.5.1
 backon-1.6.0
@@ -467,6 +469,7 @@ guacamole-0.11.0
 h2-0.3.27
 h2-0.4.20
 half-2.7.1
+hashbrown-0.12.3
 hashbrown-0.13.2
 hashbrown-0.14.5
 hashbrown-0.15.5
@@ -521,6 +524,7 @@ ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.2
 image-0.25.10
+indexmap-1.9.3
 indexmap-2.14.2
 indicatif-0.17.11
 indoc-2.0.8
@@ -600,6 +604,7 @@ madsim-macros-0.2.12
 madsim-tokio-0.2.30
 mappings-0.7.0
 matchers-0.2.0
+matchit-0.7.3
 matchit-0.8.4
 matrixmultiply-0.3.11
 md-5-0.10.6
@@ -684,12 +689,10 @@ oorandom-11.1.5
 openssl-probe-0.2.2
 opentelemetry-0.27.1
 opentelemetry-0.31.0
-opentelemetry-0.33.1
-opentelemetry-http-0.33.1
-opentelemetry-otlp-0.33.1
-opentelemetry-proto-0.33.1
+opentelemetry-http-0.27.0
+opentelemetry-otlp-0.27.0
+opentelemetry-proto-0.27.0
 opentelemetry_sdk-0.27.1
-opentelemetry_sdk-0.33.1
 option-ext-0.2.0
 ordered-float-2.10.1
 ordered-float-4.6.0
@@ -1033,11 +1036,13 @@ toml_edit-0.25.17+spec-1.1.0
 toml_parser-1.1.5+spec-1.1.0
 toml_write-0.1.2
 toml_writer-1.1.3+spec-1.1.0
+tonic-0.12.3
 tonic-0.14.9
 tonic-build-0.14.9
 tonic-health-0.14.9
 tonic-prost-0.14.9
 tonic-prost-build-0.14.9
+tower-0.4.13
 tower-0.5.3
 tower-http-0.6.11
 tower-layer-0.3.3
@@ -1380,6 +1385,8 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 #	"${FILESDIR}/${PN}-1.5.9-use-yaml_serde.patch"
+	"${FILESDIR}/${PN}-1.5.9-pyo3-0.30.1-compat.patch"
+	"${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
 )
 
 pkg_setup() {
