@@ -13,6 +13,7 @@ GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 #DISTUTILS_ARGS=(
 #	"kornia-py/Cargo.toml"
 #)
+DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
@@ -1756,7 +1757,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	dev? (
