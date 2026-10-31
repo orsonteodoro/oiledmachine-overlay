@@ -33,7 +33,7 @@ EAPI=8
 # Change tantivy to 0.27.0 in Cargo.toml to bump lru and serde_yml 
 # Change ratatui to 0.30.2 in rust/cli/Cargo.toml to bump lru
 # Change parquet to 60.1.0 in Cargo.toml to bump thrift
-# Change kube to 4.2.0 in rust/memberlist/Cargo.toml to bump k8s-openapi, rustls 0.21 -> rustlst 0.23
+# Change kube to 4.2.0 in rust/memberlist/Cargo.toml to bump k8s-openapi, rustls 0.21 -> rustls 0.23
 # Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml to bump serde_json
 
 # "for mitigation" implies the package is being remediated for a CVE/GHSA
