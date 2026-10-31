@@ -1555,10 +1555,21 @@ pkg_postinst() {
 elog
 elog "SECURITY NOTICE"
 elog
-elog "This release, AI claims, is still vulnerable to ChromaToast"
-elog "(CVE-2026-45829, GHSA-f4j7-r4q5-qw2c, 10 Critical, RCE)."
+elog "CVE-2026-45829, GHSA-f4j7-r4q5-qw2c - 10 Critical, ChromaToast, RCE, ZC, EBR, DoS, DT, ID"
+elog "CVE-2026-45830 - High, AB, IV, DT, ID"
+elog "CVE-2026-45831 - High, IA, DoS, DT, ID"
+elog "CVE-2026-45833 - Critical, CI, DoS, DT, ID"
 elog
-elog "Partial remediation:"
+elog "AB - Authentication Bypass"
+elog "CI - Code Injection"
+elog "DoS - Denial of Service"
+elog "DT - Data Tampering"
+elog "EBR - Extended Blast Radius"
+elog "ID - Information Disclosure"
+elog "IV - Insufficient Validation"
+elog "ZC - Zero Click Vulnerability"
+elog
+elog "Partial ChromaToast remediation:"
 elog
 elog "1. Block port 8000 (ChromaDB API port) with external traffic with nftables or firewall."
 elog "2. Use the Rust implementation (\`chroma run\`) or Docker image."
