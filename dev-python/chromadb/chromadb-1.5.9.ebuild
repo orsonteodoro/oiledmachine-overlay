@@ -1414,7 +1414,7 @@ DOCS=( "README.md" )
 PATCHES=(
 #	"${FILESDIR}/${PN}-1.5.9-use-yaml_serde.patch"
 	"${FILESDIR}/${PN}-1.5.9-pyo3-0.30.1-compat.patch"
-	"A${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
+	"${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-chroma_blockstore-recursion-limit.patch"
 )
 
