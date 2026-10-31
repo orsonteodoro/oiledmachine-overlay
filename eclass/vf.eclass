@@ -26,7 +26,7 @@ _VULNERABILITIES_FIXED_ECLASS=1
 #
 # Example:
 # VULNERABILITIES_FIXED=(
-#	"<vuln-id>;<vuln-classes|vuln-types>;<misc|severity|message>"
+#	"<vuln-ids|vuln-name|exploit-name>;<vuln-classes|vuln-types>;<misc|severity|message>"
 #	"CVE-2024-50262;DoS, DT, ID;High"
 #	"CVE-2024-50260;DoS;Medium"
 #	"CVE-2024-50083;ZC, DoS;High"
