@@ -12,6 +12,10 @@ EAPI=8
 # USE=-dev (production):  protobuf-python >= 4
 #               USE=dev:  protobuf-python == 5
 
+# Security checklist:
+# Change zip to 9.1.3 in Cargo.toml
+# Change utoipa-swagger-ui to 10.0.2 in rust/frontend/Cargo.toml
+
 MY_PN="chroma"
 
 inherit protobuf
@@ -115,7 +119,6 @@ anstyle-wincon-3.0.11
 anyhow-1.0.104
 approx-0.3.2
 approx-0.5.1
-arbitrary-1.5.0
 arboard-3.7.0
 arc-swap-1.9.3
 array-util-1.0.2
@@ -304,7 +307,6 @@ der-0.7.10
 der-0.8.3
 deranged-0.5.9
 derivative-2.2.0
-derive_arbitrary-1.5.0
 derive_more-2.1.1
 derive_more-impl-2.1.1
 derive_utils-0.16.0
@@ -980,9 +982,11 @@ utf8parse-0.2.2
 utf8-ranges-1.0.5
 utf_types-1.0.0
 utoipa-5.5.0
+utoipa-6.0.0
 utoipa-axum-0.2.0
 utoipa-gen-5.5.0
-utoipa-swagger-ui-9.0.2
+utoipa-gen-6.0.1
+utoipa-swagger-ui-10.0.2
 uuid-1.29.0
 validator-0.19.0
 validator_derive-0.19.0
@@ -1076,7 +1080,6 @@ zeroize_derive-1.5.0
 zerotrie-0.2.5
 zerovec-0.11.9
 zerovec-derive-0.11.7
-zip-3.0.0
 zip-9.1.3
 zip-extract-0.2.3
 zlib-rs-0.6.8
@@ -1089,6 +1092,7 @@ zstd-safe-8.2.0
 zstd-sys-2.1.2+zstd.1.5.7
 zune-core-0.5.3
 zune-jpeg-0.5.15
+
 "
 
 # Cargo must go after distutils-r1
