@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# TODO convert to live ebuild to pick up 973eeac to mitigate partially CVE-2026-45829.
+
 # TODO package (optional):
 # mypy-protobuf
 
@@ -33,8 +35,6 @@ EAPI=8
 # Change parquet to 60.1.0 in Cargo.toml
 # Change kube to 4.2.0 in rust/memberlist/Cargo.toml
 # Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml
-
-
 
 MY_PN="chroma"
 
@@ -1414,7 +1414,8 @@ DOCS=( "README.md" )
 PATCHES=(
 #	"${FILESDIR}/${PN}-1.5.9-use-yaml_serde.patch"
 	"${FILESDIR}/${PN}-1.5.9-pyo3-0.30.1-compat.patch"
-	"${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
+	"A${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
+	"${FILESDIR}/${PN}-1.5.9-chroma_blockstore-recursion-limit.patch"
 )
 
 pkg_setup() {
@@ -1548,6 +1549,22 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+}
+
+pkg_postinst() {
+ewarn
+ewarn "SECURITY NOTICE"
+ewarn
+ewarn "This release, AI claims, is still vulnerable to ChromaToast (CVE-2026-45829, RCE)"
+ewarn
+ewarn "Partial remediation:"
+ewarn
+ewarn "1. Block port 8000 (ChromaDB API port) with external traffic with nftables or firewall."
+ewarn "2. Use the Rust implementation (\`chroma run\`) or Docker image."
+ewarn "3. Authenticate requests"
+ewarn "4. Use reverse proxy before Python FastAPI server"
+ewarn "3. Ask AI for help."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
