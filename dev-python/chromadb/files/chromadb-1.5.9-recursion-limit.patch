@@ -23,3 +23,10 @@ This patch uses AI assistant fixes.
  pub mod blockfile_metadata;
  pub mod blockfile_record;
  pub mod bloom_filter;
+--- a/rust/wal3/src/lib.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/wal3/src/lib.rs	2026-10-31 15:08:40.174374731 -0700
+@@ -1,3 +1,4 @@
++#![recursion_limit = "256"]
+ #![doc = include_str!("../README.md")]
+ 
+ use std::sync::Arc;

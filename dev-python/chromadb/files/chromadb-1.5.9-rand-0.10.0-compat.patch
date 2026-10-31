@@ -428,7 +428,7 @@ This patch uses AI assistant fixes.
 -    distributions::{Alphanumeric, Open01},
 -    thread_rng, Rng,
 +    distr::{Alphanumeric, Open01},
-+    rng, Rng,
++    rng, Rng, RngExt,
  };
  
  pub const TEST_EMBEDDING_DIMENSION: usize = 6;
