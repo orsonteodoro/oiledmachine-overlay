@@ -12,7 +12,7 @@ MY_PV="${1}"
 # - has ambiguous means
 declare -A CARGO_PATHS=(
 	[gcloud-auth]="google-cloud-rust-%commit%/foundation/auth"
-	[gcloud-gax]="google-cloud-rust-%commit%/googleapis/foundation/gax"
+	[gcloud-gax]="google-cloud-rust-%commit%/foundation/gax"
 	[gcloud-googleapis]="google-cloud-rust-%commit%/googleapis"
 	[gcloud-longrunning]="google-cloud-rust-%commit%/foundation/longrunning"
 	[gcloud-metadata]="google-cloud-rust-%commit%/foundation/metadata"

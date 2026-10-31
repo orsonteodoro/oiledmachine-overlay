@@ -54,7 +54,7 @@ declare -A GIT_CRATES=(
 # Remove ?tag=v20260319
 
 [gcloud-auth]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/auth" # 1.3.0
-[gcloud-gax]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/googleapis/foundation/gax" # 1.4.0
+[gcloud-gax]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/gax" # 1.4.0
 [gcloud-googleapis]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/googleapis" # 1.3.0
 [gcloud-longrunning]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/longrunning" # 1.4.0
 [gcloud-metadata]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/metadata" # 1.0.2
