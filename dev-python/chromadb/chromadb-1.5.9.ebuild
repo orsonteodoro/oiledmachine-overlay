@@ -1555,7 +1555,8 @@ pkg_postinst() {
 ewarn
 ewarn "SECURITY NOTICE"
 ewarn
-ewarn "This release, AI claims, is still vulnerable to ChromaToast (CVE-2026-45829, RCE)"
+ewarn "This release, AI claims, is still vulnerable to ChromaToast"
+ewarn "(CVE-2026-45829, GHSA-f4j7-r4q5-qw2c)."
 ewarn
 ewarn "Partial remediation:"
 ewarn
