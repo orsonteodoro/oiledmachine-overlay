@@ -15,26 +15,32 @@ EAPI=8
 #               USE=dev:  protobuf-python == 5
 
 # Security checklist:
-# Change zip to 9.1.3 in Cargo.toml
-# Change utoipa-swagger-ui to 10.0.2 in rust/frontend/Cargo.toml
-# Change aws-config to 1.13.0 in Cargo.toml
-# Change aws-sdk-s3 to 1.157.0 in Cargo.toml
-# Change aws-smithy-types to 1.9.1 in Cargo.toml
-# Change rustls to 0.23.46 in Cargo.toml
-# Change pyo3 to 0.30.1 in Cargo.toml
-# Change reqwest to 0.13.5 in Cargo.toml
-# Change hf-hub to 1.0.0 and removing tokio feature in rust/benchmark/Cargo.toml
-# Change serde_yml to 0.0.13 in Cargo.toml
-# Skip change opentelemetry_sdk to 0.33.1 in Cargo.toml
-# Skip change opentelemetry-http to 0.33.1 in Cargo.toml
-# Skip change opentelemetry-otlp to 0.33.1 in Cargo.toml
-# Skip change opentelemetry to 0.33.1 in Cargo.toml
-# Change rand to 0.10.3 in Cargo.toml
-# Change tantivy to 0.27.0 in Cargo.toml
-# Change ratatui to 0.30.2 in rust/cli/Cargo.toml
-# Change parquet to 60.1.0 in Cargo.toml
-# Change kube to 4.2.0 in rust/memberlist/Cargo.toml
-# Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml
+# Change zip to 9.1.3 in Cargo.toml for mitigation
+# Change utoipa-swagger-ui to 10.0.2 in rust/frontend/Cargo.toml for zip bump
+# Change aws-config to 1.13.0 in Cargo.toml for aws-smithy-json bump
+# Change aws-sdk-s3 to 1.157.0 in Cargo.toml for aws-smithy-json bump
+# Change aws-smithy-types to 1.9.1 in Cargo.toml for aws-smithy-json bump
+# Change rustls to 0.23.46 in Cargo.toml for mitigation
+# Change pyo3 to 0.30.1 in Cargo.toml for mitigation
+# Change reqwest to 0.13.5 in Cargo.toml to bump rustls, hyper-rustls -> rustls, quinn -> quinn-proto
+# Change hf-hub to 1.0.0 and removing tokio feature in rust/benchmark/Cargo.toml to bump reqwest
+# Change serde_yml to 0.0.13 in Cargo.toml for mitigation
+# Skip change opentelemetry_sdk to 0.33.1 in Cargo.toml for mitigation
+# Skip change opentelemetry-http to 0.33.1 in Cargo.toml for opentelemetry_sdk version alignment
+# Skip change opentelemetry-otlp to 0.33.1 in Cargo.toml for opentelemetry_sdk version alignment
+# Skip change opentelemetry to 0.33.1 in Cargo.toml for opentelemetry_sdk version alignment
+# Change rand to 0.10.3 in Cargo.toml for mitigation
+# Change tantivy to 0.27.0 in Cargo.toml to bump lru and serde_yml 
+# Change ratatui to 0.30.2 in rust/cli/Cargo.toml to bump lru
+# Change parquet to 60.1.0 in Cargo.toml to bump thrift
+# Change kube to 4.2.0 in rust/memberlist/Cargo.toml to bump k8s-openapi, rustls 0.21 -> rustlst 0.23
+# Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml to bump serde_json
+
+# "for mitigation" implies the package is being remediated for a CVE/GHSA
+# "to bump" implies a transitive dependency is bumped to remediate a vulnerability
+
+# The AI will tend to recommend upstreamed vulnerable pinned versions, when the
+# goal is to version bump in order to remove vulnerable versions.
 
 MY_PN="chroma"
 
