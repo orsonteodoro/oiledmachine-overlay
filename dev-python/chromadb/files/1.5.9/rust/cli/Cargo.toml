@@ -37,7 +37,7 @@ regex = "1.11.1"
 futures-util = "0.3.31"
 zip-extract = "0.2.1"
 crossterm = { version = "0.29.0", features = ["event-stream"] }
-ratatui = { version = "0.29.0", features = ["crossterm"] }
+ratatui = { version = "0.30.2", features = ["crossterm"] }
 tui-input = { version = "0.12.1", default-features = false, features = ["crossterm"] }
 textwrap = "0.16.2"
 futures = { workspace = true }
