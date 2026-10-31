@@ -1472,6 +1472,7 @@ python_configure() {
 		PROTOBUF_CPP_SLOT="4"
 		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4[@]}"
 	fi
+	export PROTOC="/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 	abseil-cpp_python_configure
 	protobuf_python_configure
 	re2_python_configure
