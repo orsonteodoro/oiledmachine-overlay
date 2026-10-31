@@ -1555,7 +1555,7 @@ pkg_postinst() {
 elog
 elog "SECURITY NOTICE"
 elog
-elog "CVE-2026-45829, GHSA-f4j7-r4q5-qw2c - 10 Critical, ChromaToast, RCE, ZC, EBR, DoS, DT, ID"
+elog "ChromaToast, CVE-2026-45829, GHSA-f4j7-r4q5-qw2c - 10 Critical, RCE, ZC, EBR, DoS, DT, ID"
 elog "CVE-2026-45830 - High, AB, IV, DT, ID"
 elog "CVE-2026-45831 - High, IA, DoS, DT, ID"
 elog "CVE-2026-45833 - Critical, CI, DoS, DT, ID"
