@@ -419,3 +419,34 @@ This patch uses AI assistant fixes.
                          if touched_ids.contains(&id) {
                              continue;
                          }
+--- a/rust/log/src/test.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/log/src/test.rs	2026-10-31 14:07:46.094748392 -0700
+@@ -4,8 +4,8 @@ use async_trait::async_trait;
+ use chroma_segment::test::TestDistributedSegment;
+ use chroma_types::{Chunk, LogRecord, Operation, OperationRecord, UpdateMetadataValue};
+ use rand::{
+-    distributions::{Alphanumeric, Open01},
+-    thread_rng, Rng,
++    distr::{Alphanumeric, Open01},
++    rng, Rng,
+ };
+ 
+ pub const TEST_EMBEDDING_DIMENSION: usize = 6;
+@@ -44,7 +44,7 @@ pub fn int_as_id(value: usize) -> String
+ }
+ 
+ pub fn random_embedding(dim: usize) -> Vec<f32> {
+-    thread_rng().sample_iter(&Open01).take(dim).collect()
++    rng().sample_iter(&Open01).take(dim).collect()
+ }
+ 
+ pub fn modulo_metadata(value: usize) -> HashMap<String, UpdateMetadataValue> {
+@@ -65,7 +65,7 @@ pub fn modulo_metadata(value: usize) ->
+ }
+ 
+ pub fn random_document(len: usize) -> String {
+-    thread_rng()
++    rng()
+         .sample_iter(&Alphanumeric)
+         .map(char::from)
+         .take(len)
