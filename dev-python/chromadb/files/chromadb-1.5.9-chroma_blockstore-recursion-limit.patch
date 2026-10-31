@@ -1,8 +1,0 @@
---- a/rust/blockstore/src/lib.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/blockstore/src/lib.rs	2026-10-31 07:28:13.656682402 -0700
-@@ -1,3 +1,5 @@
-+#![recursion_limit = "256"]
-+
- pub mod types;
- 
- pub mod arrow;

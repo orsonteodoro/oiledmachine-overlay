@@ -1,5 +1,6 @@
+This patch uses AI assistant fixes.
 --- a/rust/storage/src/s3.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/storage/src/s3.rs	2026-10-31 10:02:20.451572794 -0700
++++ b/rust/storage/src/s3.rs	2026-10-31 12:08:58.365055981 -0700
 @@ -1400,7 +1400,7 @@ pub async fn s3_client_for_test_with_buc
  }
  
@@ -62,13 +63,13 @@
              .take(value_size)
              .map(char::from)
 --- a/rust/index/src/spann/utils.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/index/src/spann/utils.rs	2026-10-31 09:59:33.367725450 -0700
++++ b/rust/index/src/spann/utils.rs	2026-10-31 12:11:44.556992836 -0700
 @@ -3,7 +3,7 @@ use std::{cmp::min, collections::HashMap
  use chroma_distance::DistanceFunction;
  use chroma_error::{ChromaError, ErrorCodes};
  use chroma_types::QuantizedCluster;
 -use rand::{seq::IteratorRandom, seq::SliceRandom, thread_rng, Rng};
-+use rand::{seq::IteratorRandom, seq::SliceRandom, rng, Rng, RngExt};
++use rand::{seq::IndexedRandom, seq::IteratorRandom, seq::SliceRandom, rng, Rng, RngExt};
  use simsimd::SpatialSimilarity;
  use thiserror::Error;
  
@@ -100,7 +101,16 @@
      let mut best_c_1 = embeddings[1].2.as_ref();
      let mut best_total_dist = f32::MAX;
 --- a/rust/index/src/spann/fast_writer.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/index/src/spann/fast_writer.rs	2026-10-31 09:59:34.263691572 -0700
++++ b/rust/index/src/spann/fast_writer.rs	2026-10-31 12:13:06.474610242 -0700
+@@ -16,7 +16,7 @@ use chroma_tracing::util::Stopwatch;
+ use chroma_types::{Cmek, CollectionUuid, InternalSpannConfiguration, SpannPostingList};
+ use dashmap::DashMap;
+ use opentelemetry::global;
+-use rand::seq::SliceRandom;
++use rand::seq::{IndexedRandom, SliceRandom};
+ use uuid::Uuid;
+ 
+ use crate::{
 @@ -1308,7 +1308,7 @@ impl FastSpannIndexWriter {
              }
              local_indices.push(index);
@@ -110,11 +120,13 @@
          let last = local_indices.len();
  
          // Run KMeans
-@@ -1791,7 +1791,7 @@ impl FastSpannIndexWriter {
+@@ -1790,8 +1790,8 @@ impl FastSpannIndexWriter {
+             })?;
          }
          // Randomly sample x% of heads for gc.
-         let sampled_heads = non_deleted_heads.choose_multiple(
+-        let sampled_heads = non_deleted_heads.choose_multiple(
 -            &mut rand::thread_rng(),
++        let sampled_heads = non_deleted_heads.choose_multiple( 
 +            &mut rand::rng(),
              (non_deleted_heads.len() as f32 * sample_size).floor() as usize,
          );
@@ -150,15 +162,17 @@
              // Convert to Cartesian coordinates
              let x = r * theta.cos() + 10000.0;
 --- a/rust/index/src/spann/types.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/index/src/spann/types.rs	2026-10-31 09:59:35.127712435 -0700
-@@ -19,6 +19,7 @@ use chroma_tracing::util::Stopwatch;
++++ b/rust/index/src/spann/types.rs	2026-10-31 12:13:04.490653006 -0700
+@@ -19,7 +19,8 @@ use chroma_tracing::util::Stopwatch;
  use chroma_types::{Cmek, CollectionUuid, InternalSpannConfiguration, SpannPostingList};
  use futures::future;
  use opentelemetry::global;
+-use rand::seq::SliceRandom;
 +use rand::RngExt;
- use rand::seq::SliceRandom;
++use rand::seq::{IndexedRandom, SliceRandom};
  use thiserror::Error;
  use tracing::{Instrument, Span};
+ use uuid::Uuid;
 @@ -1267,7 +1268,7 @@ impl SpannIndexWriter {
              // Otherwise split the posting list.
              local_indices.truncate(up_to_date_index);
@@ -168,11 +182,13 @@
              let last = local_indices.len();
              // Convert flat embeddings to Arc<[f32]> format for kmeans.
              let doc_embeddings_arc: Vec<Arc<[f32]>> = (0..doc_offset_ids.len())
-@@ -2133,7 +2134,7 @@ impl SpannIndexWriter {
+@@ -2132,8 +2133,8 @@ impl SpannIndexWriter {
+             })?;
          }
          // Randomly sample x% of heads for gc.
-         let sampled_heads = non_deleted_heads.choose_multiple(
+-        let sampled_heads = non_deleted_heads.choose_multiple(
 -            &mut rand::thread_rng(),
++        let sampled_heads = non_deleted_heads.choose_multiple( 
 +            &mut rand::rng(),
              (non_deleted_heads.len() as f32 * sample_size).floor() as usize,
          );
