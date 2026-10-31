@@ -1552,25 +1552,25 @@ src_install() {
 }
 
 pkg_postinst() {
-ewarn
-ewarn "SECURITY NOTICE"
-ewarn
-ewarn "This release, AI claims, is still vulnerable to ChromaToast"
-ewarn "(CVE-2026-45829, GHSA-f4j7-r4q5-qw2c, 10 Critical, RCE)."
-ewarn
-ewarn "Partial remediation:"
-ewarn
-ewarn "1. Block port 8000 (ChromaDB API port) with external traffic with nftables or firewall."
-ewarn "2. Use the Rust implementation (\`chroma run\`) or Docker image."
-ewarn "3. Authenticate requests between endpoint and server"
-ewarn "4. Use reverse proxy before Python FastAPI server"
-ewarn "5. Audit and patch apps for trust_remote_code=true to"
-ewarn "   trust_remote_code=false and disable untrusted sources."
-ewarn "6. Ask AI for help."
-ewarn
-ewarn "There are multiple input vectors.  Don't assume one fix will completely"
-ewarn "neturalize this vulnerability."
-ewarn
+elog
+elog "SECURITY NOTICE"
+elog
+elog "This release, AI claims, is still vulnerable to ChromaToast"
+elog "(CVE-2026-45829, GHSA-f4j7-r4q5-qw2c, 10 Critical, RCE)."
+elog
+elog "Partial remediation:"
+elog
+elog "1. Block port 8000 (ChromaDB API port) with external traffic with nftables or firewall."
+elog "2. Use the Rust implementation (\`chroma run\`) or Docker image."
+elog "3. Authenticate requests between endpoint and server"
+elog "4. Use reverse proxy before Python FastAPI server"
+elog "5. Audit and patch apps for trust_remote_code=true to"
+elog "   trust_remote_code=false and disable untrusted sources."
+elog "6. Ask AI for help."
+elog
+elog "There are multiple input vectors.  Don't assume one fix will completely"
+elog "neturalize this vulnerability."
+elog
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
