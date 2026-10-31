@@ -1555,6 +1555,8 @@ pkg_postinst() {
 elog
 elog "SECURITY NOTICE"
 elog
+elog "Known unpatched vulnerabilities for this release:"
+elog
 elog "ChromaToast, CVE-2026-45829, GHSA-f4j7-r4q5-qw2c - 10 Critical, RCE, ZC, EBR, DoS, DT, ID"
 elog "CVE-2026-45830 - High, AB, IV, DT, ID"
 elog "CVE-2026-45831 - High, IA, DoS, DT, ID"
@@ -1566,6 +1568,7 @@ elog "DoS - Denial of Service"
 elog "DT - Data Tampering"
 elog "EBR - Extended Blast Radius"
 elog "ID - Information Disclosure"
+elog "IA - Incorrect Authorization"
 elog "IV - Insufficient Validation"
 elog "RCE - Remote Code Execution"
 elog "ZC - Zero Click Vulnerability"
