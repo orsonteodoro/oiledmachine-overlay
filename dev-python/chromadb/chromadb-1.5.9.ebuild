@@ -30,11 +30,12 @@ EAPI=8
 # Skip change opentelemetry-otlp to 0.33.1 in Cargo.toml for opentelemetry_sdk version alignment
 # Skip change opentelemetry to 0.33.1 in Cargo.toml for opentelemetry_sdk version alignment
 # Change rand to 0.10.3 in Cargo.toml for mitigation
-# Change tantivy to 0.27.0 in Cargo.toml to bump lru and serde_yml 
+# Change tantivy to 0.27.0 in Cargo.toml to bump lru and serde_yml
 # Change ratatui to 0.30.2 in rust/cli/Cargo.toml to bump lru
 # Change parquet to 60.1.0 in Cargo.toml to bump thrift
 # Change kube to 4.2.0 in rust/memberlist/Cargo.toml to bump k8s-openapi, rustls 0.21 -> rustls 0.23
 # Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml to bump serde_json
+# Change schemars to 1.2.3 in rust/memberlist/Cargo.toml to version align with kube
 
 # "for mitigation" implies the package is being remediated for a CVE/GHSA
 # "to bump" implies a transitive dependency is bumped to remediate a vulnerability
@@ -872,9 +873,7 @@ ryu-1.0.23
 safe-transmute-0.11.3
 same-file-1.0.6
 schannel-0.1.30
-schemars-0.8.22
 schemars-1.2.3
-schemars_derive-0.8.22
 schemars_derive-1.2.3
 scoped-tls-1.0.1
 scopeguard-1.2.0
@@ -894,7 +893,6 @@ serde_bytes-0.11.19
 serde_core-1.0.229
 serdect-0.4.3
 serde_derive-1.0.229
-serde_derive_internals-0.29.1
 serde_derive_internals-0.30.0
 serde_json-1.0.154
 serde_path_to_error-0.1.20
@@ -1078,7 +1076,7 @@ unicase-2.10.0
 unicode-bidi-0.3.18
 unicode-ident-1.0.27
 unicode-normalization-0.1.26
-unicode-properties-0.1.4
+unicode-properties-0.1.5
 unicode-segmentation-1.13.3
 unicode-truncate-2.0.1
 unicode-width-0.2.3
@@ -1124,7 +1122,7 @@ wasm-bindgen-macro-support-0.2.130
 wasm-bindgen-shared-0.2.130
 wasm-streams-0.4.2
 wasm-streams-0.5.0
-webbrowser-1.2.5
+webbrowser-1.2.6
 webpki-root-certs-1.0.11
 webpki-roots-1.0.11
 web-sys-0.3.107
@@ -1201,7 +1199,7 @@ zeroize_derive-1.5.0
 zerotrie-0.2.5
 zerovec-0.11.9
 zerovec-derive-0.11.7
-zip-9.1.3
+zip-9.2.0
 zip-extract-0.2.3
 zlib-rs-0.6.8
 zmij-1.0.23
