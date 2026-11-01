@@ -1497,7 +1497,7 @@ src_unpack() {
 		"${FILESDIR}/${PV}/" \
 		"${S}/" \
 		|| die
-	die
+#	die
 
 	# When updating Cargo.lock
 	# QA:  Replace from serde_yml to yaml_serde in .rs, Cargo.toml
