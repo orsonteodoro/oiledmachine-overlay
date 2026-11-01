@@ -7,9 +7,10 @@ members = ["rust/benchmark", "rust/blockstore", "rust/cache", "rust/chroma", "ru
 anyhow = "1.0"
 arrow = "60.1.0"
 async-trait = "0.1"
-aws-config = { version = "1.13.0", features = ["behavior-version-latest"] }
-aws-sdk-s3 = "1.157.0"
-aws-smithy-types = "1.9.1"
+aws-config = { version = "1.13.0", default-features = false, features = ["behavior-version-latest", "rt-tokio"] }
+aws-sdk-s3 = { version = "1.157.0", default-features = false, features = ["rt-tokio"] }
+aws-smithy-types = { version = "1.9.1" }
+aws-smithy-http-client = { version = "", default-features = false, features = ["default-client", "rt-tokio", "rustls-aws-lc"] }
 axum = { version = "0.8", features = ["macros"] }
 bytes = "1.10"
 chrono = { version = "0.4", features = ["serde"] }

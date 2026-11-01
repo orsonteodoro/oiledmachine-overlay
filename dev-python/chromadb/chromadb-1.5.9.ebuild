@@ -44,6 +44,7 @@ EAPI=8
 # Change arrow to 60.1 to align with parquet in Cargo.toml.
 # Remove zip-extract in rust/cli/Cargo.toml
 # Add line to rust/cli/Cargo.toml: zip = { version = "9.2.0", default-features = false, features = ["deflate", "bzip2", "time"] }
+# Force modernized http 1.5 for aws-* packages via disabling default/deprecated features and adding modern features.  Remove legacy http 0.2 support in aws-* for remediation of rustls 0.21.x -> rustls-webpki.
 #
 
 # "for mitigation" implies the package is being remediated for a CVE/GHSA
@@ -60,7 +61,7 @@ inherit protobuf
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
-GEN_CARGO_LOCKFILE=0 # 1, 0, unset (same as 0)
+GEN_CARGO_LOCKFILE=1 # 1, 0, unset (same as 0)
 PROTOBUF_GRPC="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5[@]}"
@@ -90,7 +91,6 @@ GOOGLE_CLOUD_RUST_COMMIT="bd8ec9581e00034363befe7d38146084df018876"
 #CHROMADB_RS_COMMIT="bd8ec9581e00034363befe7d38146084df018876"
 declare -A GIT_CRATES=(
 # Remove ?tag=v20260319
-
 [gcloud-auth]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/auth" # 1.3.0
 [gcloud-gax]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/gax" # 1.4.0
 [gcloud-googleapis]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/googleapis" # 1.3.0
@@ -199,15 +199,12 @@ aws-lc-rs-1.19.0
 aws-lc-sys-0.47.0
 aws-runtime-1.10.2
 aws-sdk-s3-1.157.0
-aws-sdk-sso-1.119.0
-aws-sdk-ssooidc-1.121.0
 aws-sdk-sts-1.124.0
 aws-sigv4-1.6.4
 aws-smithy-async-1.3.1
 aws-smithy-checksums-0.65.0
 aws-smithy-eventstream-0.61.6
 aws-smithy-http-0.64.3
-aws-smithy-http-client-1.5.2
 aws-smithy-json-0.65.1
 aws-smithy-observability-0.3.0
 aws-smithy-query-0.64.0
@@ -225,7 +222,6 @@ axum-core-0.5.6
 axum-macros-0.5.1
 backon-1.6.0
 backtrace-0.3.77
-base16ct-1.0.0
 base64-0.22.1
 base64-0.23.1
 base64ct-1.8.3
@@ -305,7 +301,6 @@ core-foundation-0.10.1
 core-foundation-0.9.4
 core-foundation-sys-0.8.7
 countio-0.3.0
-cpubits-0.1.1
 cpufeatures-0.2.17
 cpufeatures-0.3.1
 crc32fast-1.5.3
@@ -323,7 +318,6 @@ crossbeam-utils-0.8.23
 crossterm-0.29.0
 crossterm_winapi-0.9.1
 crunchy-0.2.4
-crypto-bigint-0.7.10
 crypto-common-0.1.7
 crypto-common-0.2.2
 csscolorparser-0.6.2
@@ -357,7 +351,6 @@ defmt-macros-1.2.0
 defmt-parser-1.1.0
 deltae-0.3.2
 der-0.7.10
-der-0.8.3
 deranged-0.5.9
 derivative-2.2.0
 derive_more-2.1.1
@@ -380,10 +373,8 @@ dunce-1.0.5
 dyn-clone-1.0.20
 dyn-stack-0.13.2
 dyn-stack-macros-0.1.3
-ecdsa-0.17.0
 educe-0.6.0
 either-1.19.0
-elliptic-curve-0.14.3
 encode_unicode-1.0.0
 encoding_rs-0.8.44
 encoding_rs_io-0.1.8
@@ -417,7 +408,6 @@ fastrace-opentelemetry-0.8.1
 fastrand-2.5.0
 fax-0.2.7
 fdeflate-0.3.7
-ff-0.14.0
 figment-0.10.19
 filedescriptor-0.8.3
 find-msvc-tools-0.1.15
@@ -473,9 +463,7 @@ glob-0.3.4
 globset-0.4.21
 gloo-timers-0.3.0
 granit-parser-0.0.7
-group-0.14.0
 guacamole-0.11.0
-h2-0.3.27
 h2-0.4.20
 half-2.7.1
 hashbrown-0.12.3
@@ -500,19 +488,15 @@ hmac-0.13.0
 home-0.5.12
 hostname-0.4.2
 htmlescape-0.3.1
-http-0.2.12
 http-1.5.0
 httparse-1.10.1
-http-body-0.4.6
 http-body-1.1.0
 http-body-util-0.1.5
 httpdate-1.0.3
 httpmock-0.8.3
 humantime-2.4.0
 hybrid-array-0.4.15
-hyper-0.14.32
 hyper-1.12.0
-hyper-rustls-0.24.2
 hyper-rustls-0.27.10
 hyper-timeout-0.5.2
 hyper-util-0.1.21
@@ -708,7 +692,6 @@ os_str_bytes-6.6.1
 outref-0.5.2
 ownedbytes-0.9.0
 owo-colors-3.5.0
-p256-0.14.0
 palette-0.7.7
 palette_derive-0.7.7
 palette_math-0.7.7
@@ -725,7 +708,6 @@ pear-0.2.9
 pear_codegen-0.2.9
 pem-3.0.6
 pem-rfc7468-0.7.0
-pem-rfc7468-1.0.0
 percent-encoding-2.3.2
 pest-2.9.5
 pest_derive-2.9.5
@@ -743,7 +725,6 @@ pin-project-internal-1.1.13
 pin-project-lite-0.2.17
 pkcs1-0.7.5
 pkcs8-0.10.2
-pkcs8-0.11.0
 pkg-config-0.3.34
 plain-0.2.3
 plotters-0.3.7
@@ -759,8 +740,6 @@ pprof_util-0.7.0
 ppv-lite86-0.2.21
 prettyplease-0.2.37
 prettyplease-0.3.0
-primefield-0.14.0
-primeorder-0.14.0
 private-gemm-x86-0.1.22
 proc-macro2-0.4.30
 proc-macro2-1.0.107
@@ -843,7 +822,6 @@ regex-syntax-0.8.11
 reqwest-0.12.28
 reqwest-0.13.5
 reqwest-middleware-0.5.2
-rfc6979-0.6.0
 rgb-0.8.53
 ring-0.17.14
 roaring-0.10.12
@@ -856,14 +834,12 @@ rust-embed-8.13.0
 rust-embed-impl-8.13.0
 rust-embed-utils-8.13.0
 rustix-1.1.6
-rustls-0.21.12
 rustls-0.23.46
 rustls-native-certs-0.8.5
 rustls-pemfile-2.2.0
 rustls-pki-types-1.15.1
 rustls-platform-verifier-0.7.1
 rustls-platform-verifier-android-0.2.0
-rustls-webpki-0.101.7
 rustls-webpki-0.103.16
 rust-stemmers-1.2.0
 rustversion-1.0.23
@@ -877,11 +853,9 @@ schemars_derive-1.2.3
 scoped-tls-1.0.1
 scopeguard-1.2.0
 scratch-1.0.9
-sct-0.7.1
 sea-query-0.32.7
 sea-query-binder-0.7.0
 sea-query-derive-0.4.3
-sec1-0.8.1
 secrecy-0.10.3
 security-framework-3.7.0
 security-framework-sys-2.17.0
@@ -890,7 +864,6 @@ seq-macro-0.3.6
 serde-1.0.229
 serde_bytes-0.11.19
 serde_core-1.0.229
-serdect-0.4.3
 serde_derive-1.0.229
 serde_derive_internals-0.30.0
 serde_json-1.0.154
@@ -924,7 +897,6 @@ signal-hook-0.3.18
 signal-hook-mio-0.2.5
 signal-hook-registry-1.4.8
 signature-2.2.0
-signature-3.0.0
 simd-adler32-0.3.10
 simd_cesu8-1.2.0
 simdutf8-0.1.5
@@ -943,7 +915,6 @@ socket2-0.6.5
 spin-0.10.1
 spin-0.9.9
 spki-0.7.3
-spki-0.8.1
 sprs-0.11.6
 sqlx-0.8.6
 sqlx-core-0.8.6
@@ -1021,7 +992,6 @@ tokio-1.54.1
 tokio-macros-2.7.2
 tokio-retry-0.3.2
 tokio-retry2-0.6.2
-tokio-rustls-0.24.1
 tokio-rustls-0.26.6
 tokio-stream-0.1.19
 tokio-test-0.4.6
@@ -1173,7 +1143,6 @@ windows_x86_64_msvc-0.52.6
 winnow-0.7.15
 winnow-1.0.4
 wit-bindgen-0.57.1
-wnaf-0.14.1
 worker-0.1.0
 writeable-0.6.4
 wyz-0.5.1
@@ -1196,13 +1165,13 @@ zeroize_derive-1.5.0
 zerotrie-0.2.5
 zerovec-0.11.9
 zerovec-derive-0.11.7
-zip-9.2.0
+zip-9.2.1
 zlib-rs-0.6.8
 zmij-1.0.23
 zopfli-0.8.4
-zstd-0.13.3
+zstd-0.13.4
 zstd-0.14.3
-zstd-safe-7.3.0
+zstd-safe-7.4.0
 zstd-safe-8.2.0
 zstd-sys-2.1.2+zstd.1.5.7
 zune-core-0.5.3
@@ -1471,6 +1440,7 @@ einfo "Generating Cargo.lock"
 		-e "s|@RUST_RUSTLS_PV@|${RUST_RUSTLS_PV}|g" \
 		-e "s|@RUST_SCHEMARS_PV@|${RUST_SCHEMARS_PV}|g" \
 		-e "s|@RUST_SERDE_YML_PV@|${RUST_SERDE_YML_PV}|g" \
+		-e "s|@RUST_SMITHY_HTTP_CLIENT_PV@|${RUST_SMITHY_HTTP_CLIENT_PV}|g" \
 		-e "s|@RUST_TANTIVY_PV@|${RUST_TANTIVY_PV}|g" \
 		-e "s|@RUST_UTOIPA_PV@|${RUST_UTOIPA_PV}|g" \
 		-e "s|@RUST_UTOIPA_AXUM_PV@|${RUST_UTOIPA_AXUM_PV}|g" \

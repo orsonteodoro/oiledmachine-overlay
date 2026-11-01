@@ -1,7 +1,8 @@
+This patch is partly AI generated.
 diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
 --- chroma-1.5.9.orig/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/Cargo.toml	2026-11-01 00:13:55.241133326 -0700
-@@ -5,11 +5,11 @@ members = ["rust/benchmark", "rust/block
++++ chroma-1.5.9/Cargo.toml	2026-11-01 09:31:47.074980970 -0800
+@@ -5,11 +5,12 @@ members = ["rust/benchmark", "rust/block
  
  [workspace.dependencies]
  anyhow = "1.0"
@@ -11,13 +12,14 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
 -aws-config = { version = "1.5", features = ["behavior-version-latest"] }
 -aws-sdk-s3 = "1.63"
 -aws-smithy-types = "1.2"
-+aws-config = { version = "@RUST_AWS_CONFIG_PV@", features = ["behavior-version-latest"] }
-+aws-sdk-s3 = "@RUST_AWS_SDK_S3_PV@"
-+aws-smithy-types = "@RUST_AWS_SMITHY_TYPES_PV@"
++aws-config = { version = "@RUST_AWS_CONFIG_PV@", default-features = false, features = ["behavior-version-latest", "rt-tokio"] }
++aws-sdk-s3 = { version = "@RUST_AWS_SDK_S3_PV@", default-features = false, features = ["rt-tokio"] }
++aws-smithy-types = { version = "@RUST_AWS_SMITHY_TYPES_PV@" }
++aws-smithy-http-client = { version = "@RUST_SMITHY_HTTP_CLIENT_PV@", default-features = false, features = ["default-client", "rt-tokio", "rustls-aws-lc"] }
  axum = { version = "0.8", features = ["macros"] }
  bytes = "1.10"
  chrono = { version = "0.4", features = ["serde"] }
-@@ -32,7 +32,7 @@ opentelemetry-otlp = { version = "0.27",
+@@ -32,7 +33,7 @@ opentelemetry-otlp = { version = "0.27",
  opentelemetry-http = { version = "0.27", features = ["reqwest-rustls"] }
  opentelemetry_sdk = { version = "0.27", features = ["rt-tokio"] }
  parking_lot = { version = "0.12.3", features = ["serde"] }
@@ -26,7 +28,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  pin-project = "1.1.10"
  prost = "0.14"
  prost-types = "0.14"
-@@ -43,11 +43,11 @@ sea-query = "0.32"
+@@ -43,11 +44,11 @@ sea-query = "0.32"
  sea-query-binder = "0.7"
  serde = { version = "1.0.215", features = ["derive", "rc"] }
  serde_json = "1.0.133"
@@ -40,7 +42,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  thiserror = "1.0.69"
  tokio = { version = "1.41", features = ["fs", "macros", "rt-multi-thread", "time", "io-util", "signal"] }
  tokio-util = "0.7.12"
-@@ -61,11 +61,11 @@ tracing-bunyan-formatter = "0.3"
+@@ -61,11 +62,11 @@ tracing-bunyan-formatter = "0.3"
  tracing-opentelemetry = "0.28.0"
  tracing-subscriber = { version = "0.3", features = ["env-filter"] }
  uuid = { version = "1.11.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
@@ -54,7 +56,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  http = "1.1.0"
  tower-http = { version = "0.6.8", features = ["trace", "cors"] }
  bytemuck = { version = "1.21.0", features = ["derive"] }
-@@ -76,9 +76,9 @@ rust-embed = { version = "8.5.0", featur
+@@ -76,9 +77,9 @@ rust-embed = { version = "8.5.0", featur
  hnswlib = { version = "0.8.2", git = "https://github.com/chroma-core/hnswlib.git", branch = "master" }
  usearch = "=2.23"
  faer = { version = "0.24.0", default-features = false, features = ["std", "rand"] }
@@ -66,7 +68,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  ndarray = { version = "0.16.1", features = ["approx"] }
  humantime = { version = "2.2.0" }
  petgraph = { version = "0.8.1" }
-@@ -128,13 +128,13 @@ indicatif = { version = "0.17.9", featur
+@@ -128,13 +129,13 @@ indicatif = { version = "0.17.9", featur
  proptest = "1.6.0"
  proptest-state-machine = "0.3.1"
  proptest-derive = "0.5.1"
@@ -84,7 +86,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  # Significantly reduces compile times
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/api-types/Cargo.toml chroma-1.5.9/rust/api-types/Cargo.toml
 --- chroma-1.5.9.orig/rust/api-types/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/api-types/Cargo.toml	2026-11-01 00:14:39.607796567 -0700
++++ chroma-1.5.9/rust/api-types/Cargo.toml	2026-11-01 09:25:28.770872976 -0800
 @@ -8,7 +8,7 @@ repository = "https://github.com/chroma-
  
  [dependencies]
@@ -96,7 +98,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/api-types/Cargo.toml chroma-1.5.
  utoipa = ["dep:utoipa"]
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/benchmark/Cargo.toml chroma-1.5.9/rust/benchmark/Cargo.toml
 --- chroma-1.5.9.orig/rust/benchmark/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/benchmark/Cargo.toml	2026-11-01 00:13:21.244013975 -0700
++++ chroma-1.5.9/rust/benchmark/Cargo.toml	2026-11-01 09:25:28.770994784 -0800
 @@ -27,5 +27,5 @@ reqwest = { workspace = true, features =
  tokio-stream = { version = "0.1.16", features = ["full"] }
  tokio-util = "0.7.12"
@@ -106,7 +108,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/benchmark/Cargo.toml chroma-1.5.
  sprs = { workspace = true }
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/chroma/Cargo.toml chroma-1.5.9/rust/chroma/Cargo.toml
 --- chroma-1.5.9.orig/rust/chroma/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/chroma/Cargo.toml	2026-11-01 00:13:21.244129722 -0700
++++ chroma-1.5.9/rust/chroma/Cargo.toml	2026-11-01 09:25:28.771115998 -0800
 @@ -13,7 +13,7 @@ failsafe = { version = "1.3.0", features
  murmur3.workspace = true
  opentelemetry = { version = ">=0.27,<0.32", optional = true }
@@ -118,7 +120,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/chroma/Cargo.toml chroma-1.5.9/r
  serde_json.workspace = true
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/cli/Cargo.toml chroma-1.5.9/rust/cli/Cargo.toml
 --- chroma-1.5.9.orig/rust/cli/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/cli/Cargo.toml	2026-11-01 00:13:21.244248400 -0700
++++ chroma-1.5.9/rust/cli/Cargo.toml	2026-11-01 09:25:28.771232275 -0800
 @@ -35,14 +35,13 @@ strum_macros = "0.27.1"
  semver = "1.0.26"
  regex = "1.11.1"
@@ -138,7 +140,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/cli/Cargo.toml chroma-1.5.9/rust
  httpmock = "0.8.2"
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/frontend/Cargo.toml chroma-1.5.9/rust/frontend/Cargo.toml
 --- chroma-1.5.9.orig/rust/frontend/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/frontend/Cargo.toml	2026-11-01 00:14:49.847441868 -0700
++++ chroma-1.5.9/rust/frontend/Cargo.toml	2026-11-01 09:25:28.771346120 -0800
 @@ -47,8 +47,8 @@ chroma-tracing = { workspace = true, fea
  chroma-types = { workspace = true, features = ["utoipa"] }
  chroma-sqlite = { workspace = true }
@@ -152,7 +154,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/frontend/Cargo.toml chroma-1.5.9
  
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/memberlist/Cargo.toml chroma-1.5.9/rust/memberlist/Cargo.toml
 --- chroma-1.5.9.orig/rust/memberlist/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/memberlist/Cargo.toml	2026-11-01 00:13:21.244483295 -0700
++++ chroma-1.5.9/rust/memberlist/Cargo.toml	2026-11-01 09:25:28.771462980 -0800
 @@ -4,9 +4,9 @@ version = "0.1.0"
  edition = "2021"
  
