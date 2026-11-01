@@ -83,6 +83,7 @@ GOOGLE_CLOUD_RUST_COMMIT="bd8ec9581e00034363befe7d38146084df018876"
 #CHROMADB_RS_COMMIT="bd8ec9581e00034363befe7d38146084df018876"
 declare -A GIT_CRATES=(
 # Remove ?tag=v20260319
+
 [gcloud-auth]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/auth" # 1.3.0
 [gcloud-gax]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/foundation/gax" # 1.4.0
 [gcloud-googleapis]="https://github.com/yoshidan/google-cloud-rust;bd8ec9581e00034363befe7d38146084df018876;google-cloud-rust-%commit%/googleapis" # 1.3.0
@@ -557,7 +558,6 @@ jsonptr-0.7.1
 jsonwebtoken-10.4.0
 js-sys-0.3.107
 k8s-openapi-0.28.0
-k8s-openapi-0.29.0
 kasuari-0.4.13
 keccak-0.1.6
 konst-0.4.3
