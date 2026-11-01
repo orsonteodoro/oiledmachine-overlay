@@ -1647,7 +1647,7 @@ name = "chroma-api-types"
 version = "0.14.0"
 dependencies = [
  "serde",
- "utoipa 6.0.0",
+ "utoipa",
 ]
 
 [[package]]
@@ -1877,7 +1877,7 @@ dependencies = [
  "tower-http",
  "tracing",
  "tracing-opentelemetry",
- "utoipa 5.5.0",
+ "utoipa",
  "utoipa-axum",
  "utoipa-swagger-ui",
  "uuid",
@@ -2273,7 +2273,7 @@ dependencies = [
  "tonic 0.14.9",
  "tonic-prost",
  "tonic-prost-build",
- "utoipa 5.5.0",
+ "utoipa",
  "uuid",
  "validator",
 ]
@@ -11431,18 +11431,6 @@ checksum = "3a3b425286980a367278453f3b6d28cdcb134b574e5a35824a6ff5eebad50bb6"
 
 [[package]]
 name = "utoipa"
-version = "5.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8bde15df68e80b16c7d16b9616e80770ad158988daa56a27dccd1e55558b0160"
-dependencies = [
- "indexmap 2.14.2",
- "serde",
- "serde_json",
- "utoipa-gen 5.5.0",
-]
-
-[[package]]
-name = "utoipa"
 version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8765fe27aeff71012a3f90fa474cf1df863a7d0dd81ed25de4e63fff2544994f"
@@ -11450,7 +11438,7 @@ dependencies = [
  "indexmap 2.14.2",
  "serde",
  "serde_json",
- "utoipa-gen 6.0.1",
+ "utoipa-gen",
 ]
 
 [[package]]
@@ -11463,20 +11451,7 @@ dependencies = [
  "pastey",
  "tower-layer",
  "tower-service",
- "utoipa 6.0.0",
-]
-
-[[package]]
-name = "utoipa-gen"
-version = "5.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ba0b99ee52df3028635d93840c797102da61f8a7bb3cf751032455895b52ef8"
-dependencies = [
- "proc-macro2 1.0.107",
- "quote 1.0.47",
- "regex",
- "syn 2.0.119",
- "uuid",
+ "utoipa",
 ]
 
 [[package]]
@@ -11505,7 +11480,7 @@ dependencies = [
  "serde",
  "serde_json",
  "url",
- "utoipa 6.0.0",
+ "utoipa",
  "zip",
 ]
 

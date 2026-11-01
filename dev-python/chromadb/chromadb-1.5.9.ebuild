@@ -1084,10 +1084,8 @@ utf8_iter-1.1.0
 utf8parse-0.2.2
 utf8-ranges-1.0.5
 utf_types-1.0.0
-utoipa-5.5.0
 utoipa-6.0.0
 utoipa-axum-0.3.0
-utoipa-gen-5.5.0
 utoipa-gen-6.0.1
 utoipa-swagger-ui-10.0.2
 uuid-1.29.0
@@ -1466,9 +1464,9 @@ einfo "Generating Cargo.lock"
 		-e "s|@RUST_SCHEMARS_PV@|${RUST_SCHEMARS_PV}|g" \
 		-e "s|@RUST_SERDE_YML_PV@|${RUST_SERDE_YML_PV}|g" \
 		-e "s|@RUST_TANTIVY_PV@|${RUST_TANTIVY_PV}|g" \
-		-e "s|@RUST_UTOIPIA_PV@|${RUST_UTOIPIA_PV}|g" \
-		-e "s|@RUST_UTOIPIA_AXUM_PV@|${RUST_UTOIPIA_AXUM_PV}|g" \
-		-e "s|@RUST_UTOIPIA_SWAGGER_UI_PV@|${RUST_UTOIPIA_SWAGGER_UI_PV}|g" \
+		-e "s|@RUST_UTOIPA_PV@|${RUST_UTOIPA_PV}|g" \
+		-e "s|@RUST_UTOIPA_AXUM_PV@|${RUST_UTOIPA_AXUM_PV}|g" \
+		-e "s|@RUST_UTOIPA_SWAGGER_UI_PV@|${RUST_UTOIPA_SWAGGER_UI_PV}|g" \
 		-e "s|@RUST_ZIP_PV@|${RUST_ZIP_PV}|g" \
 		"${S}/Cargo.toml" \
 		"${S}/rust/api-types/Cargo.toml" \

@@ -1,6 +1,6 @@
 diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
 --- chroma-1.5.9.orig/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/Cargo.toml	2026-10-31 22:46:23.004015435 -0700
++++ chroma-1.5.9/Cargo.toml	2026-11-01 00:13:55.241133326 -0700
 @@ -5,11 +5,11 @@ members = ["rust/benchmark", "rust/block
  
  [workspace.dependencies]
@@ -40,7 +40,12 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  thiserror = "1.0.69"
  tokio = { version = "1.41", features = ["fs", "macros", "rt-multi-thread", "time", "io-util", "signal"] }
  tokio-util = "0.7.12"
-@@ -65,7 +65,7 @@ utoipa = { version = "5", features = ["m
+@@ -61,11 +61,11 @@ tracing-bunyan-formatter = "0.3"
+ tracing-opentelemetry = "0.28.0"
+ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ uuid = { version = "1.11.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
+-utoipa = { version = "5", features = ["macros", "axum_extras", "debug", "uuid"] }
++utoipa = { version = "@RUST_UTOIPA_PV@", features = ["macros", "axum_extras", "debug", "uuid"] }
  sqlx = { version = "0.8.3", features = ["runtime-tokio", "sqlite", "postgres", "chrono"] }
  sha2 = "0.10.8"
  md5 = "0.7.0"
@@ -79,19 +84,19 @@ diff '--color=auto' -urp chroma-1.5.9.orig/Cargo.toml chroma-1.5.9/Cargo.toml
  # Significantly reduces compile times
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/api-types/Cargo.toml chroma-1.5.9/rust/api-types/Cargo.toml
 --- chroma-1.5.9.orig/rust/api-types/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/api-types/Cargo.toml	2026-10-31 22:46:23.004214148 -0700
++++ chroma-1.5.9/rust/api-types/Cargo.toml	2026-11-01 00:14:39.607796567 -0700
 @@ -8,7 +8,7 @@ repository = "https://github.com/chroma-
  
  [dependencies]
  serde.workspace = true
 -utoipa = { version = "5.0.0", features = ["macros", "axum_extras", "debug", "uuid"], optional = true }
-+utoipa = { version = "@RUST_UTOIPIA_PV@", features = ["macros", "axum_extras", "debug", "uuid"], optional = true }
++utoipa = { version = "@RUST_UTOIPA_PV@", features = ["macros", "axum_extras", "debug", "uuid"], optional = true }
  
  [features]
  utoipa = ["dep:utoipa"]
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/benchmark/Cargo.toml chroma-1.5.9/rust/benchmark/Cargo.toml
 --- chroma-1.5.9.orig/rust/benchmark/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/benchmark/Cargo.toml	2026-10-31 22:46:23.004332453 -0700
++++ chroma-1.5.9/rust/benchmark/Cargo.toml	2026-11-01 00:13:21.244013975 -0700
 @@ -27,5 +27,5 @@ reqwest = { workspace = true, features =
  tokio-stream = { version = "0.1.16", features = ["full"] }
  tokio-util = "0.7.12"
@@ -101,7 +106,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/benchmark/Cargo.toml chroma-1.5.
  sprs = { workspace = true }
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/chroma/Cargo.toml chroma-1.5.9/rust/chroma/Cargo.toml
 --- chroma-1.5.9.orig/rust/chroma/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/chroma/Cargo.toml	2026-10-31 22:47:59.458285614 -0700
++++ chroma-1.5.9/rust/chroma/Cargo.toml	2026-11-01 00:13:21.244129722 -0700
 @@ -13,7 +13,7 @@ failsafe = { version = "1.3.0", features
  murmur3.workspace = true
  opentelemetry = { version = ">=0.27,<0.32", optional = true }
@@ -113,7 +118,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/chroma/Cargo.toml chroma-1.5.9/r
  serde_json.workspace = true
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/cli/Cargo.toml chroma-1.5.9/rust/cli/Cargo.toml
 --- chroma-1.5.9.orig/rust/cli/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/cli/Cargo.toml	2026-10-31 22:46:23.004448190 -0700
++++ chroma-1.5.9/rust/cli/Cargo.toml	2026-11-01 00:13:21.244248400 -0700
 @@ -35,14 +35,13 @@ strum_macros = "0.27.1"
  semver = "1.0.26"
  regex = "1.11.1"
@@ -133,21 +138,21 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/cli/Cargo.toml chroma-1.5.9/rust
  httpmock = "0.8.2"
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/frontend/Cargo.toml chroma-1.5.9/rust/frontend/Cargo.toml
 --- chroma-1.5.9.orig/rust/frontend/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/frontend/Cargo.toml	2026-10-31 22:46:23.004567035 -0700
++++ chroma-1.5.9/rust/frontend/Cargo.toml	2026-11-01 00:14:49.847441868 -0700
 @@ -47,8 +47,8 @@ chroma-tracing = { workspace = true, fea
  chroma-types = { workspace = true, features = ["utoipa"] }
  chroma-sqlite = { workspace = true }
  utoipa = { workspace = true }
 -utoipa-axum = { version = "0.2.0", features = ["debug"] }
 -utoipa-swagger-ui = { version = "9", features = ["axum"] }
-+utoipa-axum = { version = "@RUST_UTOIPIA_AXUM_PV@", features = ["debug"] }
-+utoipa-swagger-ui = { version = "@RUST_UTOIPIA_SWAGGER_UI_PV@", features = ["axum"] }
++utoipa-axum = { version = "@RUST_UTOIPA_AXUM_PV@", features = ["debug"] }
++utoipa-swagger-ui = { version = "@RUST_UTOIPA_SWAGGER_UI_PV@", features = ["axum"] }
  strum = "0.27.1"
  strum_macros = "0.27.1"
  
 diff '--color=auto' -urp chroma-1.5.9.orig/rust/memberlist/Cargo.toml chroma-1.5.9/rust/memberlist/Cargo.toml
 --- chroma-1.5.9.orig/rust/memberlist/Cargo.toml	2026-05-04 16:34:47.000000000 -0700
-+++ chroma-1.5.9/rust/memberlist/Cargo.toml	2026-10-31 22:46:23.004687214 -0700
++++ chroma-1.5.9/rust/memberlist/Cargo.toml	2026-11-01 00:13:21.244483295 -0700
 @@ -4,9 +4,9 @@ version = "0.1.0"
  edition = "2021"
  
