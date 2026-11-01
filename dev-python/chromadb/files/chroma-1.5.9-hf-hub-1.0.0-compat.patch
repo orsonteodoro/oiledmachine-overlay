@@ -1,0 +1,23 @@
+# This contains AI suggested fixes.
+--- a/rust/benchmark/src/datasets/rust.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/benchmark/src/datasets/rust.rs	2026-11-01 11:42:25.345041529 -0800
+@@ -3,7 +3,7 @@ use std::path::PathBuf;
+ use anyhow::{Context, Result};
+ use arrow::array::AsArray;
+ use futures::{stream, StreamExt, TryStreamExt};
+-use hf_hub::api::tokio::Api;
++use hf_hub::tokio::Api;
+ use parquet::arrow::ParquetRecordBatchStreamBuilder;
+ use tokio::fs::File;
+ 
+--- a/rust/benchmark/src/datasets/wikipedia_splade.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/benchmark/src/datasets/wikipedia_splade.rs	2026-11-01 11:42:58.784035828 -0800
+@@ -7,7 +7,7 @@ use arrow::{
+     record_batch::RecordBatch,
+ };
+ use futures::{stream, Stream, StreamExt, TryStreamExt};
+-use hf_hub::api::tokio::Api;
++use hf_hub::tokio::Api;
+ use parquet::arrow::ParquetRecordBatchStreamBuilder;
+ use sprs::CsVec;
+ use tokio::fs::File;

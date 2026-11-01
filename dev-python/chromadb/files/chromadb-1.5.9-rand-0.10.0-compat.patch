@@ -479,3 +479,21 @@ This patch uses AI assistant fixes.
          tracing::error!(
              "Failed to create weighted index for client selection: {}",
              e
+--- a/rust/benchmark/src/datasets/types.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/benchmark/src/datasets/types.rs	2026-11-01 11:46:54.281050897 -0800
+@@ -1,5 +1,5 @@
+ use anyhow::Result;
+-use rand::prelude::SliceRandom;
++use rand::{rng, Rng};
+ use serde::{Deserialize, Serialize};
+ use std::{collections::HashMap, future::Future, path::PathBuf, sync::Arc};
+ use tantivy::{
+@@ -137,7 +137,7 @@ where
+                         .collect::<Result<Vec<String>>>()
+                         .await?;
+ 
+-                    shuffled_queries.shuffle(&mut rand::thread_rng());
++                    shuffled_queries.shuffle(&mut rand::rng());
+ 
+                     let reader = corpus_index
+                         .reader_builder()

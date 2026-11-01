@@ -1387,6 +1387,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.5.9-recursion-limit.patch"
 	"${FILESDIR}/${PN}-1.5.9-arrow-data-60.1.0-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-zip-9.2.0-compat.patch"
+	"${FILESDIR}/${PN}-1.5.9-hf-hub-1.0.0-compat.patch"
 )
 
 pkg_setup() {
