@@ -1441,7 +1441,7 @@ einfo "Generating tag done"
 }
 
 gen_lockfile() {
-	[[ "${GEN_CARGO_LOCKFILE}" == "1" ]] || die
+	[[ "${GEN_CARGO_LOCKFILE}" == "1" ]] || return
 	cd "${S}" || die
 	rm "${S}/Cargo.lock"
 einfo "Generating Cargo.lock"
