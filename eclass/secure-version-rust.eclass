@@ -17,6 +17,10 @@ esac
 if [[ -z "${_SECURE_VERSION_RUST_ECLASS}" ]] ; then
 _SECURE_VERSION_RUST_ECLASS=1
 
+# This timestamp was generated from `date +%s`.
+# This is a quick and simplified check to see if the secure lockfile versions are up to date in O(1) time.
+SECURE_VERSION_RUST_ECLASS_UPDATE=1793545930
+
 # You must prefix your entry with RUST_
 # Packages that have vulnerabilities fixes should be listed as latest version.
 # Packages that impede remediation should be listed as latest version.
@@ -70,5 +74,18 @@ RUST_UTOIPA_AXUM_PV=${RUST_UTOIPA_AXUM_PV:-"0.3.0"}
 RUST_UTOIPA_SWAGGER_UI_PV=${RUST_UTOIPA_SWAGGER_UI_PV:-"10.0.2"}
 RUST_XXHASH_RUST_PV=${RUST_XXHASH_RUST_PV:-"0.8.19"}
 RUST_ZIP_PV=${RUST_ZIP_PV:-"9.2.0"}
+
+# QA check
+secure-version-rust_check_update() {
+	if [[ -z "${SECURE_VERSION_RUST_EBUILD_UPDATE}" ]] ; then
+ewarn "QA:  Missing SECURE_VERSION_RUST_EBUILD_UPDATE for lockfile verification"
+	else
+		if (( ${SECURE_VERSION_RUST_ECLASS_UPDATE} > ${SECURE_VERSION_RUST_EBUILD_UPDATE} )) ; then
+ewarn "QA:  Old lockfile detected.  Update the lockfile to avoid unpack/compile time issues."
+ewarn "secure-version-rust eclass timestamp:  "$(date --date=@${SECURE_VERSION_RUST_ECLASS_UPDATE})
+ewarn "secure-version-rust ebuild timestamp:  "$(date --date=@${SECURE_VERSION_RUST_EBUILD_UPDATE})
+		fi
+	fi
+}
 
 fi

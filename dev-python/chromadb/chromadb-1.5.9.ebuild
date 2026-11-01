@@ -66,6 +66,7 @@ OPENTELEMETRY_SLOT_REL="0/${OPENTELEMETRY_PV_REL}"
 RE2_SLOT="20250512"
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1"
+SECURE_VERSION_RUST_EBUILD_UPDATE=1793545930
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
@@ -1414,6 +1415,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	secure-version-rust_check_update
 	python-single-r1_pkg_setup
 	rust_pkg_setup
 
