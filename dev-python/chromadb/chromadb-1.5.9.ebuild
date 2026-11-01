@@ -15,7 +15,7 @@ EAPI=8
 #               USE=dev:  protobuf-python == 5
 
 # Security checklist:
-# Change zip to 9.1.3 in Cargo.toml for mitigation
+# Change zip to 9.1.3 in Cargo.toml for mitigation and remove zip-extract from features
 # Change utoipa-swagger-ui to 10.0.2 in rust/frontend/Cargo.toml for zip bump
 # Change utoipa to 6.0.0 to version align with utoipa-swagger-ui in rust/api-types/Cargo.toml and Cargo.toml
 # Change utoipa-axum to 0.3.0 to version align with utoipa-swagger-ui in rust/frontend/Cargo.toml
@@ -24,7 +24,7 @@ EAPI=8
 # Change aws-smithy-types to 1.9.1 in Cargo.toml for aws-smithy-json bump
 # Change rustls to 0.23.46 in Cargo.toml for mitigation
 # Change pyo3 to 0.30.1 in Cargo.toml for mitigation
-# Change reqwest to 0.13.5 in Cargo.toml to bump rustls, hyper-rustls -> rustls, quinn -> quinn-proto
+# Change reqwest to 0.13.5 in Cargo.toml and rust/chroma/Cargo.toml to bump rustls, hyper-rustls -> rustls, quinn -> quinn-proto
 # Change hf-hub to 1.0.0 and removing tokio feature in rust/benchmark/Cargo.toml to bump reqwest
 # Change serde_yml to 0.0.13 in Cargo.toml for mitigation
 # Skip change opentelemetry_sdk to 0.33.1 in Cargo.toml for mitigation
@@ -38,7 +38,7 @@ EAPI=8
 # Change kube to 4.2.0 in rust/memberlist/Cargo.toml to bump k8s-openapi, rustls 0.21 -> rustls 0.23
 # Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml to bump serde_json
 # Change schemars to 1.2.3 in rust/memberlist/Cargo.toml to version align with kube
-# Change arrow to 60.1 to align with parquet.
+# Change arrow to 60.1 to align with parquet in .
 
 # "for mitigation" implies the package is being remediated for a CVE/GHSA
 # "to bump" implies a transitive dependency is bumped to remediate a vulnerability
@@ -54,6 +54,7 @@ inherit protobuf
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
+GEN_CARGO_LOCKFILE=0 # 1, 0, unset (same as 0)
 PROTOBUF_GRPC="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5[@]}"
@@ -129,7 +130,6 @@ chroma-faults-0.1.0
 CRATES="
 addr2line-0.27.1
 adler2-2.0.1
-aes-0.9.3
 ahash-0.8.12
 aho-corasick-1.1.5
 alga-0.9.3
@@ -266,7 +266,6 @@ chrono-0.4.45
 ciborium-0.2.2
 ciborium-io-0.2.2
 ciborium-ll-0.2.2
-cipher-0.5.2
 clap-4.6.7
 clap_builder-4.6.7
 clap_derive-4.6.7
@@ -285,7 +284,6 @@ compression-core-0.4.34
 concurrent-queue-2.5.0
 console-0.15.11
 constant_time_eq-0.4.2
-constant_time_eq-0.6.1
 const-oid-0.10.2
 const-oid-0.9.6
 const_panic-0.2.17
@@ -346,7 +344,6 @@ darling_macro-0.24.1
 dashmap-6.2.1
 datasketches-0.5.0
 defer-0.2.1
-deflate64-0.1.12
 defmt-1.2.0
 defmt-macros-1.2.0
 defmt-parser-1.1.0
@@ -535,7 +532,6 @@ indoc-2.0.8
 inferno-0.12.8
 inherent-1.0.14
 inlinable_string-0.1.15
-inout-0.2.5
 instability-0.3.14
 interpol-0.2.1
 inventory-0.3.25
@@ -561,6 +557,7 @@ jsonptr-0.7.1
 jsonwebtoken-10.4.0
 js-sys-0.3.107
 k8s-openapi-0.28.0
+k8s-openapi-0.29.0
 kasuari-0.4.13
 keccak-0.1.6
 konst-0.4.3
@@ -600,7 +597,6 @@ lz4-1.28.1
 lz4_flex-0.13.1
 lz4_flex-0.14.0
 lz4-sys-1.11.1+lz4-1.10.0
-lzma-rust2-0.23.0
 mac_address-1.2.1
 madsim-0.2.34
 madsim-macros-0.2.12
@@ -718,7 +714,6 @@ paste-1.0.15
 pastey-0.2.3
 pathdiff-0.2.3
 path-tree-0.8.3
-pbkdf2-0.13.0
 pear-0.2.9
 pear_codegen-0.2.9
 pem-3.0.6
@@ -753,7 +748,6 @@ portable-atomic-1.15.0
 portable-atomic-util-0.2.8
 potential_utf-0.1.6
 powerfmt-0.2.1
-ppmd-rust-1.5.2
 pprof_util-0.7.0
 ppv-lite86-0.2.21
 prettyplease-0.2.37
@@ -1090,8 +1084,10 @@ utf8_iter-1.1.0
 utf8parse-0.2.2
 utf8-ranges-1.0.5
 utf_types-1.0.0
+utoipa-5.5.0
 utoipa-6.0.0
 utoipa-axum-0.3.0
+utoipa-gen-5.5.0
 utoipa-gen-6.0.1
 utoipa-swagger-ui-10.0.2
 uuid-1.29.0
@@ -1196,7 +1192,6 @@ zerotrie-0.2.5
 zerovec-0.11.9
 zerovec-derive-0.11.7
 zip-9.2.0
-zip-extract-0.2.3
 zlib-rs-0.6.8
 zmij-1.0.23
 zopfli-0.8.4
@@ -1215,7 +1210,7 @@ KUBERNETES_TARGETS=(
 )
 
 # Cargo must go after distutils-r1
-inherit abseil-cpp distutils-r1 cargo grpc pypi re2
+inherit abseil-cpp cargo grpc pypi re2 secure-version-rust distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -1417,6 +1412,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-recursion-limit.patch"
 	"${FILESDIR}/${PN}-1.5.9-arrow-data-60.1.0-compat.patch"
+	"${FILESDIR}/${PN}-1.5.9-zip-9.1.3-compat.patch"
 )
 
 pkg_setup() {
@@ -1444,14 +1440,64 @@ einfo "Generating tag start for ${path}"
 einfo "Generating tag done"
 }
 
+gen_lockfile() {
+	[[ "${GEN_CARGO_LOCKFILE}" == "1" ]] || die
+	cd "${S}" || die
+	rm "${S}/Cargo.lock"
+einfo "Generating Cargo.lock"
+
+	eapply "${FILESDIR}/${PN}-1.5.9-symbolize-cargo-toml.patch"
+	local kubernetes_ver="v1_36"
+	sed -i \
+		-e "s|@K8S_OPENAPI_KUBERNETES_VER@|${kubernetes_ver}|g" \
+		-e "s|@RUST_ARROW_PV@|${RUST_ARROW_PV}|g" \
+		-e "s|@RUST_AWS_CONFIG_PV@|${RUST_AWS_CONFIG_PV}|g" \
+		-e "s|@RUST_AWS_SDK_S3_PV@|${RUST_AWS_SDK_S3_PV}|g" \
+		-e "s|@RUST_AWS_SMITHY_TYPES_PV@|${RUST_AWS_SMITHY_TYPES_PV}|g" \
+		-e "s|@RUST_HF_HUB_PV@|${RUST_HF_HUB_PV}|g" \
+		-e "s|@RUST_K8S_OPENAPI_PV@|${RUST_K8S_OPENAPI_PV}|g" \
+		-e "s|@RUST_KUBE_PV@|${RUST_KUBE_PV}|g" \
+		-e "s|@RUST_PARQUET_PV@|${RUST_PARQUET_PV}|g" \
+		-e "s|@RUST_PYO3_PV@|${RUST_PYO3_PV}|g" \
+		-e "s|@RUST_RAND_PV@|${RUST_RAND_PV}|g" \
+		-e "s|@RUST_RATATUI_PV@|${RUST_RATATUI_PV}|g" \
+		-e "s|@RUST_REQWEST_PV@|${RUST_REQWEST_PV}|g" \
+		-e "s|@RUST_RUSTLS_PV@|${RUST_RUSTLS_PV}|g" \
+		-e "s|@RUST_SCHEMARS_PV@|${RUST_SCHEMARS_PV}|g" \
+		-e "s|@RUST_SERDE_YML_PV@|${RUST_SERDE_YML_PV}|g" \
+		-e "s|@RUST_TANTIVY_PV@|${RUST_TANTIVY_PV}|g" \
+		-e "s|@RUST_UTOIPIA_PV@|${RUST_UTOIPIA_PV}|g" \
+		-e "s|@RUST_UTOIPIA_AXUM_PV@|${RUST_UTOIPIA_AXUM_PV}|g" \
+		-e "s|@RUST_UTOIPIA_SWAGGER_UI_PV@|${RUST_UTOIPIA_SWAGGER_UI_PV}|g" \
+		-e "s|@RUST_ZIP_PV@|${RUST_ZIP_PV}|g" \
+		"${S}/Cargo.toml" \
+		"${S}/rust/api-types/Cargo.toml" \
+		"${S}/rust/benchmark/Cargo.toml" \
+		"${S}/rust/chroma/Cargo.toml" \
+		"${S}/rust/cli/Cargo.toml" \
+		"${S}/rust/frontend/Cargo.toml" \
+		"${S}/rust/memberlist/Cargo.toml" \
+		|| die
+
+	cargo generate-lockfile
+einfo
+einfo "Now do the following"
+einfo "./cp-cargo-files.sh ${PV}"
+einfo "./convert-cargo-lock.sh ${PV} ${PV}"
+einfo "Update CRATES, GIT_CRATES"
+einfo
+	die
+}
+
 src_unpack() {
 	# For maintenance
 	unpack ${A}
+	gen_lockfile
 	cp -aT \
 		"${FILESDIR}/${PV}/" \
 		"${S}/" \
 		|| die
-#	die
+	die
 
 	# When updating Cargo.lock
 	# QA:  Replace from serde_yml to yaml_serde in .rs, Cargo.toml
@@ -1462,6 +1508,7 @@ src_unpack() {
 	# QA:  Bump to lru = "0.16.3" in Cargo.toml
 	# QA:  Bump to tracing-opentelemetry = "0.34.0" in Cargo.toml
 
+	cd "${WORKDIR}" || die
 	cargo_src_unpack
 
 # To fix:

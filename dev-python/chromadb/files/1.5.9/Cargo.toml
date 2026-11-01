@@ -5,7 +5,7 @@ members = ["rust/benchmark", "rust/blockstore", "rust/cache", "rust/chroma", "ru
 
 [workspace.dependencies]
 anyhow = "1.0"
-arrow = "60.1"
+arrow = "60.1.0"
 async-trait = "0.1"
 aws-config = { version = "1.13.0", features = ["behavior-version-latest"] }
 aws-sdk-s3 = "1.157.0"
@@ -28,9 +28,9 @@ murmur3 = "0.5.2"
 num_cpus = "1.16.0"
 once_cell = "1.21.3"
 opentelemetry = { version = "0.27.0", default-features = false, features = ["trace", "metrics"] }
-opentelemetry-otlp = { version = "0.27.0", features = ["http-proto"] }
-opentelemetry-http = { version = "0.27.0", features = ["reqwest-rustls"] }
-opentelemetry_sdk = { version = "0.27.0", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.27", features = ["http-proto"] }
+opentelemetry-http = { version = "0.27", features = ["reqwest-rustls"] }
+opentelemetry_sdk = { version = "0.27", features = ["rt-tokio"] }
 parking_lot = { version = "0.12.3", features = ["serde"] }
 parquet = { version = "60.1.0", features = ["async"] }
 pin-project = "1.1.10"
@@ -61,7 +61,7 @@ tracing-bunyan-formatter = "0.3"
 tracing-opentelemetry = "0.28.0"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1.11.0", features = ["v4", "v7", "fast-rng", "macro-diagnostics", "serde"] }
-utoipa = { version = "6.0.0", features = ["macros", "axum_extras", "debug", "uuid"] }
+utoipa = { version = "5", features = ["macros", "axum_extras", "debug", "uuid"] }
 sqlx = { version = "0.8.3", features = ["runtime-tokio", "sqlite", "postgres", "chrono"] }
 sha2 = "0.10.8"
 md5 = "0.7.0"
@@ -134,7 +134,7 @@ shuttle = "0.7.1"
 tempfile = "3.14.0"
 itertools = "0.13.0"
 serial_test = "3.2.0"
-zip = "9.1.3"
+zip = "9.2.0"
 
 [profile.dev]
 # Significantly reduces compile times
