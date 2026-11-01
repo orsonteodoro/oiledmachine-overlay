@@ -788,6 +788,10 @@ einfo "UPTR = Use of Uninitialized Pointer"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"URES"($|" "|";"|",") ]] ; then
 einfo "URES = Use of Uninitialized Resource"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"USRC"($|" "|";"|",") ]] ; then
+# Undefined Behavior (UB)
+einfo "USRC = Unsound Safe Rust Code"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UTB"($|" "|";"|",") ]] ; then
 einfo "UTB = Unterminated Buffer"
 		fi
