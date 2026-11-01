@@ -14,14 +14,17 @@ EAPI=8
 # USE=-dev (production):  protobuf-python >= 4
 #               USE=dev:  protobuf-python == 5
 
+#
 # Security checklist:
-# Change zip to 9.1.3 in Cargo.toml for mitigation and remove zip-extract from features
+#
+# Change zip to 9.2.0 in Cargo.toml for mitigation and remove zip-extract from features
 # Change utoipa-swagger-ui to 10.0.2 in rust/frontend/Cargo.toml for zip bump
 # Change utoipa to 6.0.0 to version align with utoipa-swagger-ui in rust/api-types/Cargo.toml and Cargo.toml
 # Change utoipa-axum to 0.3.0 to version align with utoipa-swagger-ui in rust/frontend/Cargo.toml
 # Change aws-config to 1.13.0 in Cargo.toml for aws-smithy-json bump
 # Change aws-sdk-s3 to 1.157.0 in Cargo.toml for aws-smithy-json bump
 # Change aws-smithy-types to 1.9.1 in Cargo.toml for aws-smithy-json bump
+# aws-smithy-json is indirectly mitigated with the above version bumps.
 # Change rustls to 0.23.46 in Cargo.toml for mitigation
 # Change pyo3 to 0.30.1 in Cargo.toml for mitigation
 # Change reqwest to 0.13.5 in Cargo.toml and rust/chroma/Cargo.toml to bump rustls, hyper-rustls -> rustls, quinn -> quinn-proto
@@ -38,7 +41,10 @@ EAPI=8
 # Change kube to 4.2.0 in rust/memberlist/Cargo.toml to bump k8s-openapi, rustls 0.21 -> rustls 0.23
 # Change k8s-openapi to 0.28.0 in rust/memberlist/Cargo.toml to bump serde_json
 # Change schemars to 1.2.3 in rust/memberlist/Cargo.toml to version align with kube
-# Change arrow to 60.1 to align with parquet in .
+# Change arrow to 60.1 to align with parquet in Cargo.toml.
+# Remove zip-extract in rust/cli/Cargo.toml
+# Add line to rust/cli/Cargo.toml: zip = { version = "9.2.0", default-features = false, features = ["deflate", "bzip2", "time"] }
+#
 
 # "for mitigation" implies the package is being remediated for a CVE/GHSA
 # "to bump" implies a transitive dependency is bumped to remediate a vulnerability
