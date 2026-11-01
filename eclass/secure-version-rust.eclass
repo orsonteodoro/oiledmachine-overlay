@@ -18,6 +18,8 @@ if [[ -z "${_SECURE_VERSION_RUST_ECLASS}" ]] ; then
 _SECURE_VERSION_RUST_ECLASS=1
 
 # You must prefix your entry with RUST_
+# Packages that have vulnerabilities fixes should be listed as latest version.
+# Packages that impede remediation should be listed as latest version.
 
 RUST_ARROW_PV=${RUST_ARROW_PV:-"60.1.0"}
 RUST_AWS_CONFIG_PV=${RUST_AWS_CONFIG_PV:-"1.13.0"}
