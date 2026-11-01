@@ -450,3 +450,32 @@ This patch uses AI assistant fixes.
          .sample_iter(&Alphanumeric)
          .map(char::from)
          .take(len)
+--- a/rust/frontend/src/executor/distributed.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/frontend/src/executor/distributed.rs	2026-10-31 19:33:38.318119380 -0700
+@@ -22,7 +22,7 @@ use chroma_types::{
+     ExecutorError,
+ };
+ 
+-use rand::distributions::Distribution;
++use rand::distr::Distribution;
+ use tonic::Request;
+ 
+ // Convenience type alias for the gRPC query client used by the DistributedExecutor
+@@ -405,7 +405,7 @@ fn choose_client_weighted<T: Clone>(
+         return Ok(clients[0].clone());
+     }
+ 
+-    let mut rng = rand::thread_rng();
++    let mut rng = rand::rng();
+ 
+     let selection_weights = if is_retry && config.uniform_on_retry {
+         vec![1.0; clients.len()]
+@@ -430,7 +430,7 @@ fn choose_client_weighted<T: Clone>(
+         vec![1.0 / clients.len() as f64; clients.len()]
+     };
+ 
+-    let dist = rand::distributions::WeightedIndex::new(&normalized_weights).map_err(|e| {
++    let dist = rand::distr::weighted::WeightedIndex::new(&normalized_weights).map_err(|e| {
+         tracing::error!(
+             "Failed to create weighted index for client selection: {}",
+             e
