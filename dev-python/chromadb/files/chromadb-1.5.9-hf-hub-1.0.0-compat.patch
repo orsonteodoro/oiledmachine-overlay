@@ -1,23 +1,89 @@
-# This contains AI suggested fixes.
+# This contains AI generated code.
 --- a/rust/benchmark/src/datasets/rust.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/benchmark/src/datasets/rust.rs	2026-11-01 11:42:25.345041529 -0800
-@@ -3,7 +3,7 @@ use std::path::PathBuf;
++++ b/rust/benchmark/src/datasets/rust.rs	2026-11-01 12:40:32.537707327 -0800
+@@ -3,9 +3,9 @@ use std::path::PathBuf;
  use anyhow::{Context, Result};
  use arrow::array::AsArray;
  use futures::{stream, StreamExt, TryStreamExt};
 -use hf_hub::api::tokio::Api;
-+use hf_hub::tokio::Api;
  use parquet::arrow::ParquetRecordBatchStreamBuilder;
  use tokio::fs::File;
++use hf_hub::HFClient;
+ 
+ pub struct TheStackDedupRust {
+     pub shard_paths: Vec<PathBuf>,
+@@ -14,11 +14,22 @@ pub struct TheStackDedupRust {
+ impl TheStackDedupRust {
+     pub async fn init() -> Result<Self> {
+         let mut shard_paths = Vec::new();
+-        let api = Api::new()?;
+-        let dataset = api.dataset("bigcode/the-stack-dedup".to_string());
++        // Instantiate the modern v1.0.0 async client
++        let client = HFClient::new()?;
++        
++        // Target the correct repo type (dataset) and name
++        let dataset_repo = client.dataset("bigcode", "the-stack-dedup");
++
+         for i in 0..21 {
+             let shard_path = format!("data/rust/data-{:05}-of-00021.parquet", i);
+-            let local_path = dataset.get(&shard_path).await?;
++            
++            // Execute the build-and-send chain for the v1.0.0 downloader
++            let local_path = dataset_repo
++                .download_file()
++                .filename(&shard_path)
++                .send()
++                .await?;
++                
+             shard_paths.push(local_path);
+         }
  
 --- a/rust/benchmark/src/datasets/wikipedia_splade.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/benchmark/src/datasets/wikipedia_splade.rs	2026-11-01 11:42:58.784035828 -0800
++++ b/rust/benchmark/src/datasets/wikipedia_splade.rs	2026-11-01 12:44:49.762027355 -0800
 @@ -7,7 +7,7 @@ use arrow::{
      record_batch::RecordBatch,
  };
  use futures::{stream, Stream, StreamExt, TryStreamExt};
 -use hf_hub::api::tokio::Api;
-+use hf_hub::tokio::Api;
++use hf_hub::HFClient;
  use parquet::arrow::ParquetRecordBatchStreamBuilder;
  use sprs::CsVec;
  use tokio::fs::File;
+@@ -21,18 +21,32 @@ pub struct WikipediaSplade {
+ 
+ impl WikipediaSplade {
+     pub async fn init() -> Result<Self> {
+-        let api = Api::new()?;
+-        let dataset = api.dataset("Sicheng-Chroma/wikipedia-en-splade-bge".to_string());
++        // Instantiate the modern v1.0.0 async client
++        let client = HFClient::new()?;
++        
++        // Target the correct repo namespace and name
++        let dataset_repo = client.dataset("Sicheng-Chroma", "wikipedia-en-splade-bge");
+ 
+         let mut train_paths = Vec::new();
+         for shard_idx in 0..7 {
+             let train_shard = format!("train/train-{shard_idx:05}-of-00007.parquet");
+-            let train_path = dataset.get(&train_shard).await?;
++            
++            // Modern download builder syntax
++            let train_path = dataset_repo
++                .download_file()
++                .filename(&train_shard)
++                .send()
++                .await?;
++                
+             train_paths.push(train_path);
+         }
+ 
+-        // Download test queries
+-        let test_path = dataset.get("test/test-00000-of-00001.parquet").await?;
++        // Download test queries using the new builder syntax
++        let test_path = dataset_repo
++            .download_file()
++            .filename("test/test-00000-of-00001.parquet")
++            .send()
++            .await?;
+ 
+         Ok(Self {
+             train_paths,
