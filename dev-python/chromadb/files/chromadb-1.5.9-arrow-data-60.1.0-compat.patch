@@ -1,0 +1,19 @@
+--- a/rust/blockstore/src/arrow/block/types.rs.orig	2026-10-31 18:53:46.836221231 -0700
++++ b/rust/blockstore/src/arrow/block/types.rs	2026-10-31 18:54:40.599420887 -0700
+@@ -503,9 +503,14 @@ impl Block {
+     /// ### Notes
+     /// - The metadata is stored in the Arrow RB schema as custom metadata
+     #[allow(dead_code)]
+-    pub(crate) fn metadata(&self) -> &HashMap<String, String> {
++    pub(crate) fn metadata(&self) -> HashMap<String, String> {
+         let schema = self.data.schema_ref();
+-        schema.metadata()
++        // Iterate over Arrow's custom Metadata type and collect into a standard HashMap
++        schema
++            .metadata()
++            .iter()
++            .map(|(k, v)| (k.clone(), v.clone()))
++            .collect()
+     }
+ 
+     /*

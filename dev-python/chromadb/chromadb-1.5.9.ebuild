@@ -1416,6 +1416,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.5.9-pyo3-0.30.1-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-rand-0.10.0-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-recursion-limit.patch"
+	"${FILESDIR}/${PN}-1.5.9-arrow-data-60.1.0-compat.patch"
 )
 
 pkg_setup() {
