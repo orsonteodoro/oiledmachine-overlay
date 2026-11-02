@@ -1400,8 +1400,11 @@ PATCHES=(
 
 _check-reqs_requirements() {
 	if use lto ; then
-		CHECKREQS_MEMORY="8G" # 5.4G min
-		CHECKREQS_DISK_BUILD="16G" # /var/tmp/portage, 12G minimum
+		export CHECKREQS_MEMORY="8G" # 5.4G min
+		export CHECKREQS_DISK_BUILD="16G" # /var/tmp/portage, 12G minimum
+	else
+		export CHECKREQS_MEMORY="6G" # 5.4G min
+		export CHECKREQS_DISK_BUILD="13G" # /var/tmp/portage, 12G minimum
 	fi
 }
 
