@@ -1408,6 +1408,11 @@ _check-reqs_requirements() {
 	fi
 }
 
+pkg_pretend() {
+	_check-reqs_requirements
+	check-reqs_pkg_setup
+}
+
 pkg_setup() {
 	secure-version-rust_check_update
 	_check-reqs_requirements
