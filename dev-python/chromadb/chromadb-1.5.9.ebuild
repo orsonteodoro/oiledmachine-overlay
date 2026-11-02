@@ -1218,7 +1218,7 @@ ${CPU_FLAGS_X86[@]}
 ${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
 dev helm kubectl kubernetes -lto
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE+="
 	^^ (
@@ -1581,7 +1581,7 @@ src_prepare() {
 
 	# This is a security-critical package so only up to O1 <= x <= O2 allowed.
 	[[ "${opt_level}" == "fast" ]] && opt_level="2"
-	[[ "${opt_level}" == "3" ]] && opt_level="3"
+	[[ "${opt_level}" == "3" ]] && opt_level="2"
 	[[ "${opt_level}" == "0" ]] && opt_level="1"
 
 	sed -i -e "s|opt-level = 3|opt-level = ${opt_level}|g" "${S}/Cargo.toml" || die
