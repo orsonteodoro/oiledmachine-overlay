@@ -93,8 +93,10 @@ exist in build files.
 | Rust 1.94.1                     | Available                             |                                                    |
 | Rust 1.95.0                     | Available                             |                                                    |
 | Rust 1.96.1                     | Available                             |                                                    |
-| Rust 1.97.1                     | Available                             | G23 (1.97.1)                                       |
-| Rust 1.98.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
+| Rust 1.97.1                     | Available                             |                                                    |
+| Rust 1.98.1                     | Available                             | G23 (1.98.1)                                       |
+| Rust 1.98.0                     | Not supported                         |                                                    |
+| Rust 1.99.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
 | Rust-9999 (1.101.0-nightly) [C] | Limited support                       |                                                    |
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
@@ -120,7 +122,8 @@ For C/C++ the Rust slot rules for version pinning are as follows:
 
 | LLVM slot          | Rust slot |
 | ---                | ---       |
-| 23 (Rolling)       | 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version) |
+| 23 (Live)          | 9999 with timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version) |
+| 23 (Rolling)       | 1.99.1    |
 | 22 (Rolling)       | 1.98.1    |
 | 21 (LTS)           | 1.94.1    |
 | 20 (Not supported) | 1.90.0    |
@@ -128,9 +131,16 @@ For C/C++ the Rust slot rules for version pinning are as follows:
 | 18 (LTS)           | 1.81.0    |
 | 17 (LTS)           | 1.77.2    |
 
-For Rust live, this slot is limited to the following packages:
+In this context, the meanings are LTS distros, rolling distros,
+and projects that depend on live explicitly.
 
-- Chromium, Firefox ESR 153, Firefox rapid release, SpiderMonkey 153
+For Rust live, this slot is limited to the following packages
+that test using live explicitly:
+
+- Chromium
+- Firefox ESR 153
+- Firefox rapid release
+- SpiderMonkey 153
 
 The version ranges are matching to avoid multiple LLVM versions loaded issues.
 
