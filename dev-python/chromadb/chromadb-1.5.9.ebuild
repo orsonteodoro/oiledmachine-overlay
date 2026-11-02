@@ -1220,7 +1220,7 @@ ${CPU_FLAGS_X86[@]}
 ${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
 dev helm kubectl kubernetes -lto
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE+="
 	^^ (
@@ -1619,8 +1619,9 @@ src_configure() {
 		export HNSWLIB_NO_NATIVE=1
 	fi
 
-	export CC="${CHOST}-clang-${LLVM_SLOT}"
-	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	# It has an atomics build failure with Clang.
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 
 	fix_mb_len_max # For aws-lc-sys crate -> x509_vfy.c
@@ -1629,7 +1630,6 @@ src_configure() {
 
 	# The mold linker could be breaking with the chromadb_rust_bindings, so it is avoided.
 	# The rust-lld rejects the linker options, so use the system lld instead.
-	# Prevent switching to system linker (BFD)
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc|rust-lld)##g")
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C link-arg=-fuse-ld=mold##g")
 	RUSTFLAGS=" -C link-arg=-fuse-ld=lld ${RUSTFLAGS}"
