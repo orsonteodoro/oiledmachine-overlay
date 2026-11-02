@@ -7,9 +7,9 @@ EAPI=8
 # AI inference was used for obtaining info for the patch.
 # This ebuild contains AI generated code.
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=20
-RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1" # LLVM 22.1
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
@@ -652,7 +652,7 @@ RESTRICT="mirror"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 bluez doc networkmanager pipewire-pulse power-profiles-daemon upower wireplumber
-ebuild_revision_4
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
@@ -766,10 +766,12 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 
-	fix_mb_len_max
 	unset LD
-	cflags-hardened_append
+
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
 	rustflags-hardened_append
+
 	export LLVM_CONFIG_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/llvm-config"
 	export LIBCLANG_PATH="/usr/lib/llvm/${LLVM_SLOT}/$(get_libdir)"
 	cargo_src_configure

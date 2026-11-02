@@ -26,6 +26,8 @@ EAPI=8
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
 # LLVM 22 - Required for Rust 1.96.1 (Same as CI testing for lavd)
 
+CFLAGS_HARDENED_USE_CASES="security-critical" # For aws-lc-sys
+RUSTFLAGS_HARDENED_USE_CASES="security-critical"
 GENERATE_LOCKFILE=0
 # Both llvm_slot_19 and llvm_slot_22 must be specified.
 LLVM_SLOT_PROTOBUF=19
@@ -862,7 +864,7 @@ zvariant_utils-3.5.0
 "
 
 # Generally speaking the llvm eclasses make things worst when two llvm slots are required.
-inherit abseil-cpp cargo linux-info protobuf
+inherit abseil-cpp cargo cflags-hardened flag-o-matic-om linux-info protobuf rustflags-hardened
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -890,7 +892,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +lto
-ebuild_revision_11
+ebuild_revision_13
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
@@ -1209,6 +1211,10 @@ src_unpack() {
 src_configure() {
 	# Reduce trashing
 	export CARGO_BUILD_JOBS=1
+
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
+	rustflags-hardened_append
 
 	if has_version "dev-libs/protobuf:6/6.33" ; then
 		ABSEIL_CPP_SLOT="20250512"

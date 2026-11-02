@@ -49,6 +49,7 @@ unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
 
+CFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GST_PV="${MY_PV}"
@@ -153,7 +154,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit chkl rustflags-hardened flag-o-matic lcnr llvm meson multilib-build
+inherit cflags-hardened chkl rustflags-hardened flag-o-matic flag-o-matic-om lcnr llvm meson multilib-build
 inherit python-any-r1 rust sandbox-changes toolchain-funcs secure-version multilib-minimal
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
@@ -1527,7 +1528,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_68
+ebuild_revision_70
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -2141,7 +2142,12 @@ einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 einfo "emesonargs:  ${emesonargs[@]}"
 
 	chkl_check_many_timestamps
+
+	# Must go before meson_src_configure injects into config file.
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
 	rustflags-hardened_append
+
 	meson_src_configure
 }
 

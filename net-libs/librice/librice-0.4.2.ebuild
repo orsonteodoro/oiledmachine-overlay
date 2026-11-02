@@ -10,6 +10,7 @@ EAPI=8
 
 RUST_MAX_VER="1.91.1"
 RUST_MIN_VER="1.91.1" # LLVM 21.1
+CFLAGS_HARDENED_USE_CASES="multithreaded-confidential security-critical network untrusted-data p2p"
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential security-critical network untrusted-data p2p"
 
 CRATES_DISABLED="
@@ -325,7 +326,7 @@ zmij-1.0.21
 "
 declare -A GIT_CRATES=()
 
-inherit cargo edo lcnr meson-multilib rustflags-hardened xdg
+inherit cargo cflags-hardened edo flag-o-matic-om lcnr meson-multilib rustflags-hardened xdg
 
 DESCRIPTION="sans-IO implementation of ICE (RFC8445) in Rust"
 HOMEPAGE="https://github.com/ystreet/librice"
@@ -393,7 +394,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 debug
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="mirror"
 RDEPEND="
@@ -423,6 +424,8 @@ src_unpack() {
 }
 
 src_configure() {
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
 	rustflags-hardened_append
 }
 

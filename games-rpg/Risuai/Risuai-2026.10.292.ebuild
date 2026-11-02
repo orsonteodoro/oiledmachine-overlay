@@ -24,6 +24,7 @@ EAPI=8
 
 MY_PN="RisuAI"
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 NODE_SHARP_USE="exif jpeg lcms png svg"
 NODE_SLOT="24"
 PNPM_SLOT="9"
@@ -31,6 +32,7 @@ PNPM_TARBALL="${TARBALL}"
 PYTHON_COMPAT=( "python3_12" )
 # CI uses Rust 1.94.1
 # Lockfile deps require 1.88.0
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUST_MAX_VER="1.98.1" # Inclusive
 RUST_MIN_VER="1.98.1" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
@@ -685,7 +687,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo chkl desktop edo lcnr node-sharp pnpm python-r1 secure-version secure-version-node xdg
+inherit cargo cflags-hardened chkl desktop edo flag-o-matic-om lcnr node-sharp pnpm python-r1 rustflags-hardened secure-version secure-version-node xdg
 
 #KEYWORDS="~amd64" # Still debugging issues
 S="${WORKDIR}/${P}"
@@ -706,7 +708,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_33
+ebuild_revision_35
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
@@ -1099,6 +1101,11 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
+
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
+	rustflags-hardened_append
+
 	export PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	cargo_src_configure
 

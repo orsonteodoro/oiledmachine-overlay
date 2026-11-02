@@ -10,6 +10,8 @@ EAPI=8
 
 GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 #DISTUTILS_ARGS=(
 #	"kornia-py/Cargo.toml"
 #)
@@ -1723,7 +1725,7 @@ else
 	inherit distutils-r1
 fi
 
-inherit pypi
+inherit cflags-hardened flag-o-matic-om rustflags-hardened pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -1757,7 +1759,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_8
+ebuild_revision_11
 "
 REQUIRED_USE="
 	dev? (
@@ -1851,6 +1853,10 @@ src_prepare() {
 }
 
 src_configure() {
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
+	rustflags-hardened_append
+
 	distutils-r1_src_configure
 }
 

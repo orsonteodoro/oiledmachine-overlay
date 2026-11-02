@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 MY_P="${PN/-/_}-${PV}"
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
@@ -610,7 +611,7 @@ zlib-rs-0.6.8
 zmij-1.0.23
 "
 
-inherit cargo distutils-r1 lcnr rustflags-hardened
+inherit cargo cflags-hardened flag-o-matic-om lcnr rustflags-hardened distutils-r1
 
 SRC_URI+="
 $(cargo_crate_uris ${CRATES})
@@ -634,7 +635,7 @@ SLOT="0"
 # Upstream enables lto by default
 IUSE+="
 lto test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 "
@@ -668,6 +669,9 @@ src_prepare() {
 
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
+
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
 	rustflags-hardened_append
 
 	S="${WORKDIR}/xet-core-${PV}" \

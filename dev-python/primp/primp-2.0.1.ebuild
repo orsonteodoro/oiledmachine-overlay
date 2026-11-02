@@ -4,6 +4,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{11..14} "pypy3_11" )
@@ -437,7 +438,7 @@ zstd-sys-2.1.2+zstd.1.5.7
 "
 
 # Cargo must go after distutils-r1
-inherit lcnr pypi rustflags-hardened secure-version-python distutils-r1 cargo
+inherit cflags-hardened flag-o-matic-om lcnr pypi rustflags-hardened secure-version-python distutils-r1 cargo
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -469,7 +470,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev
-ebuild_revision_7
+ebuild_revision_9
 "
 RDEPEND+="
 "
@@ -524,7 +525,11 @@ python_configure() {
 
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
+
+	fix_mb_len_max			# For Clang built aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys
 	rustflags-hardened_append
+
 	cargo_src_configure
 	distutils-r1_src_configure
 }
