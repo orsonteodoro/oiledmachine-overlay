@@ -1185,7 +1185,7 @@ KUBERNETES_TARGETS=(
 )
 
 # Cargo must go after distutils-r1
-inherit abseil-cpp cargo check-reqs grpc pypi re2 rustflags-hardened secure-version-rust distutils-r1
+inherit abseil-cpp cargo check-reqs grpc pypi re2 rustflags-hardened secure-version secure-version-rust distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -1212,11 +1212,12 @@ RESTRICT="mirror"
 SLOT="0"
 # Upstream enables ThinLTO by default.
 # The LTO is taking longer than usual so it was disabled by default.
+# The ebuild enables mold by default because the rust-lld is unusually slow.
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
-dev helm kubectl kubernetes -lto
+dev helm kubectl kubernetes -lto +mold
 ebuild_revision_16
 "
 REQUIRED_USE+="
@@ -1232,6 +1233,9 @@ REQUIRED_USE+="
 			helm
 			kubectl
 		)
+	)
+	mold? (
+		!lto
 	)
 "
 
@@ -1373,11 +1377,6 @@ BDEPEND+="
 			dev-python/types-protobuf[${PYTHON_USEDEP}]
 		)
 	')
-	lto? (
-		llvm-core/clang:22
-		llvm-core/ldd:22
-		llvm-core/llvm:22
-	)
 	dev? (
 		dev-python/grpcio-tools:=
 		dev-python/protobuf:=
@@ -1385,6 +1384,14 @@ BDEPEND+="
 		|| (
 			$(gen_grpcio_bdepend_dev)
 		)
+	)
+	lto? (
+		llvm-core/clang:22
+		llvm-core/ldd:22
+		llvm-core/llvm:22
+	)
+	mold? (
+		>=sys-devel/mold-${MOLD_PV}
 	)
 "
 DOCS=( "README.md" )
@@ -1621,6 +1628,18 @@ src_configure() {
 		export HNSWLIB_NO_NATIVE=1
 	fi
 	rustflags-hardened_append
+	if use lto ; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc)##g")
+		RUSTFLAGS+=" -C link-arg=-fuse-ld=lld"
+		export RUSTFLAGS
+	elif use mold ; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc)##g")
+		RUSTFLAGS+=" -C link-arg=-fuse-ld=mold"
+		export RUSTFLAGS
+	else
+		local linker_type=$(echo "${RUSTFLAGS}" | grep -E -e "-C linker=[a-zA-Z.]+" | cut -f 2 -d "=")
+ewarn "Enable USE=mold for fast linking."
+	fi
 	distutils-r1_src_configure
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
