@@ -11,4 +11,12 @@
     <remote-id type="github">chroma-core/chroma</remote-id>
     <remote-id type="pypi">chromadb</remote-id>
   </upstream>
+  <use>
+    <flag name="kubernetes_target_1_35">
+      Compatibility with exactly Kubernetes 1.35.x.
+    </flag>
+    <flag name="kubernetes_target_1_36">
+      Compatibility with exactly Kubernetes 1.36.x.
+    </flag>
+  </use>
 </pkgmetadata>
