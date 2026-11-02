@@ -74,6 +74,7 @@ OPENTELEMETRY_SLOT_REL="0/${OPENTELEMETRY_PV_REL}"
 RE2_SLOT="20250512"
 RUST_MAX_VER="1.99.1"
 RUST_MIN_VER="1.99.1"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 SECURE_VERSION_RUST_EBUILD_UPDATE=1793545930
 
@@ -1186,7 +1187,8 @@ KUBERNETES_TARGETS=(
 )
 
 # Cargo must go after distutils-r1
-inherit abseil-cpp cargo check-reqs grpc pypi re2 rustflags-hardened secure-version secure-version-rust distutils-r1
+# For aws-lc-sys crate uses x509_vfy.c
+inherit abseil-cpp cargo cflags-hardened check-reqs flag-o-matic-om grpc pypi re2 rustflags-hardened secure-version secure-version-rust distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -1621,6 +1623,8 @@ src_configure() {
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	export CPP="${CC} -E"
 
+	fix_mb_len_max # For aws-lc-sys crate -> x509_vfy.c
+	cflags-hardened_append
 	rustflags-hardened_append
 
 	# The mold linker could be breaking with the chromadb_rust_bindings, so it is avoided.
