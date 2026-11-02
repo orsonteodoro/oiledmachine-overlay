@@ -11,7 +11,6 @@ EAPI=8
 GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 #DISTUTILS_ARGS=(
 #	"kornia-py/Cargo.toml"
 #)
@@ -22,6 +21,7 @@ PYTHON_COMPAT=( "python3_"{11..14} "pypy3" )
 RUST_MAX_VER="1.98.1" # Inclusive
 RUST_MIN_VER="1.98.1" # llvm-22.1
 RUST_PV="${RUST_MIN_VER}"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 # Example crates:
