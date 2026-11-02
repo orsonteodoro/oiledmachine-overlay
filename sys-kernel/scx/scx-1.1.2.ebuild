@@ -26,8 +26,7 @@ EAPI=8
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
 # LLVM 22 - Required for Rust 1.96.1 (Same as CI testing for lavd)
 
-CFLAGS_HARDENED_USE_CASES="security-critical" # For aws-lc-sys
-RUSTFLAGS_HARDENED_USE_CASES="security-critical"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data" # For aws-lc-sys, AI said that it uses IPC, untrusted-data=no, sensitive-data=yes.
 GENERATE_LOCKFILE=0
 # Both llvm_slot_19 and llvm_slot_22 must be specified.
 LLVM_SLOT_PROTOBUF=19
@@ -36,12 +35,15 @@ LLVM_COMPAT=( ${LLVM_SLOT_PROTOBUF} ${LLVM_SLOT_SCX} )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
 RUST_MAX_VER="1.96.1" # LLVM 22.1
 RUST_MIN_VER="1.96.1" # LLVM 22.1
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
+
 DISABLED_CRATES="
 scx_arena_selftests-1.1.2
 scx_mitosis-1.1.2
 vmlinux_docify-1.1.2
 xtask-1.1.2
 "
+
 CRATES="
 addr2line-0.25.1
 adler2-2.0.1
@@ -892,7 +894,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +lto
-ebuild_revision_13
+ebuild_revision_16
 "
 # Both LLVM slots are required as discussed above.
 REQUIRED_USE+="
