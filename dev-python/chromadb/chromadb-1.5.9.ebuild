@@ -71,8 +71,8 @@ OPENTELEMETRY_PV_REL="1.27.0"
 OPENTELEMETRY_SLOT_DEV="0/${OPENTELEMETRY_PV_DEV}"
 OPENTELEMETRY_SLOT_REL="0/${OPENTELEMETRY_PV_REL}"
 RE2_SLOT="20250512"
-RUST_MAX_VER="1.98.1"
-RUST_MIN_VER="1.98.1"
+RUST_MAX_VER="1.99.1"
+RUST_MIN_VER="1.99.1"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 SECURE_VERSION_RUST_EBUILD_UPDATE=1793545930
 
@@ -1346,9 +1346,6 @@ DEPEND+="
 # grpcio-tools version range was relaxed
 # dev? ( protobuf ) requirement changed for opentelemetry-proto 1.29.0
 BDEPEND+="
-	llvm-core/clang:22
-	llvm-core/ldd:22
-	llvm-core/llvm:22
 	$(python_gen_cond_dep '
 		>=dev-util/maturin-1.0[${PYTHON_USEDEP}]
 		<dev-util/maturin-2.0[${PYTHON_USEDEP}]
