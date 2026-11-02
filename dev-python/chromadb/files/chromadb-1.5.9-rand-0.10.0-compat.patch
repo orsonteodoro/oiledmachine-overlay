@@ -479,12 +479,12 @@ This patch uses AI assistant fixes.
          tracing::error!(
              "Failed to create weighted index for client selection: {}",
              e
---- a/rust/benchmark/src/datasets/types.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/benchmark/src/datasets/types.rs	2026-11-01 11:46:54.281050897 -0800
+--- a/rust/benchmark/src/datasets/types.rs.orig	2026-11-01 14:23:14.714743527 -0800
++++ b/rust/benchmark/src/datasets/types.rs	2026-11-01 14:24:19.074809957 -0800
 @@ -1,5 +1,5 @@
  use anyhow::Result;
 -use rand::prelude::SliceRandom;
-+use rand::{rng, Rng};
++use rand::seq::SliceRandom;
  use serde::{Deserialize, Serialize};
  use std::{collections::HashMap, future::Future, path::PathBuf, sync::Arc};
  use tantivy::{
@@ -497,3 +497,12 @@ This patch uses AI assistant fixes.
  
                      let reader = corpus_index
                          .reader_builder()
+@@ -163,7 +163,7 @@ where
+                             query_parser.parse_query(format!("\"{}\"", query_text).as_str())?;
+ 
+                         let top_docs =
+-                            searcher.search(&query, &TopDocs::with_limit(min_results_per_query))?;
++                            searcher.search(&query, &TopDocs::with_limit(min_results_per_query).order_by_score())?;
+                         if top_docs.len() >= min_results_per_query {
+                             frozen_query_subset.queries.push(query_text.to_string());
+                         }

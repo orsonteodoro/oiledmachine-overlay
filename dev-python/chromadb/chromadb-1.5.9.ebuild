@@ -73,6 +73,7 @@ OPENTELEMETRY_SLOT_REL="0/${OPENTELEMETRY_PV_REL}"
 RE2_SLOT="20250512"
 RUST_MAX_VER="1.98.1"
 RUST_MIN_VER="1.98.1"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 SECURE_VERSION_RUST_EBUILD_UPDATE=1793545930
 
 CPU_FLAGS_X86=(
@@ -1184,7 +1185,7 @@ KUBERNETES_TARGETS=(
 )
 
 # Cargo must go after distutils-r1
-inherit abseil-cpp cargo grpc pypi re2 secure-version-rust distutils-r1
+inherit abseil-cpp cargo check-reqs grpc pypi re2 rustflags-hardened secure-version-rust distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -1209,11 +1210,13 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
+# Upstream enables ThinLTO by default.
+# The LTO is taking longer than usual so it was disabled by default.
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
-dev helm kubectl kubernetes
+dev helm kubectl kubernetes -lto
 ebuild_revision_16
 "
 REQUIRED_USE+="
@@ -1370,6 +1373,11 @@ BDEPEND+="
 			dev-python/types-protobuf[${PYTHON_USEDEP}]
 		)
 	')
+	lto? (
+		llvm-core/clang:22
+		llvm-core/ldd:22
+		llvm-core/llvm:22
+	)
 	dev? (
 		dev-python/grpcio-tools:=
 		dev-python/protobuf:=
@@ -1390,13 +1398,38 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.5.9-hf-hub-1.0.0-compat.patch"
 )
 
+_check-reqs_requirements() {
+	if use lto ; then
+		CHECKREQS_MEMORY="8G" # 5.4G min
+		CHECKREQS_DISK_BUILD="16G" # /var/tmp/portage, 12G minimum
+	fi
+}
+
 pkg_setup() {
 	secure-version-rust_check_update
+	_check-reqs_requirements
+	check-reqs_pkg_setup
 	python-single-r1_pkg_setup
 	rust_pkg_setup
 
 	# Prevent overswapping
 	export MAKEOPTS="-j1"
+
+	if use lto ; then
+		export LLVM_SLOT=22
+	# Sanitize paths
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -e "\|/usr/lib/llvm|d" \
+			| tr "\n" ":")
+		local llvm_path="/usr/lib/llvm/${LLVM_SLOT}"
+	# Add compatible LTO slot
+		export PATH=$(echo "${PATH}" \
+			| tr ":" $'\n' \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr $'\n' ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
+	fi
 }
 
 gen_git_tag() {
@@ -1519,6 +1552,14 @@ src_unpack() {
 	gen_git_tag "${S}" "${PV}"
 }
 
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	echo "${olast}"
+}
+
 src_prepare() {
 	distutils-r1_src_prepare
 	if use kubernetes_target_1_35 ; then
@@ -1527,6 +1568,18 @@ src_prepare() {
 	if use kubernetes_target_1_36 ; then
 		sed -i -e "s|v1_36|v1_36|g" "${S}/rust/memberlist/Cargo.toml" || die
 	fi
+	if ! use lto ; then
+		sed -i -e "\|lto|d" "${S}/Cargo.toml" || die
+	fi
+	local opt_level=$(get_olast)
+	[[ -z "${opt_level}" ]] && opt_level=2
+
+	# This is a security-critical package so only up to O1 <= x <= O2 allowed.
+	[[ "${opt_level}" == "fast" ]] && opt_level="2"
+	[[ "${opt_level}" == "3" ]] && opt_level="3"
+	[[ "${opt_level}" == "0" ]] && opt_level="1"
+
+	sed -i -e "s|opt-level = 3|opt-level = ${opt_level}|g" "${S}/Cargo.toml" || die
 }
 
 python_configure() {
@@ -1557,6 +1610,7 @@ src_configure() {
 	else
 		export HNSWLIB_NO_NATIVE=1
 	fi
+	rustflags-hardened_append
 	distutils-r1_src_configure
 }
 
