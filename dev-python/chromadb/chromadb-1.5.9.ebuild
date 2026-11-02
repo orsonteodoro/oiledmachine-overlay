@@ -1580,6 +1580,7 @@ src_prepare() {
 		sed -i -e "\|lto|d" "${S}/Cargo.toml" || die
 	fi
 	local opt_level=$(get_olast)
+	opt_level="${opt_level/-O}"
 	[[ -z "${opt_level}" ]] && opt_level=2
 
 	# This is a security-critical package so only up to O1 <= x <= O2 allowed.
@@ -1588,6 +1589,7 @@ src_prepare() {
 	[[ "${opt_level}" == "0" ]] && opt_level="1"
 
 	sed -i -e "s|opt-level = 3|opt-level = ${opt_level}|g" "${S}/Cargo.toml" || die
+einfo "opt-level:  ${opt_level}"
 }
 
 python_configure() {
@@ -1620,6 +1622,11 @@ src_configure() {
 	fi
 	rustflags-hardened_append
 	distutils-r1_src_configure
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
+einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "RUSTFLAGS:  ${RUSTFLAGS}"
+einfo "PATH:  ${PATH}"
 }
 
 python_compile() {
