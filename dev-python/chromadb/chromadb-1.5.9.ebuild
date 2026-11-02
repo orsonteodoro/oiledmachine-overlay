@@ -1422,20 +1422,18 @@ pkg_setup() {
 	# Prevent overswapping
 	export MAKEOPTS="-j1"
 
-	if use lto ; then
 	# Sanitize paths
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -e "\|/usr/lib/llvm|d" \
-			| tr "\n" ":")
-		local llvm_path="/usr/lib/llvm/${LLVM_SLOT}"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -e "\|/usr/lib/llvm|d" \
+		| tr "\n" ":")
+	local llvm_path="/usr/lib/llvm/${LLVM_SLOT}"
 	# Add compatible LTO slot
-		export PATH=$(echo "${PATH}" \
-			| tr ":" $'\n' \
-			| sed -E -e "/llvm\/[0-9]+/d" \
-			| tr $'\n' ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
-	fi
+	export PATH=$(echo "${PATH}" \
+		| tr ":" $'\n' \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr $'\n' ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
 }
 
 gen_git_tag() {
