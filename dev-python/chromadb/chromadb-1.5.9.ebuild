@@ -1677,7 +1677,7 @@ elog "3. Authenticate requests between endpoint and server"
 elog "4. Use reverse proxy before Python FastAPI server"
 elog "5. Audit and patch apps for trust_remote_code=true to"
 elog "   trust_remote_code=false and disable untrusted sources."
-elog "6. Ask AI for help."
+elog "6. Ask AI for help to generate a firewall config or autoload rule, or custom code hardening per app."
 elog
 elog "There are multiple input vectors.  Don't assume one fix will completely"
 elog "neturalize this vulnerability."
