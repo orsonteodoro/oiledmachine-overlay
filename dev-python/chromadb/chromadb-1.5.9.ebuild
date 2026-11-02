@@ -62,6 +62,7 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
 GEN_CARGO_LOCKFILE=0 # 1, 0, unset (same as 0)
+LLVM_SLOT=23
 PROTOBUF_GRPC="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5[@]}"
@@ -1276,6 +1277,9 @@ gen_grpcio_rdepend_rel() {
 }
 
 RDEPEND+="
+	llvm-core/clang:${LLVM_SLOT}
+	llvm-core/llvm:${LLVM_SLOT}
+	llvm-core/lld:${LLVM_SLOT}
 	$(python_gen_cond_dep '
 		>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/build-1.0.3[${PYTHON_USEDEP}]
@@ -1417,6 +1421,21 @@ pkg_setup() {
 
 	# Prevent overswapping
 	export MAKEOPTS="-j1"
+
+	if use lto ; then
+	# Sanitize paths
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -e "\|/usr/lib/llvm|d" \
+			| tr "\n" ":")
+		local llvm_path="/usr/lib/llvm/${LLVM_SLOT}"
+	# Add compatible LTO slot
+		export PATH=$(echo "${PATH}" \
+			| tr ":" $'\n' \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr $'\n' ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
+	fi
 }
 
 gen_git_tag() {
@@ -1600,12 +1619,16 @@ src_configure() {
 		export HNSWLIB_NO_NATIVE=1
 	fi
 
+	export CC="${CHOST}-clang-${LLVM_SLOT}"
+	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	export CPP="${CC} -E"
+
 	rustflags-hardened_append
 
 	# Force rust-lld
 	# Prevent switching to system linker (BFD)
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc)##g")
-	RUSTFLAGS+=" -C linker=rust-lld"
+	RUSTFLAGS=" -C link-arg=-fuse-ld=lld ${RUSTFLAGS}"
 	export RUSTFLAGS
 
 	distutils-r1_src_configure
