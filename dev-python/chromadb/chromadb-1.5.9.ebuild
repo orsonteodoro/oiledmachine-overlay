@@ -1625,9 +1625,11 @@ src_configure() {
 
 	rustflags-hardened_append
 
+	# The mold linker could be breaking with the chromadb_rust_bindings, so it is avoided.
 	# The rust-lld rejects the linker options, so use the system lld instead.
 	# Prevent switching to system linker (BFD)
-	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc)##g")
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc|rust-lld)##g")
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C link-arg=-fuse-ld=mold##g")
 	RUSTFLAGS=" -C link-arg=-fuse-ld=lld ${RUSTFLAGS}"
 	export RUSTFLAGS
 
