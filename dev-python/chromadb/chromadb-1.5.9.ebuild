@@ -1625,7 +1625,7 @@ src_configure() {
 
 	rustflags-hardened_append
 
-	# Force rust-lld
+	# The rust-lld rejects the linker options, so use the system lld instead.
 	# Prevent switching to system linker (BFD)
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc)##g")
 	RUSTFLAGS=" -C link-arg=-fuse-ld=lld ${RUSTFLAGS}"
