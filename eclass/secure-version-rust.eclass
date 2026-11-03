@@ -19,7 +19,7 @@ _SECURE_VERSION_RUST_ECLASS=1
 
 # This timestamp was generated from `date +%s`.
 # This is a quick and simplified check to see if the secure lockfile versions are up to date in O(1) time.
-SECURE_VERSION_RUST_ECLASS_UPDATE=1793662995
+SECURE_VERSION_RUST_ECLASS_UPDATE=1793670667
 
 # You must prefix your entry with RUST_
 # Packages that have vulnerabilities fixes should be listed as latest version.
