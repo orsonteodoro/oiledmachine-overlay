@@ -1093,7 +1093,7 @@ ewarn "Release quality:  Production ready"
 ewarn "Upstream security update delay from live:  0"
 ewarn "Release quality:  Entering development quality (adding 7.4 commits, development quality for WIP code, production quality for mature code)"
 	fi
-ewarn "Has the 7.4 merge window been announced?  YES, https://lkml.org/lkml/2026/10/18/1221"
+ewarn "Merge window:  Closed"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
