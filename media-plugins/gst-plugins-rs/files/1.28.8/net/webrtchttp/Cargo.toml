@@ -14,7 +14,7 @@ rust-version.workspace = true
 gst.workspace = true
 gst-webrtc = { workspace = true, features = ["v1_18"] }
 gst-sdp.workspace = true
-reqwest = { version = "0.13", default-features = false, features = ["charset", "http2", "system-proxy", "rustls-no-provider"] }
+reqwest = { version = "0.13.5", default-features = false, features = ["charset", "http2", "system-proxy", "rustls-no-provider"] }
 rustls.workspace = true
 rustls-platform-verifier.workspace = true
 parse_link_header = {version = "0.4", features = ["url"]}
