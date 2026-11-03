@@ -54,3 +54,11 @@ This patch partly uses AI assistant fixes or suggestions.
  use chroma_config::Configurable;
  
  use crate::config::RootConfig;
+--- a/rust/log-service/src/lib.rs.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/rust/log-service/src/lib.rs	2026-11-03 10:29:11.301998042 -0800
+@@ -1,4 +1,4 @@
+-#![recursion_limit = "256"]
++#![recursion_limit = "512"]
+ 
+ use std::collections::hash_map::Entry;
+ use std::collections::HashMap;
