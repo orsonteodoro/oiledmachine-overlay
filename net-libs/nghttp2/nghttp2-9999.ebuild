@@ -33,7 +33,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"net-dns/c-ares-9999"
 	"net-libs/nghttp3-9999"
 	"net-libs/ngtcp2-9999"
@@ -135,7 +134,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE+="
 apparmor -bpf clang debug doc gcc -hpack-tools -http3 -mruby -neverbleed -jemalloc openrc quic
 -static-libs systemd test +threads -utils +xml
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	|| (
