@@ -423,7 +423,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-util/glslang-9999"
 	"dev-util/spirv-tools-9999"
 	"gnome-base/librsvg-9999"
@@ -589,7 +588,7 @@ ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
 wayland
-ebuild_revision_59
+ebuild_revision_60
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.

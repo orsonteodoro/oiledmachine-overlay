@@ -450,7 +450,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-util/glslang-9999"
 	"dev-util/spirv-tools-9999"
 	"gnome-base/librsvg-9999"
@@ -619,7 +618,7 @@ ${USE_LICENSES[@]}
 alsa -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun mold openvino oss pgo pipewire +re-codecs sndio sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_59
+ebuild_revision_60
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
