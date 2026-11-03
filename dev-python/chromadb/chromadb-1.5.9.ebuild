@@ -1219,7 +1219,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
-dev helm kubectl kubernetes -lto
+dev helm kubectl kubernetes -lto +mold
 ebuild_revision_18
 "
 REQUIRED_USE+="
@@ -1279,9 +1279,11 @@ gen_grpcio_rdepend_rel() {
 }
 
 RDEPEND+="
-	llvm-core/clang:${LLVM_SLOT}
-	llvm-core/llvm:${LLVM_SLOT}
-	llvm-core/lld:${LLVM_SLOT}
+	!mold? (
+		llvm-core/clang:${LLVM_SLOT}
+		llvm-core/llvm:${LLVM_SLOT}
+		llvm-core/lld:${LLVM_SLOT}
+	)
 	$(python_gen_cond_dep '
 		>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/build-1.0.3[${PYTHON_USEDEP}]
@@ -1344,6 +1346,9 @@ RDEPEND+="
 		)
 		dev-python/grpcio-tools:=
 		dev-python/protobuf:=
+	)
+	mold? (
+		>=sys-devel/mold-${MOLD_PV}
 	)
 "
 DEPEND+="
@@ -1632,7 +1637,11 @@ src_configure() {
 	# The rust-lld rejects the linker options, so use the system lld instead.
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C linker=(clang|gcc|rust-lld)##g")
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C link-arg=-fuse-ld=mold##g")
-	RUSTFLAGS=" -C link-arg=-fuse-ld=lld ${RUSTFLAGS}"
+	if use mold ; then
+		RUSTFLAGS=" -C link-arg=-fuse-ld=mold ${RUSTFLAGS}"
+	else
+		RUSTFLAGS=" -C link-arg=-fuse-ld=lld ${RUSTFLAGS}"
+	fi
 	export RUSTFLAGS
 
 	distutils-r1_src_configure
