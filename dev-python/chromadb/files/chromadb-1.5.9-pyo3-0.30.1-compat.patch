@@ -9,7 +9,7 @@ diff '--color=auto' -urp chroma-1.5.9.orig/rust/python_bindings/src/bindings.rs 
 -    pub fn py_new(sqlite_db_config: SqliteDBConfig) -> Self {
 -        PythonBindingsConfig { sqlite_db_config }
 +    pub fn py_new(sqlite_db_config: &SqliteDBConfig) -> Self {
-+        PythonBindingsConfig { sqlite_db_config.clone() }
++        PythonBindingsConfig { sqlite_db_config: sqlite_db_config.clone() }
      }
  }
  
