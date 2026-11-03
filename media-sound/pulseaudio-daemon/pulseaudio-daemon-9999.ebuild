@@ -11,7 +11,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
 	"media-libs/libsndfile-9999"
@@ -59,7 +58,7 @@ SLOT="0"
 IUSE+="
 +alsa +alsa-plugin aptx +asyncns bluetooth dbus elogind equalizer fftw +gdbm +glib gstreamer jack ldac lirc
 ofono-headset +orc oss selinux sox ssl systemd system-wide tcpd test +udev valgrind +webrtc-aec +X zeroconf
-ebuild_revision_3
+ebuild_revision_4
 "
 
 RESTRICT="!test? ( test )"
