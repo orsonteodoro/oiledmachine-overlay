@@ -13,7 +13,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"app-arch/zstd-9999"
 )
 
@@ -42,7 +41,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 
 IUSE+="
 brotli mbedtls ssl test zlib zstd
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="test? ( brotli zlib zstd )"
 RESTRICT="!test? ( test )"
