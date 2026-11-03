@@ -14,7 +14,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"net-libs/gnutls-3.8.9999"
 	"net-libs/nghttp2-9999"
 )
@@ -42,7 +41,7 @@ LICENSE="GPL-3+ LGPL-3+"
 SLOT="0/0" # subslot = libwget.so version
 IUSE+="
 brotli bzip2 doc +gnutls gpgme +http2 idn lzip lzma nls pcre psl +ssl test xattr zlib
-ebuild_revision_6
+ebuild_revision_7
 "
 
 RDEPEND="
