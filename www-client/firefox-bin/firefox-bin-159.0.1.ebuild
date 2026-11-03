@@ -38,6 +38,9 @@ MITIGATION_DATE="Oct 27, 2026" # Official annoucement (advisories)
 MITIGATION_LAST_UPDATE=1793089320 # From `date +%s -d "27-Oct-2026 01:22"` From ftp source code
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-118/"
 VULNERABILITIES_FIXED=(
+	# 159.0.1
+	"CVE-2026-120572;IBC;"
+
 	# 159.0
 	"CVE-2026-117860;SOPB, WBSPB;"
 	"CVE-2026-117861;SBE;"
