@@ -672,7 +672,7 @@ secure-version_gen_openssl_depends() {
 	local usedep="${2}" # [${MULTILIB_USEDEP}], <empty string>
 	local t=""
 	t+="
-		!=dev-libs/openssl-3.4*
+		!<dev-libs/openssl-3.5
 		dev-libs/openssl:=${usedep}
 		|| (
 	"
