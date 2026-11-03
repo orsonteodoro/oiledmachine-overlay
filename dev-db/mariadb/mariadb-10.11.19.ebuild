@@ -22,7 +22,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-libs/libpcre2-9999"
 	"net-libs/gnutls-3.8.9999"
 	"net-misc/curl-9999"
@@ -55,7 +54,7 @@ IUSE+=" +backup bindist columnstore cracklib debug extraengine galera innodb-lz4
 	numa odbc oqgraph pam +perl profiling rocksdb selinux +server sphinx
 	sst-rsync sst-mariabackup static systemd systemtap s3 tcmalloc
 	test xml yassl
-	ebuild_revision_3
+	ebuild_revision_4
 "
 
 RESTRICT="!bindist? ( bindist ) !test? ( test )"
