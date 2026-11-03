@@ -1,6 +1,96 @@
 This patch uses AI assistant fixes.
---- a/rust/types/src/metadata.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/types/src/metadata.rs	2026-10-30 20:45:13.310312625 -0700
+diff '--color=auto' -urp chroma-1.5.9.orig/rust/python_bindings/src/bindings.rs chroma-1.5.9/rust/python_bindings/src/bindings.rs
+--- chroma-1.5.9.orig/rust/python_bindings/src/bindings.rs	2026-05-04 16:34:47.000000000 -0700
++++ chroma-1.5.9/rust/python_bindings/src/bindings.rs	2026-11-03 05:32:12.618905880 -0800
+@@ -45,8 +45,8 @@ pub struct PythonBindingsConfig {
+ #[pymethods]
+ impl PythonBindingsConfig {
+     #[new]
+-    pub fn py_new(sqlite_db_config: SqliteDBConfig) -> Self {
+-        PythonBindingsConfig { sqlite_db_config }
++    pub fn py_new(sqlite_db_config: &SqliteDBConfig) -> Self {
++        PythonBindingsConfig { sqlite_db_config.clone() }
+     }
+ }
+ 
+@@ -60,7 +60,7 @@ pub fn cli(py: Python<'_>, py_args: Opti
+     } else {
+         args
+     };
+-    py.allow_threads(|| chroma_cli(args));
++    py.detach(|| chroma_cli(args));
+     Ok(())
+ }
+ 
+@@ -71,7 +71,7 @@ impl Bindings {
+     #[pyo3(signature = (allow_reset, sqlite_db_config, hnsw_cache_size, persist_path=None))]
+     pub fn py_new(
+         allow_reset: bool,
+-        sqlite_db_config: SqliteDBConfig,
++        sqlite_db_config: &SqliteDBConfig,
+         hnsw_cache_size: usize,
+         persist_path: Option<String>,
+     ) -> ChromaPyResult<Self> {
+@@ -119,7 +119,7 @@ impl Bindings {
+         let frontend_config = FrontendConfig {
+             allow_reset,
+             segment_manager: Some(segment_manager_config),
+-            sqlitedb: Some(sqlite_db_config),
++            sqlitedb: Some(sqlite_db_config.clone()),
+             sysdb: sysdb_config,
+             mcmr_sysdb: None,
+             collections_with_segments_provider: collection_cache_config,
+@@ -673,7 +673,7 @@ impl Bindings {
+         )?;
+ 
+         let mut frontend_clone = self.frontend.clone();
+-        let result = py.allow_threads(move || {
++        let result = py.detach(move || {
+             self.runtime
+                 .block_on(async { Box::pin(frontend_clone.get(request)).await })
+         })?;
+@@ -721,7 +721,7 @@ impl Bindings {
+         )?;
+ 
+         let mut frontend_clone = self.frontend.clone();
+-        let response = py.allow_threads(move || {
++        let response = py.detach(move || {
+             self.runtime
+                 .block_on(async { frontend_clone.query(request).await })
+         })?;
+diff '--color=auto' -urp chroma-1.5.9.orig/rust/sqlite/src/config.rs chroma-1.5.9/rust/sqlite/src/config.rs
+--- chroma-1.5.9.orig/rust/sqlite/src/config.rs	2026-05-04 16:34:47.000000000 -0700
++++ chroma-1.5.9/rust/sqlite/src/config.rs	2026-11-03 05:28:38.481108255 -0800
+@@ -22,7 +22,7 @@ fn default_migration_mode() -> Migration
+ }
+ 
+ #[derive(Serialize, Deserialize, Clone, Debug)]
+-#[cfg_attr(feature = "pyo3", pyo3::pyclass)]
++#[cfg_attr(feature = "pyo3", pyo3::pyclass(from_py_object))]
+ pub struct SqliteDBConfig {
+     #[serde(default = "default_hash_type")]
+     pub hash_type: MigrationHash,
+@@ -47,7 +47,7 @@ impl Default for SqliteDBConfig {
+ /// - Apply: Apply the migrations
+ /// - Validate: Validate the applied migrations and ensure none are unappliued
+ #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
+-#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int))]
++#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int, from_py_object))]
+ #[serde(rename_all = "lowercase")]
+ pub enum MigrationMode {
+     Apply,
+@@ -58,7 +58,7 @@ pub enum MigrationMode {
+ /// - SHA256: Use SHA256 hash
+ /// - MD5: Use MD5 hash
+ #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
+-#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int))]
++#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int, from_py_object))]
+ #[serde(rename_all = "lowercase")]
+ pub enum MigrationHash {
+     SHA256,
+diff '--color=auto' -urp chroma-1.5.9.orig/rust/types/src/metadata.rs chroma-1.5.9/rust/types/src/metadata.rs
+--- chroma-1.5.9.orig/rust/types/src/metadata.rs	2026-05-04 16:34:47.000000000 -0700
++++ chroma-1.5.9/rust/types/src/metadata.rs	2026-11-03 05:24:44.470305504 -0800
 @@ -286,11 +286,12 @@ impl<'py> pyo3::IntoPyObject<'py> for Sp
  }
  
@@ -59,72 +149,3 @@ This patch uses AI assistant fixes.
              // Empty lists are not allowed
              if list.is_empty()? {
                  return Err(pyo3::exceptions::PyValueError::new_err(
---- a/rust/sqlite/src/config.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/sqlite/src/config.rs	2026-10-31 00:56:58.444588354 -0700
-@@ -58,7 +58,7 @@ pub enum MigrationMode {
- /// - SHA256: Use SHA256 hash
- /// - MD5: Use MD5 hash
- #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
--#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int))]
-+#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int, from_py_object))]
- #[serde(rename_all = "lowercase")]
- pub enum MigrationHash {
-     SHA256,
---- a/rust/sqlite/src/config.rs.orig	2026-10-31 00:59:54.056261748 -0700
-+++ b/rust/sqlite/src/config.rs	2026-10-31 01:19:11.941300367 -0700
-@@ -47,7 +47,7 @@ impl Default for SqliteDBConfig {
- /// - Apply: Apply the migrations
- /// - Validate: Validate the applied migrations and ensure none are unappliued
- #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
--#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int))]
-+#[cfg_attr(feature = "pyo3", pyclass(eq, eq_int, from_py_object))]
- #[serde(rename_all = "lowercase")]
- pub enum MigrationMode {
-     Apply,
---- a/rust/python_bindings/src/bindings.rs.orig	2026-05-04 16:34:47.000000000 -0700
-+++ b/rust/python_bindings/src/bindings.rs	2026-11-02 15:10:35.225910526 -0800
-@@ -45,7 +45,7 @@ pub struct PythonBindingsConfig {
- #[pymethods]
- impl PythonBindingsConfig {
-     #[new]
--    pub fn py_new(sqlite_db_config: SqliteDBConfig) -> Self {
-+    pub fn py_new(sqlite_db_config: &SqliteDBConfig) -> Self {
-         PythonBindingsConfig { sqlite_db_config }
-     }
- }
-@@ -60,7 +60,7 @@ pub fn cli(py: Python<'_>, py_args: Opti
-     } else {
-         args
-     };
--    py.allow_threads(|| chroma_cli(args));
-+    py.detach(|| chroma_cli(args));
-     Ok(())
- }
- 
-@@ -71,7 +71,7 @@ impl Bindings {
-     #[pyo3(signature = (allow_reset, sqlite_db_config, hnsw_cache_size, persist_path=None))]
-     pub fn py_new(
-         allow_reset: bool,
--        sqlite_db_config: SqliteDBConfig,
-+        sqlite_db_config: &SqliteDBConfig,
-         hnsw_cache_size: usize,
-         persist_path: Option<String>,
-     ) -> ChromaPyResult<Self> {
-@@ -673,7 +673,7 @@ impl Bindings {
-         )?;
- 
-         let mut frontend_clone = self.frontend.clone();
--        let result = py.allow_threads(move || {
-+        let result = py.detach(move || {
-             self.runtime
-                 .block_on(async { Box::pin(frontend_clone.get(request)).await })
-         })?;
-@@ -721,7 +721,7 @@ impl Bindings {
-         )?;
- 
-         let mut frontend_clone = self.frontend.clone();
--        let response = py.allow_threads(move || {
-+        let response = py.detach(move || {
-             self.runtime
-                 .block_on(async { frontend_clone.query(request).await })
-         })?;
