@@ -42,7 +42,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-libs/wayland-9999"
 	"dev-util/vulkan-headers-9999"
 	"media-libs/fontconfig-9999"
@@ -88,7 +87,7 @@ declare -gA QT6_IUSE=(
 )
 IUSE+="
 ${QT6_IUSE[*]}
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	?? ( journald syslog )
