@@ -678,11 +678,14 @@ secure-version_gen_openssl_depends() {
 	local l=""
 	local r=""
 	if [[ -z "${range}" ]] ; then
-		l="3.4"
+		l="3.5"
 		r="4.0"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
+		if [[ -z "${l}" ]] ; then
+			r="3.5"
+		fi
 		if [[ -z "${r}" ]] ; then
 			r="4.0"
 		fi
@@ -694,7 +697,6 @@ secure-version_gen_openssl_depends() {
 		"4.0"
 		"3.6"
 		"3.5"
-		"3.4"
 	)
 	local x
 	for x in "${L[@]}" ; do
