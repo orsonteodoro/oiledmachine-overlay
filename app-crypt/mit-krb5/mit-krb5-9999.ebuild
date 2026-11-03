@@ -15,7 +15,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 )
 
 inherit autotools cflags-hardened flag-o-matic python-any-r1 systemd toolchain-funcs multilib-minimal secure-version
@@ -42,7 +41,7 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE+="
 cpu_flags_x86_aes doc +keyutils lmdb nls openldap +pkinit selinux test xinetd
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RESTRICT="!test? ( test )"
