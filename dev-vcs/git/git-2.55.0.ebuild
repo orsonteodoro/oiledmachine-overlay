@@ -22,7 +22,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-vcs/subversion-9999"
 	"net-misc/curl-9999"
 )
@@ -83,7 +82,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 +curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl +rust +safe-directory selinux subversion test tk +webdav xinetd
-ebuild_revision_2
+ebuild_revision_3
 "
 
 # Common to both DEPEND and RDEPEND
