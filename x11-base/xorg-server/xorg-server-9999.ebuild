@@ -17,7 +17,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"media-libs/libglvnd-9999"
 	"media-libs/mesa-9999"
 	"sys-apps/dbus-9999"
@@ -46,7 +45,7 @@ fi
 IUSE_SERVERS="xephyr xnest xorg xvfb"
 IUSE+="
 ${IUSE_SERVERS} debug +elogind minimal pciaccess selinux suid systemd test +udev unwind xcsecurity
-ebuild_revision_11
+ebuild_revision_12
 "
 RESTRICT="!test? ( test )"
 
