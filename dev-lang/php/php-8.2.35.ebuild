@@ -37,7 +37,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"media-libs/freetype-9999"
 	"media-libs/libavif-9999"
 	"media-libs/libjpeg-turbo-9999"
@@ -86,7 +85,7 @@ IUSE="${IUSE} acl apparmor argon2 avif bcmath berkdb bzip2 calendar
 	+simplexml snmp soap sockets sodium spell sqlite ssl
 	sysvipc systemd test tidy tinycdb +tokenizer tokyocabinet truetype unicode
 	valgrind webp +xml xmlreader xmlwriter xpm xslt zip zlib
-	ebuild_revision_2
+	ebuild_revision_3
 "
 
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
