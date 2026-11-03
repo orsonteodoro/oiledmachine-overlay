@@ -84,7 +84,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"net-misc/curl-9999"
 	"sys-process/procps-9999"
 )
@@ -106,7 +105,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 -big-endian -geoip -inotify openrc selinux +sysc +syscat -system-libs systemd
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
