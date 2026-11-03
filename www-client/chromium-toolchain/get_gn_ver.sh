@@ -2,7 +2,7 @@
 
 main() {
 	# Commit from https://gn.googlesource.com/gn/+log
-	# See also https://github.com/chromium/chromium/blob/156.0.8078.47/DEPS#L571
+	# See also https://github.com/chromium/chromium/blob/156.0.8078.79/DEPS#L571
 	GN_COMMIT=${GN_COMMIT:-"510ec7992c30f172205792f190e96111a896ba8f"}
 	echo "GN_COMMIT: ${GN_COMMIT}"
 

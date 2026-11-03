@@ -7,7 +7,7 @@ EAPI=8
 # This ebuild contains AI generated code and AI synthetic data.
 
 # D11, D12, D13, D14, F36, F37, F38, F39, F40, F41, F42, F43, U22, U24, U25
-# See /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/taskcluster/kinds/bootstrap/kind.yml
 
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
@@ -43,9 +43,11 @@ EAPI=8
 # 152.0.5 -> 153.0.1
 # 153.0.1 -> 153.0.4
 # 153.0 -> 155.0.1
-# 156.0 -> 153.3.0
-# 153.3.0 -> 153.4.0
-# 153.4.0 -> 153.5.0
+# 155.0.1 -> 156.0
+# 156.0 -> 157.0
+# 157.0 -> 157.0.1
+# 157.0.1 -> 158.0
+# 158.0.1 -> 159.0.1
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -61,28 +63,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/153.5.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/moz.configure
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/media/libwebp/moz.yaml L16, live
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/third_party/aom/CHANGELOG
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/159.0.1/system-requirements/
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/moz.configure
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/media/libwebp/moz.yaml L16, live
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/third_party/aom/CHANGELOG
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0/taskcluster
+# /var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -104,7 +106,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="153.5.0"
+PV="159.0.1"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -121,7 +123,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-153.5.0e/work/firefox-153.5.0"
+SRC="/var/tmp/portage/www-client/firefox-159.0.1/work/firefox-159.0.1"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -144,8 +146,8 @@ grep -E \
 unset __
 #   Keyword search:  aom, dbus, fontconfig, pango, perl, pixman, xkbcommon, xrandr
 
-MOZ_ESR="yes"
-MOZ_PV="${PV/e}"
+MOZ_ESR=
+MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ ("_"("alpha"|"beta"|"rc").*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
@@ -186,12 +188,12 @@ RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IBC ID IO JITM MC NPD OOBA OOBR OOBW PE SA SB SBE SO SOPB UAF UM TC"
 DBUS_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 LICENSE_FINGERPRINT="\
-8dc633d29bd4270a8947c6c95bbd051273a2f6cbe3212a2f01b615431ac84300\
-1c72b1a426ea76d3fba1cbff7c7853b7c3dc9827b45864f29d3f623faf36c1db\
+6d4370034a13abfc832044dea972d8c1462a5be63247136d513156765a412a6a\
+375a89ab2ed10534dd33a549534ab6079c65390d5cdbcd08139fb67e64e2f2f5\
 " # SHA512
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
@@ -301,139 +303,181 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
-MITIGATION_DATE="Oct 20, 2026" # Official annoucement (advisories)
-MITIGATION_LAST_UPDATE=1792517100 # From `date +%s -d "20-Oct-2026 10:25"` From ftp source code
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-112/"
+MITIGATION_DATE="Nov 3, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1793704980 # From `date +%s -d "03-Nov-2026 03:23"` From ftp source code
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-123/"
 VULNERABILITIES_FIXED=(
-	# 153.5.1
-	"CVE-2026-113470;;"
+	# 159.0.1
+	"CVE-2026-120572;IBC;"
 
-	# 153.5.0
-	"CVE-2026-109704;PE;"
-	"CVE-2026-109705;UAF, IBC, SBE, IOV;"
-	"CVE-2026-109706;UAF;"
-	"CVE-2026-109707;UAF, SBE;"
-	"CVE-2026-109708;IBC, SBE;"
-	"CVE-2026-109709;ID, PE;"
-	"CVE-2026-109710;UAF;"
-	"CVE-2026-109711;UAF;"
-	"CVE-2026-109712;UM, ID, SBE;"
-	"CVE-2026-109713;UAF, CRSH, DoS;"
-	"CVE-2026-109715;IBC;"
-	"CVE-2026-109716;IBC;"
-	"CVE-2026-109717;UAF;"
-	"CVE-2026-109718;UAF;"
-	"CVE-2026-109719;RC, UAF;"
-	"CVE-2026-109720;JITM;"
-	"CVE-2026-109721;IBC;"
-	"CVE-2026-109722;JITM;"
-	"CVE-2026-109723;IO;"
-	"CVE-2026-109724;UAF;"
-	"CVE-2026-109725;UAF;"
-	"CVE-2026-109726;UAF;"
-	"CVE-2026-109727;UAF;"
-	"CVE-2026-109728;UAF;"
-	"CVE-2026-109729;UAF;"
-	"CVE-2026-109730;IO;"
-	"CVE-2026-109731;IBC;"
-	"CVE-2026-109732;UAF;"
-	"CVE-2026-109733;JITM;"
-	"CVE-2026-109734;SB;"
-	"CVE-2026-109736;;"
-	"CVE-2026-109737;SB;"
-	"CVE-2026-109738;UAF;"
-	"CVE-2026-109740;IBC, SBE;"
-	"CVE-2026-109741;UAF;"
-	"CVE-2026-109742;ID;"
-	"CVE-2026-109743;PE;"
-	"CVE-2026-109744;;"
-	"CVE-2026-109745;UM, ID, SBE;"
-	"CVE-2026-109782;SB;"
-	"CVE-2026-109751;ID;"
-	"CVE-2026-109752;UAF;"
-	"CVE-2026-109753;IBC;"
-	"CVE-2026-109754;IBC;"
-	"CVE-2026-109756;PE;"
-	"CVE-2026-109757;RC, SBE;"
-	"CVE-2026-109759;IOV;"
-	"CVE-2026-109760;SB;"
-	"CVE-2026-109762;IBC;"
-	"CVE-2026-109763;SB;"
-	"CVE-2026-109764;SB;"
-	"CVE-2026-109765;RC, UAF;"
-	"CVE-2026-109766;SB;"
-	"CVE-2026-109767;ID;"
-	"CVE-2026-109783;SB;"
-	"CVE-2026-109770;;"
-	"CVE-2026-109775;DoS;"
-	"CVE-2026-109776;RC;"
-	"CVE-2026-109777;ID;"
-	"CVE-2026-109778;PE;"
-	"CVE-2026-109781;DoS;"
-
-	# 153.4.0
-	"CVE-2026-100756;IBC;"
-	"CVE-2026-100757;UAF;"
-	"CVE-2026-100758;SBE;"
-	"CVE-2026-100759;;"
-	"CVE-2026-100760;SBE;"
-	"CVE-2026-100762;UAF, SBE;"
-	"CVE-2026-100765;UAF;"
-	"CVE-2026-100766;ID;"
-	"CVE-2026-100767;UAF;"
-	"CVE-2026-100769;UAF;"
-	"CVE-2026-100770;UAF, SBE;"
-	"CVE-2026-100771;;"
-	"CVE-2026-100772;UAF;"
-	"CVE-2026-100773;UAF;"
-	"CVE-2026-100774;UAF;"
-	"CVE-2026-100775;SBE;"
-	"CVE-2026-100776;UAF;"
-	"CVE-2026-100777;UAF;"
-	"CVE-2026-100778;UAF, SBE;"
-	"CVE-2026-100779;UAF;"
-	"CVE-2026-100780;UAF;"
-	"CVE-2026-100781;IBC, SBE;"
-	"CVE-2026-100782;IBC, PE;"
-	"CVE-2026-100783;;"
-	"CVE-2026-100784;UAF;"
-	"CVE-2026-100785;UAF;"
-	"CVE-2026-100786;UAF, SBE;"
-	"CVE-2026-100787;SBE;"
-	"CVE-2026-100788;;"
-	"CVE-2026-100789;UAF;"
-	"CVE-2026-100790;UAF;"
-	"CVE-2026-100791;UAF;"
-	"CVE-2026-100832;UAF;"
-	"CVE-2026-100792;JITM;"
-	"CVE-2026-100794;IBC, SBE;"
-	"CVE-2026-96869;ID;"
-	"CVE-2026-100797;UAF, PE;"
-	"CVE-2026-100798;;"
-	"CVE-2026-100800;UAF, SBE;"
+	# 159.0
+	"CVE-2026-117860;SOPB, WBSPB;"
+	"CVE-2026-117861;SBE;"
+	"CVE-2026-117862;IBC, PE;"
+	"CVE-2026-117863;UM, ID;"
+	"CVE-2026-117864;SBE;"
+	"CVE-2026-117865;UAF;"
+	"CVE-2026-117866;UAF, PE;"
+	"CVE-2026-117867;UAF;"
+	"CVE-2026-117868;SBE;"
+	"CVE-2026-117869;UAF;"
+	"CVE-2026-117870;UAF;"
+	"CVE-2026-117871;;"
+	"CVE-2026-117872;UAF;"
+	"CVE-2026-117873;IBC;"
+	"CVE-2026-118005;UAF;"
+	"CVE-2026-117874;UAF;"
+	"CVE-2026-117875;UAF, OF;"
+	"CVE-2026-117876;UAF;"
+	"CVE-2026-118006;UAF, PE;"
+	"CVE-2026-117877;UAF;"
+	"CVE-2026-118007;UAF;"
+	"CVE-2026-117878;UAF;"
+	"CVE-2026-117879;IBC;"
+	"CVE-2026-118008;PE;"
+	"CVE-2026-117880;UAF;"
+	"CVE-2026-118009;UAF, IO;"
+	"CVE-2026-117881;UAF;"
+	"CVE-2026-117882;UAF;"
+	"CVE-2026-117883;UAF;"
+	"CVE-2026-117884;UAF;"
+	"CVE-2026-117885;UAF;"
+	"CVE-2026-117886;IBC;"
+	"CVE-2026-117887;UAF;"
+	"CVE-2026-118010;UAF;"
+	"CVE-2026-117888;UM, ID;"
+	"CVE-2026-117889;IBC;"
+	"CVE-2026-117890;JITM;"
+	"CVE-2026-117891;UAF;"
+	"CVE-2026-117892;UAF, PE;"
+	"CVE-2026-117893;IBC;"
+	"CVE-2026-117894;IBC;"
+	"CVE-2026-117895;UAF;"
+	"CVE-2026-117896;UAF;"
+	"CVE-2026-117897;IBC;"
+	"CVE-2026-117898;UAF;"
+	"CVE-2026-117899;UAF;"
+	"CVE-2026-117900;UAF;"
+	"CVE-2026-117901;UAF;"
+	"CVE-2026-117902;UAF;"
+	"CVE-2026-117903;UAF;"
+	"CVE-2026-117904;UAF;"
+	"CVE-2026-117905;UAF;"
+	"CVE-2026-117906;UAF;"
+	"CVE-2026-117907;UAF;"
+	"CVE-2026-117908;UAF;"
+	"CVE-2026-117909;UAF;"
+	"CVE-2026-117910;;"
+	"CVE-2026-117911;UAF;"
+	"CVE-2026-117912;SOPB, WBSPB;"
+	"CVE-2026-117913;UAF;"
+	"CVE-2026-117914;UAF;"
+	"CVE-2026-117915;IBC;"
+	"CVE-2026-117916;UAF;"
+	"CVE-2026-117917;;"
+	"CVE-2026-117918;UAF;"
+	"CVE-2026-117919;UAF;"
+	"CVE-2026-117920;UAF;"
+	"CVE-2026-117921;UAF;"
+	"CVE-2026-117922;UAF;"
+	"CVE-2026-117923;UAF;"
+	"CVE-2026-117924;UAF;"
+	"CVE-2026-117925;UAF;"
+	"CVE-2026-117926;IBC;"
+	"CVE-2026-117927;UAF;"
+	"CVE-2026-117928;SOPB, WBSPB;"
+	"CVE-2026-117929;UAF;"
+	"CVE-2026-117930;UAF;"
+	"CVE-2026-117931;UAF;"
+	"CVE-2026-117932;UAF;"
+	"CVE-2026-117933;;"
+	"CVE-2026-117934;UAF;"
+	"CVE-2026-118011;;"
+	"CVE-2026-118012;UAF;"
+	"CVE-2026-117935;UAF;"
+	"CVE-2026-117936;UAF;"
+	"CVE-2026-117937;;"
+	"CVE-2026-117938;UAF;"
+	"CVE-2026-117939;UAF;"
+	"CVE-2026-117940;UAF;"
+	"CVE-2026-118013;UAF;"
+	"CVE-2026-117941;UAF;"
+	"CVE-2026-117942;IBC;"
+	"CVE-2026-118014;UAF;"
+	"CVE-2026-117943;UAF;"
+	"CVE-2026-117944;UAF;"
+	"CVE-2026-118015;UAF;"
+	"CVE-2026-117945;IBC;"
+	"CVE-2026-118016;UAF;"
+	"CVE-2026-117946;IBC;"
+	"CVE-2026-117947;UAF;"
+	"CVE-2026-117948;UAF;"
+	"CVE-2026-117949;UAF;"
+	"CVE-2026-117950;IBC;"
+	"CVE-2026-117951;UAF;"
+	"CVE-2026-117952;UM, ID;"
+	"CVE-2026-117953;UAF;"
+	"CVE-2026-118017;UAF;"
+	"CVE-2026-117954;UAF;"
+	"CVE-2026-118018;;"
+	"CVE-2026-118019;RC, UAF;"
+	"CVE-2026-117955;JITM;"
 	"CVE-2026-100801;PE;"
-	"CVE-2026-100803;SOPB, WBSPB;"
-	"CVE-2026-100806;;"
-	"CVE-2026-100807;PE;"
-	"CVE-2026-100808;SB;"
-	"CVE-2026-100809;SOPB, WBSPB;"
-	"CVE-2026-100811;UAF, SBE;"
-	"CVE-2026-100812;DoS;"
-	"CVE-2026-100814;IBC;"
-	"CVE-2026-100815;UAF;"
-	"CVE-2026-100816;IOV;"
-	"CVE-2026-100818;UAF, SBE;"
-	"CVE-2026-100819;IBC, SBE;"
-	"CVE-2026-100820;PE;"
-	"CVE-2026-100821;IOV;"
-	"CVE-2026-100822;;"
-	"CVE-2026-100824;PE;"
-	"CVE-2026-100825;UAF;"
-	"CVE-2026-100826;DoS;"
-	"CVE-2026-100828;SB;"
-	"CVE-2026-100829;SB;"
-	"CVE-2026-100830;SB;"
-	"CVE-2026-100831;UAF;"
+	"CVE-2026-117956;;"
+	"CVE-2026-117957;;"
+	"CVE-2026-117958;IOV;"
+	"CVE-2026-117959;IOV;"
+	"CVE-2026-117960;;"
+	"CVE-2026-117961;IBC;"
+	"CVE-2026-117962;IBC, SBE;"
+	"CVE-2026-117963;IBC;"
+	"CVE-2026-117964;UAF;"
+	"CVE-2026-117965;SOPB, WBSPB;"
+	"CVE-2026-117966;IOV;"
+	"CVE-2026-117967;SB;"
+	"CVE-2026-118020;UAF;"
+	"CVE-2026-117968;UAF;"
+	"CVE-2026-117969;;"
+	"CVE-2026-117970;RC;"
+	"CVE-2026-117971;UAF, SBE;"
+	"CVE-2026-117972;UAF;"
+	"CVE-2026-118021;UAF, SBE;"
+	"CVE-2026-117973;UAF;"
+	"CVE-2026-117974;UAF;"
+	"CVE-2026-117975;SBE;"
+	"CVE-2026-117976;IOV;"
+	"CVE-2026-117977;;"
+	"CVE-2026-117978;IBC;"
+	"CVE-2026-117979;IBC;"
+	"CVE-2026-117980;UAF;"
+	"CVE-2026-117981;PE;"
+	"CVE-2026-117982;;"
+	"CVE-2026-117983;UAF;"
+	"CVE-2026-118022;UAF, SBE;"
+	"CVE-2026-117984;OF, IBC;"
+	"CVE-2026-117985;UAF, SBE;"
+	"CVE-2026-117986;UAF;"
+	"CVE-2026-117987;UAF;"
+	"CVE-2026-117988;IBC, SBE;"
+	"CVE-2026-117989;UAF;"
+	"CVE-2026-118023;UAF, SBE;"
+	"CVE-2026-117990;IBC, SBE;"
+	"CVE-2026-117991;IBC;"
+	"CVE-2026-117992;ID;"
+	"CVE-2026-117993;IO;"
+	"CVE-2026-117994;UAF;"
+	"CVE-2026-117995;PE;"
+	"CVE-2026-117996;IBC;"
+	"CVE-2026-117997;UAF, SBE;"
+	"CVE-2026-118024;UAF;"
+	"CVE-2026-118025;;"
+	"CVE-2026-117998;SB;"
+	"CVE-2026-117999;RC;"
+	"CVE-2026-118000;ID;"
+	"CVE-2026-118002;RC, ID;"
+	"CVE-2026-118003;ID;"
+	"CVE-2026-118026;;"
+	"CVE-2026-118004;IBC;"
 )
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker
@@ -443,8 +487,8 @@ inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened secure-version toolchain-funcs virtualx vf web-kernel-config xdg
 
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
-S="${WORKDIR}/${PN}-${PV/e}"
-S_BAK="${WORKDIR}/${PN}-${PV/e}"
+S="${WORKDIR}/${PN}-${PV%_*}"
+S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 if [[ "${PV}" == *"_rc"* ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
 else
@@ -520,7 +564,7 @@ ${PATENT_STATUS[@]}
 ${PULSEAUDIO_IMPL[@]/+}
 ${WIFI_IMPL[@]/+}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
--hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
+-hwaccel jack +jemalloc +jit libcanberra libnotify libproxy
 libsecret mold +pgo +pulseaudio
 selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
@@ -840,12 +884,12 @@ DEPEND+="
 if [[ -n "${MOZ_ESR}" ]] ; then
 	RDEPEND+="
 		!www-client/firefox:rapid
-		~www-client/firefox-l10n-${PV/e}:0/esr
+		~www-client/firefox-l10n-${PV}:0/esr
 	"
 else
 	RDEPEND+="
 		!www-client/firefox:esr
-		~www-client/firefox-l10n-${PV/e}:0/rapid
+		~www-client/firefox-l10n-${PV}:0/rapid
 	"
 fi
 
@@ -1678,6 +1722,7 @@ eerror "Failed to copy '${_src_file}' to '${_lp_dir}'!"
 	done
 }
 
+# FIXME, it is missing
 verify_license_fingerprint() {
 einfo "Verifying about:license fingerprint"
 	local actual_fp=$(sha512sum "${S}/toolkit/content/license.html" \
@@ -1685,7 +1730,7 @@ einfo "Verifying about:license fingerprint"
 	# Check patched versions and/or new features for differences.
 	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
 	# For ebuild maintainers
-		local license_file_name="Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html"
+		local license_file_name="Firefox-$(ver_cut 1-2 ${PV}).x-Licenses.html"
 		if [[ \
 			   ! ( "${LICENSE}" =~ "${license_file_name}" ) \
 			|| ! -e "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
@@ -1783,10 +1828,6 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 }
 
 src_prepare() {
-	if is-flagq '-flto*' ; then
-		rm -fv "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
-	fi
-
 	# Workaround for bgo#915651 and bmo#1988166 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
@@ -1956,6 +1997,7 @@ einfo "Removing pre-built binaries ..."
 
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
+	moz_clear_vendor_checksums bindgen
 
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
 	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && ! use debug ; then
@@ -1985,7 +2027,7 @@ ewarn
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}/api-location.key" || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}/api-mozilla.key" || die
 
-	verify_license_fingerprint
+	#verify_license_fingerprint # FIXME
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
 
@@ -2326,7 +2368,6 @@ einfo
 		"--disable-strip" \
 		"--disable-tests" \
 		"--disable-updater" \
-		"--disable-wmf" \
 		"--enable-negotiateauth" \
 		"--enable-new-pass-manager" \
 		"--enable-official-branding" \
@@ -2384,7 +2425,6 @@ einfo
 	# riscv-related options, bgo#947337, bgo#947338, bgo#977845
 	if use riscv ; then
 		mozconfig_add_options_ac 'Disable webrtc for RISC-V' --disable-webrtc
-		mozconfig_add_options_ac 'Disable JIT for RISC-V' --disable-jit
 	fi
 
 	mozconfig_use_enable valgrind
@@ -2459,7 +2499,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable "dbus"
 	mozconfig_use_enable "libproxy"
-	mozconfig_use_enable "cups" "printing"
+	#mozconfig_use_enable "cups" "printing"
 	multilib_is_native_abi && mozconfig_use_enable "speech" "synth-speechd"
 	mozconfig_use_enable "webrtc"
 	mozconfig_use_enable "webspeech"
@@ -2544,8 +2584,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		LTO_TYPE=""
 	fi
-
-	use jpegxl || mozconfig_add_options_ac "-jpegxl" "--disable-jxl"
 
 	# Upstream only supports lld or mold when using clang.
 	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
@@ -3030,7 +3068,7 @@ EOF
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
-		cat "${FILESDIR}/gentoo-hwaccel-prefs.js-r4" \
+		cat "${FILESDIR}/gentoo-hwaccel-prefs.js-r5" \
 		>>"${GENTOO_PREFS}" \
 || die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
@@ -3044,17 +3082,9 @@ pref("gfx.x11-egl.force-enabled", true);
 EOF
 		fi
 
-	# Install the vaapitest binary on supported arches (122.0 supports all platforms, bmo#1865969)
+	# Install the gfxtest binary on supported arches
 		exeinto "${MOZILLA_FIVE_HOME}"
-		doexe "${BUILD_DIR}/dist/bin/vaapitest"
-		doexe "${BUILD_DIR}/dist/bin/vulkantest"
-
-	# Install the v4l2test on supported arches (+ arm, + riscv64 when keyworded)
-		if use arm64 ; then
-			exeinto "${MOZILLA_FIVE_HOME}"
-			doexe "${BUILD_DIR}/dist/bin/v4l2test"
-		fi
-
+		doexe "${BUILD_DIR}/dist/bin/gfxtest"
 	fi
 
 	if ! use gmp-autoupdate ; then
@@ -3081,6 +3111,14 @@ EOF
 	# options stop working.
 	if ! use telemetry ; then
 		cat "${FILESDIR}/gentoo-telemetry-prefs.js" >>"${GENTOO_PREFS}" || die "failed to set telemetry prefs"
+
+	# When not building "official" copy of Firefox, ie when building with '-telemetry' use flag, these
+	# prefs are turned on causing verbose messaging in sysjournal. Guard these prefs behind 'telemetry'
+	# use flag so they get enabled for '+debug' builds correctly. # bgo#956677
+cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set non-official debug prefs"
+sticky_pref("browser.dom.window.dump.enabled", false);
+sticky_pref("devtools.console.stdout.chrome", false);
+EOF
 	fi
 
 	# Install icons
@@ -3153,12 +3191,6 @@ EOF
 			-e "s/firefox.desktop/${desktop_filename}/g" \
 			"${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
 			|| die "Failed to sed search-provider file."
-	fi
-
-	if use jpegxl ; then
-		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable jpegxl via pref"
-		pref("image.jxl.enabled", true);
-		EOF
 	fi
 
 	# Install wrapper script
