@@ -44,7 +44,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-libs/rapidjson-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/opencv-4.9999"
@@ -102,7 +101,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx -minimal +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
