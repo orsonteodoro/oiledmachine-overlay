@@ -59,7 +59,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot lua multilib-minimal sandbox-changes secure-version
@@ -92,7 +91,7 @@ ${_CXX_STANDARD[@]}
 ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +cgi -cxx +caching debug doc -duktape +ipv6 -lua -serve_no_files
 +server_executable -server_stats +ssl static-libs -test -websockets -zlib
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE+="
 	lua? (
