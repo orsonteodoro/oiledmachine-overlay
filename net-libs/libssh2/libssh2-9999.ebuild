@@ -11,7 +11,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 )
 
 inherit cflags-hardened chkl cmake-multilib secure-version
@@ -36,7 +35,7 @@ SLOT="0"
 KEYWORDS=""
 IUSE+="
 gcrypt mbedtls test zlib
-ebuild_revision_25
+ebuild_revision_26
 "
 REQUIRED_USE="
 	!mbedtls
