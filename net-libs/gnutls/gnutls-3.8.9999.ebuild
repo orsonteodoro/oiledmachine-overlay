@@ -30,7 +30,7 @@ HOMEPAGE="https://www.gnutls.org/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_PV="3.8.13"
-	FALLBACK_COMMIT="4e84948a5e89689edbab2c5920db7fc32f31a985"
+	FALLBACK_COMMIT="b70f2f47d3bf3d57a4fdcf5fc42c73b8228438f0"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.com/gnutls/gnutls.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -54,7 +54,7 @@ SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE="brotli +cxx dane doc examples +idn nls +openssl pkcs11 +post-quantum sslv2 sslv3"
 IUSE+=" systemtap static-libs test test-full +tls-heartbeat tools zlib zstd"
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_4"
 REQUIRED_USE="test-full? ( cxx dane doc examples idn nls openssl pkcs11 tls-heartbeat tools )"
 RESTRICT="!test? ( test )"
 
