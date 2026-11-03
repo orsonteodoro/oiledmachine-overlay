@@ -66,7 +66,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 )
 
 inherit cargo chkl distutils-r1 flag-o-matic pypi rustflags-hardened secure-version
@@ -104,7 +103,7 @@ LICENSE+="
 RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/cffi-2.0.0:=[${PYTHON_USEDEP}]
