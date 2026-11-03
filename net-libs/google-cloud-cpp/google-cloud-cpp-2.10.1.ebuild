@@ -28,7 +28,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"net-misc/curl-9999"
 )
 
@@ -56,7 +55,7 @@ SLOT="${PROTOBUF_CPP_SLOT}/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64 ~x86"
 IUSE+="
 test
-ebuild_revision_17
+ebuild_revision_18
 "
 # Tests need a GCP account
 RESTRICT="test"
