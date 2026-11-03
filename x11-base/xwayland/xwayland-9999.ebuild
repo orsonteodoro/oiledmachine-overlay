@@ -10,7 +10,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"dev-libs/wayland-9999"
 	"sys-apps/systemd-9999"
 	"sys-libs/libunwind-9999"
@@ -43,7 +42,7 @@ SLOT="0"
 
 IUSE+="
 libei selinux systemd test unwind xcsecurity
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 
