@@ -5433,7 +5433,10 @@ dependencies = [
  "aws-sdk-sts",
  "aws-sdk-transcribestreaming",
  "aws-sdk-translate",
+ "aws-smithy-http-client",
  "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
  "aws-types",
  "base32",
  "bytes",
@@ -6434,6 +6437,8 @@ dependencies = [
  "aws-sigv4",
  "aws-smithy-http",
  "aws-smithy-http-client",
+ "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
  "aws-smithy-types",
  "aws-types",
  "bytes",
@@ -10853,7 +10858,7 @@ dependencies = [
  "serde",
  "tar",
  "thiserror 2.0.21",
- "zip 9.2.2",
+ "zip 9.3.0",
 ]
 
 [[package]]
@@ -14432,9 +14437,9 @@ dependencies = [
 
 [[package]]
 name = "web-transport-proto"
-version = "0.6.3"
+version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2baf87f7a4701d964fd23529b440db3da535b1d7539289f7a463c3481dafcff"
+checksum = "40d8e5dba9b14dbe25b116ac7e62ca82bf7c328d1c6072238bf0b9b47874c9d1"
 dependencies = [
  "bytes",
  "http 1.5.0",
@@ -15774,9 +15779,9 @@ dependencies = [
 
 [[package]]
 name = "zip"
-version = "9.2.2"
+version = "9.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e408c6cc4699dd017d53dc080cd51c2cea2b5354af57a1479bd265ed42911487"
+checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
 dependencies = [
  "crc32fast",
  "flate2",

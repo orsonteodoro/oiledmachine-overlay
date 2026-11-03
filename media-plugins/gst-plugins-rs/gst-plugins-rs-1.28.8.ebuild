@@ -15,6 +15,7 @@ EAPI=8
 # 1.28.4 -> 1.28.5
 # 1.28.5 -> 1.28.6
 # 1.28.6 -> 1.28.7
+# 1.28.7 -> 1.28.8
 
 # Security checklist:
 
@@ -1289,7 +1290,7 @@ webpki-roots-0.26.11
 webpki-roots-1.0.7
 web-sys-0.3.107
 web-time-1.1.0
-web-transport-proto-0.6.3
+web-transport-proto-0.6.4
 web-transport-quinn-0.12.1
 web-transport-trait-0.4.0
 weezl-0.1.12
@@ -1419,7 +1420,7 @@ zerovec-0.11.9
 zerovec-derive-0.10.4
 zerovec-derive-0.11.7
 zip-0.6.6
-zip-9.2.2
+zip-9.3.0
 zlib-rs-0.6.8
 zmij-1.0.19
 zstd-0.11.2+zstd.1.5.2
@@ -2094,6 +2095,7 @@ _gen_cargo_lockfile() {
 		-e "s|@RUST_AWS_SMITHY_HTTP_PV@|${RUST_AWS_SMITHY_HTTP_PV}|g" \
 		-e "s|@RUST_AWS_SMITHY_HTTP_CLIENT_PV@|${RUST_AWS_SMITHY_HTTP_CLIENT_PV}|g" \
 		-e "s|@RUST_AWS_SMITHY_RUNTIME_PV@|${RUST_AWS_SMITHY_RUNTIME_PV}|g" \
+		-e "s|@RUST_AWS_SMITHY_RUNTIME_API_PV@|${RUST_AWS_SMITHY_RUNTIME_API_PV}|g" \
 		-e "s|@RUST_AWS_SMITHY_TYPES_PV@|${RUST_AWS_SMITHY_TYPES_PV}|g" \
 		-e "s|@RUST_AWS_TYPES_PV@|${RUST_AWS_TYPES_PV}|g" \
 		-e "s|@RUST_BURN_PV@|${RUST_BURN_PV}|g" \

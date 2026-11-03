@@ -1,6 +1,7 @@
+# This is partly contains AI generated fixes.
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/analytics/burn/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/analytics/burn/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/analytics/burn/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/analytics/burn/Cargo.toml	2026-11-02 16:33:04.998122195 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/analytics/burn/Cargo.toml	2026-11-02 20:20:36.791917241 -0800
 @@ -14,8 +14,8 @@ gst = { workspace = true, features = ["v
  gst-base = { workspace = true, features = ["v1_28"] }
  gst-analytics = { workspace = true, features = ["v1_28"] }
@@ -14,7 +15,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/analytics/burn/Car
  byte-slice-cast = "1"
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/audio/elevenlabs/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/audio/elevenlabs/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/audio/elevenlabs/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/audio/elevenlabs/Cargo.toml	2026-11-02 16:33:05.005896399 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/audio/elevenlabs/Cargo.toml	2026-11-02 20:20:36.792125549 -0800
 @@ -17,7 +17,7 @@ tokio = { version = "1", features = [ "f
  serde = { version = "1", features = ["derive"] }
  serde_json = "1"
@@ -26,8 +27,8 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/audio/elevenlabs/C
  signalsmith-stretch = { version = "0.1.2", optional = true }
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/Cargo.toml	2026-11-02 17:00:42.405609063 -0800
-@@ -160,16 +160,16 @@ edition = "2024"
++++ gst-plugins-rs-gstreamer-1.28.8/Cargo.toml	2026-11-02 20:21:21.785834726 -0800
+@@ -160,15 +160,15 @@ edition = "2024"
  rust-version = "1.92"
  
  [workspace.dependencies]
@@ -40,7 +41,6 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/Cargo.toml gst-plu
 -gdk-wayland = { package = "gdk4-wayland", git = "https://github.com/gtk-rs/gtk4-rs", branch = "0.11", features = ["v4_4"], version = "0.11.0" }
 -gdk-x11 = { package = "gdk4-x11", git = "https://github.com/gtk-rs/gtk4-rs", branch = "0.11", features = ["v4_4"], version = "0.11.0" }
 -gdk-win32 = { package = "gdk4-win32", git = "https://github.com/gtk-rs/gtk4-rs", branch = "0.11", features = ["v4_4"], version = "0.11.0" }
--gst = { package = "gstreamer", git = "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs", branch = "0.25", version = "0.25.0" }
 +glib = { git = "https://github.com/gtk-rs/gtk-rs-core", branch = "@RUST_GLIB_4_SLOT@", version = "@RUST_GLIB_4_PV@" }
 +gio = { git = "https://github.com/gtk-rs/gtk-rs-core", branch = "@RUST_GLIB_4_SLOT@", version = "@RUST_GIO_4_PV@" }
 +cairo-rs = { git = "https://github.com/gtk-rs/gtk-rs-core", branch = "@RUST_GLIB_4_SLOT@", features=["use_glib"], version = "@RUST_CAIRO_RS_4_PV@" }
@@ -50,10 +50,9 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/Cargo.toml gst-plu
 +gdk-wayland = { package = "gdk4-wayland", git = "https://github.com/gtk-rs/gtk4-rs", branch = "@RUST_GTK_4_SLOT@", features = ["v4_4"], version = "@RUST_GDK_WAYLAND_4_PV@" }
 +gdk-x11 = { package = "gdk4-x11", git = "https://github.com/gtk-rs/gtk4-rs", branch = "@RUST_GTK_4_SLOT@", features = ["v4_4"], version = "@RUST_GDK_X11_4_PV@" }
 +gdk-win32 = { package = "gdk4-win32", git = "https://github.com/gtk-rs/gtk4-rs", branch = "@RUST_GTK_4_SLOT@", features = ["v4_4"], version = "@RUST_GDK_WIN32_4_PV@" }
-+gst = { package = "gstreamer", git = "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs", branch = "0.25", version = "0.25.0" }
+ gst = { package = "gstreamer", git = "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs", branch = "0.25", version = "0.25.0" }
  gst-allocators = { package = "gstreamer-allocators", git = "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs", branch = "0.25", version = "0.25.0" }
  gst-analytics = { package = "gstreamer-analytics", git = "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs", branch = "0.25", version = "0.25.0" }
- gst-app = { package = "gstreamer-app", git = "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs", branch = "0.25", version = "0.25.0" }
 @@ -196,6 +196,6 @@ gst-plugin-isobmff = { path="mux/isobmff
  gst-plugin-gtk4 = { path="video/gtk4", version = "0.15.0" }
  gst-plugin-rtp = { path="net/rtp", version = "0.15.0" }
@@ -65,7 +64,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/Cargo.toml gst-plu
  rustls-platform-verifier = "0.7"
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/generic/sodium/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/generic/sodium/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/generic/sodium/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/generic/sodium/Cargo.toml	2026-11-02 16:33:05.006201859 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/generic/sodium/Cargo.toml	2026-11-02 20:20:36.792439506 -0800
 @@ -16,13 +16,13 @@ hex = "0.4"
  smallvec = "1.0"
  
@@ -84,7 +83,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/generic/sodium/Car
  
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/generic/threadshare/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/generic/threadshare/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/generic/threadshare/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/generic/threadshare/Cargo.toml	2026-11-02 16:33:05.006333731 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/generic/threadshare/Cargo.toml	2026-11-02 20:20:36.792582847 -0800
 @@ -24,7 +24,7 @@ gst-rtp = { workspace = true, features =
  num-traits = "0.2"
  pin-project-lite = "0.2.0"
@@ -105,8 +104,8 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/generic/threadshar
  [lib]
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/aws/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/aws/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/aws/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/aws/Cargo.toml	2026-11-02 16:33:05.015872553 -0800
-@@ -13,16 +13,16 @@ rust-version.workspace = true
++++ gst-plugins-rs-gstreamer-1.28.8/net/aws/Cargo.toml	2026-11-02 20:20:36.792726639 -0800
+@@ -13,16 +13,19 @@ rust-version.workspace = true
  [dependencies]
  async-stream = "0.3.4"
  base32 = "0.5"
@@ -126,14 +125,17 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/aws/Cargo.toml
 +aws-sdk-s3 = { version = "@RUST_AWS_SDK_S3_PV@", default-features = false, features = ["rt-tokio", "sigv4a"] }
 +aws-sdk-transcribestreaming = { version = "@RUST_AWS_SDK_TRANSCRIBESTREAMING_PV@", default-features = false, features = ["rt-tokio"] }
 +aws-sdk-translate = { version = "@RUST_AWS_SDK_TRANSLATE_PV@", default-features = false, features = ["rt-tokio"] }
-+aws-smithy-runtime = { version = "@RUST_AWS_SMITHY_RUNTIME_PV@", default-features = false, features = ["default-https-client"] }
++aws-smithy-runtime = { version = "@RUST_AWS_SMITHY_RUNTIME_PV@", default-features = false, features = ["rt-tokio"] }
++aws-smithy-runtime-api = { version = "@RUST_AWS_SMITHY_RUNTIME_API_PV@", default-features = false }
++aws-smithy-http-client = { version = "@RUST_AWS_SMITHY_HTTP_CLIENT_PV@", default-features = false, features = ["default-client", "rt-tokio", "rustls-aws-lc"] }
++aws-smithy-types = { version = "@RUST_AWS_SMITHY_TYPES_PV@", default-features = false }
 +aws-types = "@RUST_AWS_TYPES_PV@"
 +aws-credential-types = "@RUST_AWS_CREDENTIAL_TYPES_PV@"
 +aws-sdk-polly = { version = "@RUST_AWS_SDK_POLLY_PV@", default-features = false, features = ["rt-tokio"] }
  bytes = "1.0"
  futures = "0.3"
  gio.workspace = true
-@@ -45,7 +45,7 @@ signalsmith-stretch = { version = "0.1.2
+@@ -45,7 +47,7 @@ signalsmith-stretch = { version = "0.1.2
  chrono = { version = "0.4", features = [ "alloc" ] }
  env_logger = "0.11"
  gst-check = { workspace = true, features = ["v1_18"] }
@@ -144,7 +146,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/aws/Cargo.toml
  [lib]
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/icecast/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/icecast/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/icecast/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/icecast/Cargo.toml	2026-11-02 16:33:05.016603390 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/icecast/Cargo.toml	2026-11-02 20:20:36.792846225 -0800
 @@ -17,7 +17,7 @@ gst-base = { workspace = true }
  httparse = "1.8"
  rustls.workspace = true
@@ -156,7 +158,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/icecast/Cargo.
  url = "2"
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/quinn/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/quinn/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/quinn/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/quinn/Cargo.toml	2026-11-02 16:33:05.017607496 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/quinn/Cargo.toml	2026-11-02 20:20:36.792965481 -0800
 @@ -34,7 +34,7 @@ http = "1"
  [dev-dependencies]
  gst-check = { workspace = true, features = ["v1_20"] }
@@ -168,7 +170,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/quinn/Cargo.to
  name = "gstquinn"
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/raptorq/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/raptorq/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/raptorq/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/raptorq/Cargo.toml	2026-11-02 16:33:05.017746416 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/raptorq/Cargo.toml	2026-11-02 20:20:36.793080642 -0800
 @@ -16,7 +16,7 @@ raptorq = "2"
  
  [dev-dependencies]
@@ -180,7 +182,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/raptorq/Cargo.
  name = "gstraptorq"
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/reqwest/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/reqwest/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/reqwest/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/reqwest/Cargo.toml	2026-11-02 16:33:05.017866312 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/reqwest/Cargo.toml	2026-11-02 20:20:36.793194079 -0800
 @@ -10,7 +10,7 @@ rust-version.workspace = true
  
  [dependencies]
@@ -192,7 +194,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/reqwest/Cargo.
  futures = "0.3"
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/rtp/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/rtp/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/rtp/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/rtp/Cargo.toml	2026-11-02 16:33:05.017985700 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/rtp/Cargo.toml	2026-11-02 20:20:36.793318401 -0800
 @@ -26,7 +26,7 @@ gio.workspace = true
  hex = "0.4.3"
  log = "0.4"
@@ -213,7 +215,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/rtp/Cargo.toml
  gst-app   = { workspace = true, features = ["v1_20"] }
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/rtsp/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/rtsp/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/rtsp/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/rtsp/Cargo.toml	2026-11-02 16:33:05.018124130 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/rtsp/Cargo.toml	2026-11-02 20:20:36.793443335 -0800
 @@ -25,7 +25,7 @@ sdp-types = "0.1"
  socket2 = { version = "0.6", features = ["all"] }
  thiserror = "2"
@@ -243,8 +245,8 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/rtsp/Cargo.tom
  [lib]
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/webrtc/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/webrtc/Cargo.toml	2026-11-02 16:33:05.018929456 -0800
-@@ -36,26 +36,26 @@ fastrand = "2.0"
++++ gst-plugins-rs-gstreamer-1.28.8/net/webrtc/Cargo.toml	2026-11-02 20:20:36.793604104 -0800
+@@ -36,26 +36,28 @@ fastrand = "2.0"
  gst-plugin-webrtc-protocol.workspace = true
  gst-plugin-webrtc-signalling.workspace = true
  human_bytes = "0.4"
@@ -272,9 +274,11 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/Cargo.t
 +aws-types = { version = "@RUST_AWS_TYPES_PV@", optional = true }
 +aws-credential-types = { version = "@RUST_AWS_CREDENTIAL_TYPES_PV@", optional = true }
 +aws-sigv4 = { version = "@RUST_AWS_SIGV4_PV@", optional = true }
-+aws-smithy-http = { version = "@RUST_AWS_SMITHY_HTTP_PV@", features = [ "rt-tokio" ], optional = true }
-+aws-smithy-http-client = { version = "@RUST_AWS_SMITHY_HTTP_CLIENT_PV@", default-features = false, features = ["default-client", "rt-tokio", "rustls-ring"], optional = true }
-+aws-smithy-types = { version = "@RUST_AWS_SMITHY_TYPES_PV@", optional = true }
++aws-smithy-http = { version = "@RUST_AWS_SMITHY_HTTP_PV@", features = ["rt-tokio"], optional = true }
++aws-smithy-http-client = { version = "@RUST_AWS_SMITHY_HTTP_CLIENT_PV@", default-features = false, features = ["default-client", "rt-tokio", "rustls-aws-lc"], optional = true }
++aws-smithy-runtime-api = { version = "@RUST_AWS_SMITHY_RUNTIME_API_PV@", default-features = false, optional = true }
++aws-smithy-runtime = { version = "@RUST_AWS_SMITHY_RUNTIME_PV@", default-features = false, features = ["rt-tokio"], optional = true }
++aws-smithy-types = { version = "@RUST_AWS_SMITHY_TYPES_PV@", default-features = false, optional = true }
 +aws-sdk-kinesisvideo = { version =  "@RUST_AWS_SDK_KINESISVIDEO_PV@", optional = true, default-features = false, features = ["rt-tokio"] }
 +aws-sdk-kinesisvideosignaling = { version = "@RUST_AWS_SDK_KINESISVIDEOSIGNALING_PV@", optional = true, default-features = false, features = ["rt-tokio"] }
  http = { version = "1.0" }
@@ -285,7 +289,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/Cargo.t
  rustls.workspace = true
  rustls-platform-verifier.workspace = true
  parse_link_header = {version = "0.4", features = ["url"]}
-@@ -77,7 +77,7 @@ indexmap = "2.13.0"
+@@ -77,7 +79,7 @@ indexmap = "2.13.0"
  [dev-dependencies]
  gst-plugin-rtp.workspace = true
  tokio = { version = "1", features = ["signal"] }
@@ -296,7 +300,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/Cargo.t
  
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/signalling/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/webrtc/signalling/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/signalling/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/webrtc/signalling/Cargo.toml	2026-11-02 16:33:05.019776741 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/webrtc/signalling/Cargo.toml	2026-11-02 20:20:36.793748757 -0800
 @@ -14,7 +14,7 @@ tokio = { version = "1", features = ["fs
  async-tungstenite = { version = "0.35", features = ["tokio-runtime", "tokio-rustls-native-certs"] }
  serde = { version = "1", features = ["derive"] }
@@ -317,7 +321,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtc/signall
  [features]
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtchttp/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/net/webrtchttp/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtchttp/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/net/webrtchttp/Cargo.toml	2026-11-02 16:33:05.021297775 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/net/webrtchttp/Cargo.toml	2026-11-02 20:20:36.793868483 -0800
 @@ -14,7 +14,7 @@ rust-version.workspace = true
  gst.workspace = true
  gst-webrtc = { workspace = true, features = ["v1_18"] }
@@ -329,7 +333,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/net/webrtchttp/Car
  parse_link_header = {version = "0.4", features = ["url"]}
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/utils/fallbackswitch/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/utils/fallbackswitch/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/utils/fallbackswitch/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/utils/fallbackswitch/Cargo.toml	2026-11-02 16:33:05.021442959 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/utils/fallbackswitch/Cargo.toml	2026-11-02 20:20:36.793990625 -0800
 @@ -14,7 +14,7 @@ gst-base.workspace = true
  gst-audio.workspace = true
  gst-video.workspace = true
@@ -350,7 +354,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/utils/fallbackswit
  [lib]
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/utils/uriplaylistbin/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/utils/uriplaylistbin/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/utils/uriplaylistbin/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/utils/uriplaylistbin/Cargo.toml	2026-11-02 16:33:05.021569605 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/utils/uriplaylistbin/Cargo.toml	2026-11-02 20:20:36.794113444 -0800
 @@ -11,7 +11,7 @@ rust-version.workspace = true
  [dependencies]
  gst = { workspace = true, features = ["v1_26"] }
@@ -371,7 +375,7 @@ diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/utils/uriplaylistb
  [lib]
 diff '--color=auto' -urp gst-plugins-rs-gstreamer-1.28.8.orig/video/closedcaption/Cargo.toml gst-plugins-rs-gstreamer-1.28.8/video/closedcaption/Cargo.toml
 --- gst-plugins-rs-gstreamer-1.28.8.orig/video/closedcaption/Cargo.toml	2026-09-28 10:36:03.000000000 -0700
-+++ gst-plugins-rs-gstreamer-1.28.8/video/closedcaption/Cargo.toml	2026-11-02 16:33:05.021707896 -0800
++++ gst-plugins-rs-gstreamer-1.28.8/video/closedcaption/Cargo.toml	2026-11-02 20:20:36.794237626 -0800
 @@ -33,9 +33,9 @@ itertools = "0.15"
  
  [dev-dependencies]
