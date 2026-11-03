@@ -22,6 +22,8 @@ _SECURE_VERSION_RUST_ECLASS=1
 SECURE_VERSION_RUST_ECLASS_UPDATE=1793670667
 
 # You must prefix your entry with RUST_
+
+# Packages should be added to this eclass if one of the following is true:
 # Packages that have vulnerabilities fixes should be listed as latest version.
 # Packages that impede remediation should be listed as latest version.
 # Packages that use unsafe and have reported/unreported vulnerabilities (double-free, UAF, etc) should be listed.
