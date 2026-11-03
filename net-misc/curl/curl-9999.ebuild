@@ -34,7 +34,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 )
 
 inherit dot-a autotools cflags-hardened chkl multilib-minimal multiprocessing prefix secure-version toolchain-funcs verify-sig
@@ -71,7 +70,7 @@ IUSE+=" mbedtls +openssl +pop3 +psl +quic rustls sasl-scram +smtp ssh ssl static
 IUSE+=" telnet +tftp +websockets zstd"
 # These select the default tls implementation / which quic impl to use
 IUSE+=" curl_ssl_gnutls curl_ssl_mbedtls +curl_ssl_openssl curl_ssl_rustls"
-IUSE+=" ebuild_revision_16"
+IUSE+=" ebuild_revision_17"
 RESTRICT="!test? ( test )"
 
 # HTTPS RR is technically usable with the threaded resolver, but it still uses c-ares to
