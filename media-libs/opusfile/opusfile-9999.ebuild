@@ -9,7 +9,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"media-libs/libogg-9999"
 	"media-libs/opus-9999"
 )
@@ -35,7 +34,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64"
 IUSE+="
 doc fixed-point +float +http libressl static-libs
-ebuild_revision_26
+ebuild_revision_27
 "
 RDEPEND="
 	>=media-libs/libogg-${LIBOGG_PV}:=[${MULTILIB_USEDEP}]
