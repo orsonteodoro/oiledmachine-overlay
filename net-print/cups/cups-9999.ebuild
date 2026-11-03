@@ -10,7 +10,6 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
 	"dev-libs/openssl-3.5.9999"
-	"dev-libs/openssl-3.4.9999"
 	"net-libs/gnutls-3.8.9999"
 )
 
@@ -44,7 +43,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+="
 acl dbus debug kerberos mdnsresponder-compat openssl pam selinux static-libs systemd test usb X xinetd zeroconf
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	mdnsresponder-compat? (
