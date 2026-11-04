@@ -1,0 +1,9 @@
+--- a/pyproject.toml.orig	2026-05-04 16:34:47.000000000 -0700
++++ b/pyproject.toml	2026-11-04 12:35:01.434882554 -0800
+@@ -1,5 +1,6 @@
+ [project]
+ name = "chromadb"
++version = @PV@
+ dynamic = ["version"]
+ 
+ authors = [{ name = "Jeff Huber", email = "jeff@trychroma.com" }, { name = "Anton Troynikov", email = "anton@trychroma.com" }]

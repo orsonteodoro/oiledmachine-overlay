@@ -1402,6 +1402,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.5.9-arrow-data-60.1.0-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-zip-9.2.0-compat.patch"
 	"${FILESDIR}/${PN}-1.5.9-hf-hub-1.0.0-compat.patch"
+	"${FILESDIR}/${PN}-1.5.9-pyproject-version.patch"
 )
 
 _check-reqs_requirements() {
@@ -1593,6 +1594,7 @@ src_prepare() {
 
 	sed -i -e "s|opt-level = 3|opt-level = ${opt_level}|g" "${S}/Cargo.toml" || die
 einfo "opt-level:  ${opt_level}"
+	sed -i -e "s|@PV@|${PV}|g" "${S}/pyproject.toml" || die
 }
 
 python_configure() {
@@ -1679,8 +1681,7 @@ python_compile() {
 
 	rm -rf "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/"* || true
 
-	local internal_pv="0.1.0"
-	local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/wheel/${PN}-${internal_pv}-cp${pypv}-abi3-linux_"*".whl")
+	local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/wheel/${PN}-${PV}-cp${pypv}-abi3-linux_"*".whl")
 	einfo "wheel_path=${wheel_path}"
 	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install"
 	distutils_wheel_install "${d}" \
