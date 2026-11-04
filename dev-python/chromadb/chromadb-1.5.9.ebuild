@@ -59,7 +59,7 @@ inherit protobuf
 
 #CHROMA_CORE_HNSWLIB_PV="0.8.1"
 DISTUTILS_EXT=1
-DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_SINGLE_IMPL=1 # It also takes a long time to build+link.
 DISTUTILS_USE_PEP517="maturin"
 GEN_CARGO_LOCKFILE=0 # 1, 0, unset (same as 0)
 LLVM_SLOT=23
@@ -1654,7 +1654,10 @@ einfo "PATH:  ${PATH}"
 
 python_compile() {
 	#export HNSWLIB_NO_NATIVE=1
-	cargo_src_compile
+
+	# Properly align the slot.
+	# The forward's compatible abi3-py39 is the minimum required.
+	export PYO3_PYTHON="${PYTHON}"
 	distutils-r1_python_compile
 }
 
