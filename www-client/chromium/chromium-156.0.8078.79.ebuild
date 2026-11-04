@@ -2310,6 +2310,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${COMMON_DEPEND}
+	!<www-client/chromium-sources-${PV}
 	www-client/chromium-sources:0=
 	!headless? (
 		>=media-video/pipewire-${PIPEWIRE_PV}:=
