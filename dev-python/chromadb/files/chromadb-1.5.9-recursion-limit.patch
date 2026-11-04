@@ -58,7 +58,7 @@ This patch partly uses AI assistant fixes or suggestions.
 +++ b/rust/log-service/src/lib.rs	2026-11-03 10:29:11.301998042 -0800
 @@ -1,4 +1,4 @@
 -#![recursion_limit = "256"]
-+#![recursion_limit = "1024"]
++#![recursion_limit = "2048"]
  
  use std::collections::hash_map::Entry;
  use std::collections::HashMap;

@@ -1629,8 +1629,8 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 
-	fix_mb_len_max # For aws-lc-sys crate -> x509_vfy.c
-	cflags-hardened_append
+	fix_mb_len_max			# For Clang build of aws-lc-sys crate of x509_vfy.c
+	cflags-hardened_append		# For aws-lc-sys
 	rustflags-hardened_append
 
 	# The mold linker could be breaking with the chromadb_rust_bindings, so it is avoided.
