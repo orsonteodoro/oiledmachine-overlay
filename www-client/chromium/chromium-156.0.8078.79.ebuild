@@ -2311,7 +2311,7 @@ RDEPEND+="
 DEPEND+="
 	${COMMON_DEPEND}
 	!<www-client/chromium-sources-${PV}
-	www-client/chromium-sources:0=
+	~www-client/chromium-sources-${PV}:0=
 	!headless? (
 		>=media-video/pipewire-${PIPEWIRE_PV}:=
 		gtk3? (
@@ -2360,7 +2360,7 @@ BDEPEND+="
 	sys-apps/hwdata
 	sys-devel/flex
 	!<www-client/chromium-toolchain-${PV}
-	www-client/chromium-toolchain:0=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
+	~www-client/chromium-toolchain-${PV}:0=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
 	x11-misc/xdg-utils
 	mold? (
 		>=sys-devel/mold-${MOLD_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
