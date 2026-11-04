@@ -3,7 +3,7 @@
 @@ -1,5 +1,6 @@
  [project]
  name = "chromadb"
-+version = @PV@
++version = "@PV@"
  dynamic = ["version"]
  
  authors = [{ name = "Jeff Huber", email = "jeff@trychroma.com" }, { name = "Anton Troynikov", email = "anton@trychroma.com" }]
