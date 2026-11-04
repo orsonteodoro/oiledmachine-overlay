@@ -2277,7 +2277,7 @@ COMMON_DEPEND="
 # runtime for most configurations.
 RDEPEND+="
 	${COMMON_DEPEND}
-	!www-client/chromium:155.0.8059.84
+	!<www-client/chromium-${PV}
 	>=www-client/chromium-common-2:*
 	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/ttf-fonts:*
@@ -2303,6 +2303,7 @@ RDEPEND+="
 	)
 	bindist? (
 		ffmpeg-chromium? (
+			!<media-video/ffmpeg-chromium-${PV}
 			~media-video/ffmpeg-chromium-${PV}:0=[patent_status_nonfree=]
 		)
 	)
@@ -2357,6 +2358,7 @@ BDEPEND+="
 	dev-vcs/git
 	sys-apps/hwdata
 	sys-devel/flex
+	!<www-client/chromium-toolchain-${PV}
 	www-client/chromium-toolchain:0=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cfi,pgo,system-clang=,system-rust=]
 	x11-misc/xdg-utils
 	mold? (
