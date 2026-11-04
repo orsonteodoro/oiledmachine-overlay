@@ -1658,7 +1658,38 @@ python_compile() {
 	# Properly align the slot.
 	# The forward's compatible abi3-py39 is the minimum required.
 	export PYO3_PYTHON="${PYTHON}"
+
+	local pypv="${EPYTHON}"
+	pypv="${pypv/./}"
+	pypv="${pypv/python/}"
+
+	# The AI suggests not do it this way and not do sed edits.
+	# The documentation <https://pyo3.rs/v0.29.3/building-and-distribution#py_limited_apiabi3abi3t>
+	# says that using exact versions allows the PyO3 library to optimize.
+	sed -i \
+		-r -e "s|abi3-py[0-9]+|abi3-py${pypv}|g" \
+		"${S}/Cargo.toml" \
+		|| die
+
+	export PYTHON_SYS_EXECUTABLE="${PYTHON}"
+
+	cd "${S}/" || die
+	export BUILD_DIR="${WORKDIR}/${PN}-${PV}/"
 	distutils-r1_python_compile
+
+	rm -rf "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/"* || true
+
+	local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}/target/wheels/${PN}-${PV}-cp${pypv}-abi3-linux_"*".whl")
+	einfo "wheel_path=${wheel_path}"
+	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install"
+	distutils_wheel_install "${d}" \
+		"${wheel_path}"
+
+	# Unbreak die check
+	mkdir -p "${d}/usr/bin"
+	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.cfg"}
+	mv "${d}/usr/bin/pyvenv.cfg" "${d}/usr/bin/../pyvenv.cfg" || die
+
 }
 
 src_compile() {
