@@ -1674,7 +1674,7 @@ python_compile() {
 	export PYTHON_SYS_EXECUTABLE="${PYTHON}"
 
 	cd "${S}/" || die
-	export BUILD_DIR="${WORKDIR}/${PN}-${PV}/"
+	export BUILD_DIR="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/"
 	distutils-r1_python_compile
 
 	rm -rf "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/"* || true
