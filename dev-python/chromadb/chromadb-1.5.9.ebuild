@@ -1679,7 +1679,8 @@ python_compile() {
 
 	rm -rf "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/"* || true
 
-	local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}/target/wheels/${PN}-${PV}-cp${pypv}-abi3-linux_"*".whl")
+	local internal_pv="0.1.0"
+	local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/wheel/${PN}-${internal_pv}-cp${pypv}-abi3-linux_"*".whl")
 	einfo "wheel_path=${wheel_path}"
 	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install"
 	distutils_wheel_install "${d}" \
