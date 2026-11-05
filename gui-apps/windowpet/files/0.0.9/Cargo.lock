@@ -2188,9 +2188,9 @@ dependencies = [
 
 [[package]]
 name = "mime"
-version = "0.3.17"
+version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
+checksum = "d5848f5a9e8117cf94f2f90faac24a87ff81600ff8628c1e3deaab572e76bfa1"
 
 [[package]]
 name = "minisign-verify"
@@ -3966,7 +3966,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-dialog"
 version = "2.8.4"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce0fb9c2b6d34a9720627ed930ebc8af26f61e648695aecaeb03d5c33c5896f5"
 dependencies = [
  "log",
  "raw-window-handle",
@@ -3983,7 +3984,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-fs"
 version = "2.7.1"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5d58eb1d4984e535f47a642ffec09a2da6f5c18a12b5902d12126cb7626d628b"
 dependencies = [
  "anyhow",
  "dunce",
@@ -4006,7 +4008,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-log"
 version = "2.10.1"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d83980f6765feb86cf2224959246be28b0488e14a23204a719f7f9deecfc64c9"
 dependencies = [
  "android_logger",
  "fern",
@@ -4026,7 +4029,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-process"
 version = "2.4.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74ae3d8549ae564c0397377373e262f340908eb23a5b9fbe03f2a00007dc0038"
 dependencies = [
  "tauri",
  "tauri-plugin",
@@ -4035,7 +4039,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shell"
 version = "2.6.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7375b25f72f70f6168f27f1ba3a413e30eaa0a2098cff53a4046ebfe9e2f142d"
 dependencies = [
  "encoding_rs",
  "libc",
@@ -4057,7 +4062,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-single-instance"
 version = "2.5.5"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "726b6da0dd5bd1344f84f4108a622c07d01923baacb5c803a605189672c5352f"
 dependencies = [
  "serde",
  "serde_json",
@@ -4072,7 +4078,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-store"
 version = "2.5.0"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3c6fdaac41e60f2313a440fa1776f3a5fdd16800ff967915e9800985b680822"
 dependencies = [
  "dunce",
  "serde",
@@ -4087,7 +4094,8 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-updater"
 version = "2.14.1"
-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v2#685d3424a946346721d839add3bfb6521690eb6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d957abbcb3f9f6c76d22a3a0f012f30880640d0bccb5634d2b12a9937e4c872b"
 dependencies = [
  "base64 0.23.1",
  "dirs",
@@ -5617,9 +5625,9 @@ dependencies = [
 
 [[package]]
 name = "zip"
-version = "9.3.0"
+version = "9.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
+checksum = "3cec733c9820347a592f6375c3c0089b479ba0a0b1cbf3dd1958b02959b7c033"
 dependencies = [
  "crc32fast",
  "getrandom 0.4.3",

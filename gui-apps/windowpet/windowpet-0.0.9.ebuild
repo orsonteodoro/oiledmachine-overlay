@@ -26,6 +26,7 @@ EAPI=8
 
 MY_PN="WindowPet"
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"	# For unsafe -sys packages
 GEN_CARGO_LOCKFILE=0 # 0, 1, unset (0)
 NODE_SLOT="24" # CI uses 23 based on CI logs, bump for security
 NPM_AUDIT_FATAL=0
@@ -36,6 +37,7 @@ PLUGINS_WORKSPACE_COMMIT="685d3424a946346721d839add3bfb6521690eb6e" # Obtained f
 RUST_MAX_VER="1.93.1"
 RUST_MIN_VER="1.93.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
+RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"	# For user generated content
 SECURE_VERSION_NODE_EBUILD_UPDATE=1793848992
 SECURE_VERSION_RUST_EBUILD_UPDATE=1793849048
 
@@ -67,14 +69,6 @@ declare -A BANNED_CARGO_PACKAGES_PV=(
 
 # Remove tauri-plugin-autostart from GIT_CRATES:
 declare -A GIT_CRATES=(
-[tauri-plugin-dialog]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/dialog" # 2.8.4
-[tauri-plugin-fs]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/fs" # 2.7.1
-[tauri-plugin-log]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/log" # 2.10.1
-[tauri-plugin-process]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/process" # 2.4.0
-[tauri-plugin-shell]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/shell" # 2.6.0
-[tauri-plugin-single-instance]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/single-instance" # 2.5.5
-[tauri-plugin-store]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/store" # 2.5.0
-[tauri-plugin-updater]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/updater" # 2.14.1
 )
 
 CRATES="
@@ -293,7 +287,7 @@ log-0.4.35
 markup5ever-0.39.0
 memchr-2.8.3
 memoffset-0.9.1
-mime-0.3.17
+mime-0.3.18
 minisign-verify-0.3.0
 miniz_oxide-0.8.9
 miniz_oxide-0.9.1
@@ -452,6 +446,14 @@ tauri-build-2.7.4
 tauri-codegen-2.7.4
 tauri-macros-2.7.4
 tauri-plugin-2.7.2
+tauri-plugin-dialog-2.8.4
+tauri-plugin-fs-2.7.1
+tauri-plugin-log-2.10.1
+tauri-plugin-process-2.4.0
+tauri-plugin-shell-2.6.0
+tauri-plugin-single-instance-2.5.5
+tauri-plugin-store-2.5.0
+tauri-plugin-updater-2.14.1
 tauri-runtime-2.12.2
 tauri-runtime-wry-2.12.3
 tauri-utils-2.10.2
@@ -593,7 +595,7 @@ zeroize-1.9.1
 zerotrie-0.2.5
 zerovec-0.11.9
 zerovec-derive-0.11.7
-zip-9.3.0
+zip-9.4.0
 zlib-rs-0.6.8
 zmij-1.0.23
 zvariant-5.15.1
@@ -613,7 +615,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo chkl desktop lcnr npm secure-version secure-version-node secure-version-rust xdg
+inherit cargo cflags-hardened chkl desktop lcnr npm rustflags-hardened secure-version secure-version-node secure-version-rust xdg
 
 RUST_LOG_PV="0.4.21"
 
@@ -955,28 +957,8 @@ einfo
 	die
 }
 
-src_unpack() {
-	unpack "${P}.tar.gz"
-	gen_cargo_lockfile
-	#die # For lockfile update
-
-einfo "Unpacking npm side"
-	S="${WORKDIR}/${MY_PN}-${PV}" \
-	npm_src_unpack
-	S="${WORKDIR}/${MY_PN}-${PV}" \
-	enpm i --save-dev "@types/testing-library__react"
-
-einfo "Unpacking Tauri side"
-	pushd "${WORKDIR}/${MY_PN}-${PV}/src-tauri" || die
-		S="${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
-		_cargo_src_unpack
-	popd
-
-einfo "Copying npm build files"
-	cp -av "${FILESDIR}/${PV}/"{"package.json","package-lock.json"} "${S}" || die
-einfo "Copying cargo build files"
-	cp -av "${FILESDIR}/${PV}/Cargo."{"lock","toml"} "${S}/src-tauri" || die
-
+_unpack_git_crates() {
+	(( ${#GIT_CRATES[@]} > 0 )) || return
 	cd "${WORKDIR}" || die
 	local commit="${PLUGINS_WORKSPACE_COMMIT}"
 	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/autostart" || die
@@ -1001,6 +983,33 @@ einfo "Copying cargo build files"
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/store" \
 		|| die
 
+}
+
+src_unpack() {
+	unpack "${P}.tar.gz"
+	gen_cargo_lockfile
+	#die # For lockfile update
+
+einfo "Unpacking npm side"
+	S="${WORKDIR}/${MY_PN}-${PV}" \
+	npm_src_unpack
+	S="${WORKDIR}/${MY_PN}-${PV}" \
+	enpm i --save-dev "@types/testing-library__react"
+
+einfo "Unpacking Tauri side"
+	pushd "${WORKDIR}/${MY_PN}-${PV}/src-tauri" || die
+		S="${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
+		_cargo_src_unpack
+	popd
+
+einfo "Copying npm build files"
+	cp -av "${FILESDIR}/${PV}/"{"package.json","package-lock.json"} "${S}" || die
+einfo "Copying cargo build files"
+	cp -av "${FILESDIR}/${PV}/Cargo."{"lock","toml"} "${S}/src-tauri" || die
+
+	_unpack_git_crates
+	cd "${WORKDIR}" || die
+
 	local row
 	for row in "${BANNED_CARGO_PACKAGES[@]}" ; do
 		local pkg="${row%;*}"
@@ -1017,17 +1026,16 @@ einfo "Copying cargo build files"
 		fi
 	done
 
-	# Remove mistake by _npm_src_unpack_default_ebuild()
+	# Remove mistake by _npm_src_unpack_default_ebuild() which should ignore Cargo.* files.
 	rm "${S}/"{"Cargo.toml","Cargo.lock"} || true
-
-einfo "Copying npm build files"
-	cp -av "${FILESDIR}/${PV}/"{"package.json","package-lock.json"} "${S}" || die
-einfo "Copying cargo build files"
-	cp -av "${FILESDIR}/${PV}/Cargo."{"lock","toml"} "${S}/src-tauri" || die
 }
 
 src_configure() {
 	chkl_check_many_timestamps
+
+	cflags-hardened_append		# For -sys packages with unsafe code
+	rustflags-hardened_append	# For untrusted user generated content
+
 	pushd "${WORKDIR}/${MY_PN}-${PV}/src-tauri" || die
 		S="${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
 		cargo_src_configure

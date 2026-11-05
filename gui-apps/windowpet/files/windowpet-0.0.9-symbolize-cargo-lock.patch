@@ -22,14 +22,14 @@
 -tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 -tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 -tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
-+tauri-plugin-dialog = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_DIALOG_PV@" }
-+tauri-plugin-fs = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_FS_PV@" }
-+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_LOG_PV@" }
-+tauri-plugin-process = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_PROCESS_PV@" }
-+tauri-plugin-shell = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_SHELL_PV@" }
-+tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_SINGLE_INSTANCE_PV@" }
-+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_STORE_PV@" }
-+tauri-plugin-updater = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "@RUST_TAURI_2_PLUGIN_SLOT@", version = "@RUST_TAURI_2_PLUGIN_UPDATER_PV@" }
++tauri-plugin-dialog = { version = "@RUST_TAURI_2_PLUGIN_DIALOG_PV@" }
++tauri-plugin-fs = { version = "@RUST_TAURI_2_PLUGIN_FS_PV@" }
++tauri-plugin-log = { version = "@RUST_TAURI_2_PLUGIN_LOG_PV@" }
++tauri-plugin-process = { version = "@RUST_TAURI_2_PLUGIN_PROCESS_PV@" }
++tauri-plugin-shell = { version = "@RUST_TAURI_2_PLUGIN_SHELL_PV@" }
++tauri-plugin-single-instance = { version = "@RUST_TAURI_2_PLUGIN_SINGLE_INSTANCE_PV@" }
++tauri-plugin-store = { version = "@RUST_TAURI_2_PLUGIN_STORE_PV@" }
++tauri-plugin-updater = { version = "@RUST_TAURI_2_PLUGIN_UPDATER_PV@" }
  
  [features]
  # this feature is used for production builds or when `devPath` points to the filesystem

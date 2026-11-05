@@ -13,7 +13,7 @@
 -    "distDir": "../dist",
 -    "withGlobalTauri": false
 +    "devUrl": "http://localhost:1420",
-+    "frontendDist": "../dist",
++    "frontendDist": "../dist"
    },
 -  "package": {
 -    "productName": "WindowPet",
