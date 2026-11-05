@@ -666,7 +666,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	tray? (
@@ -741,7 +741,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-0.0.9-tauri-v2-rs.patch"
 	"${FILESDIR}/${PN}-0.0.9-tauri-v2-js-ts.patch"
-	"A${FILESDIR}/${PN}-0.0.9-tauri-v2-capabilities-json.patch"
+	"${FILESDIR}/${PN}-0.0.9-tauri-v2-capabilities-json.patch"
 	"${FILESDIR}/${PN}-0.0.9-tauri-v2-tauri-conf-json.patch"
 )
 
