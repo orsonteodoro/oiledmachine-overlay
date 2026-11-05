@@ -1676,22 +1676,19 @@ python_compile() {
 	export PYTHON_SYS_EXECUTABLE="${PYTHON}"
 
 	cd "${S}/" || die
-	export BUILD_DIR="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/"
+	export BUILD_DIR="${S}_${EPYTHON}/"
 	distutils-r1_python_compile
 
-	rm -rf "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/"* || true
+	rm -rf "${S}_${EPYTHON}/install/"* || true
 
-	local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/wheel/${PN}-${PV}-cp${pypv}-abi3-linux_"*".whl")
+	local wheel_path=$(realpath "${S}_${EPYTHON}/wheel/${PN}-${PV}-cp${pypv}-abi3-linux_"*".whl")
 	einfo "wheel_path=${wheel_path}"
-	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install"
+	local d="${S}_${EPYTHON}/install"
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
 
 	# Unbreak die check
-	mkdir -p "${d}/usr/bin"
-	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.cfg"}
-	mv "${d}/usr/bin/pyvenv.cfg" "${d}/usr/bin/../pyvenv.cfg" || die
-
+	rm "${d}/usr/bin/"{"${EPYTHON}","python","python3"} || true
 }
 
 src_compile() {
