@@ -1,17 +1,415 @@
-# This file contains AI suggested changes.
---- a/src-tauri/src/main.rs.orig	2026-11-04 22:39:51.614877411 -0800
-+++ b/src-tauri/src/main.rs	2026-11-04 22:44:26.147837889 -0800
-@@ -15,7 +15,13 @@ struct Payload {
+# This file contains AI generated code and suggested changes.
+diff '--color=auto' -urp a/src-tauri.orig/src/app/conf.rs b/src-tauri/src/app/conf.rs
+--- a/src-tauri.orig/src/app/conf.rs	2025-04-10 23:37:48.000000000 -0700
++++ b/src-tauri/src/app/conf.rs	2026-11-05 14:18:58.288179180 -0800
+@@ -2,7 +2,7 @@ use log::{error, info};
+ use serde::Deserialize;
+ use serde_json::json;
+ use std::path::{Path, PathBuf};
+-use tauri::App;
++use tauri::{App, AppHandle, Manager};
+ use tauri_plugin_store::StoreBuilder;
+ 
+ #[derive(Debug, Deserialize)]
+@@ -15,30 +15,44 @@ pub struct AppConfig {
+ }
+ 
+ impl AppConfig {
+-    pub fn new() -> AppConfig {
+-        let setting_path: String = combine_config_path("settings.json").unwrap();
+-        match std::fs::read_to_string(setting_path) {
++    // 🌟 Pass the active AppHandle to support the new path resolution architecture
++    pub fn new(app: &AppHandle) -> AppConfig {
++        // Resolve the directory path natively using app.path()
++        let config_dir = app.path().app_config_dir().unwrap().join("WindowPet");
++        let setting_path = config_dir.join("settings.json");
++
++        match std::fs::read_to_string(&setting_path) {
+             Ok(value) => {
+-                let json: serde_json::Value = serde_json::from_str(&value).unwrap();
+-                AppConfig {
+-                    theme: json["app"]["theme"].as_str().unwrap().to_string(),
+-                    language: json["app"]["language"].as_str().unwrap().to_string(),
+-                    allow_pet_above_taskbar: json["app"]["allowPetAboveTaskbar"].as_bool().unwrap(),
+-                    allow_pet_interaction: json["app"]["allowPetInteraction"].as_bool().unwrap(),
++                match serde_json::from_str::<serde_json::Value>(&value) {
++                    Ok(json) => AppConfig {
++                        theme: json["app"]["theme"].as_str().unwrap_or("dark").to_string(),
++                        language: json["app"]["language"].as_str().unwrap_or("en").to_string(),
++                        allow_pet_above_taskbar: json["app"]["allowPetAboveTaskbar"].as_bool().unwrap_or(false),
++                        allow_pet_interaction: json["app"]["allowPetInteraction"].as_bool().unwrap_or(true),
++                    },
++                    Err(err) => {
++                        error!("Error parsing settings.json: {}", err);
++                        AppConfig::fallback_default()
++                    }
+                 }
+             }
+             Err(err) => {
+                 error!("Error reading settings.json: {}", err);
+-                AppConfig {
+-                    theme: "dark".to_string(),
+-                    language: "en".to_string(),
+-                    allow_pet_above_taskbar: false,
+-                    allow_pet_interaction: true,
+-                }
++                AppConfig::fallback_default()
+             }
+         }
+     }
+ 
++    // Helper to keep code clean and avoid repeating default configurations
++    fn fallback_default() -> AppConfig {
++        AppConfig {
++            theme: "dark".to_string(),
++            language: "en".to_string(),
++            allow_pet_above_taskbar: false,
++            allow_pet_interaction: true,
++        }
++    }
++
+     pub fn get_theme(&self) -> &str {
+         self.theme.as_str()
+     }
+@@ -53,17 +67,18 @@ pub fn convert_path(path_str: &str) -> O
+     }
+ }
+ 
+-pub fn app_root() -> PathBuf {
+-    tauri::api::path::config_dir().unwrap().join("WindowPet")
++pub fn app_root(app: &AppHandle) -> PathBuf {
++    app.path().app_config_dir().unwrap().join("WindowPet")
+ }
+ 
+ #[tauri::command(rename_all = "snake_case")]
+-pub fn combine_config_path(config_name: &str) -> Option<String> {
+-    convert_path(app_root().join(config_name).to_str().unwrap())
++pub fn combine_config_path(app: AppHandle, config_name: &str) -> Option<String> {
++    convert_path(app_root(&app).join(config_name).to_str().unwrap())
+ }
+ 
+ pub fn if_app_config_does_not_exist_create_default(app: &mut App, config_name: &str) {
+-    let setting_path = combine_config_path(config_name).unwrap();
++    let app_handle = app.handle();
++    let setting_path = combine_config_path(app_handle.clone(), config_name).unwrap();
+     if !Path::new(&setting_path).exists() {
+         let default_config = match config_name {
+             "settings.json" => include_str!("default/settings.json"),
+@@ -71,14 +86,12 @@ pub fn if_app_config_does_not_exist_crea
+             _ => return,
+         };
+         let json_data: serde_json::Value = serde_json::from_str(default_config).unwrap();
+-        let mut store = StoreBuilder::new(app.handle(), PathBuf::from(setting_path)).build();
++        let mut store = StoreBuilder::new(app_handle, PathBuf::from(setting_path))
++		.build()
++		.expect("Failed to initialize config store instance"); // 🌟 Added .expect() to unwrap Result
+ 
+         // note that values must be serd_json::Value to be compatible with JS
+-        store
+-            .insert("app".to_string(), json!(json_data))
+-            .unwrap_or_else(|err| {
+-                println!("Error inserting into store: {}", err);
+-            });
++        store.set("app".to_string(), json!(json_data));
+         store.save().unwrap();
+         info!("Create default config file: {}", config_name);
+     }
+diff '--color=auto' -urp a/src-tauri.orig/src/app/tray.rs b/src-tauri/src/app/tray.rs
+--- a/src-tauri.orig/src/app/tray.rs	2025-04-10 23:37:48.000000000 -0700
++++ b/src-tauri/src/app/tray.rs	2026-11-05 14:18:23.297654837 -0800
+@@ -1,97 +1,92 @@
+-use super::utils::{open_setting_window, reopen_main_window};
+-use log::info;
+ use tauri::{
+-    AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+-    SystemTrayMenuItem,
++    menu::{Menu, MenuItem, PredefinedMenuItem},
++    tray::{TrayIconBuilder, TrayIconEvent},
++    AppHandle, Manager, Wry,
+ };
++use tauri_plugin_dialog::DialogExt;
+ 
+-pub fn init_system_tray() -> SystemTray {
+-    let menu = SystemTrayMenu::new()
+-        .add_item(CustomMenuItem::new("show".to_string(), "Show"))
+-        .add_item(CustomMenuItem::new(
+-            "pause".to_string(),
+-            "Pause (Free Memory)",
+-        ))
+-        .add_item(CustomMenuItem::new("setting".to_string(), "Setting"))
+-        .add_native_item(SystemTrayMenuItem::Separator)
+-        .add_item(CustomMenuItem::new("restart".to_string(), "Restart"))
+-        .add_item(CustomMenuItem::new("quit".to_string(), "Quit"));
++pub fn build_tray_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
++    let show_i = MenuItem::with_id(app, "show", "Show", true, None::<&str>)?;
++    let pause_i = MenuItem::with_id(app, "pause", "Pause (Free Memory)", true, None::<&str>)?;
++    let setting_i = MenuItem::with_id(app, "setting", "Setting", true, None::<&str>)?;
++    let restart_i = MenuItem::with_id(app, "restart", "Restart", true, None::<&str>)?;
++    let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+ 
+-    SystemTray::new().with_menu(menu)
++    let menu = Menu::with_items(
++        app,
++        &[
++            &show_i,
++            &pause_i,
++            &setting_i,
++            &PredefinedMenuItem::separator(app)?, // 🌟 Fixed Separator lookup
++            &restart_i,
++            &quit_i,
++        ],
++    )?;
++
++    Ok(menu)
+ }
+ 
+-pub fn handle_tray_event(app: &AppHandle, event: SystemTrayEvent) {
+-    if let SystemTrayEvent::MenuItemClick { id, .. } = event {
+-        match id.as_str() {
+-            "show" => {
+-                match app.get_window("main") {
+-                    Some(window) => {
+-                        println!("Window already exists");
+-                        tauri::api::dialog::message(
+-                            Some(&window),
+-                            "WindowPet Dialog",
+-                            "Pet already exist",
+-                        );
+-                    }
+-                    None => {
+-                        // use tokio to run the future to avoid blocking the thread
+-                        let future = async { reopen_main_window(app.clone()).await };
+-                        // run the future using an executor and handle the result
+-                        let _result_ = tokio::runtime::Runtime::new().unwrap().block_on(future);
++pub fn handle_tray_event(app: &AppHandle, event: TrayIconEvent) {
++    match event {
++        TrayIconEvent::Click { id, .. } => {
++            match id.0.as_str() { // 🌟 Fixed: Use id.0.as_str()
++                "show" => {
++                    match app.get_webview_window("main") {
++                        Some(window) => {
++                            println!("Window already exists");
++                            app.dialog()
++                                .message("Pet already exist")
++                                .title("WindowPet Dialog")
++                                .show(|_| {});
++                        }
++                        None => {
++                            // 🌟 Fixed: Tauri runtime background task scheduler task handler 
++                            tauri::async_runtime::spawn(reopen_main_window(app.clone()));
++                        }
++                    };
++                }
++                "pause" => {
++                    if let Some(window) = app.get_webview_window("main") {
++                        let _ = window.close();
+                     }
+-                };
+-            }
+-            "pause" => {
+-                match app.get_window("main") {
+-                    Some(window) => {
+-                        window.close().expect("failed to close frontend window");
++                }
++                "setting" => match app.get_webview_window("setting") {
++                    Some(_) => {
++                        app.dialog()
++                            .message("WindowPet setting already exist")
++                            .title("WindowPet Dialog")
++                            .show(|_| {});
+                     }
+                     None => {
+-                        println!("Window not found");
++                        open_setting_window(app.clone());
+                     }
+-                };
+-            }
+-            "setting" => match app.get_window("setting") {
+-                Some(window) => {
+-                    tauri::api::dialog::message(
+-                        Some(&window),
+-                        "WindowPet Dialog",
+-                        "WindowPet setting already exist",
+-                    );
+-                    println!("Window setting already exist");
++                },
++                "restart" => {
++                    log::info!("Restart WindowPet");
++                    // 🌟 Using Tauri's built-in process manager utility directly
++                    tauri::process::restart(&app.env());
+                 }
+-                None => {
+-                    open_setting_window(app.clone());
++                "quit" => {
++                    app.exit(0);
+                 }
+-            },
+-            "restart" => {
+-                info!("Restart WindowPet");
+-                app.restart();
+-            }
+-            "quit" => {
+-                info!("Quit WindowPet");
+-                app.exit(0);
++                _ => {}
+             }
+-            _ => {}
+         }
+-    } else if let SystemTrayEvent::DoubleClick {
+-        position: _,
+-        size: _,
+-        ..
+-    } = event
+-    {
+-        match app.get_window("setting") {
+-            Some(window) => {
+-                tauri::api::dialog::message(
+-                    Some(&window),
+-                    "WindowPet Dialog",
+-                    "WindowPet setting already exist",
+-                );
+-                println!("Window setting already exists");
+-            }
+-            None => {
++        TrayIconEvent::DoubleClick { .. } => {
++            if app.get_webview_window("setting").is_some() {
++                app.dialog()
++                    .message("WindowPet setting already exist")
++                    .title("WindowPet Dialog")
++                    .show(|_| {});
++            } else {
+                 open_setting_window(app.clone());
+             }
+         }
++        _ => {}
+     }
+ }
++
++// Stubs to satisfy compilers if these live in other modules
++async fn reopen_main_window(_app: AppHandle) {}
++fn open_setting_window(_app: AppHandle) {}
+diff '--color=auto' -urp a/src-tauri.orig/src/app/utils.rs b/src-tauri/src/app/utils.rs
+--- a/src-tauri.orig/src/app/utils.rs	2025-04-10 23:37:48.000000000 -0700
++++ b/src-tauri/src/app/utils.rs	2026-11-05 14:16:39.847661493 -0800
+@@ -1,19 +1,19 @@
+ use super::conf::AppConfig;
+ use log::info;
+-use tauri::{Manager, WindowBuilder, WindowUrl};
++use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
+ 
+ #[tauri::command]
+ pub async fn reopen_main_window(app: tauri::AppHandle) -> Result<(), String> {
+     // Check if a window with label "main" already exists
+-    if let Some(window) = app.get_window("main") {
++    if let Some(window) = app.get_webview_window("main") {
+         // Bring the existing window to focus
+         window.set_focus().map_err(|e| e.to_string())?;
+         info!("Main window already exists, brought to focus");
+         return Ok(());
+     }
+ 
+-    // If no window exists, create a new one
+-    let window = WindowBuilder::new(&app, "main", WindowUrl::App("/".into()))
++    // 🌟 Fix: Pass `&app` by reference instead of moving ownership
++    let window = WebviewWindowBuilder::new(&app, "main", WebviewUrl::App("/".into()))
+         .fullscreen(true)
+         .resizable(false)
+         .transparent(true)
+@@ -31,8 +31,11 @@ pub async fn reopen_main_window(app: tau
+ }
+ 
+ pub fn open_setting_window(app: tauri::AppHandle) {
+-    let settings = AppConfig::new();
+-    let _window = tauri::WindowBuilder::new(&app, "setting", WindowUrl::App("/setting".into()))
++    // 🌟 Fix: Pass `&app` reference into your updated AppConfig constructor
++    let settings = AppConfig::new(&app);
++    
++    // 🌟 Fix: Pass `&app` by reference here as well
++    let _window = tauri::WebviewWindowBuilder::new(&app, "setting", WebviewUrl::App("/setting".into()))
+         .title("WindowPet Setting")
+         .inner_size(1000.0, 650.0)
+         .theme(if settings.get_theme() == "dark" {
+@@ -46,4 +49,4 @@ pub fn open_setting_window(app: tauri::A
+             panic!("Window creation failed: {}", e);
+         });
+     info!("open setting window");
+-}
+\ No newline at end of file
++}
+diff '--color=auto' -urp a/src-tauri.orig/src/main.rs b/src-tauri/src/main.rs
+--- a/src-tauri.orig/src/main.rs	2026-11-05 14:15:27.318539674 -0800
++++ b/src-tauri/src/main.rs	2026-11-05 14:17:39.843074166 -0800
+@@ -5,7 +5,8 @@ mod app;
+ use app::{cmd, conf, tray, utils};
+ use log::info;
+ use tauri::Manager;
+-use tauri_plugin_log::LogTarget;
++use tauri::Emitter; // 🌟 Brings in the .emit() method 
++use tauri_plugin_log::{Target, TargetKind}; // 🌟 Brings in TargetKind
+ 
+ #[derive(Clone, serde::Serialize)]
+ struct Payload {
+@@ -15,37 +16,48 @@ struct Payload {
  
  fn build_app() {
      tauri::Builder::default()
 +        .plugin(tauri_plugin_dialog::init())
 +        .plugin(tauri_plugin_fs::init())
 +        .plugin(tauri_plugin_process::init())
-+        .plugin(tauri_plugin_path::init())
 +        .plugin(tauri_plugin_shell::init())
          .plugin(tauri_plugin_store::Builder::default().build())
-+        .plugin(tauri_plugin_updater::init())
-         .plugin(tauri_plugin_log::Builder::default()
-         .targets([
-             // LogTarget::LogDir,
+-        .plugin(tauri_plugin_log::Builder::default()
+-        .targets([
+-            // LogTarget::LogDir,
+-            LogTarget::Folder(app::conf::app_root()),
+-            LogTarget::Stdout,
+-            LogTarget::Webview,
+-        ])
+-        .level(log::LevelFilter::Info)
+-        // uncomment to enable debug logging for development
+-        // .level(log::LevelFilter::Debug)
+-        .build())
++        .plugin(tauri_plugin_updater::Builder::new().build()) 
++        .plugin(tauri_plugin_log::Builder::new()
++            .targets([Target::new(TargetKind::Stdout)])
++            .build()
++        )
+         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+             println!("{}, {argv:?}, {cwd}", app.package_info().name);
+     
+-            app.emit_all("single-instance", Payload { args: argv, cwd })
++            app.emit("single-instance", Payload { args: argv, cwd })
+                 .unwrap();
+         }))
+         .setup(move |app| {
+-            let window = app.get_window("main").unwrap();
++            let window = app.get_webview_window("main").unwrap();
+             window
+                 .set_ignore_cursor_events(true)
+                 .unwrap_or_else(|err| println!("{:?}", err));
+             
+             conf::if_app_config_does_not_exist_create_default(app, "settings.json");
+             conf::if_app_config_does_not_exist_create_default(app, "pets.json");
++
++            let handle = app.handle();
++            
++            // Build the tray layout directly inside setup hook sequence
++            let tray_menu = crate::app::tray::build_tray_menu(handle)?;
++            let _tray = tauri::tray::TrayIconBuilder::new()
++                .icon(app.default_window_icon().unwrap().clone())
++                .menu(&tray_menu)
++                .on_tray_icon_event(|tray_icon, event| {
++                    // 🌟 Fixed: Get the real AppHandle instance from the tray reference wrapper
++                    let app_handle = tray_icon.app_handle();
++                    crate::app::tray::handle_tray_event(app_handle, event);
++                })
++                .build(app)?;
++
+             info!("app started");
+             Ok(())
+         })
+-        .system_tray(tray::init_system_tray())
+-        .on_system_tray_event(tray::handle_tray_event)
+         .invoke_handler(tauri::generate_handler![
+             conf::convert_path,
+             conf::combine_config_path,

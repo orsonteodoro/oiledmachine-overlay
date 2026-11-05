@@ -666,7 +666,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	tray? (
@@ -741,7 +741,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-0.0.9-tauri-v2-rs.patch"
 	"${FILESDIR}/${PN}-0.0.9-tauri-v2-js-ts.patch"
-	"${FILESDIR}/${PN}-0.0.9-tauri-v2-capabilities-json.patch"
+	"A${FILESDIR}/${PN}-0.0.9-tauri-v2-capabilities-json.patch"
 	"${FILESDIR}/${PN}-0.0.9-tauri-v2-tauri-conf-json.patch"
 )
 
@@ -1075,12 +1075,13 @@ else
 	window-pet-bin "\$@"
 fi
 EOF
-	fperms 0755 /usr/bin/window-pet
+	fperms 0755 "/usr/bin/window-pet"
 }
 
 src_install() {
 	exeinto "/usr/bin"
-	newexe "src-tauri/target/release/window-pet" "window-pet-bin"
+	newexe "${S}/src-tauri/target/release/window_pet" "window-pet-bin"
+	dosym "/usr/bin/window-pet" "/usr/bin/window_pet"
 	gen_wrapper
 
 	make_desktop_entry \
