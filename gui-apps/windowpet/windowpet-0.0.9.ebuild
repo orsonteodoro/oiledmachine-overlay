@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# This ebuild-package contains AI assisted fixes, patches containing AI generated files/edits.
+
 # U20
 
 #
