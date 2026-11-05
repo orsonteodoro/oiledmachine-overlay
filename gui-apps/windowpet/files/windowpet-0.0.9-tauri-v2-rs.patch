@@ -1,0 +1,17 @@
+# This file contains AI suggested changes.
+--- a/src-tauri/src/main.rs.orig	2026-11-04 22:39:51.614877411 -0800
++++ b/src-tauri/src/main.rs	2026-11-04 22:44:26.147837889 -0800
+@@ -15,7 +15,13 @@ struct Payload {
+ 
+ fn build_app() {
+     tauri::Builder::default()
++        .plugin(tauri_plugin_dialog::init())
++        .plugin(tauri_plugin_fs::init())
++        .plugin(tauri_plugin_process::init())
++        .plugin(tauri_plugin_path::init())
++        .plugin(tauri_plugin_shell::init())
+         .plugin(tauri_plugin_store::Builder::default().build())
++        .plugin(tauri_plugin_updater::init())
+         .plugin(tauri_plugin_log::Builder::default()
+         .targets([
+             // LogTarget::LogDir,

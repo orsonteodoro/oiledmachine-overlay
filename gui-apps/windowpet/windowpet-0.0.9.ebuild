@@ -24,20 +24,23 @@ EAPI=8
 
 MY_PN="WindowPet"
 
+GEN_CARGO_LOCKFILE=0 # 0, 1, unset (0)
 NODE_SLOT="24" # CI uses 23 based on CI logs, bump for security
 NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
-PLUGINS_WORKSPACE_COMMIT="1e407ed56455558cf751022fd68eca3b9e3713a0" # Obtained from GIT_CRATES
+PLUGINS_WORKSPACE_COMMIT="685d3424a946346721d839add3bfb6521690eb6e" # Obtained from GIT_CRATES
 # Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
 RUST_MAX_VER="1.93.1"
 RUST_MIN_VER="1.93.1" # llvm-21.1
 RUST_PV="${RUST_MIN_VER}"
+SECURE_VERSION_NODE_EBUILD_UPDATE=1793848992
+SECURE_VERSION_RUST_EBUILD_UPDATE=1793849048
 
 AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
 
 # Autostart is disabled to mitigate Arbitrary Code Execution (ACE).
-# Remove the following in src-tauri/Cargo.toml, src-tauri/Cargo,lock and from CRATES:
+# Remove the following in src-tauri/Cargo.toml, src-tauri/Cargo.lock and from CRATES:
 # auto-launch 0.5.0
 # dirs 4.0.0
 # dirs-sys 0.3.7
@@ -62,581 +65,538 @@ declare -A BANNED_CARGO_PACKAGES_PV=(
 
 # Remove tauri-plugin-autostart from GIT_CRATES:
 declare -A GIT_CRATES=(
-[tauri-plugin-log]="https://github.com/tauri-apps/plugins-workspace;1e407ed56455558cf751022fd68eca3b9e3713a0;plugins-workspace-%commit%/plugins/log" # 0.0.0
-[tauri-plugin-single-instance]="https://github.com/tauri-apps/plugins-workspace;1e407ed56455558cf751022fd68eca3b9e3713a0;plugins-workspace-%commit%/plugins/single-instance" # 0.0.0
-[tauri-plugin-store]="https://github.com/tauri-apps/plugins-workspace;1e407ed56455558cf751022fd68eca3b9e3713a0;plugins-workspace-%commit%/plugins/store" # 0.0.0
+[tauri-plugin-dialog]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/dialog" # 2.8.4
+[tauri-plugin-fs]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/fs" # 2.7.1
+[tauri-plugin-log]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/log" # 2.10.1
+[tauri-plugin-process]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/process" # 2.4.0
+[tauri-plugin-shell]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/shell" # 2.6.0
+[tauri-plugin-single-instance]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/single-instance" # 2.5.5
+[tauri-plugin-store]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/store" # 2.5.0
+[tauri-plugin-updater]="https://github.com/tauri-apps/plugins-workspace;685d3424a946346721d839add3bfb6521690eb6e;plugins-workspace-%commit%/plugins/updater" # 2.14.1
 )
 
 CRATES="
 adler2-2.0.1
-ahash-0.7.8
-aho-corasick-1.1.4
-alloc-no-stdlib-2.0.4
-alloc-stdlib-0.2.2
-android_system_properties-0.1.5
-anyhow-1.0.102
-arrayvec-0.7.6
-async-broadcast-0.5.1
+aho-corasick-1.1.5
+alloc-no-stdlib-3.0.0
+alloc-stdlib-0.3.0
+android_logger-0.15.1
+android_log-sys-0.3.2
+android_system_properties-0.1.6
+anyhow-1.0.104
+async-broadcast-0.7.2
 async-channel-2.5.0
-async-executor-1.14.0
-async-fs-1.6.0
-async-io-1.13.0
+async-executor-1.14.1
 async-io-2.6.0
-async-lock-2.8.0
-async-lock-3.4.2
-async-process-1.8.1
-async-recursion-1.1.1
+async-lock-3.5.0
+async-process-2.5.0
+async-recursion-1.2.0
 async-signal-0.2.14
 async-task-4.7.1
-async-trait-0.1.89
-atk-0.15.1
-atk-sys-0.15.1
+async-trait-0.1.92
+atk-0.18.2
+atk-sys-0.18.2
 atomic-waker-1.1.2
-autocfg-1.5.0
-auto-launch-0.5.0
-base64-0.13.1
+autocfg-1.5.1
 base64-0.21.7
-base64-0.22.1
+base64-0.23.1
 bitflags-1.3.2
-bitflags-2.11.1
-bitvec-1.0.1
-block-0.1.6
+bitflags-2.13.2
+bit-set-0.8.0
+bit-vec-0.8.0
+block2-0.6.2
 block-buffer-0.10.4
-blocking-1.6.2
-borsh-1.6.1
-borsh-derive-1.6.1
-brotli-7.0.0
-brotli-decompressor-4.0.3
-bstr-1.12.1
-bumpalo-3.20.2
-bytecheck-0.6.12
-bytecheck_derive-0.6.12
-bytemuck-1.25.0
+blocking-1.7.0
+brotli-9.1.1
+brotli-decompressor-6.2.0
+bs58-0.5.1
+bumpalo-3.20.3
+bytemuck-1.25.2
 byteorder-1.5.0
-bytes-1.11.1
-byte-unit-5.2.0
-cairo-rs-0.15.12
-cairo-sys-rs-0.15.1
-cargo_toml-0.15.3
-cc-1.2.61
+bytes-1.12.1
+cairo-rs-0.18.5
+cairo-sys-rs-0.18.2
+camino-1.2.6
+cargo_metadata-0.19.2
+cargo-platform-0.1.9
+cargo_toml-1.0.1
+cc-1.11.0
 cesu8-1.1.0
-cfb-0.7.3
-cfg_aliases-0.2.1
+cfb-0.14.0
+cfg_aliases-0.2.2
 cfg-expr-0.15.8
-cfg-expr-0.9.1
-cfg-if-1.0.4
-chrono-0.4.44
-cocoa-0.24.1
-cocoa-foundation-0.1.2
-color_quant-1.1.0
-combine-4.6.7
+cfg-if-1.0.5
+chrono-0.4.45
+combine-4.6.9
 concurrent-queue-2.5.0
-convert_case-0.4.0
+cookie-0.18.2
+core_detect-1.0.0
 core-foundation-0.10.1
 core-foundation-0.9.4
 core-foundation-sys-0.8.7
 core-graphics-0.22.3
+core-graphics-0.25.0
 core-graphics-types-0.1.3
+core-graphics-types-0.2.0
 cpufeatures-0.2.17
-crc32fast-1.5.0
-crossbeam-channel-0.5.15
-crossbeam-deque-0.8.6
-crossbeam-epoch-0.9.18
-crossbeam-utils-0.8.21
+crc32fast-1.5.4
+crossbeam-channel-0.5.17
+crossbeam-utils-0.8.23
 crypto-common-0.1.7
-cssparser-0.27.2
-cssparser-macros-0.6.1
-ctor-0.2.9
-darling-0.23.0
-darling_core-0.23.0
-darling_macro-0.23.0
-deranged-0.5.8
-derivative-2.2.0
-derive_more-0.99.20
+cssparser-0.37.0
+cssparser-macros-0.7.1
+ctor-1.0.13
+darling-0.24.1
+darling_core-0.24.1
+darling_macro-0.24.1
+dbus-0.9.12
+defmt-1.2.0
+defmt-macros-1.2.0
+defmt-parser-1.1.0
+deranged-0.5.9
+derive_more-2.1.1
+derive_more-impl-2.1.1
 digest-0.10.7
-dirs-4.0.0
-dirs-next-2.0.0
-dirs-sys-0.3.7
-dirs-sys-next-0.1.2
-dispatch-0.2.0
-displaydoc-0.2.5
+dirs-7.0.0
+dirs-sys-0.5.0
+dispatch2-0.3.1
+displaydoc-0.2.7
+dlopen2-0.8.2
+dlopen2_derive-0.4.3
+dom_query-0.28.0
+dpi-0.1.2
 dtoa-1.0.11
 dtoa-short-0.3.5
 dunce-1.0.5
 dyn-clone-1.0.20
 embed_plist-1.2.2
-embed-resource-2.5.2
-encoding_rs-0.8.35
+embed-resource-3.0.12
+encoding_rs-0.8.44
+endi-1.1.1
 enumflags2-0.7.12
 enumflags2_derive-0.7.12
-equivalent-1.0.2
+env_filter-0.1.4
+equivalent-1.0.3
+erased-serde-0.4.11
 errno-0.3.14
-event-listener-2.5.3
-event-listener-3.1.0
-event-listener-5.4.1
+event-listener-5.4.2
 event-listener-strategy-0.5.4
-fastrand-1.9.0
-fastrand-2.4.1
+fastrand-2.5.0
 fdeflate-0.3.7
-fern-0.6.2
+fern-0.7.1
 field-offset-0.3.6
-filetime-0.2.27
-find-msvc-tools-0.1.9
-flate2-1.1.9
-fluent-uri-0.1.4
+filetime-0.2.29
+find-msvc-tools-0.1.15
+flate2-1.1.10
 fnv-1.0.7
-foldhash-0.1.5
+foldhash-0.2.0
 foreign-types-0.3.2
+foreign-types-0.5.0
+foreign-types-macros-0.2.4
 foreign-types-shared-0.1.1
+foreign-types-shared-0.3.1
 form_urlencoded-1.2.2
-funty-2.0.0
-futf-0.1.5
-futures-channel-0.3.32
-futures-core-0.3.32
-futures-executor-0.3.32
-futures-io-0.3.32
-futures-lite-1.13.0
+futures-channel-0.3.34
+futures-core-0.3.34
+futures-executor-0.3.34
+futures-io-0.3.34
 futures-lite-2.6.1
-futures-macro-0.3.32
-futures-sink-0.3.32
-futures-task-0.3.32
-futures-util-0.3.32
-fxhash-0.2.1
-gdk-0.15.4
-gdk-pixbuf-0.15.11
-gdk-pixbuf-sys-0.15.10
-gdk-sys-0.15.1
-gdkwayland-sys-0.15.3
-gdkx11-sys-0.15.1
-generator-0.7.5
+futures-macro-0.3.34
+futures-sink-0.3.34
+futures-task-0.3.34
+futures-util-0.3.34
+gdk-0.18.2
+gdk-pixbuf-0.18.5
+gdk-pixbuf-sys-0.18.0
+gdk-sys-0.18.2
+gdkwayland-sys-0.18.2
+gdkx11-0.18.2
+gdkx11-sys-0.18.2
 generic-array-0.14.7
-getrandom-0.1.16
 getrandom-0.2.17
-getrandom-0.4.2
-gio-0.15.12
-gio-sys-0.15.10
-glib-0.15.12
-glib-macros-0.15.13
-glib-sys-0.15.10
-glob-0.3.3
-globset-0.4.18
-gobject-sys-0.15.10
-gtk-0.15.5
-gtk3-macros-0.15.6
-gtk-sys-0.15.3
-h2-0.3.27
+getrandom-0.3.4
+getrandom-0.4.3
+gio-0.18.4
+gio-sys-0.18.1
+glib-0.18.5
+glib-macros-0.18.5
+glib-sys-0.18.1
+glob-0.3.4
+gobject-sys-0.18.0
+gtk-0.18.2
+gtk3-macros-0.18.2
+gtk-sys-0.18.2
 hashbrown-0.12.3
-hashbrown-0.15.5
-hashbrown-0.17.0
-heck-0.3.3
+hashbrown-0.17.1
 heck-0.4.1
 heck-0.5.0
-hermit-abi-0.3.9
-hermit-abi-0.5.2
+hermit-abi-0.5.3
 hex-0.4.3
-html5ever-0.26.0
-http-0.2.12
+html5ever-0.39.0
+http-1.5.0
 httparse-1.10.1
-http-body-0.4.6
-httpdate-1.0.3
-http-range-0.1.5
-hyper-0.14.32
-hyper-tls-0.5.0
+http-body-1.1.0
+http-body-util-0.1.5
+http-range-0.1.6
+hyper-1.12.0
+hyper-rustls-0.27.10
+hyper-util-0.1.21
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-ico-0.4.0
-icu_collections-2.2.0
-icu_locale_core-2.2.0
-icu_normalizer-2.2.0
-icu_normalizer_data-2.2.0
-icu_properties-2.2.0
-icu_properties_data-2.2.0
-icu_provider-2.2.0
-id-arena-2.3.0
+ico-0.6.0
+icu_collections-2.4.0
+icu_locale_core-2.4.0
+icu_normalizer-2.4.0
+icu_normalizer_data-2.4.0
+icu_properties-2.4.0
+icu_properties_data-2.4.0
+icu_provider-2.4.0
 ident_case-1.0.1
 idna-1.1.0
 idna_adapter-1.2.2
-ignore-0.4.25
-image-0.24.9
 indexmap-1.9.3
-indexmap-2.14.0
-infer-0.13.0
-instant-0.1.13
-io-lifetimes-1.0.11
-ipnet-2.12.0
+indexmap-2.14.2
+infer-0.22.0
+ipnet-2.12.2
 is-docker-0.2.0
 is-wsl-0.4.0
-itoa-0.4.8
 itoa-1.0.18
-javascriptcore-rs-0.16.0
-javascriptcore-rs-sys-0.4.0
-jni-0.20.0
+javascriptcore-rs-1.1.2
+javascriptcore-rs-sys-1.1.1
+jiff-0.2.39
+jiff-core-0.1.2
+jiff-static-0.2.39
+jiff-tzdb-0.1.9
+jiff-tzdb-platform-0.1.3
+jni-0.21.1
+jni-0.22.4
+jni-macros-0.22.4
 jni-sys-0.3.1
 jni-sys-0.4.1
 jni-sys-macros-0.4.1
-json-patch-2.0.0
-jsonptr-0.4.7
-js-sys-0.3.97
-kuchikiki-0.8.2
-lazy_static-1.5.0
-leb128fmt-0.1.0
-libappindicator-0.7.1
-libappindicator-sys-0.7.3
-libc-0.2.186
+json-patch-4.2.0
+jsonptr-0.7.1
+js-sys-0.3.107
+keyboard-types-0.8.3
+libappindicator-0.9.0
+libappindicator-sys-0.9.0
+libc-0.2.191
+libdbus-sys-0.2.7
 libloading-0.7.4
-libredox-0.1.16
+libredox-0.1.25
 linux-raw-sys-0.12.1
-linux-raw-sys-0.3.8
-linux-raw-sys-0.4.15
-litemap-0.8.2
+litemap-0.8.3
 lock_api-0.4.14
-log-0.4.29
-loom-0.5.6
-mac-0.1.1
-malloc_buf-0.0.6
-markup5ever-0.11.0
-matchers-0.2.0
-matches-0.1.10
-memchr-2.8.0
-memoffset-0.7.1
+log-0.4.35
+markup5ever-0.39.0
+memchr-2.8.3
 memoffset-0.9.1
 mime-0.3.17
-minisign-verify-0.2.5
+minisign-verify-0.3.0
 miniz_oxide-0.8.9
-mio-1.2.0
+miniz_oxide-0.9.1
+mio-1.2.4
 mouse_position-0.1.4
-native-tls-0.2.18
-ndk-0.6.0
+muda-0.20.0
+multiversion_no_op-1.0.0
+ndk-0.9.0
 ndk-context-0.1.1
-ndk-sys-0.3.0
+ndk-sys-0.6.0+11769913
 new_debug_unreachable-1.0.6
-nix-0.26.4
-nodrop-0.1.14
-nu-ansi-term-0.50.3
-num-conv-0.2.1
-num_enum-0.5.11
-num_enum_derive-0.5.11
-num_threads-0.1.7
+nix-0.31.3
+num-conv-0.2.2
+num_enum-0.7.6
+num_enum_derive-0.7.6
+num_threads-0.1.8
 num-traits-0.2.19
-objc-0.2.7
-objc_exception-0.1.2
-objc-foundation-0.1.1
-objc_id-0.1.1
+objc2-0.6.5
+objc2-app-kit-0.3.2
+objc2-cloud-kit-0.3.2
+objc2-core-data-0.3.2
+objc2-core-foundation-0.3.2
+objc2-core-graphics-0.3.2
+objc2-core-image-0.3.2
+objc2-core-location-0.3.2
+objc2-core-text-0.3.2
+objc2-encode-4.1.0
+objc2-exception-helper-0.1.1
+objc2-foundation-0.3.2
+objc2-io-surface-0.3.2
+objc2-osa-kit-0.3.2
+objc2-quartz-core-0.3.2
+objc2-ui-kit-0.3.2
+objc2-user-notifications-0.3.2
+objc2-web-kit-0.3.2
 once_cell-1.21.4
-open-3.2.0
-open-5.3.4
-openssl-0.10.78
-openssl-macros-0.1.1
-openssl-probe-0.2.1
-openssl-sys-0.9.114
+open-5.4.5
+openssl-probe-0.2.2
+option-ext-0.2.0
 ordered-stream-0.2.0
-pango-0.15.10
-pango-sys-0.15.10
+osakit-0.3.1
+os_pipe-1.2.3
+pango-0.18.3
+pango-sys-0.18.0
 parking-2.2.1
 parking_lot-0.12.5
 parking_lot_core-0.9.12
-pathdiff-0.2.3
 percent-encoding-2.3.2
-phf-0.10.1
-phf-0.11.3
-phf-0.8.0
-phf_codegen-0.10.0
-phf_codegen-0.8.0
-phf_generator-0.10.0
-phf_generator-0.11.3
-phf_generator-0.8.0
-phf_macros-0.11.3
-phf_macros-0.8.0
-phf_shared-0.10.0
-phf_shared-0.11.3
-phf_shared-0.8.0
+phf-0.13.1
+phf_codegen-0.13.1
+phf_generator-0.13.1
+phf_macros-0.13.1
+phf_shared-0.13.1
 pin-project-lite-0.2.17
 piper-0.2.5
-pkg-config-0.3.33
-plain-0.2.3
-plist-1.9.0
-png-0.17.16
-polling-2.8.0
+pkg-config-0.3.34
+plist-1.10.3
+png-0.18.1
 polling-3.11.0
-potential_utf-0.1.5
-powerfmt-0.2.0
-ppv-lite86-0.2.21
+portable-atomic-1.15.0
+portable-atomic-util-0.2.8
+potential_utf-0.1.6
+powerfmt-0.2.1
 precomputed-hash-0.1.1
-prettyplease-0.2.37
-proc-macro2-1.0.106
+proc-macro2-1.0.107
 proc-macro-crate-1.3.1
+proc-macro-crate-2.0.2
 proc-macro-crate-3.5.0
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
-proc-macro-hack-0.5.20+deprecated
-ptr_meta-0.1.4
-ptr_meta_derive-0.1.4
-quick-xml-0.39.2
-quote-1.0.45
-radium-0.7.0
-rand-0.7.3
-rand-0.8.6
-rand_chacha-0.2.2
-rand_chacha-0.3.1
-rand_core-0.5.1
-rand_core-0.6.4
-rand_hc-0.2.0
-rand_pcg-0.2.1
-raw-window-handle-0.5.2
+quick-xml-0.42.0
+quote-1.0.47
+raw-window-handle-0.6.2
 redox_syscall-0.5.18
-redox_syscall-0.7.4
-redox_users-0.4.6
-ref-cast-1.0.25
-ref-cast-impl-1.0.25
+redox_users-0.5.3
+ref-cast-1.0.27
+ref-cast-impl-1.0.27
+r-efi-5.3.0
 r-efi-6.0.0
-regex-1.12.3
-regex-automata-0.4.14
-regex-syntax-0.8.10
-rend-0.4.2
-reqwest-0.11.27
-rfd-0.10.0
-rkyv-0.7.46
-rkyv_derive-0.7.46
+regex-1.13.1
+regex-automata-0.4.18
+regex-syntax-0.8.11
+reqwest-0.13.5
+rfd-0.17.2
+ring-0.17.14
+rustc-hash-2.1.3
 rustc_version-0.4.1
-rust_decimal-1.41.0
-rustix-0.37.28
-rustix-0.38.44
-rustix-1.1.4
-rustls-pemfile-1.0.4
-rustversion-1.0.22
-ryu-1.0.23
+rustix-1.1.6
+rustls-0.23.46
+rustls-native-certs-0.8.5
+rustls-pki-types-1.15.1
+rustls-platform-verifier-0.7.1
+rustls-platform-verifier-android-0.2.0
+rustls-webpki-0.103.16
+rustversion-1.0.23
 same-file-1.0.6
-schannel-0.1.29
+schannel-0.1.30
+schemars-0.8.22
 schemars-0.9.0
-schemars-1.2.1
-scoped-tls-1.0.1
+schemars-1.2.3
+schemars_derive-0.8.22
 scopeguard-1.2.0
-seahash-4.1.0
 security-framework-3.7.0
 security-framework-sys-2.17.0
-selectors-0.22.0
+selectors-0.38.0
 semver-1.0.28
-serde-1.0.228
-serde_core-1.0.228
-serde_derive-1.0.228
-serde_json-1.0.149
-serde_repr-0.1.20
+serde-1.0.229
+serde_core-1.0.229
+serde_derive-1.0.229
+serde_derive_internals-0.29.1
+serde_json-1.0.154
+serde_repr-0.1.21
 serde_spanned-0.6.9
-serde_urlencoded-0.7.1
-serde_with-3.19.0
-serde_with_macros-3.19.0
+serde_spanned-1.1.2
+serde-untagged-0.1.9
+serde_with-3.24.0
+serde_with_macros-3.24.0
 serialize-to-javascript-0.1.2
 serialize-to-javascript-impl-0.1.2
-servo_arc-0.1.1
-sha1-0.10.6
+servo_arc-0.4.3
 sha2-0.10.9
-sharded-slab-0.1.7
-shlex-1.3.0
+shared_child-1.1.2
+shlex-2.0.1
 signal-hook-registry-1.4.8
-simd-adler32-0.3.9
+simd-adler32-0.3.10
+simd_cesu8-1.2.0
 simdutf8-0.1.5
-siphasher-0.3.11
-siphasher-1.0.2
+siphasher-1.0.4
 slab-0.4.12
-smallvec-1.15.1
-socket2-0.4.10
-socket2-0.5.10
-socket2-0.6.3
-soup2-0.2.1
-soup2-sys-0.2.0
+smallvec-1.16.4
+socket2-0.6.5
+softbuffer-0.4.8
+soup3-0.5.0
+soup3-sys-0.5.0
 stable_deref_trait-1.2.1
-state-0.5.3
-static_assertions-1.1.0
-string_cache-0.8.9
-string_cache_codegen-0.5.4
+static_vcruntime-3.0.0
+string_cache-0.9.0
+string_cache_codegen-0.6.1
 strsim-0.11.1
+subtle-2.6.1
+swift-rs-1.0.9
 syn-1.0.109
-syn-2.0.117
-sync_wrapper-0.1.2
-synstructure-0.13.2
-system-configuration-0.5.1
-system-configuration-sys-0.5.0
-system-deps-5.0.0
+syn-2.0.119
+syn-3.0.9
+sync_wrapper-1.0.2
+synstructure-0.14.0
+system-configuration-0.7.0
+system-configuration-sys-0.6.0
 system-deps-6.2.2
-tao-0.16.11
-tao-macros-0.1.3
-tap-1.0.1
-tar-0.4.45
+tao-0.37.2
+tao-macros-0.1.4
+tar-0.4.46
 target-lexicon-0.12.16
-tauri-1.8.3
-tauri-build-1.5.6
-tauri-codegen-1.4.6
-tauri-macros-1.4.7
-tauri-runtime-0.14.6
-tauri-runtime-wry-0.14.11
-tauri-utils-1.6.2
-tauri-winres-0.1.1
+tauri-2.12.5
+tauri-build-2.7.4
+tauri-codegen-2.7.4
+tauri-macros-2.7.4
+tauri-plugin-2.7.2
+tauri-runtime-2.12.2
+tauri-runtime-wry-2.12.3
+tauri-utils-2.10.2
+tauri-winres-0.3.7
 tempfile-3.27.0
-tendril-0.4.3
-thin-slice-0.1.1
+tendril-0.5.1
 thiserror-1.0.69
+thiserror-2.0.21
 thiserror-impl-1.0.69
-thread_local-1.1.9
-time-0.3.47
-time-core-0.1.8
-time-macros-0.2.27
-tinystr-0.8.3
-tinyvec-1.11.0
-tinyvec_macros-0.1.1
-tokio-1.52.1
-tokio-native-tls-0.3.1
-tokio-util-0.7.18
-toml-0.5.11
-toml-0.7.8
-toml-0.8.23
-toml_datetime-0.6.11
-toml_datetime-1.1.1+spec-1.1.0
+thiserror-impl-2.0.21
+time-0.3.55
+time-core-0.1.9
+time-macros-0.2.32
+tinystr-0.8.5
+tinyvec-1.13.3
+tokio-1.54.1
+tokio-macros-2.7.2
+tokio-rustls-0.26.6
+tokio-util-0.7.20
+toml-0.8.2
+toml-1.2.0+spec-1.1.0
+toml_datetime-0.6.3
+toml_datetime-1.1.2+spec-1.1.0
 toml_edit-0.19.15
-toml_edit-0.22.27
-toml_edit-0.25.11+spec-1.1.0
-toml_parser-1.1.2+spec-1.1.0
-toml_write-0.1.2
+toml_edit-0.20.2
+toml_edit-0.25.18+spec-1.1.0
+toml_parser-1.1.5+spec-1.1.0
+toml_writer-1.2.0+spec-1.1.0
+tower-0.5.3
+tower-http-0.6.11
+tower-layer-0.3.3
 tower-service-0.3.3
 tracing-0.1.44
 tracing-attributes-0.1.31
 tracing-core-0.1.36
-tracing-log-0.2.0
-tracing-subscriber-0.3.23
+tray-icon-0.25.1
 try-lock-0.2.5
-typenum-1.20.0
+typed-path-0.13.0
+typeid-1.0.3
+typenum-1.20.1
 uds_windows-1.2.1
-unicode-ident-1.0.24
-unicode-segmentation-1.13.2
-unicode-xid-0.2.6
+unicode-ident-1.0.27
+unicode-segmentation-1.13.3
+untrusted-0.9.0
 url-2.5.8
-utf-8-0.7.6
-utf8_iter-1.0.4
-utf8-width-0.1.8
-uuid-1.23.1
-valuable-0.1.1
-value-bag-1.12.0
-vcpkg-0.2.15
+urlpattern-0.6.0
+utf8_iter-1.1.0
+utf_types-1.0.0
+uuid-1.29.0
 version_check-0.9.5
-version-compare-0.0.11
 version-compare-0.2.1
 vswhom-0.1.0
 vswhom-sys-0.1.3
-waker-fn-1.2.0
 walkdir-2.5.0
-want-0.3.1
+want-0.3.2
 wasi-0.11.1+wasi-snapshot-preview1
-wasi-0.9.0+wasi-snapshot-preview1
-wasip2-1.0.3+wasi-0.2.9
-wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06
-wasm-bindgen-0.2.120
-wasm-bindgen-futures-0.4.70
-wasm-bindgen-macro-0.2.120
-wasm-bindgen-macro-support-0.2.120
-wasm-bindgen-shared-0.2.120
-wasm-encoder-0.244.0
-wasm-metadata-0.244.0
-wasmparser-0.244.0
-wasm-streams-0.4.2
-webkit2gtk-0.18.2
-webkit2gtk-sys-0.18.0
-web-sys-0.3.97
-webview2-com-0.19.1
-webview2-com-macros-0.6.0
-webview2-com-sys-0.19.0
+wasip2-1.0.4+wasi-0.2.12
+wasm-bindgen-0.2.130
+wasm-bindgen-futures-0.4.80
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
+wasm-streams-0.5.0
+web_atoms-0.2.6
+webkit2gtk-2.0.2
+webkit2gtk-sys-2.0.2
+webpki-root-certs-1.0.11
+web-sys-0.3.107
+web-time-1.1.0
+webview2-com-0.39.1
+webview2-com-macros-0.8.1
+webview2-com-sys-0.39.1
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.11
 winapi-x86_64-pc-windows-gnu-0.4.0
-windows-0.37.0
-windows-0.39.0
-windows-0.48.0
+windows-0.62.2
 windows_aarch64_gnullvm-0.42.2
-windows_aarch64_gnullvm-0.48.5
 windows_aarch64_gnullvm-0.52.6
-windows_aarch64_msvc-0.37.0
-windows_aarch64_msvc-0.39.0
+windows_aarch64_gnullvm-0.53.1
 windows_aarch64_msvc-0.42.2
-windows_aarch64_msvc-0.48.5
 windows_aarch64_msvc-0.52.6
-windows-bindgen-0.39.0
+windows_aarch64_msvc-0.53.1
+windows-collections-0.3.2
 windows-core-0.62.2
-windows_i686_gnu-0.37.0
-windows_i686_gnu-0.39.0
+windows-future-0.3.2
 windows_i686_gnu-0.42.2
-windows_i686_gnu-0.48.5
 windows_i686_gnu-0.52.6
+windows_i686_gnu-0.53.1
 windows_i686_gnullvm-0.52.6
-windows_i686_msvc-0.37.0
-windows_i686_msvc-0.39.0
+windows_i686_gnullvm-0.53.1
 windows_i686_msvc-0.42.2
-windows_i686_msvc-0.48.5
 windows_i686_msvc-0.52.6
-windows-implement-0.39.0
+windows_i686_msvc-0.53.1
 windows-implement-0.60.2
 windows-interface-0.59.3
 windows-link-0.2.1
-windows-metadata-0.39.0
+windows-numerics-0.3.1
+windows-registry-0.6.1
 windows-result-0.4.1
 windows-strings-0.5.1
-windows-sys-0.42.0
-windows-sys-0.48.0
+windows-sys-0.45.0
 windows-sys-0.52.0
-windows-sys-0.59.0
+windows-sys-0.60.2
 windows-sys-0.61.2
-windows-targets-0.48.5
+windows-targets-0.42.2
 windows-targets-0.52.6
-windows-tokens-0.39.0
+windows-targets-0.53.5
+windows-threading-0.2.1
 windows-version-0.1.7
-windows_x86_64_gnu-0.37.0
-windows_x86_64_gnu-0.39.0
 windows_x86_64_gnu-0.42.2
-windows_x86_64_gnu-0.48.5
 windows_x86_64_gnu-0.52.6
+windows_x86_64_gnu-0.53.1
 windows_x86_64_gnullvm-0.42.2
-windows_x86_64_gnullvm-0.48.5
 windows_x86_64_gnullvm-0.52.6
-windows_x86_64_msvc-0.37.0
-windows_x86_64_msvc-0.39.0
+windows_x86_64_gnullvm-0.53.1
 windows_x86_64_msvc-0.42.2
-windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
+windows_x86_64_msvc-0.53.1
+window-vibrancy-0.8.1
 winnow-0.5.40
-winnow-0.7.15
-winnow-1.0.2
-winreg-0.10.1
-winreg-0.50.0
-winreg-0.52.0
-wit-bindgen-0.51.0
+winnow-1.0.5
+winreg-0.56.0
 wit-bindgen-0.57.1
-wit-bindgen-core-0.51.0
-wit-bindgen-rust-0.51.0
-wit-bindgen-rust-macro-0.51.0
-wit-component-0.244.0
-wit-parser-0.244.0
-writeable-0.6.3
-wry-0.24.12
-wyz-0.5.1
+writeable-0.6.4
+wry-0.57.1
 x11-2.21.0
 x11-dl-2.21.0
-xattr-1.6.1
-xdg-home-1.3.0
-yoke-0.8.2
-yoke-derive-0.8.2
-zbus-3.15.2
-zbus_macros-3.15.2
-zbus_names-2.6.1
-zerocopy-0.8.48
-zerocopy-derive-0.8.48
-zerofrom-0.1.7
-zerofrom-derive-0.1.7
-zerotrie-0.2.4
-zerovec-0.11.6
-zerovec-derive-0.11.3
-zip-0.6.6
-zmij-1.0.21
-zvariant-3.15.2
-zvariant_derive-3.15.2
-zvariant_utils-1.0.1
+xattr-1.7.0
+yoke-0.8.4
+yoke-derive-0.8.4
+zbus-5.19.0
+zbus_macros-5.19.0
+zbus_names-4.3.5
+zcheapstr-1.2.0
+zerofrom-0.1.8
+zerofrom-derive-0.1.8
+zeroize-1.9.1
+zerotrie-0.2.5
+zerovec-0.11.9
+zerovec-derive-0.11.7
+zip-9.3.0
+zlib-rs-0.6.8
+zmij-1.0.23
+zvariant-5.15.1
+zvariant_derive-5.15.1
+zvariant_utils-4.2.0
 "
 
 CHKL_TIMESTAMPS=(
@@ -651,7 +611,9 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo chkl desktop lcnr npm secure-version secure-version-node xdg
+inherit cargo chkl desktop lcnr npm secure-version secure-version-node secure-version-rust xdg
+
+RUST_LOG_PV="0.4.21"
 
 #KEYWORDS="~amd64" # Needs code audit or code review, deps are EOL
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -694,6 +656,9 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	MIT
 "
+RESTRICT="
+	mirror
+" # Speed up downloads, stop snooping
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
@@ -769,8 +734,16 @@ BDEPEND="
 		dev-lang/rust-bin:${RUST_PV}
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-0.0.9-tauri-v2-rs.patch"
+	"${FILESDIR}/${PN}-0.0.9-tauri-v2-js-ts.patch"
+	"${FILESDIR}/${PN}-0.0.9-tauri-v2-capabilities-json.patch"
+	"${FILESDIR}/${PN}-0.0.9-tauri-v2-tauri-conf-json.patch"
+)
 
 pkg_setup() {
+	secure-version-node_check_update
+	secure-version-rust_check_update
 	npm_pkg_setup
 	rust_pkg_setup
 }
@@ -784,11 +757,6 @@ _cargo_src_unpack() {
 
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
-
-	cp -av \
-		"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
-		"${S}" \
-		|| die
 
 	mkdir -p "${ECARGO_VENDOR}" "${S}" || die
 
@@ -851,18 +819,9 @@ npm_unpack_post() {
 			eapply "${FILESDIR}/${PN}-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
 		else
 			eapply "${FILESDIR}/${PN}-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
-			eapply "${FILESDIR}/${PN}-0.0.9-disable-updater.patch"
+			#eapply "${FILESDIR}/${PN}-0.0.9-disable-updater.patch"
 		fi
 	popd >/dev/null 2>&1 || die
-	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
-		cp -va \
-			"${FILESDIR}/${PV}/Cargo.lock" \
-			"${FILESDIR}/${PV}/Cargo.toml" \
-			"${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
-			|| die
-	else
-ewarn "Missing security updated Cargo.lock"
-	fi
 }
 
 npm_dedupe_post() {
@@ -889,6 +848,7 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 			sed -i -e "s|\"postcss\": \"^8.4.43\"|\"postcss\": \"^${NODE_POSTCSS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss-selector-parser\": \"^7.0.0\"|\"postcss-selector-parser\": \"^${NODE_POSTCSS_SELECTOR_PARSER_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"react-router\": \"6.30.1\"|\"react-router\": \"^${NODE_REACT_ROUTER_7_PV}\"|g" "package-lock.json" || die # 6-> 7 could be a breaking change
+			sed -i -e "s|\"react-router-dom\": \"^6.23.1\"|\"react-router-dom\": \"^${NODE_REACT_ROUTER_DOM_7_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"source-map-js\": \"^1.2.1\"|\"source-map-js\": \"^${NODE_SOURCE_MAP_JS_PV}\"|g" "package-lock.json" || die
 			sed -i -e "s|\"vitest\": \"^1.6.0\"|\"vitest\": \"^${NODE_VITEST_4_PV}\"|g" "package-lock.json" || die # 1 -> 4 could be a breaking change
 			sed -i -e "s|\"vite\": \"^5.2.11\"|\"vite\": \"^${NODE_VITE_6_PV}\"|g" "package-lock.json" || die
@@ -899,6 +859,36 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 		patch_lockfile
 
 		local L
+
+	# Tauri v1 -> v2
+		L=(
+	# Remove Tauri v1 references
+			"@tauri-apps/cli"
+			"@tauri-apps/api"
+			"tauri-plugin-log-api"
+			"tauri-plugin-store-api"
+		)
+		enpm uninstall "${L[@]}"
+
+		L=(
+			"@tauri-apps/api@^${NODE_AT_TAURI_APPS_API_2_PV}"
+			"@tauri-apps/plugin-dialog@^${NODE_AT_TAURI_APPS_PLUGIN_DIALOG_2_PV}"
+			"@tauri-apps/plugin-fs@^${NODE_AT_TAURI_APPS_PLUGIN_FS_2_PV}"
+			"@tauri-apps/plugin-log@^${NODE_AT_TAURI_APPS_PLUGIN_LOG_2_PV}"
+			"@tauri-apps/plugin-process@^${NODE_AT_TAURI_APPS_PLUGIN_PROCESS_2_PV}"
+			"@tauri-apps/plugin-shell@^${NODE_AT_TAURI_APPS_PLUGIN_SHELL_2_PV}"
+			"@tauri-apps/plugin-store@^${NODE_AT_TAURI_APPS_PLUGIN_STORE_2_PV}"
+			"@tauri-apps/plugin-updater@^${NODE_AT_TAURI_APPS_PLUGIN_UPDATER_2_PV}"
+		)
+		enpm install "${L[@]}" -P
+
+		L=(
+			"@tauri-apps/cli@^${NODE_AT_TAURI_APPS_CLI_2_PV}"
+		)
+		enpm install "${L[@]}" -D
+
+	# Vulnerability fixes
+
 		L=(
 			"@remix-run/router@^${NODE_AT_REMIX_RUN_ROUTER_PV}"
 			"brace-expansion@^${NODE_BRACE_EXPANSION_1_PV}"
@@ -906,6 +896,7 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 			"nanoid@^${NODE_NANOID_3_PV}"
 			"postcss@^${NODE_POSTCSS_PV}"
 			"react-router@^${NODE_REACT_ROUTER_7_PV}"
+			"react-router-dom@^${NODE_REACT_ROUTER_DOM_7_PV}"
 			"source-map-js@^${NODE_SOURCE_MAP_JS_PV}"
 			"ws@^${NODE_WS_8_PV}"
 		)
@@ -928,9 +919,44 @@ ewarn "QA:  Manually remove node_modules/vitest/node_modules/vite in ${S}/packag
 	fi
 }
 
+gen_cargo_lockfile() {
+	[[ "${GEN_CARGO_LOCKFILE}" == "1" ]] || return
+	cd "${S}/src-tauri" || die
+	rm "${S}/src-tauri/Cargo.lock" || true
+	eapply "${FILESDIR}/${PN}-0.0.9-symbolize-cargo-lock.patch"
+
+	sed -i \
+		-e "s|@RUST_LOG_PV@|${RUST_LOG_PV}|g" \
+		-e "s|@RUST_SERDE_JSON_PV@|${RUST_SERDE_JSON_PV}|g" \
+		-e "s|@RUST_TAURI_2_BUILD_PV@|${RUST_TAURI_2_BUILD_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_DIALOG_PV@|${RUST_TAURI_2_PLUGIN_DIALOG_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_FS_PV@|${RUST_TAURI_2_PLUGIN_FS_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_LOG_PV@|${RUST_TAURI_2_PLUGIN_LOG_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_PROCESS_PV@|${RUST_TAURI_2_PLUGIN_PROCESS_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_SHELL_PV@|${RUST_TAURI_2_PLUGIN_SHELL_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_SINGLE_INSTANCE_PV@|${RUST_TAURI_2_PLUGIN_SINGLE_INSTANCE_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_SLOT@|${RUST_TAURI_2_PLUGIN_SLOT}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_STORE_PV@|${RUST_TAURI_2_PLUGIN_STORE_PV}|g" \
+		-e "s|@RUST_TAURI_2_PLUGIN_UPDATER_PV@|${RUST_TAURI_2_PLUGIN_UPDATER_PV}|g" \
+		-e "s|@RUST_TAURI_2_PV@|${RUST_TAURI_2_PV}|g" \
+		"${S}/src-tauri/Cargo.toml" \
+		|| die
+
+	cargo generate-lockfile
+
+einfo
+einfo "Now do the following"
+einfo "cp ${S}/src-tauri/Cargo.* files/${PV}"
+einfo "./convert-cargo-lock.sh ${PV} ${PV}"
+einfo "Update CRATES, GIT_CRATES"
+einfo
+	die
+}
+
 src_unpack() {
 	unpack "${P}.tar.gz"
-#	die # For lockfile update
+	gen_cargo_lockfile
+	#die # For lockfile update
 
 einfo "Unpacking npm side"
 	S="${WORKDIR}/${MY_PN}-${PV}" \
@@ -943,6 +969,11 @@ einfo "Unpacking Tauri side"
 		S="${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
 		_cargo_src_unpack
 	popd
+
+einfo "Copying npm build files"
+	cp -av "${FILESDIR}/${PV}/"{"package.json","package-lock.json"} "${S}" || die
+einfo "Copying cargo build files"
+	cp -av "${FILESDIR}/${PV}/Cargo."{"lock","toml"} "${S}/src-tauri" || die
 
 	cd "${WORKDIR}" || die
 	local commit="${PLUGINS_WORKSPACE_COMMIT}"
@@ -983,6 +1014,14 @@ einfo "Unpacking Tauri side"
 			grep -q -e "${pkg}" "${S}/src-tauri/Cargo.lock" && die "QA:  ${pkg} ${pkg_pv} needs to be removed from src-tauri/Cargo.lock"
 		fi
 	done
+
+	# Remove mistake by _npm_src_unpack_default_ebuild()
+	rm "${S}/"{"Cargo.toml","Cargo.lock"} || true
+
+einfo "Copying npm build files"
+	cp -av "${FILESDIR}/${PV}/"{"package.json","package-lock.json"} "${S}" || die
+einfo "Copying cargo build files"
+	cp -av "${FILESDIR}/${PV}/Cargo."{"lock","toml"} "${S}/src-tauri" || die
 }
 
 src_configure() {
@@ -994,7 +1033,6 @@ src_configure() {
 }
 
 src_compile() {
-	rm -f "${WORKDIR}/${MY_PN}-${PV}/Cargo."{"lock","toml"}
 einfo "Inspecting code for new tauri-plugin-autostart{,-api} references.  Please wait..."
 	grep -q -r -e "tauri-plugin-autostart-api" "${S}/"{"src","src-tauri"} && die "Detected unpatched project (1)"
 	grep -q -r -e "tauri-plugin-autostart" "${S}/"{"src","src-tauri"} && die "Detected unpatched project (2)"

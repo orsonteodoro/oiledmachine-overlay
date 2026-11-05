@@ -1,0 +1,13 @@
+# This file contains an AI generated file.
+--- /dev/null	2026-10-31 10:05:22.813910733 -0700
++++ b/src-tauri/capabilities/default.json	2026-11-04 22:53:53.795064114 -0800
+@@ -0,0 +1,9 @@
++{
++  "$schema": "../gen/schemas/desktop-schema.json",
++  "identifier": "main-capability",
++  "windows": ["main"],
++  "permissions": [
++    "core:default",
++    "core:path:default"
++  ]
++}
