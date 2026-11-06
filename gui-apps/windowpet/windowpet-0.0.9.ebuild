@@ -1082,6 +1082,7 @@ src_install() {
 	exeinto "/usr/bin"
 	newexe "${S}/src-tauri/target/release/window_pet" "window-pet-bin"
 	dosym "/usr/bin/window-pet" "/usr/bin/window_pet"
+	dosym "/usr/bin/window-pet" "/usr/bin/windowpet"
 	gen_wrapper
 
 	make_desktop_entry \

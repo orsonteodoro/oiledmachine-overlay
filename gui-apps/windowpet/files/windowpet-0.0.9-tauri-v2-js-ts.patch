@@ -1,7 +1,7 @@
 # This file contains AI generated fixes.
 diff '--color=auto' -urp a/src.orig/App.tsx b/src/App.tsx
 --- a/src.orig/App.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/App.tsx	2026-11-05 09:30:11.730601184 -0800
++++ b/src/App.tsx	2026-11-06 00:00:05.918543038 -0800
 @@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes
  import React, { Suspense } from "react";
  import Loading from "./Loading";
@@ -34,8 +34,8 @@ diff '--color=auto' -urp a/src.orig/App.tsx b/src/App.tsx
 \ No newline at end of file
 +export default App;
 diff '--color=auto' -urp a/src.orig/hooks/useSettings.tsx b/src/hooks/useSettings.tsx
---- a/src.orig/hooks/useSettings.tsx	2026-11-05 09:27:41.320960781 -0800
-+++ b/src/hooks/useSettings.tsx	2026-11-05 09:30:11.730806111 -0800
+--- a/src.orig/hooks/useSettings.tsx	2026-11-05 23:58:48.712082634 -0800
++++ b/src/hooks/useSettings.tsx	2026-11-06 00:00:05.918756148 -0800
 @@ -3,7 +3,7 @@ import { useSettingStore } from "./useSe
  import { getAppSettings } from "../utils/settings";
  import i18next from "i18next";
@@ -54,7 +54,7 @@ diff '--color=auto' -urp a/src.orig/hooks/useSettings.tsx b/src/hooks/useSetting
 +}
 diff '--color=auto' -urp a/src.orig/PhaserWrapper.tsx b/src/PhaserWrapper.tsx
 --- a/src.orig/PhaserWrapper.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/PhaserWrapper.tsx	2026-11-05 09:30:11.730943937 -0800
++++ b/src/PhaserWrapper.tsx	2026-11-06 00:00:05.918886740 -0800
 @@ -2,7 +2,7 @@ import { useEffect, useRef, useState } f
  import Phaser from "phaser";
  import Pets from "./scenes/Pets";
@@ -81,7 +81,7 @@ diff '--color=auto' -urp a/src.orig/PhaserWrapper.tsx b/src/PhaserWrapper.tsx
 +export default PhaserWrapper;
 diff '--color=auto' -urp a/src.orig/scenes/manager.ts b/src/scenes/manager.ts
 --- a/src.orig/scenes/manager.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/scenes/manager.ts	2026-11-05 09:30:11.731104168 -0800
++++ b/src/scenes/manager.ts	2026-11-06 00:00:05.919046331 -0800
 @@ -1,7 +1,7 @@
 -import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 +import { convertFileSrc, invoke } from "@tauri-apps/api/core";
@@ -111,7 +111,7 @@ diff '--color=auto' -urp a/src.orig/scenes/manager.ts b/src/scenes/manager.ts
                      });
 diff '--color=auto' -urp a/src.orig/scenes/Pets.ts b/src/scenes/Pets.ts
 --- a/src.orig/scenes/Pets.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/scenes/Pets.ts	2026-11-05 09:30:11.731332508 -0800
++++ b/src/scenes/Pets.ts	2026-11-06 00:00:05.919267351 -0800
 @@ -1,6 +1,6 @@
  import { ISpriteConfig } from "../types/ISpriteConfig";
  import { useSettingStore } from "../hooks/useSettingStore";
@@ -140,7 +140,7 @@ diff '--color=auto' -urp a/src.orig/scenes/Pets.ts b/src/scenes/Pets.ts
                          this.allowPetInteraction = event.payload
 diff '--color=auto' -urp a/src.orig/scenes/Pet.ts b/src/scenes/Pet.ts
 --- a/src.orig/scenes/Pet.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/scenes/Pet.ts	2026-11-05 09:30:11.731531556 -0800
++++ b/src/scenes/Pet.ts	2026-11-06 00:02:45.304411799 -0800
 @@ -1,4 +1,4 @@
 -import { convertFileSrc } from "@tauri-apps/api/tauri";
 +import { convertFileSrc } from "@tauri-apps/api/core";
@@ -156,7 +156,7 @@ diff '--color=auto' -urp a/src.orig/scenes/Pet.ts b/src/scenes/Pet.ts
 +}
 diff '--color=auto' -urp a/src.orig/__tests__/functions/function.test.ts b/src/__tests__/functions/function.test.ts
 --- a/src.orig/__tests__/functions/function.test.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/__tests__/functions/function.test.ts	2026-11-05 09:30:11.731656889 -0800
++++ b/src/__tests__/functions/function.test.ts	2026-11-06 00:00:05.919827717 -0800
 @@ -4,7 +4,7 @@ import { expect, it } from "vitest";
  
  it("Should have main window", async () => {
@@ -169,7 +169,7 @@ diff '--color=auto' -urp a/src.orig/__tests__/functions/function.test.ts b/src/_
  })
 diff '--color=auto' -urp a/src.orig/types/components/type.ts b/src/types/components/type.ts
 --- a/src.orig/types/components/type.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/types/components/type.ts	2026-11-05 09:30:11.731785538 -0800
++++ b/src/types/components/type.ts	2026-11-06 00:00:05.919964268 -0800
 @@ -1,4 +1,4 @@
 -import { UpdateManifest } from "@tauri-apps/api/updater";
 +import { Update } from "@tauri-apps/plugin-updater";
@@ -187,7 +187,7 @@ diff '--color=auto' -urp a/src.orig/types/components/type.ts b/src/types/compone
 +}
 diff '--color=auto' -urp a/src.orig/ui/pop_up/Updater.tsx b/src/ui/pop_up/Updater.tsx
 --- a/src.orig/ui/pop_up/Updater.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/ui/pop_up/Updater.tsx	2026-11-05 09:30:11.731918414 -0800
++++ b/src/ui/pop_up/Updater.tsx	2026-11-06 00:00:05.920096077 -0800
 @@ -1,7 +1,7 @@
  import { UpdaterPopupProps } from "../../types/components/type"
  import { Anchor, Box, Text } from "@mantine/core";
@@ -206,7 +206,7 @@ diff '--color=auto' -urp a/src.orig/ui/pop_up/Updater.tsx b/src/ui/pop_up/Update
 +export default Updater;
 diff '--color=auto' -urp a/src.orig/ui/setting_tabs/About.tsx b/src/ui/setting_tabs/About.tsx
 --- a/src.orig/ui/setting_tabs/About.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/ui/setting_tabs/About.tsx	2026-11-05 09:30:11.732044355 -0800
++++ b/src/ui/setting_tabs/About.tsx	2026-11-06 00:00:05.920227382 -0800
 @@ -1,6 +1,6 @@
  import { memo, useEffect, useMemo, useState } from "react";
  import { Anchor, Avatar, Button, Flex, Loader, Text } from "@mantine/core";
@@ -224,7 +224,7 @@ diff '--color=auto' -urp a/src.orig/ui/setting_tabs/About.tsx b/src/ui/setting_t
 +export default memo(About);
 diff '--color=auto' -urp a/src.orig/ui/setting_tabs/AddPet.tsx b/src/ui/setting_tabs/AddPet.tsx
 --- a/src.orig/ui/setting_tabs/AddPet.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/ui/setting_tabs/AddPet.tsx	2026-11-05 09:30:11.732175797 -0800
++++ b/src/ui/setting_tabs/AddPet.tsx	2026-11-06 00:00:05.920359551 -0800
 @@ -21,10 +21,10 @@ import {
      IconPlus,
      IconTrash
@@ -247,7 +247,7 @@ diff '--color=auto' -urp a/src.orig/ui/setting_tabs/AddPet.tsx b/src/ui/setting_
 +export default memo(AddPet);
 diff '--color=auto' -urp a/src.orig/ui/setting_tabs/MyPets.tsx b/src/ui/setting_tabs/MyPets.tsx
 --- a/src.orig/ui/setting_tabs/MyPets.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/ui/setting_tabs/MyPets.tsx	2026-11-05 09:30:11.732329614 -0800
++++ b/src/ui/setting_tabs/MyPets.tsx	2026-11-06 00:00:05.920508616 -0800
 @@ -14,7 +14,7 @@ import { PetCardType } from "../../types
  import { DispatchType } from "../../types/IEvents";
  import { ColorSchemeType } from "../../types/ISetting";
@@ -266,7 +266,7 @@ diff '--color=auto' -urp a/src.orig/ui/setting_tabs/MyPets.tsx b/src/ui/setting_
 +export default memo(MyPets);
 diff '--color=auto' -urp a/src.orig/ui/setting_tabs/PetShop.tsx b/src/ui/setting_tabs/PetShop.tsx
 --- a/src.orig/ui/setting_tabs/PetShop.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/ui/setting_tabs/PetShop.tsx	2026-11-05 09:30:11.732451690 -0800
++++ b/src/ui/setting_tabs/PetShop.tsx	2026-11-06 00:00:05.920644075 -0800
 @@ -12,8 +12,8 @@ import { PetCardType } from "../../types
  import { useSettingStore } from "../../hooks/useSettingStore";
  import { DispatchType } from "../../types/IEvents";
@@ -286,8 +286,8 @@ diff '--color=auto' -urp a/src.orig/ui/setting_tabs/PetShop.tsx b/src/ui/setting
 \ No newline at end of file
 +export default memo(PetShop);
 diff '--color=auto' -urp a/src.orig/ui/setting_tabs/Settings.tsx b/src/ui/setting_tabs/Settings.tsx
---- a/src.orig/ui/setting_tabs/Settings.tsx	2026-11-05 09:27:41.322134411 -0800
-+++ b/src/ui/setting_tabs/Settings.tsx	2026-11-05 09:30:11.732593937 -0800
+--- a/src.orig/ui/setting_tabs/Settings.tsx	2026-11-05 23:58:48.713202910 -0800
++++ b/src/ui/setting_tabs/Settings.tsx	2026-11-06 00:00:05.920769176 -0800
 @@ -7,7 +7,7 @@ import { handleSettingChange } from "../
  import { useSettingStore } from "../../hooks/useSettingStore";
  import { memo, useCallback } from "react";
@@ -299,7 +299,7 @@ diff '--color=auto' -urp a/src.orig/ui/setting_tabs/Settings.tsx b/src/ui/settin
  
 diff '--color=auto' -urp a/src.orig/utils/event.ts b/src/utils/event.ts
 --- a/src.orig/utils/event.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/utils/event.ts	2026-11-05 09:30:11.732720893 -0800
++++ b/src/utils/event.ts	2026-11-06 00:00:05.920893405 -0800
 @@ -1,4 +1,4 @@
 -import { WebviewWindow } from '@tauri-apps/api/window'
 +import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
@@ -323,8 +323,8 @@ diff '--color=auto' -urp a/src.orig/utils/event.ts b/src/utils/event.ts
 \ No newline at end of file
 +};
 diff '--color=auto' -urp a/src.orig/utils/handleSettingChange.ts b/src/utils/handleSettingChange.ts
---- a/src.orig/utils/handleSettingChange.ts	2026-11-05 09:27:41.322531064 -0800
-+++ b/src/utils/handleSettingChange.ts	2026-11-05 09:30:11.732832453 -0800
+--- a/src.orig/utils/handleSettingChange.ts	2026-11-05 23:58:48.713573302 -0800
++++ b/src/utils/handleSettingChange.ts	2026-11-06 00:00:05.921006306 -0800
 @@ -3,7 +3,7 @@ import { ColorScheme } from "../types/IS
  import { useSettingStore } from "../hooks/useSettingStore";
  import { emitUpdatePetsEvent } from "./event";
@@ -336,7 +336,7 @@ diff '--color=auto' -urp a/src.orig/utils/handleSettingChange.ts b/src/utils/han
  
 diff '--color=auto' -urp a/src.orig/utils/index.ts b/src/utils/index.ts
 --- a/src.orig/utils/index.ts	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/utils/index.ts	2026-11-05 09:31:19.895850964 -0800
++++ b/src/utils/index.ts	2026-11-06 00:00:05.921128632 -0800
 @@ -1,8 +1,8 @@
 -import { WebviewWindow } from '@tauri-apps/api/window';
 -import { confirm } from "@tauri-apps/api/dialog";
@@ -373,8 +373,8 @@ diff '--color=auto' -urp a/src.orig/utils/index.ts b/src/utils/index.ts
 \ No newline at end of file
 +}
 diff '--color=auto' -urp a/src.orig/utils/settings.ts b/src/utils/settings.ts
---- a/src.orig/utils/settings.ts	2026-11-05 09:27:41.322916607 -0800
-+++ b/src/utils/settings.ts	2026-11-05 09:30:11.733092110 -0800
+--- a/src.orig/utils/settings.ts	2026-11-05 23:58:48.713941046 -0800
++++ b/src/utils/settings.ts	2026-11-06 00:00:05.921269031 -0800
 @@ -1,12 +1,12 @@
 -import { Store } from "tauri-plugin-store-api";
 +import { Store } from "@tauri-apps/plugin-store";
@@ -438,7 +438,7 @@ diff '--color=auto' -urp a/src.orig/utils/settings.ts b/src/utils/settings.ts
 +}
 diff '--color=auto' -urp a/src.orig/utils/update.tsx b/src/utils/update.tsx
 --- a/src.orig/utils/update.tsx	2025-04-10 23:37:48.000000000 -0700
-+++ b/src/utils/update.tsx	2026-11-05 09:30:11.733244684 -0800
++++ b/src/utils/update.tsx	2026-11-06 00:00:05.921423236 -0800
 @@ -1,54 +1,64 @@
 -import {
 -  checkUpdate,

@@ -1,7 +1,7 @@
-# This file contains AI generated code and suggested changes.
+# This patch contains AI generated code or suggested edits.
 diff '--color=auto' -urp a/src-tauri.orig/src/app/conf.rs b/src-tauri/src/app/conf.rs
 --- a/src-tauri.orig/src/app/conf.rs	2025-04-10 23:37:48.000000000 -0700
-+++ b/src-tauri/src/app/conf.rs	2026-11-05 14:18:58.288179180 -0800
++++ b/src-tauri/src/app/conf.rs	2026-11-06 00:05:49.347862425 -0800
 @@ -2,7 +2,7 @@ use log::{error, info};
  use serde::Deserialize;
  use serde_json::json;
@@ -116,7 +116,7 @@ diff '--color=auto' -urp a/src-tauri.orig/src/app/conf.rs b/src-tauri/src/app/co
      }
 diff '--color=auto' -urp a/src-tauri.orig/src/app/tray.rs b/src-tauri/src/app/tray.rs
 --- a/src-tauri.orig/src/app/tray.rs	2025-04-10 23:37:48.000000000 -0700
-+++ b/src-tauri/src/app/tray.rs	2026-11-05 14:18:23.297654837 -0800
++++ b/src-tauri/src/app/tray.rs	2026-11-06 00:05:49.348126497 -0800
 @@ -1,97 +1,92 @@
 -use super::utils::{open_setting_window, reopen_main_window};
 -use log::info;
@@ -290,7 +290,7 @@ diff '--color=auto' -urp a/src-tauri.orig/src/app/tray.rs b/src-tauri/src/app/tr
 +fn open_setting_window(_app: AppHandle) {}
 diff '--color=auto' -urp a/src-tauri.orig/src/app/utils.rs b/src-tauri/src/app/utils.rs
 --- a/src-tauri.orig/src/app/utils.rs	2025-04-10 23:37:48.000000000 -0700
-+++ b/src-tauri/src/app/utils.rs	2026-11-05 14:16:39.847661493 -0800
++++ b/src-tauri/src/app/utils.rs	2026-11-06 00:05:49.348260613 -0800
 @@ -1,19 +1,19 @@
  use super::conf::AppConfig;
  use log::info;
@@ -337,8 +337,8 @@ diff '--color=auto' -urp a/src-tauri.orig/src/app/utils.rs b/src-tauri/src/app/u
 \ No newline at end of file
 +}
 diff '--color=auto' -urp a/src-tauri.orig/src/main.rs b/src-tauri/src/main.rs
---- a/src-tauri.orig/src/main.rs	2026-11-05 14:15:27.318539674 -0800
-+++ b/src-tauri/src/main.rs	2026-11-05 14:17:39.843074166 -0800
+--- a/src-tauri.orig/src/main.rs	2026-11-06 00:04:40.029637212 -0800
++++ b/src-tauri/src/main.rs	2026-11-06 00:06:03.858339258 -0800
 @@ -5,7 +5,8 @@ mod app;
  use app::{cmd, conf, tray, utils};
  use log::info;

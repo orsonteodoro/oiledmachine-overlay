@@ -1,7 +1,7 @@
 # This file uses and contains AI generated suggestions or fixes.
 --- a/src-tauri/tauri.conf.json.orig	2025-04-10 23:37:48.000000000 -0700
-+++ b/src-tauri/tauri.conf.json	2026-11-05 07:51:48.281574957 -0800
-@@ -1,75 +1,22 @@
++++ b/src-tauri/tauri.conf.json	2026-11-05 16:33:49.340985211 -0800
+@@ -1,75 +1,14 @@
  {
 +  "productName": "WindowPet",
 +  "version": "0.0.9",
@@ -76,27 +76,36 @@
 -        "installMode": "passive"
 -      }
 -    },
+-    "security": {
+-      "csp": "asset: https://asset.localhost"
+-    },
 +  "app": {
-+    "macOSPrivateApi": true,
-     "security": {
-       "csp": "asset: https://asset.localhost"
-     },
-+    "trayIcon": {
-+      "iconPath": "icons/32x32.png",
-+      "iconAsTemplate": true
-+    },
      "windows": [
        {
          "fullscreen": true,
-@@ -81,11 +28,61 @@
-         "alwaysOnTop": true,
+@@ -82,10 +21,34 @@
          "skipTaskbar": true
        }
--    ],
+     ],
 -    "systemTray": {
--      "iconPath": "icons/32x32.png",
--      "iconAsTemplate": true
-+    ]
++    "security": {
++      "csp": "asset: https://asset.localhost"
++    },
++    "trayIcon": {
+       "iconPath": "icons/32x32.png",
+       "iconAsTemplate": true
+-    },
+-    "macOSPrivateApi": true
++    }
++  },
++  "plugins": {
++    "updater": {
++      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZERTQ3OTFEMzhDNTJEOUEKUldTYUxjVTRIWG5rYmFYak50OVBjTnBORHQ5TE5WeHJDMGNHbEJZdWxoa0RvbFEyUDVPSno1NTEK",
++      "endpoints": ["https://github.com/SeakMengs/WindowPet/releases/latest/download/latest.json"],
++      "windows": {
++        "installMode": "passive"
++      }
++    }
 +  },
 +  "bundle": {
 +    "active": true,
@@ -110,49 +119,6 @@
 +      "icons/icon.icns",
 +      "icons/icon.ico"
 +    ]
-+  },
-+  "plugins": {
-+    "all": false,
-+    "window": {
-+      "all": true
-+    },
-+    "protocol": {
-+      "asset": true,
-+      "assetScope": ["**"]
-+    },
-+    "path": {
-+      "all": true
-+    },
-+    "process": {
-+      "all": false,
-+      "exit": false,
-+      "relaunch": true,
-+      "relaunchDangerousAllowSymlinkMacos": false
-+    },
-+    "dialog": {
-+      "all": true
-     },
--    "macOSPrivateApi": true
-+    "fs": {
-+      "all": true,
-+      "scope": {
-+        "allow": ["**"],
-+        "requireLiteralLeadingDot": false
-+      }
-+    },
-+    "shell": {
-+      "all": false,
-+      "open": true
-+    },
-+    "updater": {
-+      "active": true,
-+      "dialog": false,
-+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZERTQ3OTFEMzhDNTJEOUEKUldTYUxjVTRIWG5rYmFYak50OVBjTnBORHQ5TE5WeHJDMGNHbEJZdWxoa0RvbFEyUDVPSno1NTEK",
-+      "endpoints": ["https://github.com/SeakMengs/WindowPet/releases/latest/download/latest.json"],
-+      "windows": {
-+        "installMode": "passive"
-+      }
-+    }
    }
 -}
 \ No newline at end of file
