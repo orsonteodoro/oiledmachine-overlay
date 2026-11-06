@@ -9,6 +9,13 @@ EAPI=8
 # U20
 
 #
+# FIXME:
+#
+# Fix drop pet on window and it walks or climbs on window
+# Fix pet grab without bugs
+#
+
+#
 # Security note:
 #
 # The tauri-plugin-autostart-api references have been removed in addition
@@ -666,7 +673,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	tray? (
@@ -689,7 +696,7 @@ RUST_BINDINGS_DEPEND="
 	>=x11-libs/gdk-pixbuf-${GDK_PIXBUF_PV}:=[introspection]
 	>=x11-libs/gtk+-${GTK3_PV}:3=[introspection,wayland?,X?]
 	>=x11-libs/pango-${PANGO_PV}:=[introspection]
-	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4=[javascript,introspection,wayland?,X?]
+	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4.1=[javascript,introspection,wayland?,X?]
 	elibc_glibc? (
 		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
@@ -1125,3 +1132,4 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.0.9, 20250702) on X
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.0.9, 20250814) on X
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.0.9, 20260503) on X
+# OILEDMACHINE-OVERLAY-TEST:  passed with bugs (0.0.9, 20261106) on X
