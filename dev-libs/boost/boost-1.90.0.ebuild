@@ -3,7 +3,33 @@
 
 EAPI=8
 
-# Keep an eye on releases: https://www.boost.org/releases/
+# This ebuild contains AI assisted info.
+
+# Releases:  https://www.boost.org/releases/
+
+# cpe:2.3:a:boost:boost
+
+#
+# Do a version bump if there is a security advisory for these security-critical
+# modules:
+#
+# asio
+# beast
+# dll
+# filesystem
+# interprocess
+# graph
+# json
+# optional
+# pool
+# property_tree
+# regex
+# safe_numerics
+# serialization
+# smart_ptr
+# url
+# uuid
+#
 
 CFLAGS_HARDENED_USE_CASES="
 	container-runtime
