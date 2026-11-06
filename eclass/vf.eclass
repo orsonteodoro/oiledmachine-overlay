@@ -290,6 +290,11 @@ einfo "EBR = Extended Blast Radius"
 # EEEA is used in commit messages.
 einfo "EEEA = Expodential Entity Expansion Attack"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EEITW"($|" "|";"|",") ]] ; then
+# Alias for AEITW.
+# Not necessarily KEV.
+einfo "EEITW = Exploit Exists In The Wild" # More informal but more commonly used
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("EM"|"EMA")($|" "|";"|",") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
@@ -350,6 +355,9 @@ einfo "IBCO = Incorrect Boundary Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IB"($|" "|";"|",") ]] ; then
 einfo "IB = Integrity Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICU"($|" "|";"|",") ]] ; then
+einfo "ICU = Improper CleanUp"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICV"($|" "|";"|",") ]] ; then
 einfo "ICV = Insufficient Certificate Validation"
@@ -478,10 +486,8 @@ einfo "ISI = Improper Secure Implementation"
 # Deprecated, use USI
 einfo "ISoI = Insufficient Sanitiation of Input"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"EEITW"($|" "|";"|",") ]] ; then
-# Alias for AEITW.
-# Not necessarily KEV.
-einfo "EEITW = Exploit Exists In The Wild" # More informal but more commonly used
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ITD"($|" "|";"|",") ]] ; then
+einfo "ITD = Improper Teardown"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"IU"($|" "|";"|",") ]] ; then
 einfo "IU = Integer Underflow"
