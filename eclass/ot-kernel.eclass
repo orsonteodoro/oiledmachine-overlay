@@ -457,8 +457,8 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="2026-11-03 12:32 UTC" # Advisory date
-MITIGATION_LAST_UPDATE=1793362192 # From `date --date="Fri Oct 30, 2026 13:09:52 +0100" +%s` from changelog for latest tag from either mainline, stable, or longterm
+MITIGATION_DATE="2026-11-06 18:22 UTC" # Advisory date
+MITIGATION_LAST_UPDATE=1793989110 # From `date --date="Fri Nov 6, 2026 13:18:30 -0500" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
@@ -487,6 +487,23 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-98432;ZC, RC, UAF, RCE, DoS, DT, ID;9.8 Critical on CVSS 3"
 
 	# Less popular or under the radar:
+	"CVE-2026-100082;UAF;"
+	"CVE-2026-100080;UAF;"
+	"CVE-2026-100081;;"
+	"CVE-2026-80811;LEAK, IV;Rejected"
+	"CVE-2026-99252;IV;Rejected"
+	"CVE-2026-99243;IV;Rejected"
+	"CVE-2026-81010;IV;Rejected"
+	"CVE-2026-99262;IV;Rejected"
+	"CVE-2026-99268;IV;Rejected"
+	"CVE-2026-99267;IV;Rejected"
+	"CVE-2026-99266;IV;Rejected"
+	"CVE-2026-99264;IV;Rejected"
+	"CVE-2026-99263;IV;Rejected"
+	"CVE-2026-97618;IV;Rejected"
+	"CVE-2026-81009;IV;Rejected"
+	"CVE-2026-99265;IV;Rejected"
+	"CVE-2026-99217;IV;Rejected"
 	"CVE-2026-99270;UAF;"
 	"CVE-2026-99262;;"
 	"CVE-2026-99269;;"
