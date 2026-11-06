@@ -28,10 +28,10 @@ PYTHON_COMPAT=( python3_{10..14} )
 # For releases, see also https://sources.debian.org/src/ca-certificates/
 # For the type of release, see also https://firefox-source-docs.mozilla.org/security/nss/releases/index.html#mozilla-projects-nss-releases
 # For certdata commits IDs, see https://github.com/mozilla/nss/commits/master/lib/ckfw/builtins/certdata.txt
-NSS_LIVE_COMMIT="0a2b0c75fa036930d98331b721c0780693a3e17a" # Oct 20, 2026 (NSS master), oiledmachine-overlay preference, latest certdata.txt commit
-NSS_ESR_COMMIT="108de14257bf363cf53a42e1ef382d44fe39c599" # Apr 22, 2026 (NSS 3.125), distro preference, tag's commit
-NSS_LATEST_COMMIT="0a2b0c75fa036930d98331b721c0780693a3e17a" # Oct 20, 2026 (NSS 3.132), tag's commit
-# Sep 18, 2026 (fc16813, NSS 3.129), certdata.txt commit snapshot, same as certdata.txt found in https://wiki.mozilla.org/CA/Included_Certificates
+NSS_LIVE_COMMIT="30e59d44dcc34c25d38581ee010e874b66c2e1ca" # Nov 5, 2026 (NSS master), oiledmachine-overlay preference, latest commit in commit history for certdata.txt
+NSS_ESR_COMMIT="b8bd3b4c99b408d2823a6b65fd11e0df0d4bb31f" # Nov 2, 2026 (NSS 3.125.1, LTS), tag's commit
+NSS_LATEST_COMMIT="d485b20805d136ce88e658d680fceffa9020d959" # Nov 4, 2026 (NSS 3.133, Rolling), tag's commit
+# Oct 20, 2026 (0a2b0c7, NSS 3.132 beta1), certdata.txt commit snapshot, same as certdata.txt found in https://wiki.mozilla.org/CA/Included_Certificates
 
 NSS_FLAVORS=(
 	"certdata-esr"
@@ -89,7 +89,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 ${PRECOMPILED} || IUSE+=" cacert"
 IUSE+="
 ${NSS_FLAVORS[@]}
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	^^ (
