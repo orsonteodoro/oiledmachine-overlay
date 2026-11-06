@@ -216,7 +216,7 @@ DEBIAN_PATCHSET=${DEBIAN_PATCHSET:-1}
 GENTOO_PATCHSET=${GENTOO_PATCHSET:-1}
 MJ_PATCHSET=${MJ_PATCHSET:-1} # DEPRECATED.  Used as the Gentoo patchset at M152 and earlier.
 OILEDMACHINE_OVERLAY_PATCHSET=${OILEDMACHINE_OVERLAY_PATCHSET:-1}
-OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-1}
+OPENPOWER_PATCHSET=${OPENPOWER_PATCHSET:-0}
 EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
 FEDORA_PATCHSET=${FEDORA_PATCHSET:-0}
 PPC64_PATCHSET_PROVIDER=${PPC64_PATCHSET_PROVIDER:-"debian"} # Valid values debian, openpower
@@ -300,12 +300,10 @@ MJ_PATCHSET_REV="3"
 OPENPOWER_PATCHES_COMMIT="fccedec8b13e2b874cda5746097065dac26286a2" # Same as latest for the chromium-156 branch
 UNGOOGLED_CHROMIUM_PV="157.0.8103.38-1"
 
-GN_PV="0.2562"
+GN_PV="0.2595"
 ESBUILD_PV="0.28.2" # third_party/devtools-frontend/src/node_modules/esbuild/package.json
-ROLLUP_WASM_NODE_PV="4.62.4" # third_party/chromium-bidi/node_modules/@rollup/wasm-node/package.json
-# chromium-tools/get-chromium-toolchain-strings.py (or just use Chromicler)
-# Node for M145+ should be 24.12.0 but that's not packaged in Gentoo yet. See #969145
-TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9"
+ROLLUP_WASM_NODE_PV="4.63.1" # third_party/chromium-bidi/node_modules/@rollup/wasm-node/package.json
+TEST_FONT="9c07d19d9c5ee1ff94f717e6fb17e0c8c354e6f9" # https://github.com/chromium/chromium/blob/157.0.8103.38/DEPS#L3151 at object_name row
 TYPESCRIPT_PV="7.0.2" # third_party/typescript/linux-amd64/src/package.json
 QT6_PV="${QTBASE6_PV}"
 # Testing this V8 version to avoid breaking security.  The 13.6 series cause the \
@@ -313,8 +311,7 @@ QT6_PV="${QTBASE6_PV}"
 # disable the V8 sandbox, or pointer compression and DrumBrake.  Before it was \
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
-V8_PV="15.5.35.25" # Oct 13, 2026.   The V8 current version for 155.
-#V8_PV="15.6.75.20" # Oct 20, 2026.  The lastest active with near compatibility.  15.6.75.x, 15.7.112.x, 15.8.x are active for V8.
+V8_PV="15.7.112.23" # Nov 2, 2026.   The V8 current version for 157.
 # tools/builtins-pgo/profiles/ folder contains the PGO profile for V8.
 # The AI said no version guarantees for compatibility.
 
