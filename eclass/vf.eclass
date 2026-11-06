@@ -622,8 +622,12 @@ einfo "RC = Race Condition"
 # Alias for ACE
 einfo "RCE = Remote Code Execution"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"RE"($|" "|";"|",") ]] ; then
-einfo "RE = Resource Exhaustion Attack"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("RE")($|" "|";"|",") ]] ; then
+# Same as CWE-668
+einfo "RE = Resource Exposure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"REA"($|" "|";"|",") ]] ; then
+einfo "REA = Resource Exhaustion Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")("ReDoS"|"REDOS")($|" "|";"|",") ]] ; then
 einfo "ReDoS = Regular Expression Denial of Service"
