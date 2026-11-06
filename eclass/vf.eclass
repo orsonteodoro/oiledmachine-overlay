@@ -145,6 +145,12 @@ einfo "AFW = Arbitrary File Write"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AIOOR"($|" "|";"|",") ]] ; then
 einfo "AIOOR = Array Index Out Of Range"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"APCI"($|" "|";"|",") ]] ; then
+einfo "APCI = Authorization Permissions Check Incorrect"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"APCM"($|" "|";"|",") ]] ; then
+einfo "APCM = Authorization Permissions Check Missing"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
 		fi
@@ -781,6 +787,9 @@ einfo "UMVAR = Use of Uninitialized Member Variable"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UOBJ"($|" "|";"|",") ]] ; then
 einfo "UOBJ = Use of Uninitialized Object"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UoRR"($|" "|";"|",") ]] ; then
+einfo "UoRR = Use of Released Resource"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UPTR"($|" "|";"|",") ]] ; then
 einfo "UPTR = Use of Uninitialized Pointer"
