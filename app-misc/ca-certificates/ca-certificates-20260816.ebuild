@@ -222,9 +222,9 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 	# Cheap integrity check of nssckbi.h content last seen edit
 		local c1=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION_MAJOR [0-9]+" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " ")
 		local c2=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION_MINOR [0-9]+" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " ")
-		local actual_pv
-		actual_pv="${c1}.${c2}"
-einfo "actual_pv:  ${actual_pv}"
+		local actual_ver
+		actual_ver="${c1}.${c2}"
+einfo "actual_ver:  ${actual_ver}"
 # For ver min, see https://github.com/mozilla/nss/blob/NSS_3_133_RTM/lib/ckfw/builtins/nssckbi.h#L48C9-L48C43
 # For ver max, see https://github.com/mozilla/nss/blob/master/lib/ckfw/builtins/nssckbi.h
 		local expected_ver_min="2.92" # Rolling
@@ -238,7 +238,7 @@ eerror "Expected version:  ${expected_ver_min} <= x <= ${expected_ver_max}"
 			die
 		fi
 
-		actual_pv=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION \"[0-9.]+\"" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " " | sed -e "s|\"||g")
+		actual_ver=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION \"[0-9.]+\"" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " " | sed -e "s|\"||g")
 		if ver_test "${expected_ver_min}" "-le" "${actual_ver}" && ver_test "${actual_ver}" "-le" "${expected_ver_max}" ; then
 			:
 		else
