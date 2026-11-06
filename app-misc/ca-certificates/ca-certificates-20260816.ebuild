@@ -225,24 +225,26 @@ einfo "PRECOMPILED:  ${PRECOMPILED}"
 		local actual_pv
 		actual_pv="${c1}.${c2}"
 einfo "actual_pv:  ${actual_pv}"
-		local expected_pv_min="2.92"
-		local expected_pv_max="2.93" # The tolerance is arbitrary but slow bumps
-		if ver_test "${expected_pv_min}" "-le" "${actual_pv}" && ver_test "${actual_pv}" "-le" "${expected_pv_max}" ; then
+# For ver min, see https://github.com/mozilla/nss/blob/NSS_3_133_RTM/lib/ckfw/builtins/nssckbi.h#L48C9-L48C43
+# For ver max, see https://github.com/mozilla/nss/blob/master/lib/ckfw/builtins/nssckbi.h
+		local expected_ver_min="2.92" # Rolling
+		local expected_ver_max="2.94" # Live
+		if ver_test "${expected_ver_min}" "-le" "${actual_ver}" && ver_test "${actual_ver}" "-le" "${expected_ver_max}" ; then
 			:
 		else
 eerror "Version rejected (Test 1):"
-eerror "Actual PV:  ${actual_pv}"
-eerror "Expected version:  ${expected_pv_min} <= ${actual_pv} <= ${expected_pv_max}"
+eerror "Actual version:  ${actual_ver}"
+eerror "Expected version:  ${expected_ver_min} <= x <= ${expected_ver_max}"
 			die
 		fi
 
 		actual_pv=$(grep -o -E -e "NSS_BUILTINS_LIBRARY_VERSION \"[0-9.]+\"" "${WORKDIR}/ca-certificates/mozilla/nssckbi.h" | cut -f 2 -d " " | sed -e "s|\"||g")
-		if ver_test "${expected_pv_min}" "-le" "${actual_pv}" && ver_test "${actual_pv}" "-le" "${expected_pv_max}" ; then
+		if ver_test "${expected_ver_min}" "-le" "${actual_ver}" && ver_test "${actual_ver}" "-le" "${expected_ver_max}" ; then
 			:
 		else
 eerror "Version rejected (Test 2):"
-eerror "Actual PV:  ${actual_pv}"
-eerror "Expected version:  ${expected_pv_min} <= ${actual_pv} <= ${expected_pv_max}"
+eerror "Actual version:  ${actual_ver}"
+eerror "Expected version:  ${expected_ver_min} <= x <= ${expected_ver_max}"
 			die
 		fi
 	else
