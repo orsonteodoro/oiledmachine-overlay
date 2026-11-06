@@ -146,7 +146,7 @@ einfo "AFW = Arbitrary File Write"
 einfo "AIOOR = Array Index Out Of Range"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"APC"($|" "|";"|",") ]] ; then
-einfo "APC = Authorized Permissions Check is Incorrect or Missing"
+einfo "APC = Authorized Permissions Check is incorrect or missing"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
