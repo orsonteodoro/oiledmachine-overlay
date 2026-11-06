@@ -143,7 +143,7 @@ SECURE_TIMESTAMP["dev_qt_qtwayland_6_9999"]="Oct 21, 2026 2:16 AM PDT"
 # qtwebengine uses aggressively the backport technique for Chromium updates and
 # does whole syncs on new Qt versions.
 #
-SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Oct 20, 2026 7:04 AM PDT"
+SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Nov 5, 2026 10:41 AM PST"
 
 SECURE_TIMESTAMP["dev_games_ogre_9999"]="Jun 19, 2026 10:03 AM PDT"
 SECURE_TIMESTAMP["dev_games_recastnavigation_9999"]="Feb 26, 2026 11:16 PM PST"
