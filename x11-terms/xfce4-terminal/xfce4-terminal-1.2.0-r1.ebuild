@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data security-critical sensitive-data"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/libxml2-9999"
 	"x11-libs/gtk+-3.24.9999"
@@ -27,7 +27,7 @@ SLOT="0"
 KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv ~sparc x86 ~x64-solaris"
 IUSE="
 +color-themes utempter wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="|| ( wayland X )"
 
