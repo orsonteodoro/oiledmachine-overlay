@@ -9,7 +9,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 	"dev-db/sqlite-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/libxml2-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
@@ -39,7 +39,7 @@ LICENSE="LGPL-2.1"
 SLOT="0"
 IUSE+="
 doc test valgrind
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=app-arch/zstd-${ZSTD_PV}:=
