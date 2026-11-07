@@ -570,7 +570,7 @@ selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi
 +wayland +webrtc wifi webspeech
-ebuild_revision_40
+ebuild_revision_41
 "
 
 # Firefox-only IUSE
