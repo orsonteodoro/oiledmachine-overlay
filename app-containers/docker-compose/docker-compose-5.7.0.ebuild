@@ -52,6 +52,16 @@ BDEPEND=">=dev-lang/go-${GO_PV}:="
 src_configure() {
 	chkl_check_many_timestamps
 	cflags-hardened_append
+	replace-flags "-O0" "-O1"
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-O4" "-O2"
+	if [[ "${CFLAGS}" =~ ("-O1"|"-O2"|"-Os"|"-Oz") ]] ; then
+		:
+	else
+		append-cflags "-O2"
+		append-cxxflags "-O2"
+	fi
 	default
 }
 
