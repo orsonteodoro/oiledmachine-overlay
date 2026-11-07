@@ -239,7 +239,7 @@ KEYWORDS="-* amd64 ~arm64"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="
 apulse +gmp-autoupdate +libpulse selinux wayland
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
