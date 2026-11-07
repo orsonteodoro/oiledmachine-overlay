@@ -17,7 +17,7 @@ GENTOO_DEPEND_ON_PERL=no
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/openssl-4.0.9999"
 	"dev-libs/openssl-3.6.9999"
@@ -82,7 +82,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 +curl cgi cvs doc keyring +gpg highlight +iconv +nls +pcre perforce +perl +rust +safe-directory selinux subversion test tk +webdav xinetd
-ebuild_revision_3
+ebuild_revision_4
 "
 
 # Common to both DEPEND and RDEPEND
