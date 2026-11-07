@@ -42,7 +42,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0"
 IUSE+="
 +asyncns dbus doc +glib gtk pipewire pulseaudio-daemon selinux systemd test valgrind X
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 
