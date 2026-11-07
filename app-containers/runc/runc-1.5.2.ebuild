@@ -13,9 +13,9 @@ CHKL_TIMESTAMPS=(
 
 inherit cflags-hardened chkl go-module linux-info secure-version
 
-# update on bump, look for commit ID on release tag.
+# Update on bump. You need to look for the commit ID on release tag.
 # https://github.com/opencontainers/runc
-RUNC_COMMIT="29dd3dc2b13b4123162e5fe132504bb4b15569f1"
+RUNC_COMMIT="29dd3dc2b13b4123162e5fe132504bb4b15569f1" # Same as commit associated with git tagged release
 
 DESCRIPTION="CLI tool for spawning and running containers"
 HOMEPAGE="https://github.com/opencontainers/runc/"

@@ -21,7 +21,7 @@ CHKL_TIMESTAMPS=(
 
 inherit cflags-hardened chkl go-module linux-info optfeature secure-version systemd toolchain-funcs udev
 
-GIT_COMMIT="b26fb77d3e7b01f9d21b89539c1ab428f5ca431f"
+GIT_COMMIT="70efc0e31da3a115fc87574d1b786fa2b867c346" # Same as commit associated with git tagged release
 
 DESCRIPTION="The core functions you need to create Docker images and run Docker containers"
 HOMEPAGE="https://www.docker.com/"

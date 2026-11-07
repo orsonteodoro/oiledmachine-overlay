@@ -12,7 +12,7 @@ CHKL_TIMESTAMPS=(
 
 inherit cflags-hardened go-env go-module secure-version systemd toolchain-funcs
 
-GIT_REVISION="b7a25261e029d68978bbf290df0a62fc819b3c51"
+GIT_REVISION="b7a25261e029d68978bbf290df0a62fc819b3c51" # Same as commit associated with git tagged release
 
 DESCRIPTION="A daemon to control runC"
 HOMEPAGE="https://containerd.io/"

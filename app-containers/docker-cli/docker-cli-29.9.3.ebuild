@@ -13,7 +13,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl shell-completion go-env go-module secure-version toolchain-funcs
 
 # update this on every bump
-GIT_COMMIT="dfc520dcc28994c4c699b9b219fd2f5a6bcec0ff"
+GIT_COMMIT="5457199aa57c45e990c59c89cab5f02b817238d7" # Same as commit associated with tagged release
 
 DESCRIPTION="the command line binary for docker"
 HOMEPAGE="https://www.docker.com/"
