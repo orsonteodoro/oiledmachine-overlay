@@ -16,7 +16,7 @@ TMPFILES_OPTIONAL=1
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"sys-apps/systemd-9999"
 	"sys-auth/elogind-257.9999"
 	"sys-libs/libselinux-9999"
@@ -47,7 +47,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv 
 # TODO: USE=daemon
 IUSE+="
 apparmor audit debug doc elogind selinux static-libs systemd test valgrind X
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
