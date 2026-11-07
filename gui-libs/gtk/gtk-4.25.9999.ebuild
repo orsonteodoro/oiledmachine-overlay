@@ -24,7 +24,7 @@ FALLBACK_COMMIT="0fa3673fc419d80cc8957a946be0b062deeba0df"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/fribidi-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/wayland-9999"
 	"net-print/cups-9999"
 	"gnome-base/librsvg-9999"
@@ -58,7 +58,7 @@ REQUIRED_USE="
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE+="
 aqua broadway cloudproviders colord cups examples gstreamer gtk-doc +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c
-ebuild_revision_20
+ebuild_revision_21
 "
 
 # librsvg for svg icons and "!8541 Use librsvg for symbolics that we
