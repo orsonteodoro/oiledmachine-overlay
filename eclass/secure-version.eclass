@@ -745,6 +745,7 @@ secure-version_gen_ffmpeg_depends() {
 	local slot_mode="${3}" # single, multi, any, <empty string>
 	local t=""
 	t+="
+		!<media-video/ffmpeg-5.1
 		media-video/ffmpeg:=${usedep}
 		|| (
 	"
@@ -860,6 +861,7 @@ secure-version_gen_perl_depends() {
 	local usedep="${2}" # [berkdb], <empty string>
 	local t=""
 	t+="
+		!<dev-lang/perl-5.40
 		dev-lang/perl:=${usedep}
 		|| (
 	"
@@ -945,6 +947,7 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 
 	local t=""
 	t+="
+		!<dev-lang/python-3.11
 	"
 	local l=""
 	local r=""
@@ -1040,7 +1043,7 @@ secure-version_gen_ruby_single_depends() {
 	local t=""
 	# 3.2 is EOL, eject to mitigate LotL
 	t+="
-		!dev-lang/ruby:3.2
+		!<dev-lang/ruby-3.3
 		dev-lang/ruby:=${usedep}
 		|| (
 	"
@@ -1117,7 +1120,7 @@ secure-version_gen_ruby_ng_depends() {
 	local t=""
 	# 3.2 is EOL, eject to mitigate LotL
 	t+="
-		!dev-lang/ruby:3.2
+		!<dev-lang/ruby-3.3
 		dev-lang/ruby:=${usedep}
 	"
 	local l=""
