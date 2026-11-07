@@ -9,7 +9,7 @@ DISTUTILS_USE_PEP517=setuptools
 DISTUTILS_SINGLE_IMPL=1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="404a67944c809efe858a7e137ab89115ff01c368" # Same as glib
+	FALLBACK_COMMIT="ab35c7fd8d928cd712fc6bc8f2ac99e3dbe598ad" # Same as glib
 fi
 
 inherit gnome.org distutils-r1
