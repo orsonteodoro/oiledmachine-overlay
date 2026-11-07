@@ -20,7 +20,7 @@ LLVM_COMPAT=(
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
 	"dev-cpp/highway-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"media-libs/lcms-9999"
 	"media-libs/libjpeg-turbo-9999"
 	"media-libs/libpng-9999"
@@ -69,7 +69,7 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +gdk-pixbuf gif jpeg openexr +png test
-ebuild_revision_15
+ebuild_revision_17
 "
 REQUIRED_USE="test? ( png )"
 RESTRICT="!test? ( test )"
