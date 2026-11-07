@@ -679,7 +679,7 @@ PNPM_INSTALL_ARGS=(
 
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"net-libs/libsoup-3.9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gdk-pixbuf-9999"
@@ -708,7 +708,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama server tray libappindicator libayatana-appindicator wayland X
-ebuild_revision_35
+ebuild_revision_36
 "
 RESTRICT="mirror" # Speed up downloads
 REQUIRED_USE="
