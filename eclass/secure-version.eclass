@@ -217,7 +217,6 @@ FAAD2_PV=${FAAD2_PV:-"9999"}
 FDK_AAC_PV=${FDK_AAC_PV:-"2.0.3"}
 FFMPEG_PV=${FFMPEG_PV:-"8.1.2"}
 FFMPEG_9999_PV=${FFMPEG_9999_PV:-"9999"}
-FFMPEG_4_4_PV=${FFMPEG_4_4_PV:-"4.4.8"}
 FFMPEG_5_1_PV=${FFMPEG_5_1_PV:-"5.1.10"}
 FFMPEG_6_1_PV=${FFMPEG_6_1_PV:-"6.1.6"}
 FFMPEG_7_1_PV=${FFMPEG_7_1_PV:-"7.1.5"}
@@ -678,15 +677,30 @@ secure-version_gen_openssl_depends() {
 	local l=""
 	local r=""
 	if [[ -z "${range}" ]] ; then
+	# LTS + rolling
 		l="3.5"
 		r="4.0"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
-		if [[ -z "${l}" ]] ; then
+		if [[ "${l}" == "l" ]] ; then
+	# LTS
+			r="3.5"
+		elif [[ "${l}" == "r" ]] ; then
+	# Rolling
+			r="4.0"
+		elif [[ -z "${l}" ]] ; then
+	# LTS
 			r="3.5"
 		fi
-		if [[ -z "${r}" ]] ; then
+		if [[ "${r}" == "l" ]] ; then
+	# LTS
+			r="3.5"
+		elif [[ "${r}" == "r" ]] ; then
+	# Rolling
+			r="4.0"
+		elif [[ -z "${r}" ]] ; then
+	# Rolling
 			r="4.0"
 		fi
 	else
@@ -726,7 +740,7 @@ secure-version_gen_openssl_depends() {
 }
 
 secure-version_gen_ffmpeg_depends() {
-	local range="${1}" # 4.4, 4.4-8.1, 4.4-s, 4.4-r, 4.4-l, 4.4-, <empty string>
+	local range="${1}" # 5.1, 5.1-8.1, 5.1-s, 5.1-r, 5.1-l, 5.1-, <empty string>
 	local usedep="${2}" # [lame], [${MULTILIB_USEDEP}], [${MULTILIB_USEDEP},${PYTHON_SINGLE_USEEP},lame], <empty string>
 	local slot_mode="${3}" # single, multi, any, <empty string>
 	local t=""
@@ -737,36 +751,51 @@ secure-version_gen_ffmpeg_depends() {
 	local l=""
 	local r=""
 	if [[ -z "${range}" ]] ; then
-	# Slots used in any distro releases
-		l="4.4"
-		r="9999"
+	# LTS + rolling
+		l="5.1"
+		r="9.0"
 	elif [[ "${range}" == "s" ]] ; then
-	# Slots used in LTS distro releases
-		l="4.4"
+	# LTS
+		l="5.1"
 		r="8.0"
 	elif [[ "${range}" == "r" ]] ; then
-	# Slots used in rolling distro releases
+	# Rolling
 		l="8.1"
-		r="8.1"
+		r="9.0"
 	elif [[ "${range}" == "l" ]] ; then
-	# Slots used in live distro releases
+	# Live
 		l="9999"
 		r="9999"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
-		if [[ "${r}" == "r" ]] ; then
-	# Slot used in rolling distro releases
+
+		if [[ "${l}" == "s" ]] ; then
+	# LTS
+			r="5.1"
+		elif [[ "${l}" == "r" ]] ; then
+	# Rolling
 			r="8.1"
-		elif [[ "${r}" == "s" ]] ; then
-	# Slot used in LTS distro releases
+		elif [[ "${l}" == "l" ]] ; then
+	# Live
+			r="9999"
+		elif [[ -z "${l}" ]] ; then
+	# LTS
+			r="5.1"
+		fi
+
+		if [[ "${r}" == "s" ]] ; then
+	# LTS
 			r="8.0"
+		elif [[ "${r}" == "r" ]] ; then
+	# Rolling
+			r="9.0"
 		elif [[ "${r}" == "l" ]] ; then
-	# Slot used in live distro releases
+	# Live
 			r="9999"
 		elif [[ -z "${r}" ]] ; then
-	# Slot used in live distro releases
-			r="9999"
+	# Rolling
+			r="9.0"
 		fi
 	else
 		l="${range}"
@@ -780,7 +809,6 @@ secure-version_gen_ffmpeg_depends() {
 		"7.1"	# 59.61.61
 		"6.1"	# 58.60.60
 		"5.1"	# 57.59.59
-		"4.4"	# 56.58.58
 	)
 	local x
 	for x in "${L[@]}" ; do
@@ -838,18 +866,32 @@ secure-version_gen_perl_depends() {
 	local l=""
 	local r=""
 	if [[ -z "${range}" ]] ; then
-	# Slots used in any distro releases
+	# LTS + rolling
 		l="5.40"
 		r="5.44"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
-		if [[ -z "${l}" ]] ; then
-	# Slot used in live distro releases
+
+		if [[ "${l}" == "s" ]] ; then
+	# LTS
+			r="5.40"
+		elif [[ "${l}" == "r" ]] ; then
+	# Rolling
+			r="5.44"
+		elif [[ -z "${l}" ]] ; then
+	# LTS
 			r="5.40"
 		fi
-		if [[ -z "${r}" ]] ; then
-	# Slot used in live distro releases
+
+		if [[ "${r}" == "s" ]] ; then
+	# LTS
+			r="5.40"
+		elif [[ "${r}" == "r" ]] ; then
+	# Rolling
+			r="5.44"
+		elif [[ -z "${r}" ]] ; then
+	# Rolling
 			r="5.44"
 		fi
 	else
@@ -908,48 +950,50 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 	local r=""
 	if [[ -z "${range}" ]] ; then
 	# Slots used in any distro releases
-	# Default to stable + rolling
+	# LTS + rolling
 		l="3.11"
 		r="3.15"
 	elif [[ "${range}" == "s" ]] ; then
-	# Slots used in LTS distro releases
+	# LTS
 		l="3.11"
 		r="3.14"
 	elif [[ "${range}" == "r" ]] ; then
-	# Slots used in rolling distro releases
+	# Rolling
 		l="3.15"
 		r="3.15"
 	elif [[ "${range}" == "l" ]] ; then
-	# Slots used in live distro releases
+	# Live
 		l="3.16"
 		r="3.16"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
+
 		if [[ "${l}" == "s" ]] ; then
-	# Slot used in LTS distro releases
+	# LTS
 			l="3.11"
 		elif [[ "${l}" == "r" ]] ; then
-	# Slot used in rolling distro releases
+	# Rolling
 			l="3.15"
 		elif [[ "${l}" == "l" ]] ; then
-	# Slot used in live distro releases
+	# Live
 			l="3.16"
 		elif [[ -z "${l}" ]] ; then
-	# Slot used for oldest stable
+	# LTS
 			l="3.11"
 		fi
+
 		if [[ "${r}" == "s" ]] ; then
-	# Slot used in LTS distro releases
+	# LTS
 			r="3.14"
 		elif [[ "${r}" == "r" ]] ; then
-	# Slot used in rolling distro releases
+	# Rolling
 			r="3.15"
 		elif [[ "${r}" == "l" ]] ; then
-	# Slot used in live distro releases
+	# Live
 			r="3.16"
 		elif [[ -z "${r}" ]] ; then
-	# Slot used for rolling release
+	# Rolling
 			r="3.15"
 		fi
 	else
