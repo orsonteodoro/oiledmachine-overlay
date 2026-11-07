@@ -24,7 +24,7 @@ CHKL_TIMESTAMPS=(
 	"dev-lang/python-3.13.9999"
 	"dev-lang/python-3.12.9999"
 	"dev-lang/python-3.11.9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"gui-libs/gtk-4.25.9999"
 )
 
@@ -70,7 +70,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream uses -safe-symbols by default.
 IUSE+="
 dev hibp +safe-symbols wayland X
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
