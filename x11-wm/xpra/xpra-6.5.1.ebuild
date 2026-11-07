@@ -22,7 +22,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{10..14} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.5/.github/workflows/build.yml#L15
+PYTHON_COMPAT=( "python3_"{11..14} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.5/.github/workflows/build.yml#L15
 
 CHKL_TIMESTAMPS=(
 	"app-arch/brotli-9999"
@@ -97,7 +97,7 @@ sd_listen selinux +server +socks sound-forwarding sql sqlite +ssh sshpass
 +ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
 wayland +webcam webcam-forwarding webp +websockets +websockets-browser-cookie
 -wireshark +X x264 +xdg xdummy +xinput +yaml zeroconf zlib
-ebuild_revision_29
+ebuild_revision_30
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -322,9 +322,9 @@ PYOPENGL_VER=(
 
 gen_opengl_rdepend() {
 	local s
-	for s in ${PYOPENGL_VER[@]} ; do
+	for s in "${PYOPENGL_VER[@]}" ; do
 		local impl
-		for impl in ${PYTHON_COMPAT[@]} ; do
+		for impl in "${PYTHON_COMPAT[@]}" ; do
 			echo "
 				python_single_target_${impl}? (
 					~dev-python/pyopengl-${s}[python_targets_${impl}(-)]
