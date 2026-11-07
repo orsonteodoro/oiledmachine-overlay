@@ -200,23 +200,13 @@ BDEPEND="
 PATCHES=(
 	# Don't install unexpected & unused crypt.h header (which would clash with other pkgs)
 	# Pending upstream. bug #658536
-	"${FILESDIR}/${PN}-1.2.11-minizip-drop-crypt-header.patch"
+	"${FILESDIR}/${PN}-1.4-minizip-drop-crypt-header.patch"
 
 	# Respect AR, RANLIB, NM during build. Pending upstream. bug #831628
 	"${FILESDIR}/${PN}-1.3.1-configure-fix-AR-RANLIB-NM-detection.patch"
 
 	# On Darwin, don't force /usr/bin/libtool as AR. bug #924839
 	"${FILESDIR}/${PN}-1.3.1-configure-fix-AR-libtool-on-darwin.patch"
-
-	"${FILESDIR}/${PN}-1.3.2-minizip-install.patch"
-
-	# https://github.com/madler/zlib/issues/1200
-	"${FILESDIR}/${PN}-1.3.2-s390.patch"
-
-	# oiledmachine-overlay backports:
-	"${FILESDIR}/extra-patches/${PN}-1.3.2-gzwrite-fix-ub.patch"
-	"${FILESDIR}/extra-patches/${PN}-1.3.2-gzwrite-fix-buffer-overflow.patch"
-	"${FILESDIR}/extra-patches/${PN}-1.3.2-gzlib-fix-integer-overflow.patch"
 )
 
 _seq() {
