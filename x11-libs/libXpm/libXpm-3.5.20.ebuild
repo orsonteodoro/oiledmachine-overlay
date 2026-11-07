@@ -7,7 +7,7 @@ XORG_DOC=doc
 XORG_MULTILIB=yes
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 )
 
 inherit chkl secure-version xorg-3
