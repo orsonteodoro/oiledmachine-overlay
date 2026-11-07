@@ -12,10 +12,10 @@ EAPI=8
 # Some patches contain AI generated code.
 # The ebuild contains AI synthetic data.
 
-# F44
+# F45
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{12..14} )
+PYTHON_COMPAT=( "python3_"{11..15} )
 DISTUTILS_SINGLE_IMPL=1
 
 CHKL_TIMESTAMPS=(
@@ -23,6 +23,7 @@ CHKL_TIMESTAMPS=(
 	"dev-lang/python-3.14.9999"
 	"dev-lang/python-3.13.9999"
 	"dev-lang/python-3.12.9999"
+	"dev-lang/python-3.11.9999"
 	"dev-libs/glib-2.90.9999"
 	"gui-libs/gtk-4.25.9999"
 )
@@ -34,8 +35,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://gitlab.gnome.org/World/secrets.git"
-	FALLBACK_COMMIT="17161044e611107b176438ebb8f0be81d33a804e" # Feb 22, 2026
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="ef69d44d5b10e241a8208fbbee9f1ecd4dfd41a1"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -81,7 +84,7 @@ RDEPEND+="
 	$(secure-version_gen_python_depends '3.12-3.14')
 	$(python_gen_cond_dep '
 		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
-		>=dev-python/pykeepass-4.1.1[${PYTHON_USEDEP}]
+		>=dev-python/pykeepass-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pyotp-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/zxcvbn-rs-py-0.2.0[${PYTHON_USEDEP}]
 		dev-python/PyKCS11[${PYTHON_USEDEP}]
