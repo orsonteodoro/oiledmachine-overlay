@@ -25,7 +25,7 @@ KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a" # See https://github.com/ha
 RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/ragel.wrap
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/icu-79.1.9999"
 	"media-libs/freetype-9999"
 	"media-libs/libpng-9999"
@@ -120,7 +120,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_14
+ebuild_revision_15
 "
 RESTRICT="
 	mirror
