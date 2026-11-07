@@ -548,11 +548,11 @@ POSTGRES_16_PV=${POSTGRES_16_PV:-"16.14"}
 POSTGRES_15_PV=${POSTGRES_15_PV:-"15.18"}
 POSTGRES_14_PV=${POSTGRES_14_PV:-"14.23"}
 PYSTRING_PV=${PYSTRING_PV:-"1.1.4"}
-PYTHON_3_15_PV=${PYTHON_3_15_PV:-"3.15.1"}
-PYTHON_3_14_PV=${PYTHON_3_14_PV:-"3.14.9"}
-PYTHON_3_13_PV=${PYTHON_3_13_PV:-"3.13.17"}
-PYTHON_3_12_PV=${PYTHON_3_12_PV:-"3.12.15"}
-PYTHON_3_11_PV=${PYTHON_3_11_PV:-"3.11.17"}
+PYTHON_3_15_PV=${PYTHON_3_15_PV:-"3.15.2"}
+PYTHON_3_14_PV=${PYTHON_3_14_PV:-"3.14.10"}
+PYTHON_3_13_PV=${PYTHON_3_13_PV:-"3.13.18"}
+PYTHON_3_12_PV=${PYTHON_3_12_PV:-"3.12.16"}
+PYTHON_3_11_PV=${PYTHON_3_11_PV:-"3.11.18"}
 PYTHON_3_10_PV=${PYTHON_3_10_PV:-"3.10.22"}
 RUBY_4_0_PV=${RUBY_4_0_PV:-"4.0.9"}
 RUBY_3_4_PV=${RUBY_3_4_PV:-"3.4.12"}
@@ -889,7 +889,7 @@ secure-version_gen_perl_depends() {
 
 # Some packages require security-critical security guarantees. (e.g. password manager)
 secure-version_gen_python_depends() {
-	local range="${1}" # 3.10; 3.10-3.14; 3.11, 3.13; 3.10-r, 3.10-l, 3.10-, <empty string>
+	local range="${1}" # 3.10; 3.10-3.14; 3.11, 3.13; 3.10-r, 3.10-, <empty string>
 	local usedep="${2}" # [ssl], <empty string>
 	local python_usefix="" # python_targets_python, python_single_target_python
 
@@ -909,34 +909,48 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 	local r=""
 	if [[ -z "${range}" ]] ; then
 	# Slots used in any distro releases
-		l="3.10"
+	# Default to stable + rolling
+		l="3.11"
 		r="3.15"
 	elif [[ "${range}" == "s" ]] ; then
 	# Slots used in LTS distro releases
-		l="3.10"
-		r="8.0"
+		l="3.11"
+		r="3.14"
 	elif [[ "${range}" == "r" ]] ; then
 	# Slots used in rolling distro releases
-		l="3.10"
-		r="8.1"
-	elif [[ "${range}" == "l" ]] ; then
-	# Slots used in live distro releases
 		l="3.15"
 		r="3.15"
+	elif [[ "${range}" == "l" ]] ; then
+	# Slots used in live distro releases
+		l="3.16"
+		r="3.16"
 	elif [[ "${range}" =~ "-" ]] ; then
 		l="${range%-*}"
 		r="${range#*-}"
-		if [[ "${r}" == "r" ]] ; then
+		if [[ "${l}" == "s" ]] ; then
+	# Slot used in LTS distro releases
+			l="3.11"
+		elif [[ "${l}" == "r" ]] ; then
 	# Slot used in rolling distro releases
-			r="3.14"
-		elif [[ "${r}" == "s" ]] ; then
+			l="3.15"
+		elif [[ "${l}" == "l" ]] ; then
+	# Slot used in live distro releases
+			l="3.16"
+		elif [[ -z "${l}" ]] ; then
+	# Slot used for oldest stable
+			l="3.11"
+		fi
+		if [[ "${r}" == "s" ]] ; then
 	# Slot used in LTS distro releases
 			r="3.14"
+		elif [[ "${r}" == "r" ]] ; then
+	# Slot used in rolling distro releases
+			r="3.15"
 		elif [[ "${r}" == "l" ]] ; then
 	# Slot used in live distro releases
-			r="3.15"
+			r="3.16"
 		elif [[ -z "${r}" ]] ; then
-	# Slot used in live distro releases
+	# Slot used for rolling release
 			r="3.15"
 		fi
 	else
