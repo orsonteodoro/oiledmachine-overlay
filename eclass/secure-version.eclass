@@ -1010,7 +1010,6 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 		"3.13"
 		"3.12"
 		"3.11"
-		"3.10"
 	)
 	local x
 	for x in "${L[@]}" ; do

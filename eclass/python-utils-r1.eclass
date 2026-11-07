@@ -43,7 +43,7 @@ inherit multiprocessing toolchain-funcs
 _PYTHON_ALL_IMPLS=(
 # oiledmachine-overlay changed
 # Only CI listed versions or setup.py classifier section appear
-	python3_{11..14} # Only LTS supported on this overlay
+	python3_{11..15}
 	pypy3_11
 )
 readonly _PYTHON_ALL_IMPLS
@@ -63,7 +63,6 @@ _PYTHON_HISTORICAL_IMPLS=(
 	jython2_7
 	python2_{5..7}
 	python3_{1..10}
-	python3_15
 	python3_{13..15}t # free-threading or truly multicore optimized
 	pypy # Same as PyPy 2.7
 	pypy1_{8,9}
