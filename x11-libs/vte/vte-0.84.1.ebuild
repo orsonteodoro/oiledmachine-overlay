@@ -21,7 +21,7 @@ LLVM_COMPAT=(
 CHKL_TIMESTAMPS=(
 	"app-arch/lz4-9999"
 	"dev-libs/fribidi-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/icu-79.1.9999"
 	"dev-libs/libfmt-9999"
 	"dev-libs/libpcre2-9999"
@@ -45,7 +45,7 @@ SLOT="${API_VERSION}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="
 X +crypt debug gtk-doc +icu +introspection systemd +vala wayland
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	gtk-doc? ( introspection )
