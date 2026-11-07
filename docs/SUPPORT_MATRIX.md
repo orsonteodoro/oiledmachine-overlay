@@ -293,7 +293,7 @@ Pairing rules and support
 | Python               | Ebuild level of support               | Distro or CI image correspondence                                                                                           |
 | ---                  | ---                                   | ---                                                                                                                         |
 | 3.9 and earlier      | Not supported (EOL)                   |                                                                                                                             |
-| 3.10                 | Available [1]                         | U22 (EOL Apr 2027)                                                                                                          |
+| 3.10                 | Not supported (EOL)                   | U22 (EOL Apr 2027)                                                                                                          |
 | 3.11                 | Available [4]                         | D12 (EOL Jun 2026)                                                                                                          |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                                                                                                          |
 | 3.13                 | Partially supported                   | D13 (EOL Aug 2028)                                                                                                          |
