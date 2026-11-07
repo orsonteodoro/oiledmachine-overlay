@@ -15,14 +15,14 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Oct 13, 2026
+# Last deps commit date:  Oct 20, 2026
 
 CFLAGS_HARDENED_PIE="1"
 # Don't change the hardened use cases because it will generate a compiler error.
 CFLAGS_HARDENED_USE_CASES="security-critical jit language-runtime network sensitive-data server untrusted-data web-server"
 CFLAGS_HARDENED_VTABLE_VERIFY="1"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS DT ID OOBR PE PT UAF"
-CXX_STANDARD=20 # See https://github.com/nodejs/node/blob/v26.12.1/common.gypi#L601
+CXX_STANDARD=20 # See https://github.com/nodejs/node/blob/v26.13.0/common.gypi#L601
 LTO_TYPE="none" # Global var
 PYTHON_COMPAT=( "python3_"{10..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
@@ -35,7 +35,7 @@ UOPTS_SUPPORT_TPGO=1
 ACORN_PV="8.19.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 COREPACK_PV="0.36.0"
-NPM_PV="11.20.0" # See https://github.com/nodejs/node/blob/v26.12.0/deps/npm/package.json
+NPM_PV="11.20.0" # See https://github.com/nodejs/node/blob/v26.13.0/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 CHKL_TIMESTAMPS=(

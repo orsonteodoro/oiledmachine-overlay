@@ -29,7 +29,7 @@ UOPTS_SUPPORT_TPGO=1
 ACORN_PV="8.16.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 COREPACK_PV="0.36.0"
-NPM_PV="10.9.9" # See https://github.com/nodejs/node/blob/v22.23.3/deps/npm/package.json
+NPM_PV="10.9.9" # See https://github.com/nodejs/node/blob/v22.23.4/deps/npm/package.json
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 CHKL_TIMESTAMPS=(
