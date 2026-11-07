@@ -299,7 +299,8 @@ Pairing rules and support
 | 3.13                 | Partially supported                   | D13 (EOL Aug 2028)                                                                                                          |
 | >= 3.13t [3]         | Not supported                         |                                                                                                                             |
 | 3.14                 | Available                             | G23, F43, F44, U26                                                                                                          |
-| >= 3.15 [3]          | Not supported                         | F45                                                                                                                         |
+| 3.15 [3]             | Available                             | F45                                                                                                                         |
+| 3.16                 | Not supported                         |                                                                                                                             |
 | pypy3 [2][3]         | Not supported (EOL)                   |                                                                                                                             |
 | pypy3_11 [3]         | Available [1]                         | D12 (7.3.11), D13 (7.3.10), F43 (7.3.23), F44 (7.3.23), F45 (7.3.23), G23 (7.3.23), U22 (7.3.9), U24 (7.3.15), U26 (7.3.20) |
 
