@@ -67,7 +67,7 @@ LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"media-libs/alsa-lib-9999"
 	"net-print/cups-9999"
 	"sys-apps/dbus-9999"
@@ -126,7 +126,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${PV%%.*}"
 IUSE+="
 cefclient cefsimple debug minimal test wayland X
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	cefclient? (
