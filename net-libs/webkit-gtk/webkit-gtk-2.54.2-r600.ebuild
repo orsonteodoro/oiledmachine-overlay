@@ -818,7 +818,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
 +minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
 -system-malloc systemd test thunder +variation-fonts vulkan wayland +webassembly
 -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
-ebuild_revision_48
+ebuild_revision_49
 "
 
 gen_gst_plugins_duse() {
