@@ -159,7 +159,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 	"app-crypt/rhash-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/nettle-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/freetype-9999"
@@ -219,7 +219,7 @@ SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 ${COREUTILS_IMPLS[@]}
 clang emoji ffmpeg gcc firejail libnotify wayland +X
-ebuild_revision_7
+ebuild_revision_8
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
