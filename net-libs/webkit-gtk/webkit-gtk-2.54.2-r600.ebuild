@@ -137,7 +137,7 @@ FFMPEG_COMPAT=(
 
 # TODO finish
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/gmp-9999"
 	"dev-libs/icu-79.1.9999"
 	"dev-libs/libevent-9999"
@@ -818,7 +818,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc elogind -eme
 +minibrowser mold +opengl openmp -seccomp +speech-synthesis -spell
 -system-malloc systemd test thunder +variation-fonts vulkan wayland +webassembly
 -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
-ebuild_revision_47
+ebuild_revision_48
 "
 
 gen_gst_plugins_duse() {
