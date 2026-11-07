@@ -70,7 +70,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # Upstream uses -safe-symbols by default.
 IUSE+="
 dev hibp +safe-symbols wayland X
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -81,7 +81,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	$(secure-version_gen_python_depends '3.12-3.14')
+	$(secure-version_gen_python_depends '3.11-3.15')
 	$(python_gen_cond_dep '
 		>=dev-python/pygobject-3.52[${PYTHON_USEDEP}]
 		>=dev-python/pykeepass-4.2.0[${PYTHON_USEDEP}]

@@ -105,7 +105,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="
 -big-endian -geoip -inotify openrc selinux +sysc +syscat -system-libs systemd
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
