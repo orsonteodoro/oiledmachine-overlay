@@ -388,7 +388,8 @@ Pairing rules and support
 | ROCm 6.4                             | Not supported                           | D12, U22, U24                                                          |
 | ROCm 7.0                             | Not supported                           | D12, D13, U22, U24                                                     |
 | ROCm 7.1                             | Not supported                           | D12, D13, U22, U24                                                     |
-| ROCm 7.2                             | WIP                                     | D12, D13, U22, U24                                                     |
+| ROCm 7.2                             | Not supported                           | D12, D13, U22, U24                                                     |
+| ROCm live                            | In planning / WIP                       |                                                                        |
 | SYCL                                 | Not supported                           |                                                                        |
 | systemd                              | Partially supported                     |                                                                        |
 | Tauri 1.x                            | Not supported                           |                                                                        |
