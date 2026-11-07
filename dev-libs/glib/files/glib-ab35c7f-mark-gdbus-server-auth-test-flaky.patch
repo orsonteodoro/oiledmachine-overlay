@@ -1,0 +1,18 @@
+--- a/gio/tests/meson.build.orig	2026-11-07 11:15:45.069524880 -0800
++++ b/gio/tests/meson.build	2026-11-07 11:17:42.360642711 -0800
+@@ -290,6 +290,7 @@ if dbus1_dep.found()
+     },
+     'gdbus-server-auth' : {
+       'dependencies' : [dbus1_dep],
++      'suite' : ['flaky'],
+       # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/1672
+       'can_fail': 'thread' in glib_sanitizers,
+     },
+@@ -300,6 +301,7 @@ else
+     'gdbus-server-auth' : {
+       # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/1672
+       'can_fail': 'thread' in glib_sanitizers,
++      'suite' : ['flaky']
+     },
+   }
+ endif

@@ -106,7 +106,7 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-2.64.1-mark-gdbus-server-auth-test-flaky.patch
+	"${FILESDIR}/${PN}-ab35c7f-mark-gdbus-server-auth-test-flaky.patch"
 
 	# oiledmachine-overlay patch
 	"${FILESDIR}/extra-patches/glib-90b0a7e-change-cast.patch"
