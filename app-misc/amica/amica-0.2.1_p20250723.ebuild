@@ -514,7 +514,7 @@ NODE_SHARP_PATCHES=(
 
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/gtk+-3.24.9999"
 )
@@ -663,7 +663,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_49
+ebuild_revision_50
 "
 REQUIRED_USE="
 	voice-recognition
