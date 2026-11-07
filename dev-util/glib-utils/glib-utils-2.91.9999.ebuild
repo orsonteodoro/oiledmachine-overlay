@@ -6,7 +6,7 @@ PYTHON_COMPAT=( python3_{10..14} )
 GNOME_ORG_MODULE="glib"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="bd3322219e6ed895d6f81e5a3c575e41a34875a5" # Tue, 16 Jun 2026 17:24:11 -0400
+	FALLBACK_COMMIT="ab35c7fd8d928cd712fc6bc8f2ac99e3dbe598ad" # 2026-11-06 T17:20:02 +00:00
 fi
 
 inherit gnome.org python-single-r1
