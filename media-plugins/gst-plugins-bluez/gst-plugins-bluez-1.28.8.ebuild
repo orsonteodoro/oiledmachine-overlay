@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"net-wireless/bluez-9999"
 )
 
@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="AVDTP source/sink and A2DP sink plugin for GStreamer"
 IUSE="
-ebuild_revision_25
+ebuild_revision_26
 "
 RDEPEND="
 	>=net-wireless/bluez-${BLUEZ_PV}:=[${MULTILIB_USEDEP}]
