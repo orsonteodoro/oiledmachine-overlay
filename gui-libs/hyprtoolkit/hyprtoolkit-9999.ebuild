@@ -19,7 +19,7 @@ LLVM_COMPAT=(
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/hyprlang-9999"
 	"dev-libs/wayland-9999"
 	"gui-libs/hyprutils-9999"
@@ -56,7 +56,7 @@ SOVER="6"
 SLOT="0/${SOVER}"
 IUSE="
 test
-ebuild_revision_5
+ebuild_revision_6
 "
 
 BDEPEND="
