@@ -166,7 +166,7 @@ RDEPEND="
 	)
 "
 BDEPEND="
-	$(secure-version_gen_python_depends '3.11-3.14')
+	$(secure-version_gen_python_depends '3.11-3.15')
 	>=dev-build/cmake-3.12.4
 	>=net-misc/curl-${CURL_PV}
 	app-alternatives/tar
