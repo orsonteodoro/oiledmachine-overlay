@@ -19,7 +19,7 @@ CXX_STANDARD=17
 # 2. A new tagged release on distro overlay.  Currently at 6.11.1
 # 3. A new Chromium bump in qtwebengine.  Currently at 140.0.7339.225
 #
-FALLBACK_COMMIT="bd35ca6ff2c20d4524d93546cafdd3a3fc595ddd"
+FALLBACK_COMMIT="7d5fd833811e1a655c3fc2c2bf9e4a29032fa923"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -87,7 +87,7 @@ declare -gA QT6_IUSE=(
 )
 IUSE+="
 ${QT6_IUSE[*]}
-ebuild_revision_15
+ebuild_revision_19
 "
 REQUIRED_USE="
 	?? ( journald syslog )

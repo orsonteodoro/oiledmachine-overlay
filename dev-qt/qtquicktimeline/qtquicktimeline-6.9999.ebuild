@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="c78132df98d7761de5d793adc6a700b5aa75dc16"
+FALLBACK_COMMIT="d68f4556cdbeaf084f1c0716be438dfd020ba909"
 
 CHKL_TIMESTAMPS=(
 	"dev-qt/qtbase-6.9999"
@@ -29,7 +29,7 @@ DESCRIPTION="Qt module for keyframe-based timeline construction"
 if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_19"
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	~dev-qt/qtdeclarative-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]

@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS IO"
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="666e89583dd2974894cb2d79deb454e5c1f35e0a"
+FALLBACK_COMMIT="417e6a2b70781773363e642d9ec3158ec0e1d021"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -32,7 +32,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~x86"
 fi
 IUSE+="
-ebuild_revision_4
+ebuild_revision_19
 "
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},gui,widgets]

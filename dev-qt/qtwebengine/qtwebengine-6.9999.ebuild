@@ -24,7 +24,7 @@ WEB_KERNEL_CONFIG_CHECK_LANDLOCK=1
 WEB_KERNEL_CONFIG_CHECK_YAMA=1
 PYTHON_COMPAT=( python3_{10..14} )
 
-FALLBACK_COMMIT="180e1c3b736d6e4f2cc9a34d0ce8b84e87b89074"
+FALLBACK_COMMIT="f6393a89a25a050a6621023e69f19eb27ad0473b"
 
 # QTWEBENGINE_CHROMIUM_COMMIT:  27afa1b
 # See https://github.com/qt/qtwebengine/tree/dev/src for QTWEBENGINE_CHROMIUM_COMMIT corresponding to the 3rdparty folder
@@ -101,7 +101,7 @@ IUSE+="
 	accessibility +alsa clang bindist custom-cflags designer gcc geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_17
+	ebuild_revision_19
 "
 REQUIRED_USE="
 	^^ (

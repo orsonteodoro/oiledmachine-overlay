@@ -127,15 +127,15 @@ SECURE_TIMESTAMP["dev_cpp_yaml_cpp_9999"]="Aug 23, 2026 10:32 PM PDT"
 SECURE_TIMESTAMP["dev_db_redis_9999"]="Oct 27, 2026 4:48 AM PDT"
 SECURE_TIMESTAMP["dev_db_sqlite_9999"]="Oct 8, 2026 9:17 AM PDT"
 SECURE_TIMESTAMP["dev_db_postgresql_9999"]="Jul 27, 2026 9:10 AM PDT"
-SECURE_TIMESTAMP["dev_qt_qt5compat_6_9999"]="Oct 20, 2026 10:08 PM PDT"
-SECURE_TIMESTAMP["dev_qt_qtbase_6_9999"]="Oct 21, 2026 10:49 PM PDT"
-SECURE_TIMESTAMP["dev_qt_qtdeclarative_6_9999"]="Oct 21, 2026 4:18 PM PDT"
-SECURE_TIMESTAMP["dev_qt_qtimageformats_6_9999"]="Oct 21, 2026 10:10 PM PDT"
-SECURE_TIMESTAMP["dev_qt_qtmultimedia_6_9999"]="Oct 21, 2026 9:52 PM PDT"
-SECURE_TIMESTAMP["dev_qt_qtquick3d_6_9999"]="Oct 21, 2026 8:08 AM PDT"
-SECURE_TIMESTAMP["dev_qt_qtsvg_6_9999"]="Oct 21, 2026 10:10 PM PDT"
-SECURE_TIMESTAMP["dev_qt_qttools_6_9999"]="Oct 21, 2026 11:28 AM PDT"
-SECURE_TIMESTAMP["dev_qt_qtwayland_6_9999"]="Oct 21, 2026 2:16 AM PDT"
+SECURE_TIMESTAMP["dev_qt_qt5compat_6_9999"]="Nov 4, 2026 1:09 AM PST"
+SECURE_TIMESTAMP["dev_qt_qtbase_6_9999"]="Nov 6, 2026 2:09 PM PST"
+SECURE_TIMESTAMP["dev_qt_qtdeclarative_6_9999"]="Nov 6, 2026 8:39 AM PST"
+SECURE_TIMESTAMP["dev_qt_qtimageformats_6_9999"]="Nov 2, 2026 9:46 PM PST"
+SECURE_TIMESTAMP["dev_qt_qtmultimedia_6_9999"]="Nov 6, 2026 12:53 AM PST"
+SECURE_TIMESTAMP["dev_qt_qtquick3d_6_9999"]="Nov 6, 2026 2:59 AM PST"
+SECURE_TIMESTAMP["dev_qt_qtsvg_6_9999"]="Nov 3, 2026 1:32 AM PST"
+SECURE_TIMESTAMP["dev_qt_qttools_6_9999"]="Nov 6, 2026 11:51 AM PST"
+SECURE_TIMESTAMP["dev_qt_qtwayland_6_9999"]="Oct 28, 2026 9:25 AM PDT"
 
 #
 # Security note:
@@ -143,7 +143,7 @@ SECURE_TIMESTAMP["dev_qt_qtwayland_6_9999"]="Oct 21, 2026 2:16 AM PDT"
 # qtwebengine uses aggressively the backport technique for Chromium updates and
 # does whole syncs on new Qt versions.
 #
-SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Nov 5, 2026 10:41 AM PST"
+SECURE_TIMESTAMP["dev_qt_qtwebengine_6_9999"]="Nov 6, 2026 10:47 AM PST"
 
 SECURE_TIMESTAMP["dev_games_ogre_9999"]="Jun 19, 2026 10:03 AM PDT"
 SECURE_TIMESTAMP["dev_games_recastnavigation_9999"]="Feb 26, 2026 11:16 PM PST"
