@@ -612,7 +612,7 @@ zvariant_utils-4.2.0
 
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"gnome-base/librsvg-9999"
 	"net-libs/libsoup-2.74.9999"
 	"sys-process/procps-9999"
@@ -673,7 +673,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	tray? (
