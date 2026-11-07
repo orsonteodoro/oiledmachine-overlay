@@ -45,7 +45,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( "python3_"{11..15} )
 
 # Soft checks: warn, do not die (agent still works without realtime/whodata)
 CONFIG_CHECK="
