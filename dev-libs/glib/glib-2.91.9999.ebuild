@@ -16,7 +16,7 @@ INTROSPECTION_SOURCE_DIR="${WORKDIR}/${INTROSPECTION_P}"
 INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="24f56bdafc47e024046d132bbac14264552d5c89"
+	FALLBACK_COMMIT="ab35c7fd8d928cd712fc6bc8f2ac99e3dbe598ad" # 2026-11-06 T17:20:02 +00:00
 fi
 
 inherit dot-a eapi9-ver gnome.org gnome2-utils linux-info meson-multilib multilib python-any-r1 secure-version toolchain-funcs xdg
