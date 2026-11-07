@@ -394,7 +394,7 @@ RUST_MIN_VER="1.97.1" # LLVM 22.1
 RUST_MULTILIB=1
 
 CHKL_TIMESTAMPS=(
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/libxml2-9999"
 	"media-libs/dav1d-9999"
 	"media-libs/freetype-9999"
@@ -440,7 +440,7 @@ SLOT="${API_VERSION%.*}/${API_VERSION}"
 
 IUSE+="
 avif gtk-doc +introspection +pixbuf-loader test +vala
-ebuild_revision_25
+ebuild_revision_26
 "
 RESTRICT="
 	!test? (
