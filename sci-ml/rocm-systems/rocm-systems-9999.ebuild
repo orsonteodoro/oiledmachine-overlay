@@ -35,7 +35,7 @@ inherit ccache-changes check-compiler-switch cmake dep-prepare flag-o-matic git-
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="develop"
 	EGIT_REPO_URI="https://github.com/ROCm/rocm-systems"
-	FALLBACK_COMMIT="666d066f964d9a206ce0080ac155de0a1a285a90" # Nov 7, 2026
+	FALLBACK_COMMIT="704b5fd969e19a073d26859afb54db8085479e22" # Nov 5, 2026 10:17 PM PST, 171/203
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi

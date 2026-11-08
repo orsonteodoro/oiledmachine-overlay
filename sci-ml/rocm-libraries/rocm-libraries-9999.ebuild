@@ -25,15 +25,16 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]}"
+	#"${LIBCXX_COMPAT_STDCXX20[@]}" # 21-23
+	24 # Align with HIP-Clang
 )
 
-inherit check-compiler-switch cmake flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 rocm-r1
+inherit ccache-changes check-compiler-switch cmake flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 rocm-r1
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="develop"
 	EGIT_REPO_URI="https://github.com/ROCm/rocm-systems"
-	FALLBACK_COMMIT="1702865a2f3950fba359989c74ca90263d245003" # Nov 6, 2026
+	FALLBACK_COMMIT="1702865a2f3950fba359989c74ca90263d245003" # Nov 6, 2026 10:38 PM PST, 163/210
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -114,6 +115,8 @@ pkg_setup() {
 	rocm-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
+einfo "FEATURES:  ${FEATURES}"
+	ccache-changes_yes_ccache "For reducing this monothic package rebuild time cost for 25+ vendored packages."
 }
 
 src_unpack() {
