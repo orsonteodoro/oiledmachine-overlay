@@ -249,15 +249,12 @@ RDEPEND="
 	${BANNED_RDEPEND}
 	${PYTHON_DEPS}
 	sys-apps/hwdata:=
-	virtual/kfd:=
-	|| (
-		>=virtual/kfd-10:0/10
-	)
+	~virtual/kfd-${PV}:=
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	=sys-devel/hip-clang-9999
 	>=dev-build/cmake-3.16.8
+	=sys-devel/hip-clang-${PV}:=
 	virtual/pkgconfig
 "
 #PATCHES=(
