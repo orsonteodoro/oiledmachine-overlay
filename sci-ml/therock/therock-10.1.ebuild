@@ -248,19 +248,21 @@ LICENSE="
 	PSF-2
 	UoI-NCSA
 "
+# (all-rights-reserved Apache-2.0), Apache-2.0, BSD, BSD-2, custom - perfetto
+# (all-rights-reserved MIT), Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT - hipthreads
 # all-rights-reserved, MIT - rocwmma
 # Apache-2.0, BSD-2, MIT, public-domain - miopen
 # Apache-2.0-with-LLVM-exceptions - ROCm/llvm-project
-# (all-rights-reserved Apache-2.0), Apache-2.0, BSD, BSD-2, custom - perfetto
-# (all-rights-reserved MIT), Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT - hipthreads
 # BSD, MIT - hipblas
 # BSD, MIT, PSF-2 - rocprofiler-compute
+# custom, LGPL-2.1 - GOTCHA
 # custom, MIT - rocdecode
 # GPL-2 - ROCgdb
 # LGPL-2.1+, LGPL-2.1+ public-domain (sha1.C) - dyninst
-# custom, LGPL-2.1 - GOTCHA
 # MIT - TheRock
 # public-domain - sqlite
+# The distro does not have a Apache-2.0 license template all rights reserved.
+# The distro does not have a MIT license template all rights reserved.
 RESTRICT="mirror" # Prevent snooping and speed up downloads
 SLOT="0/${ROCM_SLOT}"
 IUSE+=" test
