@@ -31,5 +31,4 @@ REQUIRED_USE="
 "
 RDEPEND="
 	~sci-ml/therock-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	~sys-devel/hip-clang-${PV}[${LIBSTDCXX_USEDEP}]
 "
