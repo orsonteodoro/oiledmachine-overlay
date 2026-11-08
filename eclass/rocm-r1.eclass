@@ -20,8 +20,8 @@ if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
 : ${ROCM_DISABLE_CCACHE:=0}
-: ${ROCM_LLVM_PATH:-"/opt/rocm"}
-: ${ROCM_VERSION:-"${PV}"}
+: ${ROCM_LLVM_PATH:="/opt/rocm"}
+: ${ROCM_VERSION:="${PV}"}
 
 inherit hip-versions
 inherit flag-o-matic toolchain-funcs
