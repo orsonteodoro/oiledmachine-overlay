@@ -351,6 +351,7 @@ BDEPEND="
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	=sys-devel/hip-clang-${PV}:=
+	dev-util/ccache
 	dev-util/patchelf
 	virtual/pkgconfig
 	test? (

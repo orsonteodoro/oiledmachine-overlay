@@ -61,6 +61,8 @@ eerror
 eerror "Contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} yes-${feature_name}.conf"
 eerror
+eerror "Also, \`emerge -a dev-util/ccache\` ebuild."
+eerror
 		die
 	fi
 }
