@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# This ebuild contains AI generated edits/suggestions.
+
 # Live is only supported on oiledmachine-overlay.  Reasons:
 # For miscompilation mitigation and version alignment with ROCm/llvm-project
 # For ROCm/amdgpu version alignment and for security mitigation.
@@ -41,6 +44,17 @@ if [[ "${PV}" == *"9999" ]] ; then
 	fi
 	inherit git-r3
 else
+	# For TheRock
+	ROCM_DOCS_COMMIT="0682a17b3aabea3e447c969c8e28ab5f199a0e3c"
+	ROCM_LIBRARIES_COMMIT="39d8d60365d2272a5366f76ccb3bfba24b219eaf"
+	ROCM_SYSTEMS_COMMIT="7da43026e4f2ef7600433c38c820732f7a205d22"
+
+	# For rocm-libraries
+	FFTS_COMMIT="b22d839b61c5bd8a993e24ae3e01f39d9b5084fb"
+	GOOGLETEST_COMMIT_4="e2239ee6043f73722e7aa812a459f54a28552929"
+	MIFIN_COMMIT="06650bddfe40c47294b0414e4262691333b788dd"
+
+	# For rocm-systems
 	ABSEIL_CPP_COMMIT="255c84dadd029fd8ad25c5efb5933e47beaa00c7"
 	CEREAL_COMMIT="40a30defcb8874270a04836d316502b08904b2bc"
 	DOXYGEN_AWESOME_CSS_COMMIT="df83fbf22cfff76b875c13d324baf584c74e96d0"
@@ -81,8 +95,23 @@ else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/rocm-systems-${PV}"
 	SRC_URI="
-https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-${PV}.tar.gz
-	-> rocm-systems-${PV}.tar.gz
+
+https://github.com/ROCm/TheRock/archive/refs/tags/therock-${PV}.tar.gz
+	-> TheRock-${PV}.tar.gz
+
+https://github.com/ROCm/rocm-systems/archive/${ROCM_SYSTEMS_COMMIT}.tar.gz
+	-> rocm-systems-${ROCM_SYSTEMS_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/rocm-docs/archive/${ROCM_DOCS_COMMIT}.tar.gz
+	-> rocm-docs-${ROCM_DOCS_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/rocm-libraries/archive/${ROCM_LIBRARIES_COMMIT}.tar.gz
+	-> rocm-libraries-${ROCM_LIBRARIES_COMMIT:0:7}.tar.gz
+
+https://github.com/ROCm/MIFin/archive/${MIFIN_COMMIT}.tar.gz
+	-> MIFin-${MIFIN_COMMIT:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_4}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_4:0:7}.tar.gz
+https://github.com/anthonix/ffts/archive/${FFTS_COMMIT}.tar.gz
+	-> ffts-${FFTS_COMMIT:0:7}.tar.gz
 
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
@@ -167,6 +196,29 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 BANNED_RDEPEND="
+	!dev-util/Tensile
+	!sci-libs/composable-kernel
+	!sci-libs/hipBLAS
+	!sci-libs/hipBLASLt
+	!sci-libs/hipCUB
+	!sci-libs/hipFFT
+	!sci-libs/hipRAND
+	!sci-libs/hipSOLVER
+	!sci-libs/hipSPARSE
+	!sci-libs/hipSPARSELt
+	!sci-libs/hipTensor
+	!sci-libs/miopen
+	!sci-libs/rocALUTION
+	!sci-libs/rocBLAS
+	!sci-libs/rocFFT
+	!sci-libs/rocPRIM
+	!sci-libs/rocRAND
+	!sci-libs/rocSOLVER
+	!sci-libs/rocSPARSE
+	!sci-libs/rocThrust
+	!sci-libs/rocWMMA
+	!sci-libs/rpp
+
 	!dev-libs/hipother
 	!dev-libs/ROCdbgapi
 	!dev-libs/rocm-core
@@ -228,43 +280,51 @@ src_unpack() {
 }
 
 src_prepare() {
-	if [[ "${PV}" == *"9999" ]] ; then
-		dep_prepare_mv "${WORKDIR}/opencode-${OPENCODE_COMMIT}" "${S}/experimental/python/perfxpert/opencode"
-		#dep_prepare_mv "${WORKDIR}/mscclpp-${MSCCLPP_COMMIT}" "${S}/projects/rccl/ext-src/mscclpp" # Removed in 5ffe6a3
-		#dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_1}" "${S}/projects/rccl/ext-src/json" # Removed in 5ffe6a3
-		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" "${S}/projects/rocprofiler/plugin/perfetto/perfetto"
-		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/googletest"
-		dep_prepare_mv "${WORKDIR}/glog-${GLOG_COMMIT}" "${S}/projects/rocprofiler-register/external/glog"
-		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/fmt"
-		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_2}" "${S}/projects/rocprofiler-register/external/fmt"
-		dep_prepare_mv "${WORKDIR}/doxygen-awesome-css-${DOXYGEN_AWESOME_CSS_COMMIT}" "${S}/projects/rocprofiler-sdk/external/doxygen-awesome-css"
-		dep_prepare_mv "${WORKDIR}/PTL-${PTL_COMMIT}" "${S}/projects/rocprofiler-sdk/external/ptl"
-		dep_prepare_mv "${WORKDIR}/cereal-${CEREAL_COMMIT}" "${S}/projects/rocprofiler-sdk/external/cereal"
-		dep_prepare_mv "${WORKDIR}/filesystem-${FILESYSTEM_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/filesystem"
-		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}" "${S}/projects/rocprofiler-sdk/external/perfetto"
-		dep_prepare_mv "${WORKDIR}/ELFIO-${ELFIO_COMMIT}" "${S}/projects/rocprofiler-sdk/external/elfio"
-		dep_prepare_mv "${WORKDIR}/yaml-cpp-${YAML_CPP_COMMIT}" "${S}/projects/rocprofiler-sdk/external/yaml-cpp"
-		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_2}" "${S}/projects/rocprofiler-sdk/external/json"
-		dep_prepare_mv "${WORKDIR}/sqlite-${SQLITE_COMMIT}" "${S}/projects/rocprofiler-sdk/external/sqlite"
-		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/pybind11"
-		dep_prepare_mv "${WORKDIR}/GOTCHA-${GOTCHA_COMMIT}" "${S}/projects/rocprofiler-sdk/external/gotcha"
-		dep_prepare_mv "${WORKDIR}/timemory-${TIMEMORY_COMMIT}" "${S}/projects/rocprofiler-systems/external/timemory"
-		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_3}" "${S}/projects/rocprofiler-systems/external/perfetto"
-		dep_prepare_mv "${WORKDIR}/dyninst-${DYNINST_COMMIT}" "${S}/projects/rocprofiler-systems/external/dyninst"
-		dep_prepare_mv "${WORKDIR}/kokkos-${KOKKOS_COMMIT}" "${S}/projects/rocprofiler-systems/examples/lulesh/external/kokkos"
-		dep_prepare_mv "${WORKDIR}/papi-${PAPI_COMMIT}" "${S}/projects/rocprofiler-systems/external/papi"
-		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/projects/rocprofiler-systems/external/pybind11"
-		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_2}" "${S}/projects/rocprofiler-systems/external/googletest"
-		dep_prepare_mv "${WORKDIR}/filesystem-${FILESYSTEM_COMMIT_2}" "${S}/projects/rocprofiler-systems/external/filesystem"
-		dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/projects/rocprofiler-systems/external/spdlog"
-		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_3}" "${S}/projects/rocprofiler-systems/external/fmt"
-		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_3}" "${S}/projects/rocprofiler-systems/external/json"
-		dep_prepare_mv "${WORKDIR}/pyyaml-${PYYAML_COMMIT}" "${S}/projects/rocprofiler-compute/src/vendored/pyyaml"
-		dep_prepare_mv "${WORKDIR}/oneTBB-${ONETBB_COMMIT}" "${S}/projects/rocprofiler-systems/external/onetbb"
-		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/projects/rocprofiler-sdk/external/abseil-cpp"
-		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_3}" "${S}/projects/rocprofiler-compute/src/lib/external/googletest"
-		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_4}" "${S}/projects/rocprofiler-compute/src/lib/external/fmt"
-		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_4}" "${S}/projects/rocprofiler-compute/src/lib/external/json"
+	if ! [[ "${PV}" =~ "9999" ]] ; then
+		dep_prepare_mv "${WORKDIR}/rocm-docs-${ROCM_DOCS_COMMIT}" "${S}/rocm-docs"
+		dep_prepare_mv "${WORKDIR}/rocm-libraries-${ROCM_LIBRARIES_COMMIT}" "${S}/rocm-libraries"
+		dep_prepare_mv "${WORKDIR}/rocm-systems-${ROCM_SYSTEMS_COMMIT}" "${S}/rocm-systems"
+
+		dep_prepare_mv "${WORKDIR}/fin-${MIFIN_COMMIT}" "${S}/rocm-libraries/projects/miopen/fin"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_4}" "${S}/rocm-libraries/shared/tensile/HostLibraryTests/googletest"
+		dep_prepare_mv "${WORKDIR}/ffts-${FFTS_COMMIT}" "${S}/rocm-libraries/projects/rpp/third_party/ffts"
+
+		dep_prepare_mv "${WORKDIR}/opencode-${OPENCODE_COMMIT}" "${S}/rocm-systems/experimental/python/perfxpert/opencode"
+		#dep_prepare_mv "${WORKDIR}/mscclpp-${MSCCLPP_COMMIT}" "${S}/rocm-systems/projects/rccl/ext-src/mscclpp" # Removed in 5ffe6a3
+		#dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_1}" "${S}/rocm-systems/projects/rccl/ext-src/json" # Removed in 5ffe6a3
+		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" "${S}/rocm-systems/projects/rocprofiler/plugin/perfetto/perfetto"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/googletest"
+		dep_prepare_mv "${WORKDIR}/glog-${GLOG_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-register/external/glog"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_1}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/fmt"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_2}" "${S}/rocm-systems/projects/rocprofiler-register/external/fmt"
+		dep_prepare_mv "${WORKDIR}/doxygen-awesome-css-${DOXYGEN_AWESOME_CSS_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/doxygen-awesome-css"
+		dep_prepare_mv "${WORKDIR}/PTL-${PTL_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/ptl"
+		dep_prepare_mv "${WORKDIR}/cereal-${CEREAL_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/cereal"
+		dep_prepare_mv "${WORKDIR}/filesystem-${FILESYSTEM_COMMIT_1}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/filesystem"
+		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/perfetto"
+		dep_prepare_mv "${WORKDIR}/ELFIO-${ELFIO_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/elfio"
+		dep_prepare_mv "${WORKDIR}/yaml-cpp-${YAML_CPP_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/yaml-cpp"
+		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_2}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/json"
+		dep_prepare_mv "${WORKDIR}/sqlite-${SQLITE_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/sqlite"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/pybind11"
+		dep_prepare_mv "${WORKDIR}/GOTCHA-${GOTCHA_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/gotcha"
+		dep_prepare_mv "${WORKDIR}/timemory-${TIMEMORY_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-systems/external/timemory"
+		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_3}" "${S}/rocm-systems/projects/rocprofiler-systems/external/perfetto"
+		dep_prepare_mv "${WORKDIR}/dyninst-${DYNINST_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-systems/external/dyninst"
+		dep_prepare_mv "${WORKDIR}/kokkos-${KOKKOS_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-systems/examples/lulesh/external/kokkos"
+		dep_prepare_mv "${WORKDIR}/papi-${PAPI_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-systems/external/papi"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/rocm-systems/projects/rocprofiler-systems/external/pybind11"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_2}" "${S}/rocm-systems/projects/rocprofiler-systems/external/googletest"
+		dep_prepare_mv "${WORKDIR}/filesystem-${FILESYSTEM_COMMIT_2}" "${S}/rocm-systems/projects/rocprofiler-systems/external/filesystem"
+		dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-systems/external/spdlog"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_3}" "${S}/rocm-systems/projects/rocprofiler-systems/external/fmt"
+		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_3}" "${S}/rocm-systems/projects/rocprofiler-systems/external/json"
+		dep_prepare_mv "${WORKDIR}/pyyaml-${PYYAML_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-compute/src/vendored/pyyaml"
+		dep_prepare_mv "${WORKDIR}/oneTBB-${ONETBB_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-systems/external/onetbb"
+		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/rocm-systems/projects/rocprofiler-sdk/external/abseil-cpp"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_3}" "${S}/rocm-systems/projects/rocprofiler-compute/src/lib/external/googletest"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_4}" "${S}/rocm-systems/projects/rocprofiler-compute/src/lib/external/fmt"
+		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_4}" "${S}/rocm-systems/projects/rocprofiler-compute/src/lib/external/json"
 	fi
 	cmake_src_prepare
 }
@@ -292,7 +352,28 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${ROCM_PATH}"
 	)
+
+	if [[ -n "${ROCM_TARGETS}" ]] ; then
+		mycmakeargs+=(
+			# Force the unified build system to only generate code for gfx908
+			-DAMDGPU_TARGETS="${ROCM_TARGETS}"
+			-DGPU_TARGETS="${ROCM_TARGETS}"
+
+			# Additional optimization flag used by internal components (like hipBLAS / rocBLAS)
+			-DROCM_GPU_TARGETS="${ROCM_TARGETS}"
+		)
+	fi
+
+	mycmakeargs+=(
+		# Optional: Disable heavyweight expansion suites you don't need
+		-DBUILD_HPC_SDK=OFF
+		-DBUILD_VISION_SDK=OFF
+	)
 	cmake_src_configure
+}
+
+src_compile() {
+	cmake_src_compile
 }
 
 src_install() {
