@@ -14,33 +14,6 @@ MY_P="${MY_PN}-${PV}"
 
 CXX_STANDARD=17
 
-inherit hip-versions
-ROCM_VERSIONS=(
-	"${HIP_7_2_VERSION}"
-)
-
-# Placeholder, TODO review
-AMDGPU_TARGETS_COMPAT=(
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1200"
-	"gfx1201"
-)
-
-# See https://github.com/ROCm/rocm-install-on-linux/blob/rocm-7.2.0/docs/reference/system-requirements.rst
-AMDGPU_TARGETS_COMPAT=(
-	"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1100"
-	"gfx1030"
-)
-
 CUDA_TARGETS_COMPAT=(
 	"sm_50"
 	"sm_60"
@@ -89,20 +62,6 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 
-gen_rocm_iuse() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s="${pv%.*}"
-		s="${pv/./_}"
-		echo "
-			rocm_${s}
-		"
-	done
-}
-ROCM_IUSE=(
-	$(gen_rocm_iuse)
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -121,7 +80,7 @@ CHKL_TIMESTAMP=(
 	"sci-ml/openvino-9999"
 )
 
-inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot secure-version rocm
+inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot secure-version rocm-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
@@ -132,29 +91,15 @@ HOMEPAGE="https://github.com/ggml-org/whisper.cpp"
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_LOONG[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${ROCM_IUSE[@]}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
 ebuild_revision_8
 "
-gen_rocm_required_use() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s="${pv%.*}"
-		s="${s/./_}"
-		echo "
-			rocm_${s}? (
-				rocm
-			)
-		"
-	done
-}
 gen_cuda_required_use() {
 	local x
 	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
@@ -165,22 +110,8 @@ gen_cuda_required_use() {
 		"
 	done
 }
-gen_rocm_required_use() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
 REQUIRED_USE="
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
-	?? (
-		${ROCM_IUSE[@]}
-	)
 	?? (
 		cpu
 		cuda
@@ -280,31 +211,7 @@ REQUIRED_USE="
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
-	rocm? (
-		|| (
-			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-		)
-	)
 "
-gen_rocm_rdepend() {
-	# DEPENDs listed in llama/llama.go
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s="0/${pv}"
-		local u="rocm_${pv/./_}"
-		local ROCM_SLOT="${pv%.*}"
-		echo "
-			${u}? (
-				~dev-libs/rocm-comgr-${pv}:=
-				~dev-libs/rocr-runtime-${pv}:=
-				~dev-util/hip-${pv}:=[lc,rocm]
-				~sci-libs/hipBLAS-${pv}:=[rocm]
-				~sci-libs/rocBLAS-${pv}:=[$(get_rocm_usedep ROCBLAS)]
-				~sys-devel/llvm-roc-${pv}:=[llvm_targets_AMDGPU,llvm_targets_X86]
-			)
-		"
-	done
-}
 RDEPEND="
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -326,7 +233,7 @@ RDEPEND="
 		>=sci-ml/openvino-${OPENVINO_PV}:=
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
+		>=sci-ml/therock-${THEROCK_PV}:=
 	)
 	sdl2? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}:=
@@ -348,12 +255,10 @@ DOCS=( "AUTHORS" "README.md" )
 pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
-		if use rocm_7_2 ; then
-			export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-			export ROCM_SLOT="7.2"
-			export ROCM_VERSION="${HIP_7_2_VERSION}"
+		if use rocm ; then
+			export LLVM_SLOT="${ROCM_LLVM_SLOT}"
 		fi
-		rocm_pkg_setup
+		rocm-r1_pkg_setup
 	fi
 	if use cuda ; then
 		export CC="${CHOST}-gcc"
