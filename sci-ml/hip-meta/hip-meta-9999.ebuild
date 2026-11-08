@@ -30,7 +30,6 @@ IUSE="
 REQUIRED_USE="
 "
 RDEPEND="
-	~sci-ml/rocm-systems-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	~sci-ml/rocm-libraries-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	~sci-ml/therock-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	~sys-devel/hip-clang-${PV}[${LIBSTDCXX_USEDEP}]
 "
