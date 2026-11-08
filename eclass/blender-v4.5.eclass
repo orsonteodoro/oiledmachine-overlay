@@ -142,6 +142,8 @@ CHKL_TIMESTAMPS=(
 	"media-libs/tiff-9999"
 	"media-libs/vulkan-loader-9999"
 	"media-libs/x264-9999"
+	"sci-ml/therock-9999"
+	"sys-libs/hip-clang-9999"
 )
 
 ARM_CPU_FLAGS_3_3=(
@@ -161,7 +163,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 16..19
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
+	#${LIBCXX_COMPAT_CXX17_ROCM_9999[@]/llvm_slot_} # 24
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21, 22
 )
 
@@ -244,57 +246,12 @@ AMDGPU_TARGETS_COMPAT=(
 	"gfx1201"
 )
 
-HIPRT_RAYTRACE_TARGETS=(
-# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.5.a21e075/scripts/bitcodes/compile.py#L90
-	"gfx1010"
-	"gfx1011"
-	"gfx1012"
-	#"gfx1013"
-	"gfx1030"
-	"gfx1031"
-	"gfx1032"
-	#"gfx1033"
-	"gfx1034"
-	"gfx1035"
-	"gfx1036"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1103"
-	"gfx1150"
-	"gfx1151"
-	"gfx1152"
-	"gfx1200"
-	"gfx1201"
-)
-
-inherit hip-versions
-
-ROCM_VERSIONS=(
-	"${HIP_7_2_VERSION}"
-)
-
-gen_rocm_iuse() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		s="${s/./_}"
-		echo "rocm_${s}"
-	done
-}
-
-ROCM_IUSE=(
-	$(gen_rocm_iuse)
-)
-
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
-${ROCM_IUSE[@]}
 +alembic aot -asan +boost +bullet clang +cineon +collada
 +color-management -cpudetection +cuda +cycles +cycles-path-guiding +dds -debug
 -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac gcc +gmp -hiprt +hydra icc
@@ -456,17 +413,6 @@ gen_required_use_cuda_targets() {
 	done
 }
 
-gen_required_use_rocm_targets() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
-
 # The below are hardcoded enabled in the dependency builder but no explicit option
 IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 	libaom
@@ -493,7 +439,6 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
-	$(gen_required_use_rocm_targets)
 	${PATENT_STATUS_REQUIRED_USE}
 	!boost? (
 		!alembic
@@ -557,12 +502,7 @@ REQUIRED_USE+="
 	)
 	hiprt? (
 		cycles
-		|| (
-			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
-		)
-		|| (
-			rocm_7_2
-		)
+		rocm
 	)
 	hydra? (
 		usd
@@ -667,21 +607,10 @@ REQUIRED_USE+="
 	rocm? (
 		!nanovdb
 		cycles
-		${ROCM_REQUIRED_USE}
-		^^ (
-			${ROCM_IUSE[@]}
-		)
-		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
-		)
 		^^ (
 			python_single_target_python3_10
 			python_single_target_python3_12
 		)
-	)
-	rocm_7_2? (
-		llvm_slot_22
-		rocm
 	)
 	theora? (
 		ffmpeg
@@ -831,68 +760,6 @@ CUDA_12_8_RDEPEND="
 	)
 "
 
-is_rocm_target_allowed() {
-	local target="${1}"
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		[[ "${x}" == "${target}" ]] && return 0
-	done
-	return 1
-}
-
-gen_hiprt_usedep() {
-	local hiprt_ver="${1/./_}"
-	local rocm_slot="${2/./_}"
-	local t="HIPRT_${hiprt_ver}_${rocm_slot}_AMDGPU_TARGETS_COMPAT[@]"
-	local a=( "${!t}" )
-	local str=""
-	local x
-	for x in "${a[@]}" ; do
-		if is_rocm_target_allowed "${x}" ; then
-			str+=",amdgpu_targets_${x}(-)?"
-		fi
-	done
-	str="${str:1}"
-	echo "${str}"
-}
-
-gen_rocm_hiprt_rdepend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		local u
-		s="${pv%.*}"
-		u="${s/./_}"
-		export ROCM_SLOT="${s}"
-		echo "
-			rocm_${u}? (
-				media-libs/HIPRT:=[${LIBSTDCXX_USEDEP},rocm]
-				|| (
-					=media-libs/HIPRT-2.5*[${LIBSTDCXX_USEDEP},rocm,$(gen_hiprt_usedep 2.5 ${s})]
-				)
-			)
-		"
-	done
-}
-
-gen_rocm_rdepend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		local u
-		s="${pv%.*}"
-		u="${s/./_}"
-		export ROCM_SLOT="${s}"
-		echo "
-			rocm_${u}? (
-				~dev-libs/rocm-opencl-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
-			)
-		"
-	done
-}
-
 # Upstream uses vendored numpy 1.26.4
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -1022,7 +889,12 @@ RDEPEND+="
 		>=dev-libs/gmp-${GMP_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx]
 	)
 	hiprt? (
-		$(gen_rocm_hiprt_rdepend)
+		rocm? (
+			media-libs/HIPRT:=[${LIBSTDCXX_USEDEP},rocm]
+			|| (
+				=media-libs/HIPRT-2.5*[${LIBSTDCXX_USEDEP},rocm]
+			)
+		)
 	)
 	jack? (
 		virtual/jack:=
@@ -1137,7 +1009,8 @@ RDEPEND+="
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[truetype]
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-libs/hip-clang-${HIP_CLANG_PV}:=[${LIBSTDCXX_USEDEP}]
 	)
 	sdl? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}:=[opengl,pulseaudio?,sound]
@@ -1253,9 +1126,7 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_7_2? (
-			~sys-devel/llvm-roc-${HIP_7_2_VERSION}:=
-		)
+		~sys-devel/hip-clang-${HIP_CLANG_PV}:=
 	)
 	test? (
 		>=dev-libs/weston-14.0.2
@@ -1283,13 +1154,11 @@ PATCHES=(
 
 _blender_set_rocm_compiler() {
 	# See https://github.com/blender/blender/blob/v4.5.13/build_files/config/pipeline_config.yaml
-	if use rocm_7_2 ; then
-		export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-		export ROCM_SLOT="7.2"
-		export ROCM_VERSION="${HIP_7_2_VERSION}"
+	if use rocm ; then
+		export LLVM_SLOT="${ROCM_LLVM_SLOT}"
 	fi
-	rocm_pkg_setup
-	rocm_set_default_hipcc
+	rocm-r1_pkg_setup
+	rocm-r1_set_default_hipcc
 }
 
 _blender_pkg_setup() {
@@ -1365,10 +1234,7 @@ _src_prepare_patches() {
 	#apply_hiprt_2_3_patchset
 	eapply "${FILESDIR}/blender-4.5.3-parent-datafiles-dir-change.patch"
 	if use rocm ; then
-		local rocm_version=""
-		if use rocm_7_2 ; then
-			rocm_version="${HIP_7_2_VERSION}"
-		fi
+		local rocm_version="${ROCM_VERSION}"
 
 		sed \
 			-i \
@@ -1586,21 +1452,12 @@ einfo "CUDA_TARGETS:  ${targets}"
 
 	# Speed up build time
 	if use rocm ; then
-		local targets=""
-		local rocm_target
-		for rocm_target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-			if use "${rocm_target/#/amdgpu_targets_}" ; then
-				targets+=";${rocm_target}"
-			fi
-		done
-		targets=$(echo "${targets}" \
-			| sed -e "s|^;||g")
 		mycmakeargs+=(
-			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
+			-DCYCLES_HIP_BINARIES_ARCH="${ROCM_TARGETS}"
 			-DHIP_DIR="/opt/rocm"
 			-DHIP_ROOT_DIR="/opt/rocm"
 		)
-einfo "AMDGPU_TARGETS:  ${targets}"
+einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
 	fi
 
 	if use hiprt ; then

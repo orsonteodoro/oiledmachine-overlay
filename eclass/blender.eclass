@@ -31,8 +31,8 @@ LTS_VERSIONS=(
 )
 
 inherit cflags-hardened check-compiler-switch chkl cuda check-reqs cmake cython dhms
-inherit ffmpeg fix-rpath flag-o-matic flag-o-matic-om hip-versions llvm pax-utils
-inherit python-single-r1 rocm toolchain-funcs xdg optfeature
+inherit ffmpeg fix-rpath flag-o-matic flag-o-matic-om llvm pax-utils
+inherit python-single-r1 rocm-r1 toolchain-funcs xdg optfeature
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -504,7 +504,6 @@ blender_src_prepare() {
 		PATCH_PATHS=(
 			"${S}/build_files/cmake/Modules/FindHIP.cmake"
 		)
-		rocm_src_prepare
 	fi
 
 	# we don't want static glew, but it's scattered across
@@ -1078,9 +1077,6 @@ blender_src_install() {
 		mv "${ED}/usr/share/doc/blender"{"","-${SLOT_MAJ}"} || die
 	fi
 	mv "${ED}/usr/share/man/man1/blender"{"","-${SLOT_MAJ}"}".1" || die
-	if use rocm ; then
-		rocm_fix_rpath
-	fi
 
 	# Prevent multislot collision
 	dodir "/usr/share/blender/${PV}/share/metainfo"
