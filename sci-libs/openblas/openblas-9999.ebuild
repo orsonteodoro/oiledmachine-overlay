@@ -8,7 +8,7 @@ MY_P=OpenBLAS-${PV}
 inherit flag-o-matic fortran-2 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="8f0b0333ba0e1b8e185017112c2e760f5e616fce"
+	FALLBACK_COMMIT="dc5f03a8e04114ff6b509397edbf2cebf9cfc926"
 	EGIT_BRANCH="develop"
 	EGIT_REPO_URI="https://github.com/OpenMathLib/OpenBLAS.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then

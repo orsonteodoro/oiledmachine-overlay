@@ -5,19 +5,12 @@ EAPI=8
 
 # The h in the version means hip
 
-inherit hip-versions
+inherit rocm-r1
 
 CXX_STANDARD=14
 EBUILD_REVISION="ebuild_revision_9"
-LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
+LLVM_SLOT="${ROCM_LLVM_SLOT}"
 MAGMA_ROCM=1
-ROCM_SLOT="7.2"
-ROCM_SLOTS=(
-	"${HIP_7_2_VERSION}"
-)
-declare -A ROCM_PV_TO_LLVM_SLOT=(
-	["${HIP_7_2_VERSION}"]="22"
-)
 SLOT="0/${ROCM_SLOT}"
 
 inherit icl-magma-v2_10

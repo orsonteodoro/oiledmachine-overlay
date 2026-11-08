@@ -10,40 +10,12 @@ MY_PV=$(ver_cut 1-3)
 FORTRAN_STANDARD="77 90"
 GPU_FRAMEWORKS="" # Global var
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-	PYTHON_COMPAT=( "python3_"{10,12} )
+	PYTHON_COMPAT=( "python3_"{11..15} )
 elif [[ "${MAGMA_CUDA}" == "1" ]] ; then
-	PYTHON_COMPAT=( "python3_"{10..14} )
+	PYTHON_COMPAT=( "python3_"{11..15} )
 else
 die "MAGMA_ROCM=1 or MAGMA_CUDA=1 are only supported"
 fi
-
-AMDGPU_TARGETS_COMPAT=(
-	"gfx700"
-	"gfx701"
-	"gfx702"
-	"gfx703"
-	"gfx704"
-	"gfx705"
-	"gfx801"
-	"gfx802"
-	"gfx803"
-	"gfx805"
-	"gfx810"
-	"gfx900"
-	"gfx902"
-	"gfx904"
-	"gfx906"
-	"gfx908"
-	"gfx909"
-	"gfx90c"
-	"gfx1010"
-	"gfx1011"
-	"gfx1012"
-	"gfx1030"
-	"gfx1031"
-	"gfx1032"
-	"gfx1033"
-)
 
 CUDA_TARGETS_COMPAT=(
 #	"sm_20" # Dropped.  SDK version not in distro.  Fork ebuild for support.
@@ -79,7 +51,7 @@ GCC_COMPAT=(
 
 inherit check-compiler-switch cmake fix-rpath flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-	inherit rocm
+	inherit rocm-r1
 else
 	inherit llvm
 fi
@@ -256,63 +228,15 @@ fi
 
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
-		${ROCM_IUSE}
 		rocm
 		system-llvm
-	"
-	gen_rocm_required_use() {
-		local x
-		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-			echo "
-				amdgpu_targets_${x}? (
-					rocm
-				)
-			"
-		done
-	}
-	REQUIRED_USE+="
-		examples? (
-			rocm? (
-				|| (
-					amdgpu_targets_gfx900
-					amdgpu_targets_gfx906
-					amdgpu_targets_gfx908
-				)
-			)
-		)
-		rocm? (
-			$(gen_rocm_required_use)
-			|| (
-				${ROCM_REQUIRED_USE}
-			)
-		)
 	"
 	GPU_FRAMEWORKS+="
 		rocm
 	"
-	gen_rocm_rdepend() {
-		local pv
-		for pv in "${ROCM_SLOTS[@]}" ; do
-			local slot="0/${pv%.*}"
-			echo "
-				(
-					>=dev-libs/rocm-core-${pv}:${slot}[${LIBSTDCXX_USEDEP}]
-					>=dev-util/hip-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
-					>=sci-libs/hipBLAS-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
-					>=sci-libs/hipSPARSE-${pv}:${slot}[${LIBSTDCXX_USEDEP},rocm]
-				)
-			"
-		done
-	}
 	RDEPEND+="
 		rocm? (
-			dev-libs/rocm-core:=
-			dev-util/hip:=
-			sci-libs/hipBLAS:=
-			sci-libs/hipSPARSE:=
-			|| (
-				$(gen_rocm_rdepend)
-			)
+			>=sci-ml/therock-${THEROCK_PV}:=
 		)
 	"
 fi
@@ -389,7 +313,7 @@ icl-magma-v2_10_pkg_setup() {
 	python-any-r1_pkg_setup
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 		if use rocm ; then
-			rocm_pkg_setup
+			rocm-r1_pkg_setup
 		fi
 	else
 		local s
@@ -411,7 +335,7 @@ icl-magma-v2_10_pkg_setup() {
 gen_pc_file() {
 	local _prefix
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		_prefix="${EPREFIX}/${EROCM_PATH}/magma"
+		_prefix="${EPREFIX}/${ROCM_PATH}/magma"
 	elif [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		_prefix="${EPREFIX}/usr"
 	else
@@ -570,11 +494,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if has "rocm" ${IUSE_EFFECTIVE} ; then
 		mycmakeargs+=(
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/magma"
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${ROCM_PATH}/magma"
 			-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
 		)
 		append-ldflags \
-			-L"${EPREFIX}${EROCM_PATH}/magma/lib"
+			-L"${EPREFIX}${ROCM_PATH}/magma/lib"
 	else
 		mycmakeargs+=(
 			-DMAGMA_ENABLE_HIP=OFF
@@ -656,7 +580,7 @@ ewarn
 		local b
 		local c
 		local hip_pv=$(grep -r -e "set(PACKAGE_VERSION" \
-			"${ESYSROOT}/${EROCM_PATH}/magma/lib/cmake/hip/hip-config-version.cmake" \
+			"${ESYSROOT}/${ROCM_PATH}/magma/lib/cmake/hip/hip-config-version.cmake" \
 			| head -n 1 \
 			| cut -f 2 -d " " \
 			| cut -f 2 -d '"')
@@ -695,9 +619,9 @@ icl-magma-v2_10_src_install() {
 		insinto "/usr/$(get_libdir)/pkgconfig"
 	fi
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		insinto "${EROCM_PATH}/magma/include/${PN}"
+		insinto "${ROCM_PATH}/magma/include/${PN}"
 		doins "include/"*".h"
-		insinto "${EROCM_PATH}/magma/lib/pkgconfig"
+		insinto "${ROCM_PATH}/magma/lib/pkgconfig"
 	fi
 	doins "${PN}.pc"
 	local DOCS=(
@@ -713,8 +637,8 @@ icl-magma-v2_10_src_install() {
 	FIX_RPATH_VERIFY_FATAL=0 # For previous install without /opt/rocm/lib rpath
 	if use rocm ; then
 		local RPATH_FIXES=(
-			"${ED}${EROCM_PATH}/magma/lib/libmagma.so:${EROCM_PATH}/$(rocm_get_libdir)"
-			"${ED}${EROCM_PATH}/magma/lib/libmagma_sparse.so:${EROCM_PATH}/$(rocm_get_libdir),${EROCM_PATH}/magma/lib"
+			"${ED}${ROCM_PATH}/magma/lib/libmagma.so:${ROCM_PATH}/lib"
+			"${ED}${ROCM_PATH}/magma/lib/libmagma_sparse.so:${ROCM_PATH}/lib,${ROCM_PATH}/magma/lib"
 		)
 		fix-rpath_repair
 	fi
