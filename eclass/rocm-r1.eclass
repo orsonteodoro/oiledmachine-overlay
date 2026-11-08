@@ -103,6 +103,7 @@ rocm-r1_set_default_hip_clang() {
 	export CC="amdclang"
 	export CXX="amdclang++"
 	export CPP="${CC} -E"
+	export PATH="${ROCM_LLVM_PATH}/bin:${PATH}"
 	strip-unsupported-flags
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=lld"
