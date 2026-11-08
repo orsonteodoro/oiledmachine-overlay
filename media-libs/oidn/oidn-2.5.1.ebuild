@@ -54,15 +54,6 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
-inherit hip-versions
-HIP_VERSIONS=(
-	"${HIP_7_2_VERSION}"
-)
-
-ROCM_SLOTS=(
-	"rocm_7_2"
-)
-
 CHKL_TIMESTAMPS=(
 	"dev-cpp/tbb-9999"
 	"dev-lang/ispc-9999"
@@ -72,7 +63,7 @@ CHKL_TIMESTAMPS=(
 )
 
 inherit check-compiler-switch chkl cmake cuda flag-o-matic flag-o-matic-om
-inherit libcxx-slot libstdcxx-slot llvm python-single-r1 rocm secure-version
+inherit libcxx-slot libstdcxx-slot llvm python-single-r1 rocm-r1 secure-version
 inherit toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
@@ -115,7 +106,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
 ebuild_revision_14
 "
@@ -129,19 +119,9 @@ gen_required_use_cuda_targets() {
 		"
 	done
 }
-gen_required_use_hip_targets() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
 REQUIRED_USE+="
+	!rocm
 	$(gen_required_use_cuda_targets)
-	$(gen_required_use_hip_targets)
 	${PYTHON_REQUIRED_USE}
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -161,17 +141,12 @@ REQUIRED_USE+="
 		)
 	)
 	rocm? (
-		${ROCM_REQUIRED_USE}
 		^^ (
-			${ROCM_SLOTS[@]}
-		)
-		^^ (
-			python_single_target_python3_10
+			python_single_target_python3_11
 			python_single_target_python3_12
+			python_single_target_python3_13
+			python_single_target_python3_14
 		)
-	)
-	rocm_7_2? (
-		llvm_slot_22
 	)
 "
 gen_clang_depends() {
@@ -189,25 +164,6 @@ gen_clang_depends() {
 }
 
 # roct-thunk-interface moved to rocr-runtime
-gen_hip_depends() {
-	local pv
-	for pv in "${HIP_VERSIONS[@]}" ; do
-		# Needed because of build failures
-		local s="0/"$(ver_cut "1-2" "${pv}")
-		local u=$(ver_cut "1-2" "${pv}")
-		u="rocm_${u/./_}"
-		echo "
-			${u}? (
-				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocm-device-libs-${pv}:=
-				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~dev-util/rocminfo-${pv}:=
-				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP}]
-			)
-		"
-	done
-}
 
 # See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 RDEPEND+="
@@ -219,7 +175,7 @@ RDEPEND+="
 		>=x11-drivers/nvidia-drivers-525.60.13:=
 	)
 	rocm? (
-		$(gen_hip_depends)
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	sycl? (
 		>=sys-devel/DPC++-2023.10.26:=[aot?]
@@ -247,8 +203,8 @@ BDEPEND+="
 		>=sys-devel/binutils-${BINUTILS_PV}:=[gold,plugins]
 	)
 	rocm? (
-		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	sycl? (
 		>=dev-build/cmake-3.25.2
@@ -280,14 +236,9 @@ pkg_setup() {
 		use cpu && check_cpu
 	fi
 
-	if use rocm_7_2 ; then
-		LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-		ROCM_SLOT="7.2"
-		ROCM_VERSION="${HIP_7_2_VERSION}"
-	fi
-
 	if use rocm ; then
-		rocm_pkg_setup
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
 	else
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		llvm_pkg_setup
@@ -340,7 +291,6 @@ src_prepare() {
 		addpredict "/proc/self/task/"
 	fi
 	if use rocm ; then
-		rocm_src_prepare
 		sed -i -e "s|@ESYSROOT_ROCM_PATH@|${ROCM_PATH}|g" \
 			"devices/hip/CMakeLists.txt" \
 			|| die
@@ -394,7 +344,7 @@ ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 	elif use rocm ; then
-		rocm_set_default_clang
+		rocm-r1_set_default_clang
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
@@ -450,7 +400,7 @@ ewarn "a crash."
 ewarn
 		einfo "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}"
 		mycmakeargs+=(
-			-DHIP_COMPILER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}"
+			-DHIP_COMPILER_PATH="${ESYSROOT}${ROCM_LLVM_PATH}"
 		)
 
 		local targets="$(get_amdgpu_flags)"
@@ -476,13 +426,7 @@ einfo "CUDA_TARGETS:  ${targets}"
 		fi
 	fi
 
-	if use rocm ; then
-		ROCM_CUSTOM_LIBDIR="$(get_libdir)"
-		ROCM_FORCE_ROCM_PATH=1
-		rocm_src_configure
-	else
-		cmake_src_configure
-	fi
+	cmake_src_configure
 }
 
 src_install() {
