@@ -15,8 +15,8 @@ EAPI=8
 # * To prevent the distro gstreamer ebuild scenario, where there is a long run
 #   unpatched vulnerabilities caused by many split ebuilds due to the wrong design
 #   choice, laziness, testing excuses, slave labor menial human labor preference
-#   over rule based automation or AI.  The more ebuilds creates more maintenance
-#   debt.
+#   over rule based automation or AI.  More ebuilds creates more maintenance
+#   debt and more code review rejection excuses that prevent remediation.
 #
 
 # The following commit is chosen if all are true:
