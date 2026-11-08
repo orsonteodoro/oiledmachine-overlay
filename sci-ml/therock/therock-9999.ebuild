@@ -37,9 +37,17 @@ LLVM_COMPAT=(
 inherit ccache-changes cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 secure-version rocm-r1
 
 if [[ "${PV}" == *"9999" ]] ; then
-	EGIT_BRANCH="develop"
-	EGIT_REPO_URI="https://github.com/ROCm/rocm-systems"
-	FALLBACK_COMMIT="16ad3db387ae21d3618bf15293c4ab7b700dbb19" # Nov 7, 2026 2:25 PM PST
+	EGIT_BRANCH="main"
+	EGIT_COMMIT="ac008259bb0d7be08d4a2ce36dab2e46383c9e63" # Oct 16, 2026 217/258
+	EGIT_REPO_URI="https://github.com/ROCm/TheRock.git"
+
+	FALLBACK_BRANCH_ROCM_LIBRARIES="develop"
+	FALLBACK_COMMIT_ROCM_LIBRARIES="1702865a2f3950fba359989c74ca90263d245003" # Nov 6, 2026 163/210
+
+	FALLBACK_BRANCH_ROCM_SYSTEMS="develop"
+	FALLBACK_COMMIT_ROCM_SYSTEMS="704b5fd969e19a073d26859afb54db8085479e22" # Nov 5, 2026 171/203
+
+
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -273,7 +281,14 @@ einfo "FEATURES:  ${FEATURES}"
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]] ; then
 		if in_iuse fallback-commit && use fallback-commit ; then
-			EGIT_COMMIT="${FALLBACK_COMMIT}"
+			EGIT_OVERRIDE_BRANCH_ROCM_THEROCK="${FALLBACK_BRANCH_ROCM_THEROCK}"
+			EGIT_OVERRIDE_COMMIT_ROCM_THEROCK="${FALLBACK_COMMIT_ROCM_THEROCK}"
+
+			EGIT_OVERRIDE_BRANCH_ROCM_LIBRARIES="${FALLBACK_BRANCH_ROCM_LIBRARIES}"
+			EGIT_OVERRIDE_COMMIT_ROCM_LIBRARIES="${FALLBACK_COMMIT_ROCM_LIBRARIES}"
+
+			EGIT_OVERRIDE_BRANCH_ROCM_SYSTEMS="${FALLBACK_BRANCH_ROCM_SYSTEMS}"
+			EGIT_OVERRIDE_COMMIT_ROCM_SYSTEMS="${FALLBACK_COMMIT_ROCM_SYSTEMS}"
 		fi
 		git-r3_fetch
 		git-r3_checkout
