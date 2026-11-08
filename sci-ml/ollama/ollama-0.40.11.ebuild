@@ -74,24 +74,6 @@ LLAMA_CPP_TAG="b11845" # See https://github.com/ollama/ollama/blob/v0.40.11/LLAM
 # ROCm:  https://github.com/ollama/ollama/blob/v0.40.11/CMakePresets.json#L71
 # CUDA:  https://github.com/ollama/ollama/blob/v0.40.11/CMakePresets.json#L33
 # Hardware support:  https://github.com/ollama/ollama/blob/v0.40.11/docs/gpu.md
-AMDGPU_TARGETS_COMPAT=(
-	"gfx908_xnack_minus"
-	"gfx908_xnack_plus"
-	"gfx90a_xnack_minus"
-	"gfx940"
-	"gfx941"
-	"gfx942"
-	"gfx1010"
-	"gfx1011"
-	"gfx1012"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1151"
-	"gfx1200"
-	"gfx1201"
-)
 
 I8MM_ARCHES=(
 	"armv8.2-a"
@@ -224,7 +206,6 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
-	#"${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_}" # 22
 	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 	{18..22}
 )
@@ -617,27 +598,6 @@ LLMS=(
 
 inherit hip-versions
 
-ROCM_VERSIONS=(
-	# Limited by libhipblas.so.2 hardcoded SOVERSION
-	"${HIP_7_2_VERSION}"
-)
-
-gen_rocm_iuse() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		s="${s/./_}"
-		echo "
-			rocm_${s}
-		"
-	done
-}
-
-ROCM_IUSE=(
-	$(gen_rocm_iuse)
-)
-
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
@@ -650,14 +610,16 @@ CHKL_TIMESTAMPS=(
 	"media-libs/freetype-9999"
 	"media-libs/vulkan-loader-9999"
 	"sci-libs/openblas-9999"
+	"sci-ml/therock-9999"
 	"sys-apps/firejail-9999"
+	"sys-devel/hip-clang-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare edo flag-o-matic
 inherit go-module lcnr libcxx-slot libstdcxx-slot multiprocessing optfeature
-inherit rocm secure-version
+inherit rocm-r1 secure-version
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
 
@@ -2228,7 +2190,6 @@ SLOT="0"
 # unreviewed community LLMs that may have malicious payloads.
 IUSE+="
 ${APP_FEATURES[@]}
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
@@ -2237,25 +2198,10 @@ ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${ROCM_IUSE[@]}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
 ebuild_revision_149
 "
-
-gen_rocm_required_use() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		s="${s/./_}"
-		echo "
-			rocm_${s}? (
-				rocm
-			)
-		"
-	done
-}
 
 gen_cuda_required_use() {
 	local x
@@ -2263,17 +2209,6 @@ gen_cuda_required_use() {
 		echo "
 			cuda_targets_${x}? (
 				cuda
-			)
-		"
-	done
-}
-
-gen_rocm_required_use() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
 			)
 		"
 	done
@@ -2290,7 +2225,6 @@ REQUIRED_USE="
 	!cuda
 	!rocm
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
 	?? (
 		cuda
 		rocm
@@ -2387,17 +2321,6 @@ REQUIRED_USE="
 	mlx? (
 		kernel_Darwin
 	)
-	rocm? (
-		|| (
-			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-		)
-		^^ (
-			${ROCM_IUSE[@]}
-		)
-		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
-		)
-	)
 	video_cards_intel? (
 		openrc
 	)
@@ -2427,45 +2350,6 @@ gen_clang_bdepend() {
 			llvm-core/clang:${s}=
 			llvm-core/llvm:${s}=
 		)
-		"
-	done
-}
-gen_rocm_bdepend() {
-	# DEPENDs listed in Dockerfile
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		s="${s/./_}"
-		local ROCM_SLOT="${pv%.*}"
-		echo "
-			rocm_${s}? (
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},lc,rocm]
-				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
-			)
-		"
-	done
-}
-gen_rocm_rdepend() {
-	# DEPENDs listed in Dockerfile
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		s="${s/./_}"
-		local ROCM_SLOT="${pv%.*}"
-		echo "
-			rocm_${s}? (
-				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocm-opencl-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},lc,rocm]
-				~sci-libs/hipBLAS-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS),cpu_flags_x86_f16c=]
-				~sci-libs/rocSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSPARSE)]
-				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
-				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
-			)
 		"
 	done
 }
@@ -2508,8 +2392,9 @@ RDEPEND="
 		)
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
 		>=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_amdgpu]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-devel/hip-clang-${HIP_CLANG_PV}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024:=[l0]
@@ -2536,7 +2421,6 @@ gen_rocm_bdepend() {
 		s="${s/./_}"
 		echo "
 			rocm_${s}? (
-				sys-devel/gcc:=
 			)
 		"
 	done
@@ -2690,7 +2574,9 @@ BDEPEND="
 		)
 	)
 	rocm? (
-		$(gen_rocm_bdepend)
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
+		~sys-devel/hip-clang-${HIP_CLANG_PV}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
+		sys-devel/gcc:=
 	)
 "
 IDEPEND="
@@ -2781,18 +2667,17 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 		unset CXX
 		unset CPP
 	elif use rocm ; then
-		if use rocm_7_2 ; then
-			export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-			export ROCM_SLOT="7.2"
-			export ROCM_VERSION="${HIP_7_2_VERSION}"
-		fi
-		rocm_pkg_setup
+		# Placeholders
+		export LLVM_SLOT="${HIP_9999_LLVM_SLOT}"
+		export ROCM_SLOT="9999"
+		export ROCM_VERSION="${HIP_9999_VERSION}"
+		rocm-r1_pkg_setup
 
 # GCC required to avoid this error:
 # /var/tmp/portage/app-misc/ollama-0.13.0/work/ollama-0.13.0/ml/backend/ggml/ggml/src/ggml-cpu/ggml-cpu.c:535:21: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('atomic_int *' (aka '_Atomic(int) *') invalid)
 #   535 |     int n_threads = atomic_load_explicit(&tp->n_threads_cur, memory_order_relaxed);
 #       |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		rocm_set_default_gcc
+		rocm-r1_set_default_gcc
 	elif tc-is-clang ; then
 		use_clang
 	else
@@ -2886,10 +2771,6 @@ src_prepare() {
 	# Avoid sed: couldn't open temporary file /var/tmp/portage/app-misc/ollama-0.20.0/work/go-mod/github.com/pdevine/tensor@v0.0.0-20240510204454-f88f4562727c/sedb9KKia: Permission denied
 	edo find "${S_GO}" -type d -exec chmod 0755 {} \;
 	edo find "${S_GO}" -type f -exec chmod 0644 {} \;
-
-	if use rocm ; then
-		rocm_src_prepare
-	fi
 
 #	if ! use cpu_flags_x86_f16c ; then
 #		sed -i \
@@ -3123,7 +3004,7 @@ eerror "Re-emerge sys-apps/firejail::oiledmachine-overlay for the ollama profile
 		fi
 	elif use rocm ; then
 einfo "ROCM_SLOT: ${ROCM_SLOT}"
-		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
+		export AMDGPU_TARGETS="${ROCM_TARGETS}"
 		sed -i \
 			-e "s|gfx908:xnack-;gfx90a:xnack+;gfx90a:xnack-;gfx942;gfx950;gfx1010;gfx1012;gfx1030;gfx1100;gfx1101;gfx1102;gfx1103;gfx1150;gfx1151;gfx1200;gfx1201|${AMDGPU_TARGETS}|g" \
 			"CMakePresets.json" \
@@ -4063,8 +3944,8 @@ einfo "Building for CUDA v12"
 einfo "Building for ROCm"
 		mycmakeargs+=(
 			"$(rocm_append_cmake_hip_deps)"
-			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
+			-DAMDGPU_TARGETS="${ROCM_TARGETS}"
+			-DCMAKE_HIP_ARCHITECTURES="${ROCM_TARGETS}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 		)
