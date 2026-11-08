@@ -235,10 +235,6 @@ HOMEPAGE="
 "
 LICENSE="
 	(
-		all-rights-reserved
-		MIT
-	)
-	(
 		(
 			all-rights-reserved
 			Apache-2.0
@@ -248,33 +244,86 @@ LICENSE="
 		BSD-2
 		custom
 	)
+	(
+		all-rights-reserved
+		custom
+	)
+	(
+		all-rights-reserved
+		GPL-3+
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		GPL-3+
+		gcc-runtime-library-exception-3.1
+	)
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
+	Boost-1.0
 	BSD
 	BSD-2
+	CC0-1.0
 	custom
+	FDL-1.3+
 	GPL-2
+	GPL-3+
+	ISC
+	LIBGLOSS
 	LGPL-2.1
 	LGPL-2.1+
 	MIT
+	NEWLIB
 	public-domain
 	PSF-2
+	rc
+	SunPro
 	UoI-NCSA
+	ZLIB
+	|| (
+		(
+			GPL-2
+			Linux-syscall-note
+		)
+		MIT
+	)
 "
 # (all-rights-reserved Apache-2.0), Apache-2.0, BSD, BSD-2, custom - perfetto
+# (all-rights-reserved custom) - ROCm/ROCgdb/blob/therock-10.1/gdb/exc_request.defs
+# (all-rights-reserved GPL-3+) - ROCm/ROCgdb/blob/therock-10.1/binutils/dwarf.c
 # (all-rights-reserved MIT), Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT - hipthreads
 # all-rights-reserved, MIT - rocwmma
 # Apache-2.0, BSD-2, MIT, public-domain - miopen
 # Apache-2.0-with-LLVM-exceptions - ROCm/llvm-project
+# Boost-1.0 - ROCm/ROCgdb/blob/therock-10.1/zlib/contrib/dotzlib/LICENSE_1_0.txt
 # BSD, MIT - hipblas
 # BSD, MIT, PSF-2 - rocprofiler-compute
+# BSD, rc - ROCm/llvm-project/blob/therock-10.1/llvm/lib/Support/COPYRIGHT.regex
+# CC0-1.0 - ROCm/llvm-project/blob/therock-10.1/llvm/lib/Support/BLAKE3/LICENSE
+# custom - ROCm/llvm-project/blob/therock-10.1/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
+# custom - ROCm/ROCgdb/blob/therock-10.1/libiberty/strncasecmp.c
+# custom - ROCm/ROCgdb/blob/therock-10.1/mkdep
+# custom - ROCm/rocm-systems/blob/therock-10.1/projects/clr/opencl/khronos/icd/LICENSE.txt
+# custom - ROCm/rocm-systems/blob/therock-10.1/projects/clr/opencl/khronos/headers/opencl2.2/LICENSE
 # custom, LGPL-2.1 - GOTCHA
 # custom, MIT - rocdecode
+# FDL-1.3+ - ROCm/ROCgdb/blob/therock-10.1/gdb/doc/python.texi
 # GPL-2 - ROCgdb
+# GPL-3+ LGPL-2.1+ UoI-NCSA ZLIB - ROCm/ROCgdb/blob/therock-10.1/gdb/NOTICES.txt
+# GPL-3+ gcc-runtime-library-exception-3.1 - ROCm/ROCgdb/blob/therock-10.1/include/dwarf2.def
+# ISC - ROCm/llvm-project/blob/therock-10.1/llvm/lib/Support/regstrlcpy.c
+# LIBGLOSS - ROCm/ROCgdb/blob/therock-10.1/COPYING.LIBGLOSS
 # LGPL-2.1+, LGPL-2.1+ public-domain (sha1.C) - dyninst
 # MIT - TheRock
+# NEWLIB - ROCm/ROCgdb/blob/therock-10.1/COPYING.NEWLIB
 # public-domain - sqlite
+# SunPro - ROCm/llvm-project/blob/therock-10.1/amd/device-libs/ocml/src/erfcF.cl
+# ZLIB - ROCm/ROCgdb/blob/therock-10.1/zlib/contrib/puff/puff.h
+# || ( (GPL-2 Linux-syscall-note) MIT ) - ROCm/rocm-systems/blob/therock-10.1/projects/rocdbgapi/src/linux/kfd_sysfs.h
 # The distro does not have a Apache-2.0 license template with all rights reserved.
+# The distro does not have a GPL-3+ license template with all rights reserved.
 # The distro does not have a MIT license template with all rights reserved.
 # The distro does have a BSD license template with all rights reserved.
 RESTRICT="mirror" # Prevent snooping and speed up downloads
