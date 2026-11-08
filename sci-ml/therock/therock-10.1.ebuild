@@ -277,6 +277,7 @@ BANNED_RDEPEND="
 	!dev-libs/rocm-comgr
 	!dev-libs/rocm-opencl-runtime
 	!dev-util/HIPIFY
+	!dev-util/hipify-clang
 	!dev-util/ROCgdb
 	!sys-devel/llvm-roc
 	!sys-devel/llvm-roc-symlinks
