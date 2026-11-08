@@ -22,22 +22,6 @@ PYTHON_COMPAT=( "python3_"{11..15} )
 RUST_MAX_VER="1.93.1"
 RUST_MIN_VER="1.93.1" # LLVM 21.1
 
-_VIDEO_CARDS=(
-	video_cards_amdgpu
-	video_cards_intel
-	video_cards_nvidia
-)
-
-OCL_DRIVERS=(
-	intel-opencl-cpu-runtime
-	pal
-	pocl
-	rocm
-	rusticl
-	video_cards_intel
-	video_cards_nvidia
-)
-
 declare -A GIT_CRATES=(
 )
 
@@ -173,62 +157,19 @@ LICENSE="MIT"
 RESTRICT="mirror test" # Speed up downloads and stop snooping
 SLOT="0"
 IUSE="
-${_VIDEO_CARDS[@]}
-${OCL_DRIVERS[@]}
-doc brain rocm
-ebuild_revision_3
+doc brain cuda rocm
+ebuild_revision_4
 "
 REQUIRED_USE="
-	pal? (
-		video_cards_amdgpu
-	)
-	rocm? (
-		video_cards_amdgpu
-	)
-	video_cards_amdgpu? (
-		^^ (
-			pal
-			rocm
-			rusticl
-		)
-	)
-	^^ (
-		${OCL_DRIVERS[@]}
-	)
 "
 RDEPEND="
-	!video_cards_nvidia? (
+	!cuda? (
 		dev-util/opencl-headers:=
 		virtual/opencl:=
 	)
 	app-arch/lzma:=
+	virtual/opencl:=
 	>=virtual/zlib-${ZLIB_PV}:=[minizip]
-	intel-opencl-cpu-runtime? (
-		>=dev-util/intel-ocl-sdk-16.1.1:=
-	)
-	pocl? (
-		dev-libs/pocl:=
-	)
-	rusticl? (
-		>=media-libs/mesa-${MESA_PV}:=[opencl]
-	)
-	video_cards_amdgpu? (
-		pal? (
-			dev-libs/amdgpu-pro-opencl-legacy:=
-		)
-		rocm? (
-			>=sci-ml/therock-${THEROCK_PV}:=
-		)
-	)
-	video_cards_intel? (
-		dev-libs/intel-compute-runtime:=
-	)
-	video_cards_nvidia? (
-		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		>=dev-util/nvidia-cuda-toolkit-12.9:=
-		>=x11-drivers/nvidia-drivers-575.57:=
-		virtual/opencl:*
-	)
 "
 DEPEND="
 	${RDEPEND}
@@ -303,7 +244,7 @@ src_compile() {
 
 	emake \
 		ENABLE_BRAIN=$(usex brain 1 0) \
-		ENABLE_CUBIN=$(usex video_cards_nvidia 1 0) \
+		ENABLE_CUBIN=$(usex cuda 1 0) \
 		PRODUCTION=1 \
 		SHARED=1 \
 		USE_SYSTEM_OPENCL=1 \
@@ -313,7 +254,7 @@ src_compile() {
 }
 
 src_test() {
-	if use video_cards_nvidia ; then
+	if use cuda ; then
 		addwrite "/dev/nvidia0"
 		addwrite "/dev/nvidia-uvm"
 		addwrite "/dev/nvidiactl"
@@ -333,7 +274,7 @@ src_install() {
 	emake \
 		DESTDIR="${ED}" \
 		ENABLE_BRAIN=$(usex brain 1 0) \
-		ENABLE_CUBIN=$(usex video_cards_nvidia 1 0) \
+		ENABLE_CUBIN=$(usex cuda 1 0) \
 		PRODUCTION=1 \
 		SHARED=1 \
 		USE_SYSTEM_OPENCL=1 \
