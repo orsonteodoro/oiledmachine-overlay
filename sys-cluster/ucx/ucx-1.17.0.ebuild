@@ -36,7 +36,7 @@ CHKL_TIMESTAMPS=(
 	"sys-process/numactl-9999"
 )
 
-inherit autotools check-compiler-switch dep-prepare flag-o-matic libcxx-slot
+inherit autotools check-compiler-switch chkl dep-prepare flag-o-matic libcxx-slot
 inherit libstdcxx-slot rocm-r1 linux-info secure-version toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
