@@ -15,7 +15,8 @@ EAPI=8
 # * To prevent the distro gstreamer ebuild scenario, where there is a long run
 #   unpatched vulnerabilities caused by many split ebuilds due to the wrong design
 #   choice, laziness, testing excuses, slave labor menial human labor preference
-#   over rule based automation or AI.
+#   over rule based automation or AI.  The more ebuilds creates more maintenance
+#   debt.
 #
 
 # The following commit is chosen if all are true:
@@ -219,8 +220,46 @@ HOMEPAGE="
 	https://github.com/ROCm/rocm-systems
 "
 LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		(
+			all-rights-reserved
+			Apache-2.0
+		)
+		Apache-2.0
+		BSD
+		BSD-2
+		custom
+	)
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+	BSD-2
+	custom
+	GPL-2
+	LGPL-2.1
+	LGPL-2.1+
 	MIT
+	public-domain
+	PSF-2
+	UoI-NCSA
 "
+# all-rights-reserved, MIT - rocwmma
+# Apache-2.0, BSD-2, MIT, public-domain - miopen
+# Apache-2.0-with-LLVM-exceptions - ROCm/llvm-project
+# (all-rights-reserved Apache-2.0), Apache-2.0, BSD, BSD-2, custom - perfetto
+# (all-rights-reserved MIT), Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT - hipthreads
+# BSD, MIT - hipblas
+# BSD, MIT, PSF-2 - rocprofiler-compute
+# custom, MIT - rocdecode
+# GPL-2 - ROCgdb
+# LGPL-2.1+, LGPL-2.1+ public-domain (sha1.C) - dyninst
+# custom, LGPL-2.1 - GOTCHA
+# MIT - TheRock
+# public-domain - sqlite
 RESTRICT="mirror" # Prevent snooping and speed up downloads
 SLOT="0/${ROCM_SLOT}"
 IUSE+=" test
@@ -368,6 +407,10 @@ pkg_setup() {
 	libstdcxx-slot_verify
 	libcxx-slot_verify
 einfo "FEATURES:  ${FEATURES}"
+	# Chromium: 39-41 MLOC, 1-3 days to build
+	# ROCm:  25-30 MLOC, 2+ days to build
+	# TensorFlow:  4 MLOC, 2-3 days to build
+	# MLOC = Millions Lines of Code
 	ccache-changes_yes_ccache "For reducing the rebuild time cost for 50+ heavy packages in this monolithic ebuild."
 }
 
