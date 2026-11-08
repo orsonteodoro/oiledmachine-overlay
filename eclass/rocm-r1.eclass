@@ -80,6 +80,12 @@ rocm-r1_set_default_clang() {
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=lld"
 
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${llvm_slot}/bin|g")
+
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
@@ -103,7 +109,13 @@ rocm-r1_set_default_hip_clang() {
 	export CC="amdclang"
 	export CXX="amdclang++"
 	export CPP="${CC} -E"
-	export PATH="${ROCM_LLVM_PATH}/bin:${PATH}"
+
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${ROCM_LLVM_PATH}/bin|g")
+
 	strip-unsupported-flags
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=lld"
