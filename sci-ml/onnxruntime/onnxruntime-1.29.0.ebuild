@@ -59,7 +59,7 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_OPTIONAL=1
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 RE2_SLOT="20250512"
 
 ABSEIL_CPP_PV_2="20250814.0" # From cmake/deps.txt
@@ -112,17 +112,6 @@ GOOGLETEST_COMMIT_5="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081" # external/protob
 BENCHMARK_COMMIT_2="0d98dba29d66e93259db7daa53a9327df767a415" # external/flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # external/flatbuffers from cmake/external/flatbuffers/benchmarks/CMakeLists.txt, or dawn/swiftshader dep, dawn/angle/swiftshader dep, dawn/angle/astc-encoder dep, dawn/angle/dawn/swiftshader dep
 
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/CMakeLists.txt#L299
-	"gfx906"
-	"gfx908"
-	"gfx90a" # ck
-	#"gfx942" # ck
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -131,7 +120,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
+	#${LIBCXX_COMPAT_CXX17_ROCM_9999[@]/llvm_slot_} # 24
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
@@ -167,11 +156,14 @@ OPENVINO_TARGETS=(
 	"npu_np"
 )
 
-ROCM_SLOTS=(
-	"rocm_7_2"
+CHKL_TIMESTAMPS=(
+	"sci-ml/therock-9999"
+	"sys-devel/hip-clang-9999"
 )
 
-inherit cflags-hardened check-compiler-switch cmake cuda edo dep-prepare distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake cuda edo dep-prepare
+inherit distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm-r1
+inherit secure-version toolchain-funcs
 
 KEYWORDS="~amd64"
 
@@ -367,11 +359,9 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE="
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
-${ROCM_SLOTS[@]}
 -abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
 -javascript -llvm -lto -migraphx -mimalloc -mpi -onednn -openvino
 +python -quant -rocm -system-eigen -system-composable-kernel test -tensorrt
@@ -392,25 +382,14 @@ gen_cuda_required_use() {
 		"
 	done
 }
-gen_rocm_required_use() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
 # For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/test/perftest/command_args_parser.cc#L40
 # abseil-cpp is required for protobuf and still links to it if disabled.
 # webgpu banned because the G repo servers removed tarball downloads.
 REQUIRED_USE="
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
+	!rocm
 	abseil-cpp
 	composable-kernel? (
-		amdgpu_targets_gfx90a
 		rocm
 	)
 	cuda? (
@@ -445,14 +424,12 @@ REQUIRED_USE="
 		python
 	)
 	rocm? (
-		llvm_slot_22
 		migraphx
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
-		)
-		^^ (
-			python_single_target_python3_10
+			python_single_target_python3_11
 			python_single_target_python3_12
+			python_single_target_python3_13
+			python_single_target_python3_14
 		)
 	)
 	tensorrt-oss-parser? (
@@ -476,37 +453,6 @@ REQUIRED_USE="
 		xnnpack
 	)
 "
-gen_rocm_rdepend() {
-	local pv
-	for pv in ${HIP_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 ${pv})
-		local u=$(ver_cut 1-2 ${pv})
-		u="${u/./_}"
-	# Check both the direct top and indirect bottom dependencies
-		echo "
-			rocm_${u}? (
-				~dev-libs/rccl-${pv}:=[$(get_rocm_usedep RCCL)]
-				~dev-libs/rocr-runtime-${pv}:=
-				~dev-util/hip-${pv}:=[rocm]
-				~dev-util/rocm-smi-${pv}:=
-				~dev-util/roctracer-${pv}:=
-				~sci-libs/hipCUB-${pv}:=[$(get_rocm_usedep HIPCUB)]
-				~sci-libs/hipFFT-${pv}:=[$(get_rocm_usedep HIPFFT)]
-				~sci-libs/hipRAND-${pv}:=[rocm]
-				~sci-libs/miopen-${pv}:=[$(get_rocm_usedep MIOPEN)]
-				~sci-libs/rocBLAS-${pv}:=[$(get_rocm_usedep ROCBLAS)]
-				system-composable-kernel? (
-					sci-libs/composable-kernel:=[$(get_rocm_usedep COMPOSABLE_KERNEL)]
-				)
-			)
-		"
-		if use amdgpu_targets_gfx90a ; then
-			echo "
-				~sci-libs/hipBLASLt-${pv}:=[$(get_rocm_usedep HIPBLASLT)]
-			"
-		fi
-	done
-}
 DISABLED_RDEPEND="
 	>=dev-cpp/ms-gsl-4.0.0:=
 	>=dev-cpp/nlohmann_json-3.10.5:=
@@ -582,14 +528,14 @@ RDEPEND="
 		')
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
-		rocm_7_2? (
-			sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
-			|| (
-				=sci-ml/pytorch-2.13*:=[${PYTHON_SINGLE_USEDEP}]
-				=sci-ml/pytorch-2.12*:=[${PYTHON_SINGLE_USEDEP}]
-				=sci-ml/pytorch-2.11*:=[${PYTHON_SINGLE_USEDEP}]
-			)
+		~sci-ml/therock-${THEROCK_PV}:=
+		~sys-devel/hip-clang-${HIP_CLANG_PV}:=
+
+		sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
+		|| (
+			=sci-ml/pytorch-2.13*:=[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.12*:=[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.11*:=[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	system-eigen? (
@@ -676,13 +622,11 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
-	if use rocm_7_2 ; then
-		LLVM_SLOT="22"
-		ROCM_SLOT="7.2"
-		export ROCM_VERSION="${HIP_7_2_VERSION}"
+	if use rocm ; then
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
 	fi
 
-	use rocm && rocm_pkg_setup
+	use rocm && rocm-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
@@ -887,17 +831,15 @@ src_prepare() {
 	#fi
 
 	cmake_src_prepare
-	use rocm && rocm_src_prepare
 }
 
 src_configure() {
-	ewarn "This ebuild is still in development.  Use the 1.19.x series instead."
+	chkl_check_many_timestamps
 
 	export BUILD_DIR="${S}" # For Python wheel
 
-	export ROCM_PATH="${ESYSROOT}/${EROCM_PATH}"
-	export MIOPEN_PATH="${ESYSROOT}/${EROCM_PATH}"
-	#export ROCM_VERSION="${ROCM_VERSION}"-
+	export ROCM_PATH="${ESYSROOT}/${ROCM_PATH}"
+	export MIOPEN_PATH="${ESYSROOT}/${ROCM_PATH}"
 
 	python && python_setup
 	CMAKE_BUILD_TYPE=$(usex debug RelWithDebInfo Release)
@@ -1077,7 +1019,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use composable-kernel && use system-composable-kernel ; then
 		mycmakeargs+=(
-			-DCOMPOSABLE_KERNEL_DIR="${ESYSROOT}/${EROCM_PATH}/lib/cmake/composable-kernel" # TODO verify against multislot
+			-DCOMPOSABLE_KERNEL_DIR="${ESYSROOT}/${ROCM_PATH}/lib/cmake/composable-kernel" # TODO verify against multislot
 		)
 	fi
 
@@ -1148,15 +1090,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use rocm ; then
 		mycmakeargs+=(
-			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
-			-DCMAKE_HIP_COMPILER="${ESYSROOT}/${EROCM_PATH}/llvm/bin/clang++"
+			-DCMAKE_HIP_ARCHITECTURES="${ROCM_TARGETS}"
+			-DCMAKE_HIP_COMPILER="${ESYSROOT}/${ROCM_PATH}/llvm/bin/clang++"
 			-Donnxruntime_ENABLE_TRITON=$(usex triton)
-			-Donnxruntime_ROCM_HOME="${ESYSROOT}/${EROCM_PATH}"
+			-Donnxruntime_ROCM_HOME="${ESYSROOT}/${ROCM_PATH}"
 			-Donnxruntime_ROCM_VERSION="${ROCM_VERSION}"
 			-Donnxruntime_USE_TRITON_KERNEL=$(usex triton)
 			-Donnxruntime_USE_COMPOSABLE_KERNEL=$(usex composable-kernel)
 		)
-		if use amdgpu_targets_gfx90a ; then
+		if [[ "${ROCM_TARGETS}" =~ "gfx90a"(" "|$) ]] ; then
 			mycmakeargs+=(
 				-Donnxruntime_USE_HIPBLASLT=ON
 			)
@@ -1201,12 +1143,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-
-	if use rocm ; then
-		rocm_src_configure
-	else
-		cmake_src_configure
-	fi
+	cmake_src_configure
 }
 
 src_compile() {
@@ -1244,10 +1181,6 @@ src_install() {
 	if use python ; then
 		cd "${S}" || die
 		distutils-r1_src_install
-	fi
-	if use rocm ; then
-		rocm_mv_docs
-		rocm_fix_rpath
 	fi
 
 # Generated from
