@@ -1,0 +1,31 @@
+[package]
+name = "dynamic_hash"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+base64 = "0.22.1"
+bcrypt = "0.17.1"
+hex = "0.4.3"
+hmac = "0.12.1"
+md-5 = "0.10.6"
+md2 = "0.10.2"
+md4 = "0.10.2"
+pbkdf2 = "0.12.2"
+sha1 = "0.10.6"
+sha2 = "0.10.9"
+sha3 = "0.10.8"
+thread_local = "1.1.9"
+hashcat-sys = { path = "../../hashcat-sys" }
+
+[build-dependencies]
+winresource = "0.1"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+strip = "symbols"
+panic = "unwind"

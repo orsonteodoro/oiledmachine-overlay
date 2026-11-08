@@ -7,25 +7,37 @@
     <name>Rick Farina</name>
   </maintainer>
   <use>
+    <flag name="bridges">
+      Install Rust plugin
+    </flag>
     <flag name="brain">
       Enable the hashcat brain
-    </flag>
-    <flag name="cuda">
-      Use CUDA® directly.
     </flag>
     <flag name="intel-opencl-cpu-runtime">
       Use the closed source OpenCL™ CPU Runtime driver for Intel® Core™ and
       Intel® Xeon®.
     </flag>
+    <flag name="pal">
+      Use the proprietary OpenCL™ driver for older AMD GPUs.
+    </flag>
     <flag name="pocl">
       Use the open source and portable OpenCL™ driver for x86, ARM, RISC-V,
       CUDA®.
     </flag>
+    <flag name="python">
+      Install Python support
+    </flag>
     <flag name="rocm">
-      Use the open source OpenCL™ driver.  Otherwise, fallback to the legacy
-      driver.
-
-      PCIe atomics required.
+      Use the open source OpenCL™ driver.  PCIe atomics required.
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Optimize for AMD GPUs.
+    </flag>
+    <flag name="video_cards_intel">
+      Optimize for Intel® GPUs.
+    </flag>
+    <flag name="video_cards_nvidia">
+      Optimize for NVIDIA GPUs using CUDA®.
     </flag>
   </use>
   <upstream>
