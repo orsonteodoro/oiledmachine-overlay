@@ -366,8 +366,8 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	mycmakeargs+=(
 		# Optional: Disable heavyweight expansion suites you don't need
-		-DBUILD_HPC_SDK=OFF
-		-DBUILD_VISION_SDK=OFF
+		#-DBUILD_HPC_SDK=OFF
+		#-DBUILD_VISION_SDK=OFF
 	)
 	cmake_src_configure
 }
