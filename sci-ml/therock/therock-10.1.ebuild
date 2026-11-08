@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# This ebuild contains AI generated edits/suggestions.
+# This ebuild contains AI generated edits/suggestions and synthetic data.
 
 #
 # Live and latest release is only supported on oiledmachine-overlay.  Reasons:
@@ -411,6 +411,7 @@ einfo "FEATURES:  ${FEATURES}"
 	# ROCm:  25-30 MLOC, 2+ days to build
 	# TensorFlow:  4 MLOC, 2-3 days to build
 	# MLOC = Millions Lines of Code
+	# The ROCm MLOC estimate is based on ROCm/llvm-projects + rocm-systems + rocm-libraries.
 	ccache-changes_yes_ccache "For reducing the rebuild time cost for 50+ heavy packages in this monolithic ebuild."
 }
 
