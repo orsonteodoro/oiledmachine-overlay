@@ -50,7 +50,7 @@ einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
 
 # @FUNCTION: rocm_set_default_gcc
 # @DESCRIPTION:
-# Sets compiler defaults to gcc to avoid versioned C++ linking errors.
+# Sets compiler defaults to system GCC to avoid versioned C++ linking errors.
 rocm-r1_set_default_gcc() {
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
@@ -71,13 +71,8 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 
 # @FUNCTION: rocm_set_default_clang
 # @DESCRIPTION:
-# Sets compiler defaults to clang to avoid primarily linker errors.
+# Sets compiler defaults to system Clang to avoid primarily linker errors.
 rocm-r1_set_default_clang() {
-	if [[ "${FEATURES}" =~ "ccache" && "${ROCM_DISABLE_CCACHE}" != "1" ]] ; then
-	# Placed here to unbreak ccache with gcc.
-		export CCACHE_PATH="${ROCM_LLVM_PATH}/bin"
-	fi
-
 	local llvm_slot="${ROCM_LLVM_SLOT}"
 	export CC="${CHOST}-clang-${llvm_slot}"
 	export CXX="${CHOST}-clang++-${llvm_slot}"
@@ -97,8 +92,13 @@ einfo "PATH:  ${PATH}"
 
 # @FUNCTION: rocm_set_default_hip_clang
 # @DESCRIPTION:
-# Sets compiler defaults to clang to avoid primarily linker errors.
+# Sets compiler defaults to HIP-Clang to avoid primarily linker errors.
 rocm-r1_set_default_hip_clang() {
+	if [[ "${FEATURES}" =~ "ccache" && "${ROCM_DISABLE_CCACHE}" != "1" ]] ; then
+	# Placed here to unbreak ccache with gcc.
+		export CCACHE_PATH="${ROCM_LLVM_PATH}/bin"
+	fi
+
 	local llvm_slot="${ROCM_LLVM_SLOT}"
 	export CC="amdclang"
 	export CXX="amdclang++"
@@ -119,7 +119,7 @@ einfo "PATH:  ${PATH}"
 
 # @FUNCTION: rocm_set_default_hipcc
 # @DESCRIPTION:
-# Sets compiler defaults for hipcc.
+# Sets compiler defaults for hipcc frontend.
 rocm-r1_set_default_hipcc() {
 	if [[ "${FEATURES}" =~ "ccache" && "${ROCM_DISABLE_CCACHE}" != "1" ]] ; then
 	# Placed here to unbreak ccache with gcc.
