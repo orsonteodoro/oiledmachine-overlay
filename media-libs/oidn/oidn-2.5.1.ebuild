@@ -344,7 +344,7 @@ ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 	elif use rocm ; then
-		rocm-r1_set_default_hip_clang
+		rocm-r1_set_default_clang
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
