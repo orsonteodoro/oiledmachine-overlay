@@ -83,3 +83,9 @@ dev-games/godot-editor system-brotli
 
 # Mitigate IO, UB
 dev-games/godot-editor system-zlib
+
+# Pinned for security
+sci-ml/therock fallback-commit
+
+# Pinned to avoid build failure
+sys-devel/hip-clang fallback-commit
