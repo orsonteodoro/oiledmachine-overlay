@@ -24,8 +24,8 @@
       Use the Compute Runtime driver for OpenCL 3.0 and Gen8 to Gen11.
       HW compatibility list:  https://github.com/intel/compute-runtime/tree/24.35.30872.22#supported-platforms
     </flag>
-    <flag name="orca">
-      Use the closed proprietary driver for OpenCL 1.x/2.x for GCN 1/2/3.
+    <flag name="pal">
+      Use the closed proprietary driver for for newer GCN.
     </flag>
     <flag name="pocl">
       Add generic CPU support for OpenCL 3.0.

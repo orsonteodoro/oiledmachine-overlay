@@ -47,7 +47,7 @@ LICENSE="
 SLOT="0/3" # 0/API_VERSION
 IUSE+="
 ${_VIDEO_CARDS[@]}
-clover cpu iocl neo neo-legacy pocl opencl orca rocm rocm_7_2
+clover cpu iocl neo neo-legacy pocl opencl pal rocm rocm_7_2
 rusticl vulkan
 ebuild_revision_3
 "
@@ -101,13 +101,13 @@ RDEPEND+="
 		clover? (
 			<media-libs/mesa-25.2.0[video_cards_r600]
 		)
-		orca? (
+		pal? (
 			dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
 			media-libs/mesa[-opencl]
 		)
 	)
 	video_cards_radeonsi? (
-		orca? (
+		pal? (
 			dev-libs/amdgpu-pro-opencl-legacy[gcc_slot_11_5]
 			media-libs/mesa[-opencl]
 		)
