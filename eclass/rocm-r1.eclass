@@ -31,7 +31,15 @@ inherit flag-o-matic toolchain-funcs
 # Init paths
 rocm-r1_pkg_setup() {
 	if [[ -z "${GPU_TARGETS}" ]] ; then
-ewarn "Your GPU_TARGETS environment variable is empty.  Please set it to reduce the number of kernels built."
+ewarn
+ewarn "Your GPU_TARGETS environment variable is empty.  Please set it to reduce the number of GPU kernels built."
+ewarn "See https://github.com/ROCm/TheRock/blob/main/SUPPORTED_GPUS.md#rocm-on-linux for details"
+ewarn
+ewarn "Examples"
+ewarn
+ewarn "GPU_TARGETS=\"gfx900;gfx950\""
+ewarn "GPU_TARGETS=\"gfx900\""
+ewarn
 	fi
 einfo "GPU_TARGETS:  ${GPU_TARGETS}"
 }
