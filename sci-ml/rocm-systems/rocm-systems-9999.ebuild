@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-
 # Live is only supported on oiledmachine-overlay.  Reasons:
 # For miscompilation mitigation and version alignment with ROCm/llvm-project
 # For ROCm/amdgpu version alignment and for security mitigation.
@@ -27,10 +26,11 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX20[@]}"
+	#"${LIBCXX_COMPAT_STDCXX20[@]}" # 21-23
+	24 # Align with HIP-Clang
 )
 
-inherit check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 rocm-r1
+inherit ccache-changes check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 rocm-r1
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="develop"
@@ -79,7 +79,7 @@ else
 	YAML_CPP_COMMIT="7b469b4220f96fb3d036cf68cd7bd30bd39e61d2"
 
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/rocm_smi_lib-rocm-${PV}"
+	S="${WORKDIR}/rocm-systems-${PV}"
 	SRC_URI="
 https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-${PV}.tar.gz
 	-> rocm-systems-${PV}.tar.gz
@@ -202,8 +202,8 @@ BDEPEND="
 	>=dev-build/cmake-3.16.8
 	virtual/pkgconfig
 "
-PATCHES=(
-)
+#PATCHES=(
+#)
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -212,6 +212,7 @@ pkg_setup() {
 	libstdcxx-slot_verify
 	libcxx-slot_verify
 einfo "FEATURES:  ${FEATURES}"
+	ccache-changes_yes_ccache "For reducing this monothic package rebuild time cost for 27+ vendored packages."
 }
 
 src_unpack() {
@@ -296,11 +297,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 src_install() {
 	cmake_src_install
-}
-
-src_install() {
-	cmake_src_install
-	#rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

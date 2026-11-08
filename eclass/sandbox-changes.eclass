@@ -9,6 +9,11 @@
 # @DESCRIPTION:
 # Display common sandbox changes required
 
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
 if [[ -z "${_SANDBOX_CHANGES_ECLASS}" ]] ; then
 _SANDBOX_CHANGES_ECLASS=1
 
