@@ -37,9 +37,10 @@ LLVM_COMPAT=(
 inherit ccache-changes cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 secure-version rocm-r1
 
 if [[ "${PV}" == *"9999" ]] ; then
-	EGIT_BRANCH="main"
-	EGIT_COMMIT="ac008259bb0d7be08d4a2ce36dab2e46383c9e63" # Oct 16, 2026 217/258
 	EGIT_REPO_URI="https://github.com/ROCm/TheRock.git"
+
+	FALLBACK_BRANCH_ROCM_THEROCK="main"
+	FALLBACK_COMMIT_ROCM_THEROCK="ac008259bb0d7be08d4a2ce36dab2e46383c9e63" # Oct 16, 2026 217/258
 
 	FALLBACK_BRANCH_ROCM_LIBRARIES="develop"
 	FALLBACK_COMMIT_ROCM_LIBRARIES="1702865a2f3950fba359989c74ca90263d245003" # Nov 6, 2026 163/210
