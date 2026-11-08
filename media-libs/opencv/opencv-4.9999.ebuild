@@ -1109,6 +1109,7 @@ pkg_setup() {
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	use java && java-pkg-opt-2_pkg_setup
 	python-single-r1_pkg_setup
+	rocm-r1_pkg_setup
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
