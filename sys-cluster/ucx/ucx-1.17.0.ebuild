@@ -28,27 +28,16 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
 )
 
-inherit hip-versions
 RDMA_CORE_PV="28.0"
-ROCM_VERSIONS=(
-	"${HIP_7_2_VERSION}"
-)
-gen_rocm_iuse() {
-	for ver in ${ROCM_VERSIONS[@]} ; do
-		local s="${ver//./_}"
-		s="${s%_*}"
-		echo "
-			rocm_${s}
-		"
-	done
-}
-ROCM_IUSE=(
-	$(gen_rocm_iuse)
-)
 UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
+CHKL_TIMESTAMPS=(
+	"sci-ml/therock-9999"
+	"sys-process/numactl-9999"
+)
+
 inherit autotools check-compiler-switch dep-prepare flag-o-matic libcxx-slot
-inherit libstdcxx-slot rocm linux-info toolchain-funcs
+inherit libstdcxx-slot rocm-r1 linux-info secure-version toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -65,7 +54,6 @@ SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
@@ -81,18 +69,7 @@ get_cuda_targets_required_use() {
 		"
 	done
 }
-gen_rocm_iuse_required_use() {
-	local u
-	for u in "${ROCM_IUSE[@]}" ; do
-		echo "
-			${u}? (
-				rocm
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_rocm_iuse_required_use)
 	$(get_cuda_targets_required_use)
 	?? (
 		cuda
@@ -126,25 +103,7 @@ REQUIRED_USE="
 			rocm
 		)
 	)
-	rocm? (
-		|| (
-			${ROCM_IUSE[@]}
-		)
-	)
 "
-gen_rocm_rdepend() {
-	local u
-	for u in ${ROCM_IUSE[@]} ; do
-		local s
-		s="${u/rocm_}"
-		s="${s//./_}"
-		echo "
-			${u}? (
-				dev-util/hip:${s}
-			)
-		"
-	done
-}
 CUDA_TOOLKIT_11_8_DEPENDS="
 	(
 		=dev-util/nvidia-cuda-toolkit-11.8*
@@ -165,23 +124,9 @@ CUDA_TOOLKIT_12_5_DEPENDS="
 		=dev-util/nvidia-cuda-toolkit-12.5*
 	)
 "
-ROCM_KFD_DEPEND="
-	rocm_7_2? (
-		rdma? (
-			|| (
-				virtual/kfd:0/7.2
-				virtual/kfd:0/7.1
-				virtual/kfd:0/7.0
-			)
-		)
-	)
-	virtual/kfd:=
-"
 RDEPEND="
-	${ROCM_KFD_DEPEND}
-	$(gen_rocm_rdepend)
 	cma? (
-		>=sys-libs/glibc-2.15
+		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	cuda_targets_sm_35? (
 		${CUDA_TOOLKIT_11_8_DEPENDS}
@@ -219,24 +164,24 @@ RDEPEND="
 		)
 	)
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-8.0
+		>=dev-util/nvidia-cuda-toolkit-8.0:=
 		dmabuf? (
-			>=dev-util/nvidia-cuda-toolkit-11.7[rdma]
-			x11-drivers/nvidia-drivers[kernel-open]
+			>=dev-util/nvidia-cuda-toolkit-11.7:=[rdma]
+			x11-drivers/nvidia-drivers:=[kernel-open]
 		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	dc? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 	debug? (
 		sys-libs/binutils-libs:=
 	)
 	devx? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 	dm? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 	dmabuf? (
 		!custom-kernel? (
@@ -259,40 +204,38 @@ RDEPEND="
 		)
 	)
 	gdrcopy? (
-		>=dev-libs/gdrcopy-2.3.1
+		>=dev-libs/gdrcopy-2.3.1:=
 	)
 	fuse3? (
-		sys-fs/fuse:3
+		sys-fs/fuse:3=
 	)
 	knem? (
-		sys-cluster/knem[modules]
+		sys-cluster/knem:=[modules]
 	)
 	mlx5-dv? (
 		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	numa? (
-		sys-process/numactl
+		>=sys-process/numactl-${NUMACTL_PV}:=
 	)
 	rc? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 	rocm? (
-		>=dev-util/hip-4.0[${LIBSTDCXX_USEDEP},rocm]
-		dev-util/hip:=
+		>=sci-ml/therock-${THEROCK_PV}:=
 	)
 	ud? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 	tm? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 	video_cards_intel? (
-		dev-libs/intel-compute-runtime[l0]
-		dev-libs/level-zero[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		dev-libs/level-zero:=
+		dev-libs/intel-compute-runtime:=[l0]
+		dev-libs/level-zero:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	verbs? (
-		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
 	)
 "
 DEPEND="
@@ -313,37 +256,20 @@ gen_clang_bdepend() {
 		"
 	done
 }
-gen_hip_clang_bdepend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s="0/${pv%.*}"
-		local u
-		u="${pv%.*}"
-		u="${u/./_}"
-		echo "
-			rocm_${u}? (
-				~sys-devel/llvm-roc-${pv}:=[${LIBSTDCXX_USEDEP}]
-				openmp? (
-					~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP}]
-				)
-			)
-		"
-	done
-}
 BDEPEND="
 	dev-build/autoconf
 	dev-build/automake
 	dev-build/libtool
 	virtual/pkgconfig
 	gcc? (
-		sys-devel/gcc[openmp?]
+		sys-devel/gcc:=[openmp?]
 		sys-devel/binutils
 	)
 	clang? (
 		$(gen_clang_bdepend)
 	)
 	hip-clang? (
-		$(gen_hip_clang_bdepend)
+		>=sci-ml/therock-${THEROCK_PV}:=
 	)
 "
 PATCHES=(
@@ -355,31 +281,9 @@ pkg_pretend() {
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 }
 
-_init_rocm_variables() {
-	if use rocm ; then
-		local pv
-		for pv in "${ROCM_VERSIONS[@]}" ; do
-			local s="${pv//./_}"
-			s="${s%_*}"
-			if use "rocm_${s}" ; then
-				export ROCM_SLOT="${pv%.*}"
-				local n="HIP_${s}_VERSION"
-				export ROCM_VERSION="${!n}"
-				local m="HIP_${s}_LLVM_SLOT"
-				export LLVM_SLOT="${!m}"
-				break
-			fi
-		done
-einfo "ROCM_SLOT:  ${ROCM_SLOT}"
-einfo "ROCM_VERSION:  ${ROCM_VERSION}"
-einfo "LLVM_SLOT:  ${LLVM_SLOT}"
-	fi
-}
-
 pkg_setup() {
 	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
-	_init_rocm_variables
 	if use clang ; then
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
@@ -399,7 +303,7 @@ pkg_setup() {
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 	fi
 	if use hip-clang ; then
-		rocm_pkg_setup
+		rocm-r1_pkg_setup
 	fi
 	linux-info_pkg_setup
 
@@ -480,21 +384,13 @@ src_prepare() {
 	default
 	eautoreconf
 	if use rocm ; then
-		local pv
-		for pv in ${ROCM_VERSIONS[@]} ; do
-			local s="${pv}"
-			s="${s%.*}"
-			s="${s/./_}"
-			if use "rocm_${s}" ; then
-einfo "Copying sources for ROCm ${pv}"
-				local ROCM_SLOT="${pv%.*}"
-				cp -a "${S}" "${S}_rocm_${s}" || die
-			fi
-		done
+einfo "Copying sources for ROCm"
+		cp -a "${S}" "${S}_rocm" || die
 	fi
 }
 
 _configure() {
+	chkl_check_many_timestamps
 	if use gcc ; then
 		local gcc_slot=12
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
@@ -593,7 +489,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use hip-clang && use openmp ; then
-		append-flags -I"${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include" -fopenmp=libomp
+		append-flags -I"${ESYSROOT}${ROCM_LLVM_PATH}/include" -fopenmp=libomp
 	fi
 
 	if use tm ; then
@@ -655,9 +551,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if [[ "${USE_ROCM}" == "1" ]] ; then
 		myconf+=(
-			--libdir="/opt/rocm-${ROCM_VERSION}/lib"
-			--prefix="/opt/rocm-${ROCM_VERSION}"
-			--with-rocm="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+			--libdir="${ROCM_PATH}/lib"
+			--prefix="${ROCM_PATH}"
+			--with-rocm="${ESYSROOT}${ROCM_PATH}"
 		)
 
 # Fix for:
@@ -672,7 +568,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		if [[ "${s/_/.}" == "6.2" ]] ; then
 			append-flags \
 				'-Wl,-fuse-ld=lld' \
-				-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
+				-Wl,-L"${ESYSROOT}${ROCM_PATH}/lib" \
 				-Wl,-lhsakmt-staticdrm \
 				-Wl,-ldrm
 		else
@@ -702,57 +598,27 @@ src_configure() {
 
 src_compile() {
 einfo "Building system ucx"
-	_configure
+	USE_ROCM=0 _configure
 	_compile
 	if use rocm ; then
-		local USE_ROCM=1
-		local pv
-		for pv in ${ROCM_VERSIONS[@]} ; do
-			local s="${pv}"
-			s="${s%.*}"
-			s="${s/./_}"
-			if use "rocm_${s}" ; then
-				local ROCM_SLOT="${pv%.*}"
-				local rocm_version="HIP_${s}_VERSION"
-				local ROCM_VERSION="${!rocm_version}"
-				local llvm_slot="HIP_${s}_LLVM_SLOT"
-				LLVM_SLOT="${!llvm_slot}"
-				pushd "${S}_rocm_${s}" >/dev/null 2>&1 || die
-einfo "Building for ROCm ${pv}"
-					rocm_pkg_setup
-					_configure
-					_compile
-				popd >/dev/null 2>&1 || die
-			fi
-		done
-		USE_ROCM=0
+		export LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		pushd "${S}_rocm" >/dev/null 2>&1 || die
+einfo "Building for ROCm"
+			rocm-r1_pkg_setup
+			USE_ROCM=1 _configure
+			_compile
+		popd >/dev/null 2>&1 || die
 	fi
 }
 
 src_install() {
 	default
 	if use rocm ; then
-		local USE_ROCM=1
-		local pv
-		for pv in ${ROCM_VERSIONS[@]} ; do
-			local s="${pv}"
-			s="${s%.*}"
-			s="${s/./_}"
-			if use "rocm_${s}" ; then
-einfo "Installing for ROCm ${pv}"
-				local ROCM_SLOT="${pv%.*}"
-				local rocm_version="HIP_${s}_VERSION"
-				local ROCM_VERSION="${!rocm_version}"
-				pushd "${S}_rocm_${s}" >/dev/null 2>&1 || die
-					default
-				popd >/dev/null 2>&1 || die
-				EROCM_PATH="/opt/rocm-${ROCM_VERSION}"
-				EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
-				EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
-				rocm_fix_rpath "${ED}/opt/rocm-${ROCM_VERSION}"
-			fi
-		done
-		USE_ROCM=0
+einfo "Installing for ROCm"
+		pushd "${S}_rocm" >/dev/null 2>&1 || die
+			default
+		popd >/dev/null 2>&1 || die
+		# TODO verify rpath
 	fi
 	find "${ED}" -type f -name '*.la' -delete || die
 }
