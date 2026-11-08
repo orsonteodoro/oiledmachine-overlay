@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# TODO:  merge/enable llvm-roc-libomp in this ebuild
+
 # GH timestamp for tagged release in "Aug 11, 2025 7:47 AM PDT" format
 TAG_TIMESTAMP="Sep 7, 2026 4:34 PM PDT" # Do not change the format
 
