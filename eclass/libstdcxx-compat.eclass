@@ -77,21 +77,40 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 # )
 #
 LIBSTDCXX_COMPAT_ROCM=(
-	"gcc_slot_12_5" # Support ROCm 7.2
-	"gcc_slot_13_4" # Support ROCm 7.2
+	"gcc_slot_13_4" # Support ROCm 10.1, live
+	"gcc_slot_13_4" # Support ROCm 10.1, live
+	"gcc_slot_14_3" # Support ROCm 10.1, live
+	"gcc_slot_15_3" # Support ROCm 10.1, live
 )
 
-# GCC_COMPAT template for ROCm 7.2 based apps/libs with latest security update
+# GCC_COMPAT template for ROCm 10.1 based apps/libs with latest security update
 #
 # Example:
 #
 # GCC_COMPAT=(
-#     ${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+#     ${LIBSTDCXX_COMPAT_ROCM_10_1[@]}
 # )
 #
-LIBSTDCXX_COMPAT_ROCM_7_2=(
-	"gcc_slot_12_5" # Support 7.2
-	"gcc_slot_13_4" # Support 7.2
+LIBSTDCXX_COMPAT_ROCM_10_1=(
+	"gcc_slot_13_4" # Support ROCm 10.1
+	"gcc_slot_13_4" # Support ROCm 10.1
+	"gcc_slot_14_3" # Support ROCm 10.1
+	"gcc_slot_15_3" # Support ROCm 10.1
+)
+
+# GCC_COMPAT template for ROCm live (aka amd-staging) based apps/libs with latest security update
+#
+# Example:
+#
+# GCC_COMPAT=(
+#     ${LIBSTDCXX_COMPAT_ROCM_9999[@]}
+# )
+#
+LIBSTDCXX_COMPAT_ROCM_9999=(
+	"gcc_slot_13_4" # Support ROCm live
+	"gcc_slot_13_4" # Support ROCm live
+	"gcc_slot_14_3" # Support ROCm live
+	"gcc_slot_15_3" # Support ROCm live
 )
 
 # GCC_COMPAT template for CUDA based apps/libs

@@ -1,67 +1,8 @@
 # Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
-HIP_7_2_VERSION="7.2.4"
+HIP_10_1_VERSION="10.1"
+HIP_9999_VERSION="9999"
 
-HIP_7_2_LLVM_SLOT="22"
-
-# rocBLAS_PV  GCC_VER  U_VER
-# 4.1.0       6.1.0
-# 4.5.2       6.1.0
-# 5.1.3       6.1.0
-# 5.2.3       6.1.0
-# 5.3.3       12.1.0   22.04
-# 5.5.3       9.1.0    20.04
-# 6.1.0       12.1.0   22.04
-# 6.2.2       9.1.0    20.04
-# 6.2.2       12.1.0   22.04
-# 6.2.2       13.2.0   24.04
-# 7.2.4       12.1.0   22.04
-# 7.2.4       13.2.0   24.04
-
-# Upstream preference
-HIP_7_2_GLIBCXX_MIN="3.4.30" # GCC 12.1.0
-
-# Upstream preference
-HIP_7_2_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
-
-# oiledmachine-overlay preference
-# The choice of GLIBCXX and GCC_SLOT maximum currently is based on rebuild mood.
-# You can fork this eclass and change it, but it should not be more than upstream's GLIBCXX_MAX.
-# The limits can change based on...
-# 1. The highest upstream preference (GLIBCXX_MAX).
-# 2. HIPIFY CUDA requirement.
-# 3. Testing between HIP and CUDA.
-HIP_7_2_GLIBCXX="3.4.32" # GCC 13.2.0
-
-_hip_set_globals() {
-	local hip_platform="${HIP_PLATFORM:-amd}"
-	if [[ "${hip_platform}" == "amd" ]] ; then
-	# Based on GLIBCXX version correspondance in rocBLAS linking to libstdc++
-	# For HIP_PLATFORM == amd.
-	#		  This distro # Upstream
-		HIP_7_2_GCC_SLOT="13" # GCC 12.1 U22, GCC 13.2 U24
-	else
-	# The GCC slots listed is based on the max GCC allowed in the dev-util/nvidia-cuda-toolkit ebuild.
-	# For HIP_PLATFORM == nvidia.
-		HIP_7_2_GCC_SLOT="14" # CUDA 12.9
-	fi
-}
-
-_hip_set_globals
-unset -f _hip_set_globals
-
-# CUDA;DRIVER_VERSION;CUDNN_MIN;CUDNN_MAX as data type
-# CUDNN version range based on cudnn ebuilds.
-HIPIFY_7_2_CUDA_SLOTS=(
-	"11.8;520.61;=,8.6.0;=,8.6"
-	"12.3;545.23;>=,8.8.0;<,9.25.0"
-	"12.4;550.54;>=,8.8.0;<,9.25.0"
-	"12.5;555.42;>=,8.8.0;<,9.25.0"
-	"12.6;560.35;>=,8.8.0;<,9.25.0"
-	"12.8;570.211;>=,8.8.0;<,9.25.0"
-	"12.9;575.57;>=,8.8.0;<,9.25.0"
-)
-
-# Limited by prebuilt binaries
-HIP_7_2_LIBSTDCXX_SLOTS=( "12.5" "13.4" )
+HIP_10_1_LLVM_SLOT="24"
+HIP_9999_LLVM_SLOT="24"

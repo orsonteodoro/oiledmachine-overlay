@@ -1,0 +1,36 @@
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CXX_STANDARD="ignore"
+LIBCXX_SLOT_VERIFY=0
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_ROCM_9999[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_CXX20_ROCM_9999[@]/llvm_slot_}"
+)
+
+inherit libcxx-slot libstdcxx-slot secure-version rocm-r1
+
+#KEYWORDS="~amd64"
+
+DESCRIPTION="HIP metapackage"
+HOMEPAGE=""
+LICENSE="metapackage"
+SLOT="0/${ROCM_SLOT}"
+IUSE="
+"
+REQUIRED_USE="
+"
+RDEPEND="
+	~sci-ml/rocm-systems-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	~sci-ml/rocm-libraries-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	~sys-devel/hip-clang-${PV}[${LIBSTDCXX_USEDEP}]
+"

@@ -188,15 +188,29 @@ CLANG_22_1_5="220105"
 CLANG_22_1_6="220106"
 CLANG_22_1_7="220107"
 CLANG_22_1_8="220108"
+CLANG_23_1_0="230100"
+CLANG_23_1_1="230101"
+CLANG_23_1_2="230102"
+CLANG_23_1_3="230103"
+CLANG_23_1_4="230104"
+CLANG_23_1_5="230105"
+CLANG_24_0_0="240000"
 
 # @ECLASS_VARIABLE: _ALL_LLVM_COMPAT
 # @DESCRIPTION:
 # All Clang point versions available by distro repo.
 # Live is not supported
 _ALL_LLVM_COMPAT=(
-	{11..22}
+	{11..24}
 )
 _ALL_LLVM_COMPAT2=(
+	"24_0_0"
+	"23_1_5"
+	"23_1_4"
+	"23_1_3"
+	"23_1_2"
+	"23_1_1"
+	"23_1_0"
 	"22_1_8"
 	"22_1_7"
 	"22_1_6"

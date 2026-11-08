@@ -1,0 +1,306 @@
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# Live is only supported on oiledmachine-overlay.  Reasons:
+# For miscompilation mitigation and version alignment with ROCm/llvm-project
+# For ROCm/amdgpu version alignment and for security mitigation.
+# Monolithic is used to speed up and simplify packaging.
+# Prevent the insecure-unmaintained gstreamer distro ebuild divide and conquer scenario
+
+# The following commit is chosen if all are true:
+# "TheRock Multi-Arch CI ASAN Nightly" passed
+# >= 170/200 checks passed
+
+# CI: U22, U24
+
+CXX_STANDARD=20 # Most default to 17 but some default to 20
+LLVM_SLOT=24
+PYTHON_COMPAT=( "python3_"{11..15} )
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX20[@]}"
+)
+
+inherit check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 rocm-r1
+
+if [[ "${PV}" == *"9999" ]] ; then
+	EGIT_BRANCH="develop"
+	EGIT_REPO_URI="https://github.com/ROCm/rocm-systems"
+	FALLBACK_COMMIT="666d066f964d9a206ce0080ac155de0a1a285a90" # Nov 7, 2026
+	if [[ "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	ABSEIL_CPP_COMMIT="255c84dadd029fd8ad25c5efb5933e47beaa00c7"
+	CEREAL_COMMIT="40a30defcb8874270a04836d316502b08904b2bc"
+	DOXYGEN_AWESOME_CSS_COMMIT="df83fbf22cfff76b875c13d324baf584c74e96d0"
+	DYNINST_COMMIT="d5adcef5fb64965beee445d16ce2a6f2c08c2496"
+	ELFIO_COMMIT="575bfdb12cd90fa8913660295103549f151d116a"
+	FILESYSTEM_COMMIT_1="8a2edd6d92ed820521d42c94d179462bf06b5ed3"
+	FILESYSTEM_COMMIT_2="8a2edd6d92ed820521d42c94d179462bf06b5ed3"
+	FMT_COMMIT_1="407c905e45ad75fc29bf0f9bb7c5c2fd3475976f"
+	FMT_COMMIT_2="123913715afeb8a437e6388b4473fcc4753e1c9a"
+	FMT_COMMIT_3="1be298e1bd68957e4cd352e1f676f00e07dcfb57"
+	FMT_COMMIT_4="407c905e45ad75fc29bf0f9bb7c5c2fd3475976f"
+	GLOG_COMMIT="7b134a5c82c0c0b5698bb6bf7a835b230c5638e4"
+	GOOGLETEST_COMMIT_1="46db91ef6ffcc128b2d5f31118ae1108109e3400"
+	GOOGLETEST_COMMIT_2="6ec14dfd8c409d05fba94e18e3a02df35b874353"
+	GOOGLETEST_COMMIT_3="52eb8108c5bdec04579160ae17225d66034bd723"
+	GOTCHA_COMMIT="b944da10ff9b3364ef2e4b12e02cb2464e05dd48"
+	#JSON_COMMIT_1="" # Removed in 5ffe6a3
+	JSON_COMMIT_2="e41905fcb0938a7502d25ea5242c6b41396e21b0"
+	JSON_COMMIT_3="55f93686c01528224f448c19128836e7df245f72"
+	JSON_COMMIT_4="98386eb08b609c172f9f4bf3e74c8d18c5ad583c"
+	KOKKOS_COMMIT="1a0c2ff6daf1068c65529ec04c2c046177847869"
+	#MSCCLPP_COMMIT="" # Removed in 5ffe6a3
+	ONETBB_COMMIT="f1862f38f83568d96e814e469ab61f88336cc595"
+	OPENCODE_COMMIT="a35b8a95c27d28e979a3826e1289d7ee87f40251"
+	PAPI_COMMIT="c27003e1642f1c151c9b18ef9e7610072b3c852d"
+	PERFETTO_COMMIT_1="eb5ef24c58d13cec289d733d03f0f3f0ed321b12"
+	PERFETTO_COMMIT_2="eb5ef24c58d13cec289d733d03f0f3f0ed321b12"
+	PERFETTO_COMMIT_3="35b3d9845c2f4017865c4dc93fafcf6d202f1651"
+	PTL_COMMIT="48df41625430d27ce43cf197fd467a8dda87cb45"
+	PYBIND11_COMMIT_1="914c06fb252b6cc3727d0eedab6736e88a3fcb01"
+	PYBIND11_COMMIT_2="1a917f1852eb7819b671fc3fa862840f4c491a07"
+	PYYAML_COMMIT="49790e73684bebad1df05ef8d828fa12f685bffb"
+	SPDLOG_COMMIT="79524ddd08a4ec981b7fea76afd08ee05f83755d"
+	SQLITE_COMMIT="f5fb820c0f4781337faf02ed871be68d13a83d94"
+	TIMEMORY_COMMIT="0bd2e58a3543f0535aceb4a88804b7f343937b89"
+	YAML_CPP_COMMIT="7b469b4220f96fb3d036cf68cd7bd30bd39e61d2"
+
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/rocm_smi_lib-rocm-${PV}"
+	SRC_URI="
+https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-${PV}.tar.gz
+	-> rocm-systems-${PV}.tar.gz
+
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
+https://github.com/fmtlib/fmt/archive/${FMT_COMMIT_1}.tar.gz
+	-> fmt-${FMT_COMMIT_1:0:7}.tar.gz
+https://github.com/fmtlib/fmt/archive/${FMT_COMMIT_2}.tar.gz
+	-> fmt-${FMT_COMMIT_2:0:7}.tar.gz
+https://github.com/fmtlib/fmt/archive/${FMT_COMMIT_3}.tar.gz
+	-> fmt-${FMT_COMMIT_3:0:7}.tar.gz
+https://github.com/fmtlib/fmt/archive/${FMT_COMMIT_4}.tar.gz
+	-> fmt-${FMT_COMMIT_4:0:7}.tar.gz
+https://github.com/gabime/spdlog/archive/${SPDLOG_COMMIT}.tar.gz
+	-> spdlog-${SPDLOG_COMMIT:0:7}.tar.gz
+https://github.com/google/glog/archive/${GLOG_COMMIT}.tar.gz
+	-> glog-${GLOG_COMMIT:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_1}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_1:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_2}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_2:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_3}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_3:0:7}.tar.gz
+https://github.com/google/perfetto/archive/${PERFETTO_COMMIT_1}.tar.gz
+	-> perfetto-${PERFETTO_COMMIT_1:0:7}.tar.gz
+https://github.com/google/perfetto/archive/${PERFETTO_COMMIT_2}.tar.gz
+	-> perfetto-${PERFETTO_COMMIT_2:0:7}.tar.gz
+https://github.com/google/perfetto/archive/${PERFETTO_COMMIT_3}.tar.gz
+	-> perfetto-${PERFETTO_COMMIT_3:0:7}.tar.gz
+https://github.com/gulrak/filesystem/archive/${FILESYSTEM_COMMIT_1}.tar.gz
+	-> gulrak-filesystem-${FILESYSTEM_COMMIT_1:0:7}.tar.gz
+https://github.com/gulrak/filesystem/archive/${FILESYSTEM_COMMIT_2}.tar.gz
+	-> gulrak-filesystem-${FILESYSTEM_COMMIT_2:0:7}.tar.gz
+https://github.com/icl-utk-edu/papi/archive/${PAPI_COMMIT}.tar.gz
+	-> papi-${PAPI_COMMIT:0:7}.tar.gz
+https://github.com/jbeder/yaml-cpp/archive/${YAML_CPP_COMMIT}.tar.gz
+	-> jbeder-yaml-cpp-${YAML_CPP_COMMIT:0:7}.tar.gz
+https://github.com/jothepro/doxygen-awesome-css/archive/${DOXYGEN_AWESOME_CSS_COMMIT}.tar.gz
+	-> doxygen-awesome-css-${DOXYGEN_AWESOME_CSS_COMMIT:0:7}.tar.gz
+https://github.com/jrmadsen/cereal/archive/${CEREAL_COMMIT}.tar.gz
+	-> cereal-${CEREAL_COMMIT:0:7}.tar.gz
+https://github.com/jrmadsen/PTL/archive/${PTL_COMMIT}.tar.gz
+	-> PTL-${PTL_COMMIT:0:7}.tar.gz
+https://github.com/kokkos/kokkos/archive/${KOKKOS_COMMIT}.tar.gz
+	-> kokkos-${KOKKOS_COMMIT:0:7}.tar.gz
+https://github.com/nlohmann/json/archive/${JSON_COMMIT_2}.tar.gz
+	-> nlohmann-json-${JSON_COMMIT_2:0:7}.tar.gz
+https://github.com/nlohmann/json/archive/${JSON_COMMIT_3}.tar.gz
+	-> nlohmann-json-${JSON_COMMIT_3:0:7}.tar.gz
+https://github.com/nlohmann/json/archive/${JSON_COMMIT_4}.tar.gz
+	-> nlohmann-json-${JSON_COMMIT_4:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_1:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_2:0:7}.tar.gz
+https://github.com/ROCm/dyninst/archive/${DYNINST_COMMIT}.tar.gz
+	-> dyninst-${DYNINST_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/GOTCHA/archive/${GOTCHA_COMMIT}.tar.gz
+	-> GOTCHA-${GOTCHA_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/timemory/archive/${TIMEMORY_COMMIT}.tar.gz
+	-> timemory-${TIMEMORY_COMMIT:0:7}.tar.gz
+https://github.com/serge1/ELFIO/archive/${ELFIO_COMMIT}.tar.gz
+	-> ELFIO-${ELFIO_COMMIT:0:7}.tar.gz
+https://github.com/sqlite/sqlite/archive/${SQLITE_COMMIT}.tar.gz
+	-> sqlite-${SQLITE_COMMIT:0:7}.tar.gz
+https://github.com/sst/opencode/archive/${OPENCODE_COMMIT}.tar.gz
+	-> opencode-${OPENCODE_COMMIT:0:7}.tar.gz
+https://github.com/uxlfoundation/oneTBB/archive/${ONETBB_COMMIT}.tar.gz
+	-> oneTBB-${ONETBB_COMMIT:0:7}.tar.gz
+https://github.com/yaml/pyyaml/archive/${PYYAML_COMMIT}.tar.gz
+	-> pyyaml-${PYYAML_COMMIT:0:7}.tar.gz
+	"
+fi
+
+DESCRIPTION="The ROCm Systems super-repo"
+HOMEPAGE="https://github.com/ROCm/rocm-systems"
+LICENSE="
+	MIT
+"
+RESTRICT="mirror" # Prevent snooping and speed up downloads
+SLOT="0/${ROCM_SLOT}"
+IUSE+=" ebuild_revision_0"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+"
+BANNED_RDEPEND="
+	!dev-libs/hipother
+	!dev-libs/ROCdbgapi
+	!dev-libs/rocm-core
+	!dev-libs/rocm-debug-agent
+	!dev-libs/rocr-runtime
+	!dev-libs/rocprofiler-register
+	!dev-libs/hsa-amd-aqlprofile
+	!dev-util/hip
+	!dev-util/amd-smi
+	!dev-util/rocm-smi
+	!dev-util/rocminfo
+	!dev-util/rocprofiler-compute
+	!dev-util/rocprofiler-systems
+	!dev-util/roctracer
+	!media-libs/rocJPEG
+	!sci-libs/rocDecode
+	!sys-apps/cuid
+	!sys-cluster/rdc
+	!sys-cluster/rocSHMEM
+"
+RDEPEND="
+	${BANNED_RDEPEND}
+	${PYTHON_DEPS}
+	sys-apps/hwdata:=
+	virtual/kfd:=
+	|| (
+		>=virtual/kfd-10:0/10
+	)
+"
+BDEPEND="
+	${ROCM_GCC_DEPEND}
+	=sys-devel/hip-clang-9999
+	>=dev-build/cmake-3.16.8
+	virtual/pkgconfig
+"
+PATCHES=(
+)
+
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+	rocm-r1_pkg_setup
+	libstdcxx-slot_verify
+	libcxx-slot_verify
+einfo "FEATURES:  ${FEATURES}"
+}
+
+src_unpack() {
+	if [[ "${PV}" == *"9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_prepare() {
+	if [[ "${PV}" == *"9999" ]] ; then
+		dep_prepare_mv "${WORKDIR}/opencode-${OPENCODE_COMMIT}" "${S}/experimental/python/perfxpert/opencode"
+		#dep_prepare_mv "${WORKDIR}/mscclpp-${MSCCLPP_COMMIT}" "${S}/projects/rccl/ext-src/mscclpp" # Removed in 5ffe6a3
+		#dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_1}" "${S}/projects/rccl/ext-src/json" # Removed in 5ffe6a3
+		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" "${S}/projects/rocprofiler/plugin/perfetto/perfetto"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/googletest"
+		dep_prepare_mv "${WORKDIR}/glog-${GLOG_COMMIT}" "${S}/projects/rocprofiler-register/external/glog"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/fmt"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_2}" "${S}/projects/rocprofiler-register/external/fmt"
+		dep_prepare_mv "${WORKDIR}/doxygen-awesome-css-${DOXYGEN_AWESOME_CSS_COMMIT}" "${S}/projects/rocprofiler-sdk/external/doxygen-awesome-css"
+		dep_prepare_mv "${WORKDIR}/PTL-${PTL_COMMIT}" "${S}/projects/rocprofiler-sdk/external/ptl"
+		dep_prepare_mv "${WORKDIR}/cereal-${CEREAL_COMMIT}" "${S}/projects/rocprofiler-sdk/external/cereal"
+		dep_prepare_mv "${WORKDIR}/filesystem-${FILESYSTEM_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/filesystem"
+		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}" "${S}/projects/rocprofiler-sdk/external/perfetto"
+		dep_prepare_mv "${WORKDIR}/ELFIO-${ELFIO_COMMIT}" "${S}/projects/rocprofiler-sdk/external/elfio"
+		dep_prepare_mv "${WORKDIR}/yaml-cpp-${YAML_CPP_COMMIT}" "${S}/projects/rocprofiler-sdk/external/yaml-cpp"
+		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_2}" "${S}/projects/rocprofiler-sdk/external/json"
+		dep_prepare_mv "${WORKDIR}/sqlite-${SQLITE_COMMIT}" "${S}/projects/rocprofiler-sdk/external/sqlite"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/projects/rocprofiler-sdk/external/pybind11"
+		dep_prepare_mv "${WORKDIR}/GOTCHA-${GOTCHA_COMMIT}" "${S}/projects/rocprofiler-sdk/external/gotcha"
+		dep_prepare_mv "${WORKDIR}/timemory-${TIMEMORY_COMMIT}" "${S}/projects/rocprofiler-systems/external/timemory"
+		dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT_3}" "${S}/projects/rocprofiler-systems/external/perfetto"
+		dep_prepare_mv "${WORKDIR}/dyninst-${DYNINST_COMMIT}" "${S}/projects/rocprofiler-systems/external/dyninst"
+		dep_prepare_mv "${WORKDIR}/kokkos-${KOKKOS_COMMIT}" "${S}/projects/rocprofiler-systems/examples/lulesh/external/kokkos"
+		dep_prepare_mv "${WORKDIR}/papi-${PAPI_COMMIT}" "${S}/projects/rocprofiler-systems/external/papi"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/projects/rocprofiler-systems/external/pybind11"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_2}" "${S}/projects/rocprofiler-systems/external/googletest"
+		dep_prepare_mv "${WORKDIR}/filesystem-${FILESYSTEM_COMMIT_2}" "${S}/projects/rocprofiler-systems/external/filesystem"
+		dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/projects/rocprofiler-systems/external/spdlog"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_3}" "${S}/projects/rocprofiler-systems/external/fmt"
+		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_3}" "${S}/projects/rocprofiler-systems/external/json"
+		dep_prepare_mv "${WORKDIR}/pyyaml-${PYYAML_COMMIT}" "${S}/projects/rocprofiler-compute/src/vendored/pyyaml"
+		dep_prepare_mv "${WORKDIR}/oneTBB-${ONETBB_COMMIT}" "${S}/projects/rocprofiler-systems/external/onetbb"
+		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/projects/rocprofiler-sdk/external/abseil-cpp"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_3}" "${S}/projects/rocprofiler-compute/src/lib/external/googletest"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_4}" "${S}/projects/rocprofiler-compute/src/lib/external/fmt"
+		dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_4}" "${S}/projects/rocprofiler-compute/src/lib/external/json"
+	fi
+	cmake_src_prepare
+}
+
+src_configure() {
+	rocm-r1_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${ROCM_PATH}"
+	)
+	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+}
+
+src_install() {
+	cmake_src_install
+	#rocm_mv_docs
+}
+
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
