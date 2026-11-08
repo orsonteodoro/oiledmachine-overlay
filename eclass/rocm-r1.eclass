@@ -19,11 +19,14 @@ esac
 if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
+# It is assumed monoslot for rocm-system, rocm-libraries
+
 : ${ROCM_DISABLE_CCACHE:=0}
 : ${ROCM_LLVM_PATH:="/opt/rocm"}
+: ${ROCM_LLVM_SLOT:="24"}
+: ${ROCM_SLOT:="9999"}
 : ${ROCM_VERSION:="${PV}"}
 
-inherit hip-versions
 inherit flag-o-matic toolchain-funcs
 
 # @FUNCTION:  rocm_pkg_setup
@@ -69,18 +72,12 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 # @DESCRIPTION:
 # Sets compiler defaults to clang to avoid primarily linker errors.
 rocm-r1_set_default_clang() {
-	if [[ -z "${ROCM_SLOT}" ]] ; then
-eerror "QA:  ROCM_SLOT needs to be defined."
-		die
-	fi
-
 	if [[ "${FEATURES}" =~ "ccache" && "${ROCM_DISABLE_CCACHE}" != "1" ]] ; then
 	# Placed here to unbreak ccache with gcc.
 		export CCACHE_PATH="${ROCM_LLVM_PATH}/bin"
 	fi
 
-	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-	llvm_slot="${!_llvm_slot}"
+	local llvm_slot="${ROCM_LLVM_SLOT}"
 	export CC="${CHOST}-clang-${llvm_slot}"
 	export CXX="${CHOST}-clang++-${llvm_slot}"
 	export CPP="${CC} -E"
@@ -101,13 +98,7 @@ einfo "PATH:  ${PATH}"
 # @DESCRIPTION:
 # Sets compiler defaults to clang to avoid primarily linker errors.
 rocm-r1_set_default_hip_clang() {
-	if [[ -z "${ROCM_SLOT}" ]] ; then
-eerror "QA:  ROCM_SLOT needs to be defined."
-		die
-	fi
-
-	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-	llvm_slot="${!_llvm_slot}"
+	local llvm_slot="${ROCM_LLVM_SLOT}"
 	export CC="amdclang"
 	export CXX="amdclang++"
 	export CPP="${CC} -E"
@@ -128,11 +119,6 @@ einfo "PATH:  ${PATH}"
 # @DESCRIPTION:
 # Sets compiler defaults for hipcc.
 rocm-r1_set_default_hipcc() {
-	if [[ -z "${ROCM_SLOT}" ]] ; then
-eerror "QA:  ROCM_SLOT needs to be defined."
-		die
-	fi
-
 	if [[ "${FEATURES}" =~ "ccache" && "${ROCM_DISABLE_CCACHE}" != "1" ]] ; then
 	# Placed here to unbreak ccache with gcc.
 		export CCACHE_PATH="${ROCM_LLVM_PATH}/bin"

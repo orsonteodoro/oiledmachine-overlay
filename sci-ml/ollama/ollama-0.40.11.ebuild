@@ -596,8 +596,6 @@ LLMS=(
 	"${COMMUNITY_LLMS[@]}"
 )
 
-inherit hip-versions
-
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
@@ -2413,21 +2411,8 @@ DEPEND="
 		>=dev-util/vulkan-headers-${VULKAN_PV}:=
 	)
 "
-gen_rocm_bdepend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		s="${s/./_}"
-		echo "
-			rocm_${s}? (
-			)
-		"
-	done
-}
 BDEPEND="
 	$(gen_clang_bdepend)
-	$(gen_rocm_bdepend)
 	>=dev-build/cmake-3.31.2
 	>=dev-lang/go-${GO_PV}:=
 	>=sys-devel/gcc-11.4.0
@@ -2668,9 +2653,7 @@ ewarn "If a prebuilt LLM is marked all-rights-reserved, it is a placeholder and 
 		unset CPP
 	elif use rocm ; then
 		# Placeholders
-		export LLVM_SLOT="${HIP_9999_LLVM_SLOT}"
-		export ROCM_SLOT="9999"
-		export ROCM_VERSION="${HIP_9999_VERSION}"
+		export LLVM_SLOT="${ROCM_LLVM_SLOT}"
 		rocm-r1_pkg_setup
 
 # GCC required to avoid this error:
