@@ -288,6 +288,7 @@ REQUIRED_USE="
 BANNED_RDEPEND="
 	!dev-build/rocm-cmake
 	!dev-libs/rocm-comgr
+	!dev-libs/rocm-device-libs
 	!dev-libs/rocm-opencl-runtime
 	!dev-util/HIPIFY
 	!dev-util/hipify-clang
