@@ -33,12 +33,12 @@ LLVM_COMPAT=(
 	24 # Align with HIP-Clang
 )
 
-inherit ccache-changes check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 rocm-r1
+inherit ccache-changes check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 secure-version rocm-r1
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="develop"
 	EGIT_REPO_URI="https://github.com/ROCm/rocm-systems"
-	FALLBACK_COMMIT="704b5fd969e19a073d26859afb54db8085479e22" # Nov 5, 2026 10:17 PM PST, 171/203
+	FALLBACK_COMMIT="16ad3db387ae21d3618bf15293c4ab7b700dbb19" # Nov 7, 2026 2:25 PM PST
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -184,8 +184,13 @@ https://github.com/yaml/pyyaml/archive/${PYYAML_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="The ROCm Systems super-repo"
-HOMEPAGE="https://github.com/ROCm/rocm-systems"
+DESCRIPTION="The HIP Environment and ROCm Kit - A lightweight open source build system for HIP and ROCm"
+HOMEPAGE="
+	https://github.com/ROCm/TheRock
+	https://github.com/ROCm/rocm-docs
+	https://github.com/ROCm/rocm-libraries
+	https://github.com/ROCm/rocm-systems
+"
 LICENSE="
 	MIT
 "
@@ -379,5 +384,3 @@ src_compile() {
 src_install() {
 	cmake_src_install
 }
-
-# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
