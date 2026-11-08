@@ -16,7 +16,8 @@ EAPI=8
 #   unpatched vulnerabilities caused by many split ebuilds due to the wrong design
 #   choice, laziness, testing excuses, slave labor menial human labor preference
 #   over rule based automation or AI.  More ebuilds creates more maintenance
-#   debt and more code review rejection excuses that prevent remediation.
+#   debt and more code review rejection excuses by insider threats that prevent
+#   remediation.
 #
 
 # The following commit is chosen if all are true:
