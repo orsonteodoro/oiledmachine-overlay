@@ -206,7 +206,9 @@ LICENSE="
 "
 RESTRICT="mirror" # Prevent snooping and speed up downloads
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" ebuild_revision_0"
+IUSE+=" test
+ebuild_revision_0
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -254,17 +256,82 @@ BANNED_RDEPEND="
 	!sys-cluster/rdc
 	!sys-cluster/rocSHMEM
 "
+THE_ROCK_PYTHON_DEPEND="
+	>=dev-python/cppheaderparser-2.7.4[${PYTHON_USEDEP}]
+	>=dev-python/build-1.2.2[${PYTHON_USEDEP}]
+	>=dev-python/meson-1.7.0[${PYTHON_USEDEP}]
+	~dev-python/packaging-25.0[${PYTHON_USEDEP}]
+	>=dev-python/pre-commit-4.3.0[${PYTHON_USEDEP}]
+	>=dev-python/python-magic-0.4.27[${PYTHON_USEDEP}]
+	~dev-python/pyyaml-6.0.2[${PYTHON_USEDEP}]
+	>=dev-python/pyzstd-0.16.0[${PYTHON_USEDEP}]
+	>=dev-python/zlib-ng-1.0.0[${PYTHON_USEDEP}]
+
+	>=dev-python/setuptools-80.9.0[${PYTHON_USEDEP}]
+	<dev-python/setuptools-82.0.0[${PYTHON_USEDEP}]
+
+	~dev-python/pytest-cmake-0.13.0[${PYTHON_USEDEP}]
+	>=dev-python/mako-1.1.3[${PYTHON_USEDEP}]
+	>=dev-python/jinja2-3.0.0[${PYTHON_USEDEP}]
+	>=dev-python/pyelftools-0.29[${PYTHON_USEDEP}]
+
+	>=dev-python/boto3-1.42.79[${PYTHON_USEDEP}]
+	<dev-python/boto3-1.42.85[${PYTHON_USEDEP}]
+
+	>=dev-python/joblib-1.4.2[${PYTHON_USEDEP}]
+	>=dev-python/msgpack-1.1.0[${PYTHON_USEDEP}]
+
+	>=dev-python/zstandard-0.19.0[${PYTHON_USEDEP}]
+
+	~dev-python/lit-18.1.8[${PYTHON_USEDEP}]
+
+	~dev-python/psutil-7.1.3[${PYTHON_USEDEP}]
+
+	>=dev-python/cxxheaderparser-1.3.1[${PYTHON_USEDEP}]
+"
 RDEPEND="
 	${BANNED_RDEPEND}
+	${THE_ROCK_PYTHON_DEPEND}
 	${PYTHON_DEPS}
 	sys-apps/hwdata:=
 	~virtual/kfd-${PV}:=
+
+"
+THEROCK_TEST_DEPEND="
+	~dev-python/boto3-1.39.15[${PYTHON_USEDEP}]
+	~dev-python/pytest-9.0.3[${PYTHON_USEDEP}]
+	~dev-python/pytest-check-2.5.3[${PYTHON_USEDEP}]
+	~dev-python/pytest-cov-6.0.0[${PYTHON_USEDEP}]
+	~dev-python/pytest-timeout-2.4.0[${PYTHON_USEDEP}]
+	~dev-python/perfetto-0.7.0[${PYTHON_USEDEP}]
+	~dev-python/pyyaml-6.0.2[${PYTHON_USEDEP}]
+	>=dev-python/pyzstd-0.16.0[${PYTHON_USEDEP}]
+	>=dev-python/zlib-ng-1.0.0[${PYTHON_USEDEP}]
+	~dev-python/prettytable-3.12.0[${PYTHON_USEDEP}]
+	~dev-python/requests-2.33.0[${PYTHON_USEDEP}]
+	~dev-python/packaging-25.0[${PYTHON_USEDEP}]
+	~dev-python/python-debian-1.1.1[${PYTHON_USEDEP}]
+
+	>=dev-python/setuptools-80.9.0[${PYTHON_USEDEP}]
+	<dev-python/setuptools-82.0.0[${PYTHON_USEDEP}]
+
+	~dev-python/python-magic-0.4.27[${PYTHON_USEDEP}]
+
+	~dev-python/psutil-7.1.3[${PYTHON_USEDEP}]
+
+	>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
+
+	~dev-python/cmake-parser-0.9.2[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	=sys-devel/hip-clang-${PV}:=
+	dev-util/patchelf
 	virtual/pkgconfig
+	test? (
+		${THEROCK_TEST_DEPEND}
+	)
 "
 #PATCHES=(
 #)
