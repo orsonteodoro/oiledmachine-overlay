@@ -5,11 +5,18 @@ EAPI=8
 
 # This ebuild contains AI generated edits/suggestions.
 
-# Live is only supported on oiledmachine-overlay.  Reasons:
-# For miscompilation mitigation and version alignment with ROCm/llvm-project
-# For ROCm/amdgpu version alignment and for security mitigation.
-# Monolithic is used to speed up and simplify packaging.
-# Prevent the insecure-unmaintained gstreamer distro ebuild divide and conquer scenario
+#
+# Live and latest release is only supported on oiledmachine-overlay.  Reasons:
+#
+# * For miscompilation mitigation and version alignment with ROCm/llvm-project
+# * For ROCm/amdgpu (aka out of tree kernel driver's) version alignment and
+#   for security mitigation.
+# * To simplify packaging with monolithic ebuild with 50+ vendored packages.
+# * To prevent the distro gstreamer ebuild scenario, where there is a long run
+#   unpatched vulnerabilities caused by many split ebuilds due to the wrong design
+#   choice, laziness, testing excuses, slave labor menial human labor preference
+#   over rule based automation or AI.
+#
 
 # The following commit is chosen if all are true:
 # "TheRock Multi-Arch CI ASAN Nightly" passed in rocm-systems, rocm-libraries
@@ -48,6 +55,8 @@ if [[ "${PV}" == *"9999" ]] ; then
 	FALLBACK_BRANCH_ROCM_SYSTEMS="develop"
 	FALLBACK_COMMIT_ROCM_SYSTEMS="704b5fd969e19a073d26859afb54db8085479e22" # Nov 5, 2026 171/203
 
+	FALLBACK_BRANCH_ROCM_LLVM_PROJECT="amd-staging"
+	FALLBACK_COMMIT_ROCM_LLVM_PROJECT="f8774c12732b96eec64050d1ea61dec531bdbde5" # Nov 8, 2026 59/97
 
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -55,9 +64,17 @@ if [[ "${PV}" == *"9999" ]] ; then
 	inherit git-r3
 else
 	# For TheRock
+	AMD_MESA_COMMIT="29299f8d651b9e1c9ce5f7256b3cdcd492c6f4f3"
+	HALF_COMMIT="207ee58595a64b5c4a70df221f1e6e704b807811"
+	HIPIFY_COMMIT="0e051929fe80ccc0af6dc194ddb990aa82eec97d"
+	LIBHIPCXX_COMMIT="4b8124417170bfb869d7ab84f380479cec15d04a"
+	LLVM_PROJECT_COMMIT="d6f6cb691863e9258034ab48c1dfce21689d5606"
+	ROCM_CMAKE_COMMIT="10155d7272ea1bf79f6b5a9dbc339657af1aa372"
 	ROCM_DOCS_COMMIT="0682a17b3aabea3e447c969c8e28ab5f199a0e3c"
 	ROCM_LIBRARIES_COMMIT="39d8d60365d2272a5366f76ccb3bfba24b219eaf"
 	ROCM_SYSTEMS_COMMIT="7da43026e4f2ef7600433c38c820732f7a205d22"
+	ROCGDB_COMMIT="7e541ef6fe7d5ad8172cf227656103f22f975226"
+	SPIRV_LLVM_TRANSLATOR_COMMIT="4fd57e737272d1a9077a7ff874961bbc82af2024"
 
 	# For rocm-libraries
 	FFTS_COMMIT="b22d839b61c5bd8a993e24ae3e01f39d9b5084fb"
@@ -213,6 +230,13 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 BANNED_RDEPEND="
+	!dev-build/rocm-cmake
+	!dev-util/HIPIFY
+	!dev-util/ROCgdb
+	!sys-devel/llvm-roc
+	!sys-devel/llvm-roc-symlinks
+	!sys-devel/llvm-roc-libomp
+
 	!dev-util/Tensile
 	!sci-libs/composable-kernel
 	!sci-libs/hipBLAS
@@ -357,6 +381,9 @@ src_unpack() {
 
 			EGIT_OVERRIDE_BRANCH_ROCM_SYSTEMS="${FALLBACK_BRANCH_ROCM_SYSTEMS}"
 			EGIT_OVERRIDE_COMMIT_ROCM_SYSTEMS="${FALLBACK_COMMIT_ROCM_SYSTEMS}"
+
+			EGIT_OVERRIDE_BRANCH_ROCM_LLVM_PROJECT="${FALLBACK_BRANCH_ROCM_LLVM_PROJECT}"
+			EGIT_OVERRIDE_COMMIT_ROCM_LLVM_PROJECT="${FALLBACK_COMMIT_ROCM_LLVM_PROJECT}"
 		fi
 		git-r3_fetch
 		git-r3_checkout
@@ -367,6 +394,16 @@ src_unpack() {
 
 src_prepare() {
 	if ! [[ "${PV}" =~ "9999" ]] ; then
+
+		dep_prepare_mv "${WORKDIR}/half-${HALF_COMMIT}" "${S}/base/half"
+		dep_prepare_mv "${WORKDIR}/HIPIFY-${HIPIFY_COMMIT}" "${S}/compiler/hipify"
+		dep_prepare_mv "${WORKDIR}/llvm-project-${LLVM_PROJECT_COMMIT}" "${S}/compiler/amd-llvm"
+		dep_prepare_mv "${WORKDIR}/rocm-cmake-${ROCM_CMAKE_COMMIT}" "${S}/base/rocm-cmake"
+		dep_prepare_mv "${WORKDIR}/SPIRV-LLVM-Translator-${SPIRV_LLVM_TRANSLATOR_COMMIT}" "${S}/compiler/spirv-llvm-translator"
+		dep_prepare_mv "${WORKDIR}/mesa-fork-${AMD_MESA_COMMIT}" "${S}/third-party/sysdeps/common/mesa-fork"
+		dep_prepare_mv "${WORKDIR}/libhipcxx-${LIBHIPCXX_COMMIT}" "${S}/math-libs/libhipcxx"
+		dep_prepare_mv "${WORKDIR}/rocgdb-${ROCGDB_COMMIT}" "${S}/debug-tools/rocgdb/source"
+
 		dep_prepare_mv "${WORKDIR}/rocm-docs-${ROCM_DOCS_COMMIT}" "${S}/rocm-docs"
 		dep_prepare_mv "${WORKDIR}/rocm-libraries-${ROCM_LIBRARIES_COMMIT}" "${S}/rocm-libraries"
 		dep_prepare_mv "${WORKDIR}/rocm-systems-${ROCM_SYSTEMS_COMMIT}" "${S}/rocm-systems"
