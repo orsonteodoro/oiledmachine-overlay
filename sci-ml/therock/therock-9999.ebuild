@@ -267,7 +267,7 @@ pkg_setup() {
 	libstdcxx-slot_verify
 	libcxx-slot_verify
 einfo "FEATURES:  ${FEATURES}"
-	ccache-changes_yes_ccache "For reducing this monothic package rebuild time cost for 27+ vendored packages."
+	ccache-changes_yes_ccache "For reducing the rebuild time cost for 50+ heavy packages in this monolithic ebuild."
 }
 
 src_unpack() {
