@@ -81,10 +81,6 @@ PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 
-ROCM_SLOTS=(
-	"rocm_7_2"
-)
-
 inherit python-single-r1
 
 get_model_use() {
@@ -190,7 +186,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-${ROCM_SLOTS[@]}
 fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
 ebuild_revision_15
 "
@@ -226,11 +221,6 @@ REQUIRED_USE="
 	!rocm
 	!tensorrt
 	vulkan
-	rocm? (
-		|| (
-			${ROCM_SLOTS[@]}
-		)
-	)
 	|| (
 		${IUSE_MODELS[@]}
 	)
@@ -297,9 +287,9 @@ NCNN_DEPEND="
 ROCM_DEPEND="
 	dev-python/triton:=
 	|| (
-		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_7_2?]
+		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm]
 	)
-	=sci-ml/pytorch-2.3*:=[${PYTHON_SINGLE_USEDEP},rocm_7_2?]
+	=sci-ml/pytorch-2.3*:=[${PYTHON_SINGLE_USEDEP},rocm]
 	=sci-ml/torchvision-0.18*:=[${PYTHON_SINGLE_USEDEP}]
 "
 TENSORRT_DEPEND="
