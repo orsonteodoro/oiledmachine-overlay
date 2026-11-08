@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STANDARD="ignore"
 LIBSTDCXX_SLOT_VERIFY=0
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
