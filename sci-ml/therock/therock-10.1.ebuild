@@ -36,6 +36,9 @@ EAPI=8
 # Add numa, comgr, hsa-runtime auto linker changes from https://github.com/orsonteodoro/oiledmachine-overlay/blob/04e9796ace549c71dc66abb878eddbdc838b86df/dev-util/hip/files/hipcc-7.0.2-autolink-hipamd64-deps.patch
 # Add cuda path changes from https://github.com/orsonteodoro/oiledmachine-overlay/blob/04e9796ace549c71dc66abb878eddbdc838b86df/dev-util/hip/files/hipcc-6.4.4-cuda-path.patch
 
+# The prebuilt is preferred but the f16 requirement and the hardcoded paths
+# prevent us from adding the prebuilt binary ebuilds.
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=20 # Most default to 17 but some default to 20
 LLVM_SLOT=24
