@@ -67,6 +67,7 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 BANNED_RDEPEND="
+	!dev-util/Tensile
 	!sci-libs/composable-kernel
 	!sci-libs/hipBLAS
 	!sci-libs/hipBLASLt
