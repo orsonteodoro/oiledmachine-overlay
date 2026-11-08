@@ -59,6 +59,7 @@ CHKL_TIMESTAMPS=(
 	"dev-lang/ispc-9999"
 	"media-libs/openimageio-3.0.9999"
 	"media-libs/openimageio-3.1.9999"
+	"sci-ml/therock-9999"
 	"sys-devel/binutils-9999"
 )
 
@@ -175,7 +176,7 @@ RDEPEND+="
 		>=x11-drivers/nvidia-drivers-525.60.13:=
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	sycl? (
 		>=sys-devel/DPC++-2023.10.26:=[aot?]
@@ -204,7 +205,7 @@ BDEPEND+="
 	)
 	rocm? (
 		>=dev-build/cmake-3.21
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	sycl? (
 		>=dev-build/cmake-3.25.2
