@@ -22,8 +22,9 @@ _ROCM_ECLASS=1
 # It is assumed monoslot for rocm-system, rocm-libraries
 
 : ${ROCM_DISABLE_CCACHE:=0}
-: ${ROCM_LLVM_PATH:="/opt/rocm"}
+: ${ROCM_LLVM_PATH:="/opt/rocm/lib/llvm"}
 : ${ROCM_LLVM_SLOT:="24"}
+: ${ROCM_PATH:="/opt/rocm"}
 : ${ROCM_SLOT:="9999"}
 : ${ROCM_VERSION:="${PV}"}
 

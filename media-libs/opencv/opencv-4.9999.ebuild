@@ -330,10 +330,6 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}" # U26
 )
 
-ROCM_SLOTS=(
-	"rocm_7_2"
-)
-
 CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
 	"app-text/tesseract-9999"
@@ -361,8 +357,8 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/gtk+-3.24.9999"
 )
 
-inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
-inherit libcxx-slot libstdcxx-slot protobuf python-single-r1 toolchain-funcs virtualx
+inherit abseil-cpp cflags-hardened chkl cuda java-pkg-opt-2 cmake-multilib flag-o-matic
+inherit libcxx-slot libstdcxx-slot protobuf python-single-r1 rocm-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	FALLBACK_COMMIT="21d60a9afeeb78b6a150ae3419df378e74a4ae21"
@@ -455,7 +451,6 @@ IUSE+="
 "
 # hardware
 IUSE+="
-	${ROCM_SLOTS[@]}
 	+opencl -cuda -cudnn rocm video_cards_intel
 "
 # video
@@ -488,16 +483,6 @@ IUSE+="
 "
 unset ARM_CPU_FEATURES PPC_CPU_FEATURES X86_CPU_FEATURES_RAW X86_CPU_FEATURES
 
-gen_rocm_required_use() {
-	local s
-	for s in "${ROCM_SLOTS[@]}" ; do
-		echo "
-			${s}? (
-				rocm
-			)
-		"
-	done
-}
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!openh264
@@ -519,7 +504,6 @@ PATENT_STATUS_REQUIRED_USE="
 	)
 "
 REQUIRED_USE="
-	$(gen_rocm_required_use)
 	${PATENT_STATUS_REQUIRED_USE}
 	?? (
 		carotene
@@ -712,9 +696,7 @@ REQUIRED_USE="
 		ffmpeg
 	)
 	openvx? (
-		|| (
-			rocm
-		)
+		rocm
 	)
 	protobuf? (
 		cxx_standard_cxx17
@@ -729,11 +711,6 @@ REQUIRED_USE="
 		|| (
 			ffmpeg
 			gstreamer
-		)
-	)
-	rocm? (
-		^^ (
-			${ROCM_SLOTS[@]}
 		)
 	)
 	tesseract? (
@@ -820,18 +797,6 @@ CUDA_DEPEND="
 # https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24	# FFmpeg 4.x
 # For the commit above, see
 # https://github.com/opencv/opencv/blob/4.x/3rdparty/ffmpeg/ffmpeg.cmake#L3
-gen_rocm_rdepend() {
-	local s
-	for s in "${ROCM_SLOTS[@]}" ; do
-		local slot="${s/rocm_}"
-		slot="${slot/_/.}"
-		echo "
-			${s}? (
-				=sci-libs/MIVisionX-${slot}*:=
-			)
-		"
-	done
-}
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status:*[patent_status_nonfree=]
 	!patent_status_nonfree? (
@@ -988,7 +953,7 @@ RDEPEND="
 		>=media-libs/quirc-${QUIRC_PV}:=
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
+		sci-libs/MIVisionX:=
 	)
 	spng? (
 		>=media-libs/libspng-${LIBSPNG_PV}:=[${MULTILIB_USEDEP}]
@@ -1593,10 +1558,10 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		)
 	fi
 
-	if use openvx && use rocm_7_2 ; then
-		export ROCM_PATH="/opt/rocm"
+	if use openvx && use rocm ; then
+		export ROCM_PATH="${ROCM_PATH}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/opt/rocm"
+			-DOPENVX_ROOT="${ROCM_PATH}"
 			-DWITH_OPENVX=ON
 		)
 	else
