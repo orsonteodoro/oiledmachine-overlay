@@ -261,8 +261,9 @@ LICENSE="
 # LGPL-2.1+, LGPL-2.1+ public-domain (sha1.C) - dyninst
 # MIT - TheRock
 # public-domain - sqlite
-# The distro does not have a Apache-2.0 license template all rights reserved.
-# The distro does not have a MIT license template all rights reserved.
+# The distro does not have a Apache-2.0 license template with all rights reserved.
+# The distro does not have a MIT license template with all rights reserved.
+# The distro does have a BSD license template with all rights reserved.
 RESTRICT="mirror" # Prevent snooping and speed up downloads
 SLOT="0/${ROCM_SLOT}"
 IUSE+=" test
