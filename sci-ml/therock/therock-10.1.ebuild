@@ -28,7 +28,7 @@ EAPI=8
 
 # Most of the packages are fine except for the following:
 # Add patches from https://github.com/orsonteodoro/oiledmachine-overlay/tree/04e9796ace549c71dc66abb878eddbdc838b86df
-# Add make cpu_flags_x86_f16 optional sed patch in https://github.com/orsonteodoro/oiledmachine-overlay/blob/04e9796ace549c71dc66abb878eddbdc838b86df/sci-libs/rocBLAS/rocBLAS-7.2.4.ebuild
+# Add cpu_flags_x86_f16 optional sed patch in https://github.com/orsonteodoro/oiledmachine-overlay/blob/04e9796ace549c71dc66abb878eddbdc838b86df/sci-libs/rocBLAS/rocBLAS-7.2.4.ebuild
 # Add make AOT optional to speed up build time from https://github.com/orsonteodoro/oiledmachine-overlay/tree/04e9796ace549c71dc66abb878eddbdc838b86df/sci-libs/rocFFT
 # Add bzcat path patches from miopen https://github.com/orsonteodoro/oiledmachine-overlay/blob/04e9796ace549c71dc66abb878eddbdc838b86df/sci-libs/miopen/files/miopen-6.1.2-bzcat-path.patch
 # Add patch for virtualenv to fix build issue https://github.com/orsonteodoro/oiledmachine-overlay/blob/04e9796ace549c71dc66abb878eddbdc838b86df/sci-libs/hipBLASLt/files/hipBLASLt-6.4.4-virtualenv.patch
