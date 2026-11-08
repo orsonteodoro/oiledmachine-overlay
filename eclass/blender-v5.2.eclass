@@ -143,7 +143,6 @@ CHKL_TIMESTAMPS=(
 	"media-libs/vulkan-loader-9999"
 	"media-libs/x264-9999"
 	"sci-ml/therock-9999"
-	"sys-libs/hip-clang-9999"
 )
 
 ARM_CPU_FLAGS_3_3=(
@@ -980,7 +979,6 @@ RDEPEND+="
 	)
 	rocm? (
 		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
-		~sys-libs/hip-clang-${HIP_CLANG_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
 	)
 	rubberband? (
 		>=media-libs/rubberband-${RUBBERBAND_PV}:=
@@ -1100,7 +1098,7 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		~sys-devel/hip-clang-${HIP_CLANG_PV}:=
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
 	)
 	test? (
 		>=dev-libs/weston-14.0.2

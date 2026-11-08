@@ -610,7 +610,6 @@ CHKL_TIMESTAMPS=(
 	"sci-libs/openblas-9999"
 	"sci-ml/therock-9999"
 	"sys-apps/firejail-9999"
-	"sys-devel/hip-clang-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libdrm-9999"
 )
@@ -2391,8 +2390,7 @@ RDEPEND="
 	)
 	rocm? (
 		>=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_amdgpu]
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
-		~sys-devel/hip-clang-${HIP_CLANG_PV}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024:=[l0]
@@ -2559,8 +2557,7 @@ BDEPEND="
 		)
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
-		~sys-devel/hip-clang-${HIP_CLANG_PV}:=[${LIBSTDCXX_USEDEP},llvm_targets_AMDGPU,llvm_targets_X86]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		sys-devel/gcc:=
 	)
 "
