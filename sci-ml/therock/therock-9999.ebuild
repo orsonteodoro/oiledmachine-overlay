@@ -17,6 +17,7 @@ EAPI=8
 
 # CI: U22, U24
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=20 # Most default to 17 but some default to 20
 LLVM_SLOT=24
 PYTHON_COMPAT=( "python3_"{11..15} )
@@ -33,7 +34,7 @@ LLVM_COMPAT=(
 	24 # Align with HIP-Clang
 )
 
-inherit ccache-changes check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 secure-version rocm-r1
+inherit ccache-changes cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 secure-version rocm-r1
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="develop"
@@ -336,6 +337,8 @@ src_prepare() {
 
 src_configure() {
 	rocm-r1_set_default_gcc
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
