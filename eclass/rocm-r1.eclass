@@ -16,8 +16,8 @@ case ${EAPI} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ ! ${_ROCM_ECLASS} ]]; then
-_ROCM_ECLASS=1
+if [[ ! ${_ROCM_R1_ECLASS} ]]; then
+_ROCM_R1_ECLASS=1
 
 # It is assumed monoslot for rocm-system, rocm-libraries
 
@@ -30,9 +30,9 @@ _ROCM_ECLASS=1
 
 inherit flag-o-matic toolchain-funcs
 
-# @FUNCTION:  rocm_pkg_setup
+# @FUNCTION:  rocm-r1_pkg_setup
 # @DESCRIPTION:
-# Init paths
+# Preconditional warnings and checks
 rocm-r1_pkg_setup() {
 	if [[ -z "${ROCM_TARGETS}" ]] ; then
 ewarn
@@ -48,9 +48,9 @@ ewarn
 einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
 }
 
-# @FUNCTION: rocm_set_default_gcc
+# @FUNCTION:  rocm-r1_set_default_gcc
 # @DESCRIPTION:
-# Sets compiler defaults to system GCC to avoid versioned C++ linking errors.
+# Sets compiler defaults to system GCC.
 rocm-r1_set_default_gcc() {
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
@@ -59,7 +59,6 @@ rocm-r1_set_default_gcc() {
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=bfd"
 
-einfo "Switched to GCC"
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
@@ -69,9 +68,9 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
 }
 
-# @FUNCTION: rocm_set_default_clang
+# @FUNCTION:  rocm-r1_set_default_clang
 # @DESCRIPTION:
-# Sets compiler defaults to system Clang to avoid primarily linker errors.
+# Sets compiler defaults to system Clang.
 rocm-r1_set_default_clang() {
 	local llvm_slot="${ROCM_LLVM_SLOT}"
 	export CC="${CHOST}-clang-${llvm_slot}"
@@ -80,6 +79,7 @@ rocm-r1_set_default_clang() {
 	strip-unsupported-flags
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=lld"
+
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
@@ -90,9 +90,9 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 einfo "PATH:  ${PATH}"
 }
 
-# @FUNCTION: rocm_set_default_hip_clang
+# @FUNCTION:  rocm-r1_set_default_hip_clang
 # @DESCRIPTION:
-# Sets compiler defaults to HIP-Clang to avoid primarily linker errors.
+# Sets compiler defaults to HIP-Clang.
 rocm-r1_set_default_hip_clang() {
 	if [[ "${FEATURES}" =~ "ccache" && "${ROCM_DISABLE_CCACHE}" != "1" ]] ; then
 	# Placed here to unbreak ccache with gcc.
@@ -107,6 +107,7 @@ rocm-r1_set_default_hip_clang() {
 	strip-unsupported-flags
 	filter-flags "-fuse-ld=*"
 	append-ldflags "-fuse-ld=lld"
+
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
@@ -117,7 +118,7 @@ einfo "LDFLAGS:  ${LDFLAGS}"
 einfo "PATH:  ${PATH}"
 }
 
-# @FUNCTION: rocm_set_default_hipcc
+# @FUNCTION:  rocm-r1_set_default_hipcc
 # @DESCRIPTION:
 # Sets compiler defaults for hipcc frontend.
 rocm-r1_set_default_hipcc() {
@@ -149,6 +150,7 @@ rocm-r1_set_default_hipcc() {
 		append-ldflags "-fuse-ld=lld"
 	fi
 	filter-lto
+
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 einfo "CPP:  ${CPP}"
