@@ -12,7 +12,7 @@ EAPI=8
 # Prevent the insecure-unmaintained gstreamer distro ebuild divide and conquer scenario
 
 # The following commit is chosen if all are true:
-# "TheRock Multi-Arch CI ASAN Nightly" passed
+# "TheRock Multi-Arch CI ASAN Nightly" passed in rocm-systems, rocm-libraries
 # >= 170/200 checks passed
 
 # CI: U22, U24
