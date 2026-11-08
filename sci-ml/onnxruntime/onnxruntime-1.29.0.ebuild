@@ -158,7 +158,6 @@ OPENVINO_TARGETS=(
 
 CHKL_TIMESTAMPS=(
 	"sci-ml/therock-9999"
-	"sys-devel/hip-clang-9999"
 )
 
 inherit cflags-hardened check-compiler-switch chkl cmake cuda edo dep-prepare
@@ -529,7 +528,6 @@ RDEPEND="
 	)
 	rocm? (
 		~sci-ml/therock-${THEROCK_PV}:=
-		~sys-devel/hip-clang-${HIP_CLANG_PV}:=
 
 		sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
 		|| (
