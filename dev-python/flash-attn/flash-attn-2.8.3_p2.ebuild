@@ -10,59 +10,36 @@ EAPI=8
 # hydra-colorlog
 # hydra-core
 
+MY_PV="2.8.3.post2"
+
 CXX_STANDARD=17
 COMPOSABLE_KERNEL_COMMIT="e8709c24f403173ad21a2da907d1347957e324fb"
 CUTLASS_COMMIT="dc4817921edda44a549197ff3a9dcf5df0636e7b"
 #DISTUTILS_EXT=1 # TODO:  enable if required
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
-
-AMDGPU_TARGETS_COMPAT=(
-	"gfx90a"
-	"gfx950"
-	"gfx942"
-)
+PYTHON_COMPAT=( "python3_"{11..13} ) # Lists up to 3.13
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
+	#${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]/llvm_slot_} # 24
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 18, 19
 	#${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_} # 18, 19
-	{18..22}
+	${LIBCXX_COMPAT_CXX17_GPU[@]/llvm_slot_} # 18, 19, 21, 24
 )
 
-inherit hip-versions
-ROCM_VERSIONS=(
-	# For RDEPEND
-	"${HIP_7_2_VERSION}"
-)
-
-gen_rocm_iuse() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local u=$(ver_cut 1-2 "${pv}")
-		u="${u/./_}"
-		echo "rocm_${u}"
-	done
-}
-
-ROCM_IUSE=(
-	$(gen_rocm_iuse)
-)
-
-inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot
+inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot secure-version rocm-r1
 
 KEYWORDS="~amd64" # The ebuild is not install tested
-S="${WORKDIR}/flash-attention-${PV}"
+S="${WORKDIR}/flash-attention-${MY_PV}"
 SRC_URI="
-https://github.com/Dao-AILab/flash-attention/archive/refs/tags/v${PV}.tar.gz
+https://github.com/Dao-AILab/flash-attention/archive/refs/tags/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 	rocm? (
 https://github.com/ROCm/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
@@ -99,8 +76,6 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE="
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-${ROCM_IUSE[@]}
 ${GCC_COMPAT[@]/#/gcc_slot_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda rocm training
@@ -130,69 +105,15 @@ REQUIRED_USE="
 		)
 	)
 	rocm? (
-		^^ (
-			gcc_slot_12_5
-			gcc_slot_13_4
-		)
-		^^ (
-			llvm_slot_22
-		)
-		^^ (
-			python_single_target_python3_10
-			python_single_target_python3_12
-		)
+		llvm_slot_${ROCM_LLVM_SLOT}
 	)
 "
-gen_rocm_required_use() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local u=$(ver_cut "1-2" "${pv}")
-		u="${u/./_}"
-		echo "
-			rocm_${u}? (
-				rocm
-			)
-		"
-	done
-}
-gen_rocm_targets_required_use() {
-	local g
-	for g in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${g}? (
-				rocm
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_rocm_required_use)
-	$(gen_rocm_targets_required_use)
 	^^ (
 		cuda
 		rocm
 	)
-	rocm? (
-		^^ (
-			${ROCM_IUSE[@]}
-		)
-	)
 "
-gen_rocm_rdepend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s=$(ver_cut "1-2" "${pv}")
-		local u="${s}"
-		u="${u/./_}"
-	# Check both the direct top and indirect bottom dependencies
-		echo "
-			rocm_${u}? (
-				~dev-build/rocm-cmake-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-			)
-		"
-	done
-}
 
 CUDA_12_6_DEPEND="
 	(
@@ -238,15 +159,15 @@ RDEPEND+="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
+		>=sci-ml/therock-${THEROCK_PV}:=
 	)
-	rocm_7_2? (
-		|| (
-			=sci-ml/pytorch-2.13*[${PYTHON_SINGLE_USEDEP},rocm_7_2]
-			=sci-ml/pytorch-2.12*[${PYTHON_SINGLE_USEDEP},rocm_7_2]
-			=sci-ml/pytorch-2.11*[${PYTHON_SINGLE_USEDEP},rocm_7_2]
-		)
+	rocm? (
 		sci-ml/pytorch:=
+		|| (
+			=sci-ml/pytorch-2.13*[${PYTHON_SINGLE_USEDEP},rocm]
+			=sci-ml/pytorch-2.12*[${PYTHON_SINGLE_USEDEP},rocm]
+			=sci-ml/pytorch-2.11*[${PYTHON_SINGLE_USEDEP},rocm]
+		)
 	)
 	training? (
 		$(python_gen_cond_dep '
@@ -289,13 +210,8 @@ pkg_setup() {
 	libcxx-slot_verify
 	libstdcxx-slot_verify
 	if use rocm ; then
-		local ROCM_VERSION
-		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-			ROCM_SLOT="7.2"
-			ROCM_VERSION="${HIP_7_2_VERSION}"
-		fi
-		rocm_pkg_setup
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
 	fi
 }
 
@@ -311,23 +227,6 @@ src_prepare() {
 	fi
 }
 
-_gpu_check_llvm() {
-	local name="${1}"
-	local pv="${2}"
-	shift
-	shift
-	local ALLOWED_SLOTS=( $@ )
-	local s
-	for s in "${ALLOWED_SLOTS[@]}" ; do
-		if use "llvm_slot_${s}" ; then
-			return
-		fi
-	done
-eerror "For ${name} ${pv}, only one ${ALLOWED_SLOTS[@]/#/llvm_slot_} is allowed."
-eerror "Pick one ${ALLOWED_SLOTS[@]/#/llvm_slot_} to continue."
-	die
-}
-
 python_configure() {
 	if use cuda ; then
 		export BUILD_TARGET="cuda"
@@ -336,15 +235,7 @@ python_configure() {
 		_gpu_check_llvm "CUDA" "12.9" {18,19}
 	elif use rocm ; then
 		export BUILD_TARGET="rocm"
-		local list=""
-		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-			if use "amdgpu_targets_${x}" ; then
-				list+=";${x}"
-			fi
-		done
-		list="${list:1}"
-		export GPU_ARCHS="${list}"
-		_gpu_check_llvm "ROCm" "7.2" "22"
+		export GPU_ARCHS="${ROCM_TARGETS}"
 	fi
 }
 
