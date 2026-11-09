@@ -223,27 +223,7 @@ OPTIX_RAYTRACE_TARGETS=(
 	"sm_120"
 )
 
-AMDGPU_TARGETS_COMPAT=(
 # https://github.com/blender/blender/blob/v4.5.13/CMakeLists.txt#L699
-	"gfx1010"
-	"gfx1011"
-	"gfx1012"
-	"gfx1030"
-	"gfx1031"
-	"gfx1032"
-	"gfx1034"
-	"gfx1035"
-	"gfx1036"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1103"
-	"gfx1150"
-	"gfx1151"
-	"gfx1152"
-	"gfx1200"
-	"gfx1201"
-)
 
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
@@ -1008,7 +988,7 @@ RDEPEND+="
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[truetype]
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
 	)
 	sdl? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}:=[opengl,pulseaudio?,sound]
@@ -1124,7 +1104,7 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
 	)
 	test? (
 		>=dev-libs/weston-14.0.2
