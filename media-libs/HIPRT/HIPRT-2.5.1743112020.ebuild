@@ -200,7 +200,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 			-DROCM_SYMLINK_LIBS=OFF
 		)
 	fi
-	rocm_src_configure
+	cmake_src_configure
 }
 
 src_install() {
