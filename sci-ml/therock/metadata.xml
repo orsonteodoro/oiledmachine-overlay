@@ -9,4 +9,37 @@
   <upstream>
     <remote-id type="github">ROCm/rocm-libraries</remote-id>
   </upstream>
+  <use>
+    <flag name="comm">
+      Enable communication libraries for multi GPU processing or distributed GPU
+      node processing.
+    </flag>
+    <flag name="cv">
+      Enable Computer Vision (CV) support
+    </flag>
+    <flag name="dc-tools">
+      Enable data center tools
+    </flag>
+    <flag name="debug">
+      Enable debugging tools
+    </flag>
+    <flag name="emulation-tools">
+      Enable emulation tools
+    </flag>
+    <flag name="media-libs">
+      Enable media libraries
+    </flag>
+    <flag name="math-libs">
+      Enable math libraries
+    </flag>
+    <flag name="ml">
+      Enable Machine Learning (ML) libraries
+    </flag>
+    <flag name="opencl">
+      Enable OpenCL support
+    </flag>
+    <flag name="profiling">
+      Enable profiling tools
+    </flag>
+  </use>
 </pkgmetadata>

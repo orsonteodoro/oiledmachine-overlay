@@ -328,7 +328,11 @@ LICENSE="
 # The distro does have a BSD license template with all rights reserved.
 RESTRICT="mirror" # Prevent snooping and speed up downloads
 SLOT="0/${ROCM_SLOT}"
-IUSE+=" test
+# Upstream enables all, but we only enable by default what is necessary for
+# popular use cases (PyTorch, TensorFlow, and OpenCL) to minimize the build
+# cost.
+IUSE+="
+comm cv dc-tools debug emulation-tools +math media +ml +opencl profiling test
 ebuild_revision_0
 "
 REQUIRED_USE="
@@ -567,6 +571,9 @@ src_prepare() {
 }
 
 src_configure() {
+	if use debug ; then
+ewarn "You are enabling debug-tools, this may increase the attack surface or be abused in Living off the Land (LotL) attacks."
+	fi
 	rocm-r1_set_default_gcc
 
 	cflags-hardened_append
@@ -590,6 +597,23 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${ROCM_PATH}"
+
+	# See also
+	# https://github.com/ROCm/TheRock/blob/therock-10.1/README.md#optional-configuration-flags
+	# https://github.com/ROCm/TheRock/blob/therock-10.1/BUILD_TOPOLOGY.toml
+			-DTHEROCK_ENABLE_ALL=OFF
+			-DTHEROCK_ENABLE_COMPILER=ON
+			-DTHEROCK_ENABLE_CORE_RUNTIME=ON
+			-DTHEROCK_ENABLE_CV_LIBS=$(usex cv "ON" "OFF")
+			-DTHEROCK_ENABLE_DC_TOOLS=$(usex dc-tools "ON" "OFF")
+			-DTHEROCK_ENABLE_DEBUG_TOOLS=$(usex debug "ON" "OFF")
+			-DTHEROCK_ENABLE_EMULATION=$(usex emulation-tools "ON" "OFF")
+			-DTHEROCK_ENABLE_MATH_LIBS=$(usex math "ON" "OFF")
+			-DTHEROCK_ENABLE_MEDIA_LIBS=$(usex media "ON" "OFF")
+			-DTHEROCK_ENABLE_ML_LIBS=$(usex ml "ON" "OFF")
+			-DTHEROCK_ENABLE_OCL_RUNTIME=$(usex opencl "ON" "OFF")
+			-DTHEROCK_ENABLE_PROFILER=$(usex profiling "ON" "OFF")
+			-DTHEROCK_ENABLE_WSL=OFF
 	)
 
 	if [[ -n "${ROCM_TARGETS}" ]] ; then
@@ -603,11 +627,6 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 
-	mycmakeargs+=(
-		# Optional: Disable heavyweight expansion suites you don't need
-		#-DBUILD_HPC_SDK=OFF
-		#-DBUILD_VISION_SDK=OFF
-	)
 	cmake_src_configure
 }
 
