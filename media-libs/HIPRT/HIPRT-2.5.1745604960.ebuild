@@ -99,7 +99,7 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	check-compiler-switch_start
-	rocm_pkg_setup
+	rocm-r1_pkg_setup
 	libstdcxx-slot_verify
 }
 
