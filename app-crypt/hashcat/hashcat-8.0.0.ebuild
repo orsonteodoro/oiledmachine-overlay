@@ -149,7 +149,7 @@ CHKL_TIMESTAMPS=(
 	"sci-ml/therock-9999"
 )
 
-inherit cargo cflags-hardened chkl libcxx-slot libstdcxx-slot pax-utils python-single-r1 rocm-r1
+inherit cargo cflags-hardened chkl libcxx-slot libstdcxx-slot optfeature pax-utils python-r1 rocm-r1
 inherit rust rustflags-hardened secure-version toolchain-funcs
 
 if [[ "${PV}" == "9999" ]]; then
@@ -171,7 +171,7 @@ SLOT="0"
 IUSE="
 ${BACKENDS[@]}
 doc brain cuda rocm video_cards_nvidia
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
@@ -179,13 +179,13 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	>=virtual/zlib-${ZLIB_PV}:=[minizip]
+	app-arch/lzma:=
+	virtual/opencl:=[iocl?,neo?,pocl?,rusticl?,video_cards_intel?,video_cards_nvidia?]
 	!cuda? (
 		dev-util/opencl-headers:=
 		virtual/opencl:=
 	)
-	app-arch/lzma:=
-	virtual/opencl:=[iocl?,neo?,pocl?,rusticl?,video_cards_intel?,video_cards_nvidia?]
-	>=virtual/zlib-${ZLIB_PV}:=[minizip]
 	rocm? (
 		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
@@ -208,7 +208,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	python-single-r1_pkg_setup
+	python_setup
 	rust_pkg_setup
 	if use rocm ; then
 		LLVM_SLOT="${ROCM_LLVM_SLOT}"
@@ -320,4 +320,10 @@ ewarn
 ewarn "Using a single GPU alone is still slow.  For longer passwords,"
 ewarn "consider using distributed multi machine hashcat methods instead."
 ewarn
+	optfeature_header "Install optional packages:"
+	optfeature "A python-plugin tutorial suggested package" "dev-python/pip"
+einfo
+einfo "For writing custom python-plugins, see https://github.com/hashcat/hashcat/blob/master/docs/hashcat-python-plugin-quickstart.md"
+einfo "For writing custom rust-plugins, see https://github.com/hashcat/hashcat/blob/master/docs/hashcat-rust-plugin-quickstart.md"
+einfo
 }
