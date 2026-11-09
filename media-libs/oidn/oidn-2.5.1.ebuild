@@ -387,11 +387,10 @@ ewarn
 			-DHIP_COMPILER_PATH="${ESYSROOT}${ROCM_LLVM_PATH}"
 		)
 
-		local targets="$(get_amdgpu_flags)"
 		mycmakeargs+=(
-			-DGPU_TARGETS="${targets}"
+			-DGPU_TARGETS="${ROCM_TARGETS}"
 		)
-einfo "AMDGPU_TARGETS:  ${targets}"
+einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
 	fi
 
 	if use cuda ; then
