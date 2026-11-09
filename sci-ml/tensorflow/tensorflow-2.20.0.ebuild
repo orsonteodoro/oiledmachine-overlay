@@ -422,6 +422,10 @@ gen_required_use_cuda_targets() {
 		"
 	done
 }
+# Re-add when CXX_STANDARD is not 17 (LTS)
+#	rocm? (
+#		llvm_slot_${ROCM_LLVM_SLOT}
+#	)
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	!rocm

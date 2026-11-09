@@ -668,7 +668,7 @@ REQUIRED_USE="
 		^^ (
 			${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]}
 		)
-		llvm_slot_24
+		llvm_slot_${ROCM_LLVM_SLOT}
 	)
 	tensorpipe? (
 		distributed
