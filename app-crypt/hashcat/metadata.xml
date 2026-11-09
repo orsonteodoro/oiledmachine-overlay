@@ -28,8 +28,8 @@
 
       AMD (radeonsi)
       ARM Mali (panfrost)
-      Intel (iris)
-      NVIDIA (nouveau)
+      Intel® (iris)
+      NVIDIA® (nouveau)
 
     </flag>
     <flag name="video_cards_nvidia">
