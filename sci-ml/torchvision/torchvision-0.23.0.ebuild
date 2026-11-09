@@ -9,7 +9,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{11..13} )
 ROCM_SKIP_GLOBALS=1
 
-inherit cuda distutils-r1 multiprocessing rocm
+inherit cuda distutils-r1 multiprocessing rocm-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/vision-${PV}"
@@ -73,7 +73,7 @@ src_compile()
 	fi
 	if use rocm ; then
 		addpredict "/dev/kfd"
-		export ROCM_HOME="/opt/rocm"
+		export ROCM_HOME="${ROCM_PATH}"
 	fi
 	distutils-r1_src_compile
 }
