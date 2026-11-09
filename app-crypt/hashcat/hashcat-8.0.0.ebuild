@@ -22,6 +22,16 @@ PYTHON_COMPAT=( "python3_"{11..15} )
 RUST_MAX_VER="1.93.1"
 RUST_MIN_VER="1.93.1" # LLVM 21.1
 
+BACKENDS=(
+	iocl
+	neo
+	pocl
+	rocm
+	rusticl
+	video_cards_intel
+	video_cards_nvidia
+)
+
 declare -A GIT_CRATES=(
 )
 
@@ -157,10 +167,14 @@ LICENSE="MIT"
 RESTRICT="mirror test" # Speed up downloads and stop snooping
 SLOT="0"
 IUSE="
-doc brain cuda rocm
+${BACKENDS[@]}
+doc brain cuda rocm video_cards_nvidia
 ebuild_revision_4
 "
 REQUIRED_USE="
+	^^ (
+		${BACKENDS[@]}
+	)
 "
 RDEPEND="
 	!cuda? (
@@ -168,8 +182,22 @@ RDEPEND="
 		virtual/opencl:=
 	)
 	app-arch/lzma:=
-	virtual/opencl:=
+	virtual/opencl:=[iocl?,neo?,pocl?,rusticl?,video_cards_intel?,video_cards_nvidia?]
 	>=virtual/zlib-${ZLIB_PV}:=[minizip]
+	rocm? (
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+	video_cards_nvidia? (
+		!cuda? (
+			x11-drivers/nvidia-drivers:=
+			virtual/opencl:*
+		)
+		cuda? (
+			virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			>=dev-util/nvidia-cuda-toolkit-12.9:=
+			>=x11-drivers/nvidia-drivers-575.57:=
+		)
+	)
 "
 DEPEND="
 	${RDEPEND}

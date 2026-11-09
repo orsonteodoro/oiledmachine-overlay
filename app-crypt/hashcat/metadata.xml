@@ -11,7 +11,35 @@
       Enable the hashcat brain
     </flag>
     <flag name="cuda">
-      Optimize for NVIDIA GPUs using CUDA®.
+      Support hardware acceleration for NVIDIA® GPUs using CUDA®.
+      Otherwise, fallback to OpenCL™.
+    </flag>
+    <flag name="iocl">
+      Support hardware acceleration for Intel® CPUs
+    </flag>
+    <flag name="neo">
+      Support hardware acceleration for Intel® GPUs
+    </flag>
+    <flag name="pocl">
+      Support hardware acceleration for CPUs
+    </flag>
+    <flag name="rusticl">
+      Support hardware acceleration for GPUs, for the following:
+
+      AMD (radeonsi)
+      ARM Mali (panfrost)
+      Intel (iris)
+      NVIDIA (nouveau)
+
+    </flag>
+    <flag name="video_cards_nvidia">
+      Support hardware acceleration for NVIDIA® GPUs.
+
+      Estimates:
+
+      With CUDA®:  1.0x (baseline)
+      With OpenCL™:  0.75-0.95x 
+
     </flag>
   </use>
   <upstream>
