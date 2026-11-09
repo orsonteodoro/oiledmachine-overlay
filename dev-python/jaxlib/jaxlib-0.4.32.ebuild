@@ -184,20 +184,6 @@ _PYPI_PACKAGES=(
 	"wheel==0.43.0"
 )
 
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L119
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/build/rocm/Dockerfile.ms#L7C53-L7C89
-	"gfx900"
-	"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx940"
-	"gfx941"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-)
-
 CPU_FLAGS_X86_64=(
 	"cpu_flags_x86_avx"
 )
@@ -218,16 +204,16 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_0[@]/llvm_slot_} # 22
+	#${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]/llvm_slot_} # 24
 	#${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 	# Upstream uses LLVM 18
-	{18..22}
+	${LIBCXX_COMPAT_CXX17_GPU[@]/llvm_slot_} # 18, 19, 21, 24
 )
 
 inherit abseil-cpp bazel cflags-hardened check-compiler-switch cuda distutils-r1
-inherit dhms flag-o-matic git-r3 grpc hip-versions java-pkg-opt-2 libcxx-slot
-inherit libstdcxx-slot llvm protobuf pypi re2 rocm sandbox-changes
-inherit toolchain-funcs
+inherit dhms flag-o-matic git-r3 grpc java-pkg-opt-2 libcxx-slot
+inherit libstdcxx-slot llvm protobuf pypi re2 rocm-r1 sandbox-changes
+inherit secure-version toolchain-funcs
 
 _PYPI_URLS=""
 gen_pypi_uris() {
@@ -369,11 +355,10 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 SLOT="0"
 IUSE+="
-${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda debug rocm rocm_7_2
+clang cpu cuda debug rocm
 ebuild_revision_37
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -384,17 +369,6 @@ gen_cuda_required_use() {
 		echo  "
 			cuda_targets_${x}? (
 				cuda
-			)
-		"
-	done
-}
-
-gen_rocm_required_use() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo  "
-			amdgpu_targets_${x}? (
-				rocm
 			)
 		"
 	done
@@ -417,7 +391,6 @@ REQUIRED_USE+="
 	!cuda
 	!rocm
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
 	$(gen_llvm_slot_required_use)
 	|| (
 		clang
@@ -439,14 +412,9 @@ REQUIRED_USE+="
 		!cuda
 		${ROCM_REQUIRED_USE}
 		^^ (
-			rocm_7_2
+			${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]}
 		)
-		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
-		)
-	)
-	rocm_7_2? (
-		llvm_slot_22
+		llvm_slot_${ROCM_LLVM_SLOT}
 	)
 	|| (
 		cpu
@@ -457,89 +425,6 @@ REQUIRED_USE+="
 # Missing
 # hipsolver
 
-ROCM_SLOTS=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/build/rocm/Dockerfile.ms
-	"${HIP_7_2_VERSION}" # For llvm 22, relaxed, upstream uses 6.0.0
-)
-
-declare -A LLD_SLOT=(
-	["${HIP_7_2_VERSION}"]="${HIP_7_2_LLVM_SLOT}"
-)
-
-gen_rocm_depends() {
-	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 "${pv}")
-		local u=$(ver_cut 1-2 "${pv}")
-		local ROCM_SLOT="${u}"
-		u="${u/./_}"
-		# Direct dependencies
-		echo "
-			rocm_${u}? (
-				>=dev-libs/rccl-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-				dev-libs/rccl:=
-				>=dev-libs/rocm-device-libs-${pv}:${s}
-				dev-libs/rocm-device-libs:=
-				>=dev-util/hip-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				dev-util/hip:=
-				>=dev-util/roctracer-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-util/roctracer:=
-				>=sci-libs/hipBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipBLAS:=
-				>=sci-libs/hipFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
-				sci-libs/hipFFT:=
-				>=sci-libs/hipSPARSE-${pv}:${s}[${LIBSTDCXX_USEDEP},rocm]
-				sci-libs/hipSPARSE:=
-				>=sci-libs/miopen-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-				sci-libs/miopen:=
-				>=sci-libs/rocFFT-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				sci-libs/rocFFT:=
-				>=sci-libs/rocRAND-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				sci-libs/rocRAND:=
-
-				llvm-core/lld:${LLD_SLOT[${pv}]}
-		"
-
-		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
-		local hipblastlt_compat=()
-		local x
-		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
-		done
-
-		for x in "${hipblastlt_compat[@]}" ; do
-			echo "
-				rocm_${u}? (
-					>=dev-libs/rocm-core-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-					dev-libs/rocm-core:=
-					amdgpu_targets_${x}? (
-						>=sci-libs/hipBLASLt-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-						sci-libs/hipBLASLt:=
-					)
-				)
-			"
-		done
-
-		# Indirect dependencies
-		echo "
-				>=dev-libs/rocm-comgr-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocm-comgr:=
-				>=dev-libs/rocr-runtime-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-libs/rocr-runtime:=
-				>=dev-build/rocm-cmake-${pv}:${s}
-				dev-build/rocm-cmake:=
-				>=dev-util/rocm-smi-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-util/rocm-smi:=
-				>=dev-util/rocminfo-${pv}:${s}[${LIBSTDCXX_USEDEP}]
-				dev-util/rocminfo:=
-				>=dev-util/Tensile-${pv}:${s}[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},$(get_rocm_usedep TENSILE)]
-				dev-util/Tensile:=
-				>=sci-libs/rocBLAS-${pv}:${s}[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				sci-libs/rocBLAS:=
-			)
-		"
-	done
-}
 #	>=dev-cpp/abseil-cpp-20220623:0/20220623
 #	>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 RDEPEND+="
@@ -565,8 +450,8 @@ RDEPEND+="
 		>=x11-drivers/nvidia-drivers-545.23
 	)
 	rocm? (
-		$(gen_rocm_depends)
-		dev-util/hip:=
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP},comm,math,ml,profiling]
+		llvm-core/lld:${ROCM_LLVM_SLOT}
 	)
 "
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
@@ -767,13 +652,9 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-			ROCM_SLOT="7.2"
-			ROCM_VERSION="${HIP_7_2_VERSION}"
-		fi
-		rocm_pkg_setup
-		rocm_set_default_hipcc
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
+		rocm-r1_set_default_hipcc
 	elif use clang ; then
 		use_clang
 	else
@@ -878,10 +759,6 @@ ewarn
 
 	# Speed up symbol replacement for @...@ by reducing search space.
 	XLA_S="${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
-
-	if use rocm ; then
-		rocm_src_prepare
-	fi
 
 	cd "${XLA_S}" || die
 
@@ -1127,19 +1004,16 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		)
 	fi
 	if use rocm ; then
+	# TODO:
+	# Update for therock-10.1
 		export LD_LIBRARY_PATH="${ESYSROOT}/usr/bin/Tensile/$(get_libdir):${LD_LIBRARY_PATH}"
 		export PATH="${ESYSROOT}/usr/bin/Tensile/bin:${PATH}"
 		export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
-		local gcc_slot=$(gcc-major-version)
-		local rocm_pv=$(best_version "sci-libs/rocFFT" | sed -e "s|sci-libs/rocFFT-||")
-		local rocm_version=$(best_version "dev-util/hip" | sed -e "s|dev-util/hip-||g")
-		rocm_version=$(ver_cut 1-3 "${rocm_version}")
-
 		export HIP_PATH="${ESYSROOT}/usr"
 		export HOST_C_COMPILER="${ESYSROOT}/usr/bin/${CC}"
 		export HOST_CXX_COMPILER="${ESYSROOT}/usr/bin/${CXX}"
-		export JAX_ROCM_VERSION="${rocm_version//./}"
+		export JAX_ROCM_VERSION="${ROCM_VERSION//./}"
 		export ROCM_PATH="${ESYSROOT}/usr"
 		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")
 einfo "HIP_PATH:  ${HIP_PATH}"
@@ -1195,9 +1069,9 @@ einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
 
 	if use rocm ; then
 	# From https://github.com/openxla/xla/blob/5fe17e380f0de323a4f56b1dcb9cb22a339e4250/xla/service/gpu/llvm_gpu_backend/amdgpu_backend.cc#L291
-		export LLVM_PATH="${EROCM_LLVM_PATH}"
-		echo "build --action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc.user" || die
-		echo "build --host_action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc.user" || die
+		export LLVM_PATH="${ROCM_LLVM_PATH}"
+		echo "build --action_env=LLVM_PATH=\"${ROCM_LLVM_PATH}\"" >> ".bazelrc.user" || die
+		echo "build --host_action_env=LLVM_PATH=\"${ROCM_LLVM_PATH}\"" >> ".bazelrc.user" || die
 	fi
 
 	if has_version "dev-java/openjdk-bin:11" ; then
