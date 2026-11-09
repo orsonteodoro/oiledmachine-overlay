@@ -340,6 +340,7 @@ REQUIRED_USE="
 "
 BANNED_RDEPEND="
 	!dev-build/rocm-cmake
+	!dev-lang/rocm-flang
 	!dev-libs/rocm-comgr
 	!dev-libs/rocm-device-libs
 	!dev-libs/rocm-opencl-runtime
