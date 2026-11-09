@@ -1015,7 +1015,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		export HOST_CXX_COMPILER="${ESYSROOT}/usr/bin/${CXX}"
 		export JAX_ROCM_VERSION="${ROCM_VERSION//./}"
 		export ROCM_PATH="${ESYSROOT}/usr"
-		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")
+		export TF_ROCM_AMDGPU_TARGETS=$(echo "${ROCM_TARGETS}" | tr ";" ",")
 einfo "HIP_PATH:  ${HIP_PATH}"
 einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
 einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"
