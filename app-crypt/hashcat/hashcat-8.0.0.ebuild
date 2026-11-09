@@ -5,6 +5,8 @@ EAPI=8
 
 # U24
 
+# This ebuild uses AI synthetic data and inference.
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
