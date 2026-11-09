@@ -287,7 +287,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Note: CUDA and HIP are currently untested. Build failures may occur.
 	# Turning off examples causes errors during configure
 	# -DWHISPER_BUILD_TESTS=$(usex test)
-	export AMDGPU_TARGETS="$(get_amdgpu_flags)"
+	export AMDGPU_TARGETS="${ROCM_TARGETS}"
 	local mycmakeargs=(
 		-DWHISPER_BUILD_EXAMPLES=ON
 		-DGGML_CLBLAST=$(usex opencl)
