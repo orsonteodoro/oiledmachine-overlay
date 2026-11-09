@@ -108,7 +108,7 @@ src_prepare() {
 }
 
 src_configure() {
-	rocm_set_default_clang
+	rocm-r1_set_default_clang
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
@@ -173,7 +173,6 @@ src_install() {
 	cmake_src_install
 	einstalldocs
 	dodoc "license.txt"
-	rocm_mv_docs
 	insinto "${ROCM_PATH}/share/${PN}"
 	doins "version.txt"
 	insinto "${ROCM_PATH}/include/hiprt"
