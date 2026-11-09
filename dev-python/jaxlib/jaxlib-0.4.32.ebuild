@@ -865,7 +865,7 @@ python_compile() {
 	prepare_jaxlib
 
 	if use rocm ; then
-		rocm_set_default_gcc
+		rocm-r1_set_default_gcc
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
