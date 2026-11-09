@@ -7,12 +7,12 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 IMPLS=(
@@ -22,18 +22,17 @@ IMPLS=(
 	"rocm"
 	"sycl"
 )
-ROCM_SLOTS=(
-	rocm_7_2
-)
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot secure-version rocm-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="3dc1cdc27a68680caa4bdab7d89c45543d71363d" # Jan 13, 2025
-	EGIT_REPO_URI="https://github.com/ekondis/mixbench.git"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/ekondis/mixbench.git"
+	FALLBACK_COMMIT="06297d6b4882729079fef586407e3ff7ecba437b" # Oct 24, 2026
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -51,16 +50,10 @@ HOMEPAGE="https://github.com/ekondis/mixbench"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
-${ROCM_SLOTS[@]}
 cuda doc rocm opencl openmp sycl
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
-	rocm? (
-		^^ (
-			${ROCM_SLOTS[@]}
-		)
-	)
 	^^ (
 		${IMPLS[@]}
 	)
@@ -76,10 +69,7 @@ RDEPEND="
 		sys-devel/gcc:=[openmp]
 	)
 	rocm? (
-		rocm_7_2? (
-			~dev-util/hip-${HIP_7_2_VERSION}:=[rocm]
-		)
-		dev-util/hip:=
+		>=sci-ml/therock-${THEROCK_PV}:=
 	)
 	sycl? (
 		|| (
@@ -94,7 +84,7 @@ DEPEND="
 	)
 "
 BDEPEND="
-	>=dev-build/cmake-3.8
+	>=dev-build/cmake-3.18
 	openmp? (
 		sys-devel/gcc:=[openmp]
 	)
@@ -107,15 +97,11 @@ _PATCHES=(
 pkg_setup() {
 	check-compiler-switch_start
 	if use rocm ; then
-		if use rocm_7_2 ; then
-			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-			export ROCM_SLOT="7.2"
-			ROCM_VERSION="${HIP_7_2_VERSION}"
-		fi
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 einfo "ROCM_SLOT:  ${ROCM_SLOT}"
 einfo "ROCM_VERSION:  ${ROCM_VERSION}"
-		rocm_pkg_setup
 	fi
 	if ! use rocm ; then
 		libcxx-slot_verify
@@ -125,7 +111,9 @@ einfo "ROCM_VERSION:  ${ROCM_VERSION}"
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -151,16 +139,13 @@ src_prepare() {
 				CMAKE_USE_DIR="${S}/mixbench-${x2}" \
 				BUILD_DIR="${S}_${x2}_build" \
 				cmake_src_prepare
-				if [[ "${x}" == "rocm" ]] ; then
-					rocm_src_prepare
-				fi
 			popd >/dev/null 2>&1 || die
 		fi
 	done
 	if use rocm ; then
 		mkdir -p "${S}/mixbench-hip/cmake"
 		cp -a \
-			"/opt/rocm/lib/cmake/hip/FindHIP"* \
+			"${ROCM_PATH}/lib/cmake/hip/FindHIP"* \
 			"${S}/mixbench-hip/cmake" \
 			|| die
 	fi
@@ -187,11 +172,11 @@ src_configure() {
 					strip-unsupported-flags
 					addpredict "/proc/self/task/"
 				elif [[ "${x2}" == "hip" ]] ; then
-					rocm_set_default_hipcc
+					rocm-r1_set_default_hipcc
 					append-ldflags -lhsa-runtime64
 					filter-flags '-Wl,--as-needed' # Fix for undefined symbol: hsa_init
 					mycmakeargs+=(
-						-DHIP_PATH="${ESYSROOT}/opt/rocm"
+						-DHIP_PATH="${ESYSROOT}${ROCM_PATH}"
 					)
 				elif [[ "${x2}" == "opencl" ]] ; then
 					mycmakeargs+=(
@@ -224,7 +209,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 				if [[ "${x}" == "rocm" ]] ; then
 					CMAKE_USE_DIR="${S}/mixbench-${x2}" \
 					BUILD_DIR="${S}_${x2}_build" \
-					rocm_src_configure
+					cmake_src_configure
 				else
 					CMAKE_USE_DIR="${S}/mixbench-${x2}" \
 					BUILD_DIR="${S}_${x2}_build" \
@@ -286,9 +271,7 @@ src_install() {
 		fi
 	done
 
-	if use rocm ; then
-		rocm_fix_rpath
-	fi
+	# TODO:  Check rpath
 
 	docinto "licenses"
 	dodoc "LICENSE"
