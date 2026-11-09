@@ -443,13 +443,6 @@ icl-magma-v2_10_src_prepare() {
 	unset CXX
 
 	cmake_src_prepare
-	local applied_rocm_patches=0
-	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		if use rocm ; then
-			applied_rocm_patches=1
-			rocm_src_prepare
-		fi
-	fi
 
 	gen_pc_file
 
