@@ -1190,7 +1190,7 @@ _src_prepare_patches() {
 
 		sed \
 			-i \
-			-e "s|/opt/rocm/|/opt/rocm/|g" \
+			-e "s|/opt/rocm/|${ROCM_PATH}/|g" \
 			"extern/hipew/src/hipew.c" \
 			|| die
 
@@ -1383,15 +1383,15 @@ einfo "CUDA_TARGETS:  ${targets}"
 	if use rocm ; then
 		mycmakeargs+=(
 			-DCYCLES_HIP_BINARIES_ARCH="${ROCM_TARGETS}"
-			-DHIP_DIR="/opt/rocm"
-			-DHIP_ROOT_DIR="/opt/rocm"
+			-DHIP_DIR="${ROCM_PATH}"
+			-DHIP_ROOT_DIR="${ROCM_PATH}"
 		)
 einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
 	fi
 
 	if use hiprt ; then
 		mycmakeargs+=(
-			-DHIPRT_ROOT_DIR="/opt/rocm"
+			-DHIPRT_ROOT_DIR="${ROCM_PATH}"
 		)
 	fi
 
@@ -1505,8 +1505,8 @@ _blender_src_install() {
 	# Tell the dynamic loader where to find the HIP RT library when dlopen
 	# is called.
 	#
-		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib"
-		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "/opt/rocm/lib/llvm/lib"
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "${ROCM_PATH}/lib"
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "${ROCM_PATH}/lib/llvm/lib"
 	fi
 
 	if use ffmpeg ; then
