@@ -4,13 +4,9 @@
 
 EAPI=8
 
-inherit hip-versions
+LLVM_SLOT=24
 
-LLVM_SLOT=22
-ROCM_SLOT="7.2"
-ROCM_VERSION="${HIP_7_2_VERSION}"
-
-inherit rocm
+inherit rocm-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -53,7 +49,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	rocm_pkg_setup
+	rocm-r1_pkg_setup
 }
 
 src_unpack() {
@@ -62,7 +58,6 @@ src_unpack() {
 
 src_prepare() {
 	default
-	rocm_src_prepare
 	premake5 gmake
 }
 
@@ -75,7 +70,7 @@ src_compile() {
 }
 
 src_install() {
-	insinto "/opt/rocm/include/${PN}"
+	insinto "${ROCM_PATH}/include/${PN}"
 	doins -r *
 }
 
