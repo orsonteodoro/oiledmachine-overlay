@@ -35,7 +35,7 @@
     <flag name="video_cards_nvidia">
       Support hardware acceleration for NVIDIA® GPUs.
 
-      Estimates:
+      Performance impact estimates:
 
       With CUDA®:  1.0x (baseline)
       With OpenCL™:  0.75-0.95x 
