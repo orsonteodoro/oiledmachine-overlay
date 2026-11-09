@@ -20,23 +20,6 @@ ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{8..14} )
 
-AMDGPU_TARGETS_COMPAT=(
-	"gfx902"
-	"gfx909"
-	"gfx90c"
-	"gfx1030"
-	"gfx1031"
-	"gfx1032"
-	"gfx1033"
-	"gfx1034"
-	"gfx1035"
-	"gfx1036"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1103"
-)
-
 CUDA_TARGETS_COMPAT=(
 	"sm_70"
 	"sm_75"

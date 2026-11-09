@@ -109,22 +109,6 @@ PYTHON_BACKENDS=(
 	"vllm"
 )
 
-inherit hip-versions
-
-AMDGPU_TARGETS_COMPAT=(
-	"gfx900"
-	"gfx906"
-	"gfx908"
-	"gfx940"
-	"gfx941"
-	"gfx942"
-	"gfx90a"
-	"gfx1030"
-	"gfx1031"
-	"gfx1100"
-	"gfx1101"
-)
-
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_dotprod"
 	"cpu_flags_arm_i8mm"
@@ -177,40 +161,12 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_4[@]}"
 )
 
-ROCM_VERSIONS=(
-	"${HIP_7_2_VERSION}"
-)
-
-get_rocm_iuse() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		u="rocm_${s/./_}"
-		echo "${u}"
-	done
-}
-
-ROCM_IUSE=$(get_rocm_iuse)
-
-get_rocm_required_use() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		s="${pv%.*}"
-		u="rocm_${s/./_}"
-		echo "
-			${u}? (
-				rocm
-			)
-		"
-	done
-}
-
-ROCM_REQUIRED_USE=$(get_rocm_required_use)
-
 CHKL_TIMESTAMPS=(
 	"app-accessibility/espeak-ng-9999"
+	"dev-vcs/git-9999"
+	"dev-vcs/git-9999-r1"
+	"dev-vcs/git-9999-r2"
+	"dev-vcs/git-9999-r3"
 	"net-misc/curl-9999"
 	"net-misc/wget-9999"
 	"sci-libs/openblas-9999"
@@ -293,7 +249,6 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 # feature.  It is enabled by default to mitigate against drive by download of
 # unreviewed trojanized LLM models which may contain malicious payloads.
 IUSE+="
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPP_BACKENDS[@]/#/localai_backends_}
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
@@ -303,14 +258,12 @@ ${CPU_FLAGS_X86[@]}
 ${GOLANG_BACKENDS[@]/#/localai_backends_}
 ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
-${ROCM_IUSE}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
 ebuild_revision_53
 "
 
 REQUIRED_USE="
-	${ROCM_REQUIRED_USE}
 	!ci
 	!devcontainer
 	^^ (
@@ -443,18 +396,6 @@ REQUIRED_USE="
 			localai_backends_vllm
 		)
 	)
-	rocm? (
-		|| (
-			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-		)
-		^^ (
-			${ROCM_IUSE}
-		)
-		^^ (
-			python_single_target_python3_10
-			python_single_target_python3_12
-		)
-	)
 	stt? (
 		localai_backends_silero-vad
 		|| (
@@ -490,21 +431,6 @@ REQUIRED_USE="
 		localai_backends_vllm
 	)
 "
-gen_rocm_rdepend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s
-		local u
-		s="${pv%.*}"
-		u="rocm_${s/./_}"
-		echo "
-			${u}? (
-				~sci-libs/hipBLAS-${pv}
-				~sci-libs/rocBLAS-${pv}
-			)
-		"
-	done
-}
 
 CHATTERBOX_RDEPEND="
 	$(python_gen_cond_dep '
@@ -725,8 +651,9 @@ VLLM_RDEPEND="
 #		  https://github.com/mudler/LocalAI/blob/v4.8.2/backend/python/kokoro/requirements-hipblas.txt
 #		  https://github.com/mudler/LocalAI/blob/v4.8.2/backend/python/vllm/requirements-hipblas.txt
 #		  https://github.com/mudler/LocalAI/blob/v4.8.2/.github/workflows/image.yml#L42
+# ffmpeg requirement relaxed
 RDEPEND+="
-	$(secure-version_gen_ffmpeg_depends '4.4')
+	$(secure-version_gen_ffmpeg_depends)
 	>=app-accessibility/espeak-ng-${ESPEAK_NG_PV}:=
 	>=x11-misc/xdg-utils-${XDG_UTILS_PV}:=
 	acct-group/${MY_PN2}:*
@@ -735,7 +662,7 @@ RDEPEND+="
 		=dev-util/nvidia-cuda-toolkit-12.0*:=
 	)
 	docker? (
-		app-containers/docker:=
+		>=app-containers/docker-${DOCKER_PV}:=
 	)
 	firejail? (
 		>=sys-apps/firejail-${FIREJAIL_PV}:=
@@ -813,11 +740,7 @@ RDEPEND+="
 		>=sci-libs/openblas-${OPENBLAS_PV}:=
 	)
 	rocm? (
-		sci-libs/hipBLAS:=
-		sci-libs/rocBLAS:=
-		|| (
-			$(gen_rocm_rdepend)
-		)
+		>=sci-ml/therock-${THEROCK_PV}:=[math]
 	)
 	vulkan? (
 		>=media-libs/vulkan-loader-${VULKAN_PV}:=
@@ -862,11 +785,11 @@ BDEPEND+="
 	net-misc/wget
 	ci? (
 		$(secure-version_gen_openssl_depends)
-		>=net-misc/curl-${CURL_PV}
+		>=app-crypt/gnupg-${GNUPG_PV}
 		>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}
-		app-crypt/gnupg
+		>=dev-vcs/git-${GIT_PV}
+		>=net-misc/curl-${CURL_PV}
 		dev-python/pip
-		dev-vcs/git
 		dev-vcs/git-lfs
 	)
 	devcontainer? (
