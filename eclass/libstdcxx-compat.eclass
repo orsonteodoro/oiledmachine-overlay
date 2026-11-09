@@ -298,8 +298,8 @@ LIBSTDCXX_COMPAT_STDCXX23=( # Rolling
 #     ${LIBSTDCXX_COMPAT_STDCXX26[@]}
 # )
 #
-LIBSTDCXX_COMPAT_STDCXX26=( # Rolling + live
-	# Newest rolling/unstable supported
+LIBSTDCXX_COMPAT_STDCXX26=( # Unstable + live
+	# Unstable supported
 	"gcc_slot_15_3" # Support -std=c++26.  Defaults:  Utenacious
 	"gcc_slot_16_2" # Support -std=c++26.  Defaults:  Dsid, Frawhide, Nunstable.  Observed in downstream projects
 	# Live supported

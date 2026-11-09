@@ -622,8 +622,8 @@ LIBCXX_COMPAT_STDCXX23=( # Rolling
 #     ${LIBCXX_COMPAT_STDCXX26[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_STDCXX26=( # Rolling + live
-	# Newest rolling/unstable supported
+LIBCXX_COMPAT_STDCXX26=( # Unstable + live
+	# Unstable supported
 	"llvm_slot_21" # Support -std=c++26.  Defaults:  Nunstable
 	"llvm_slot_22" # Support -std=c++26.  Defaults:  Utenacious; Available:  Nunstable
 	"llvm_slot_23" # Support -std=c++26.  Defaults:  Dunstable, Frawhide, G~
