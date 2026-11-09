@@ -105,7 +105,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	rocm_src_prepare
 }
 
 src_configure() {

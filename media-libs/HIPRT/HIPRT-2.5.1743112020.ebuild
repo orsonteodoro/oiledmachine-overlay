@@ -117,7 +117,6 @@ build_easy_encryption() {
 
 src_prepare() {
 	cmake_src_prepare
-	rocm_src_prepare
 
 	rm "contrib/easy-encryption/bin/linux/ee64" || die
 	build_easy_encryption
