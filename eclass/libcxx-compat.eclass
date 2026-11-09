@@ -534,9 +534,9 @@ LIBCXX_COMPAT_STDCXX17=( # LTS
 #
 LIBCXX_COMPAT_STDCXX20=( # LTS + rolling
 	# From 2 previous LTS releases to newest rolling release
-	"llvm_slot_18" # Support -std=c++17.  Defaults:  U24
-	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13
-	"llvm_slot_21" # Support -std=c++20.  Defaults:  U26, F43; Available:  D13, 4.3y
+	"llvm_slot_18" # Support -std=c++17.  Defaults:  U24; Allow CUDA 12.9
+	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13; Allow CUDA 12.9
+	"llvm_slot_21" # Support -std=c++20.  Defaults:  U26, F43; Available:  D13
 	"llvm_slot_22" # Support -std=c++20.  Defaults:  F44, G23
 	"llvm_slot_23" # Support -std=c++20.  Defaults:  F45
 )
