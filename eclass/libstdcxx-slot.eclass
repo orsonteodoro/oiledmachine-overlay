@@ -134,7 +134,7 @@ GCC_15_2="3.4.34"
 GCC_15_3="3.4.34"
 GCC_16_1="3.4.35" # Same as source but the doc is wrong
 GCC_16_2="3.4.36"
-GCC_17_1="3.4.37" # Same as source
+GCC_17_0="3.4.37" # Same as source
 
 # @ECLASS_VARIABLE: _ALL_GCC_COMPAT
 # @DESCRIPTION:
@@ -142,6 +142,7 @@ GCC_17_1="3.4.37" # Same as source
 # Live is not supported
 # Only the earliest $(ver_cut 1-2 ${GCC_X_Y}) bump need to be shown to reduce unnecessary rebuilds for libstdc++ compatibility.
 _ALL_GCC_COMPAT=(
+	"17_0"
 	"16_2" # Alias for 16_1
 	"16_1"
 	"15_3" # Alias for 15_1, 15_2
