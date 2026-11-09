@@ -10,54 +10,19 @@ MY_PV="2.5.a21e075.3" # Tagged
 
 # Versioning based on GH search: committer-date:<=YYYYMMDD [of dev-util/hip tag]
 
-inherit hip-versions
-
 CXX_STANDARD=17
 EGIT_COMMIT="4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506" # Same as most recent 2.5
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=22
-ROCM_SLOT="7.2"
-ROCM_VERSION="${HIP_7_2_VERSION}"
+LLVM_SLOT=24
 
 # See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/4a0c5a0e0957642e7ab6947b1a9bfaf72dcf5506/scripts/bitcodes/precompile_bitcode.py
-AMDGPU_TARGETS_COMPAT=(
-	"gfx900"
-	"gfx902"
-	"gfx904"
-	"gfx906"
-	"gfx908"
-	"gfx909"
-	"gfx90a"
-	"gfx90c"
-	"gfx942"
-	"gfx1010"
-	"gfx1011"
-	"gfx1012"
-	"gfx1013"
-	"gfx1030"
-	"gfx1031"
-	"gfx1032"
-	"gfx1033"
-	"gfx1034"
-	"gfx1035"
-	"gfx1036"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1103"
-	"gfx1150"
-	"gfx1151"
-	"gfx1152"
-	"gfx1200"
-	"gfx1201"
-)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_ROCM_7_0[@]}"
+	"${LIBSTDCXX_COMPAT_ROCM_10_1[@]}"
 )
 
-inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot rocm
+inherit check-compiler-switch cmake flag-o-matic libstdcxx-slot secure-version rocm-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/HIPRT-${EGIT_COMMIT}"
@@ -94,7 +59,6 @@ IUSE="
 ebuild_revision_11
 "
 REQUIRED_USE="
-	${ROCM_REQUIRED_USE}
 	?? (
 		bake-kernels
 		bitcode
@@ -108,7 +72,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${ROCM_VERSION}:=
+	>=sci-ml/therock-${THEROCK_PV}:=
 	!system-orochi? (
 		!dev-libs/Orochi
 	)

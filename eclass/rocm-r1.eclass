@@ -28,6 +28,62 @@ _ROCM_R1_ECLASS=1
 : ${ROCM_SLOT:="9999"}
 : ${ROCM_VERSION:="${PV}"}
 
+# The distro's release cycle is faster.
+HIP_CUDA_DEPEND_DISTRO="
+	dev-util/nvidia-cuda-toolkit:=
+	virtual/cuda-compiler:=
+	x11-drivers/nvidia-drivers:=
+	|| (
+		(
+			>=x11-drivers/nvidia-drivers-615
+			=dev-util/nvidia-cuda-toolkit-13.4*
+			=virtual/cuda-compiler-13.4*
+		)
+		(
+			>=x11-drivers/nvidia-drivers-575.57
+			=dev-util/nvidia-cuda-toolkit-12.9*
+			=virtual/cuda-compiler-12.9*
+		)
+	)
+"
+
+# https://github.com/ROCm/HIPIFY/blob/therock-10.1/docs/how-to/hipify-clang.rst
+# Upstream supported, user is responsible for packaging it locally.
+HIP_CUDA_DEPEND_UPSTREAM="
+	dev-util/nvidia-cuda-toolkit:=
+	virtual/cuda-compiler:=
+	x11-drivers/nvidia-drivers:=
+	|| (
+		(
+			>=x11-drivers/nvidia-drivers-595
+			=dev-util/nvidia-cuda-toolkit-13.2*
+			=virtual/cuda-compiler-13.2*
+		)
+		(
+			>=x11-drivers/nvidia-drivers-575.57
+			=dev-util/nvidia-cuda-toolkit-12.9*
+			=virtual/cuda-compiler-12.9*
+		)
+		(
+			>=x11-drivers/nvidia-drivers-570.124
+			=dev-util/nvidia-cuda-toolkit-12.8*
+			=virtual/cuda-compiler-12.8*
+		)
+		(
+			>=x11-drivers/nvidia-drivers-560.35
+			=dev-util/nvidia-cuda-toolkit-12.6*
+			=virtual/cuda-compiler-12.6*
+		)
+	)
+"
+
+# The user can choose either distro or upstream.
+if [[ ${HIP_CUDA_DEPEND_FLAVOR:-"upstream"} =~ "distro" ]] ; then
+	HIP_CUDA_DEPEND="${HIP_CUDA_DEPEND_DISTRO}"
+else
+	HIP_CUDA_DEPEND="${HIP_CUDA_DEPEND_UPSTREAM}"
+fi
+
 inherit flag-o-matic toolchain-funcs
 
 # @FUNCTION:  rocm-r1_pkg_setup
