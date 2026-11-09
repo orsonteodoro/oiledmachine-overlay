@@ -859,13 +859,13 @@ RDEPEND="
 		)
 	)
 	magma? (
+		sci-libs/magma:=
 		cuda? (
 			sci-libs/magma:0/cuda[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cuda]
 		)
-		sci-libs/magma:=
 	)
 	mpi? (
-		virtual/mpi
+		virtual/mpi:*
 	)
 	numpy? (
 		$(python_gen_cond_dep '
@@ -873,10 +873,10 @@ RDEPEND="
 		')
 	)
 	openblas? (
-		sci-libs/openblas
+		sci-libs/openblas:=
 	)
 	opencl? (
-		virtual/opencl
+		virtual/opencl:=
 	)
 	rocm? (
 		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},math,ml]

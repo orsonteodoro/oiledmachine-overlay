@@ -8,33 +8,6 @@ EAPI=8
 # For requirements, see
 # https://github.com/pytorch/pytorch/blob/v2.13.0/RELEASE.md?plain=1#L49
 
-# Obtained from caffe2 ebuild
-AMDGPU_TARGETS_COMPAT=(
-	"gfx900"
-	"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1200"
-	"gfx1201"
-)
-AMDGPU_TARGETS_UNTESTED=(
-	"gfx900"
-	#"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1200"
-	"gfx1201"
-)
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda126.bat ; min
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda130.bat ; max
 CUDA_TARGETS_COMPAT=(
@@ -63,10 +36,6 @@ CUDA_TARGETS_COMPAT=(
 	"compute_100"
 	"compute_120"
 )
-AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}")
-AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_USEDEP[@]/%/?}")
-AMDGPU_TARGETS_USEDEP="${AMDGPU_TARGETS_USEDEP[@]}"
-AMDGPU_TARGETS_USEDEP="${AMDGPU_TARGETS_USEDEP// /,}"
 CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}")
 CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_USEDEP[@]/%/?}")
 CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP[@]}"
@@ -105,8 +74,7 @@ RDEPEND="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
-	~sci-ml/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
-	sci-ml/caffe2:=
+	~sci-ml/caffe2-${PV}:=[${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 "
 DEPEND="
 	$(python_gen_cond_dep '
