@@ -1255,7 +1255,7 @@ einfo
 			export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
 			export TF_NEED_CLANG=1
-			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags | tr ";" ",")
+			export TF_ROCM_AMDGPU_TARGETS=$(echo "${ROCM_TARGETS}" | tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_SLOT}"
 			export HIP_PATH="${ROCM_PATH}"
 			export ROCM_PATH="${ROCM_PATH}"
