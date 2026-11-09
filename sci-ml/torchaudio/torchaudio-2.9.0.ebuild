@@ -15,13 +15,6 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..14} )
 
-AMDGPU_TARGETS_COMPAT=(
-	"gfx803"
-	"gfx900"
-	"gfx906"
-	"gfx908"
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
@@ -32,21 +25,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit hip-versions
-ROCM_VERSIONS=(
-	"${HIP_7_2_VERSION}"
-)
-
-gen_rocm_iuse() {
-	local x
-	for x in "${ROCM_VERSIONS[@]}" ; do
-		local t="${x%.*}"
-		echo "rocm_${t/./_}"
-	done
-}
-ROCM_IUSE=$(gen_rocm_iuse)
-
-inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi secure-version rocm
+inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi secure-version rocm-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -67,7 +46,6 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${ROCM_IUSE}
 cuda rocm rccl roctracer
 ebuild_revision_9
 "
@@ -76,47 +54,9 @@ REQUIRED_USE="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	rocm? (
-		llvm_slot_22
-		^^ (
-			python_single_target_python3_10
-			python_single_target_python3_12
-		)
+		llvm_slot_${ROCM_LLVM_SLOT}
 	)
 "
-
-gen_rocm_depend() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s="0/"$(ver_cut "1-2" "${pv}")
-		local u=$(ver_cut "1-2" "${pv}")
-		local ROCM_SLOT="${u}"
-		u="rocm_${u/./_}"
-		echo "
-			${u}? (
-				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocm-device-libs-${pv}:=
-				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipCUB-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
-				~sci-libs/hipRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
-				~sci-libs/hipSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
-				~sci-libs/miopen-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				~sci-libs/rocFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				~sci-libs/rocRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				~sci-libs/rocPRIM-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
-				~sci-libs/rocThrust-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
-				rccl? (
-					~dev-libs/rccl-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-				)
-				roctracer? (
-					~dev-util/roctracer-${pv}:=[${LIBSTDCXX_USEDEP}]
-				)
-			)
-		"
-	done
-}
 
 CUDA_12_6_RDEPEND="
 	(
@@ -144,7 +84,13 @@ RDEPEND+="
 		)
 	)
 	rocm? (
-		$(gen_rocm_depend)
+		>=sci-ml/therock-${THEROCK_PV}:=[math,ml]
+		rccl? (
+			>=sci-ml/therock-${THEROCK_PV}:=[comm]
+		)
+		roctracer? (
+			>=sci-ml/therock-${THEROCK_PV}:=[profiling]
+		)
 	)
 "
 DEPEND+="
@@ -161,10 +107,9 @@ PATCHES=(
 
 pkg_setup() {
 	python_setup
-	if use rocm_7_2 ; then
-		export LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-		export ROCM_SLOT="7.2"
-		rocm_pkg_setup
+	if use rocm ; then
+		export LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
 	else
 		local s
 		for s in "${LLVM_COMPAT[@]}" ; do
@@ -186,7 +131,7 @@ python_configure() {
 		export CUDA_HOME="/opt/cuda"
 	fi
 	if use rocm ; then
-		export ROCM_PATH="/opt/rocm"
+		export ROCM_PATH="${ROCM_PATH}"
 	fi
 }
 
