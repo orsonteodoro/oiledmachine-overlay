@@ -128,14 +128,14 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	export HIP_PATH="/opt/rocm"
+	export HIP_PATH="${ROCM_PATH}"
 	local mycmakeargs=(
 		-DBITCODE=$(usex bitcode)
 		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
-		-DCMAKE_INSTALL_PREFIX="/opt/rocm"
+		-DCMAKE_INSTALL_PREFIX="${ROCM_PATH}"
 		-DFORCE_DISABLE_CUDA=$(usex !cuda)
 		-DGENERATE_BAKE_KERNEL=$(usex bake-kernels)
-		-DHIP_PATH="/opt/rocm"
+		-DHIP_PATH="${ROCM_PATH}"
 		-DHIPRT_PREFER_HIP_5=ON
 		-DNO_ENCRYPT=$(usex !encrypt)
 		-DNO_UNITTEST=$(usex !test)
@@ -175,12 +175,12 @@ src_install() {
 	einstalldocs
 	dodoc "license.txt"
 	rocm_mv_docs
-	insinto "/opt/rocm/share/${PN}"
+	insinto "${ROCM_PATH}/share/${PN}"
 	doins "version.txt"
-	insinto "/opt/rocm/include/hiprt"
+	insinto "${ROCM_PATH}/include/hiprt"
 	doins -r "hiprt/impl"
 	if ! use system-orochi ; then
-		insinto "/opt/rocm/include"
+		insinto "${ROCM_PATH}/include"
 		doins -r "contrib/Orochi"
 	fi
 }
