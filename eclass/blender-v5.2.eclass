@@ -163,14 +163,14 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
 	#${LIBCXX_COMPAT_CXX20_CUDA_12_8[@]/llvm_slot_} # 18..19
-	#${LIBCXX_COMPAT_CXX20_ROCM_9999[@]/llvm_slot_} # 24
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 21, 22
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 21, 22, 23
+	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_MAX_SLOT="22"
+LLVM_MAX_SLOT="24"
 LLVM_MAX_UPSTREAM=20 # (inclusive)
 
 inherit ffmpeg
@@ -577,6 +577,7 @@ REQUIRED_USE+="
 	rocm? (
 		!nanovdb
 		cycles
+		llvm_slot_${ROCM_LLVM_SLOT}
 	)
 	tbb-malloc-proxy? (
 		tbb
@@ -893,6 +894,12 @@ RDEPEND+="
 			=media-libs/mesa-26.0*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 			=media-libs/mesa-26.1*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 			=media-libs/mesa-26.2*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-9999[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+		)
+	)
+	llvm_slot_24? (
+		media-libs/mesa:=
+		|| (
 			=media-libs/mesa-9999[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
 		)
 	)
