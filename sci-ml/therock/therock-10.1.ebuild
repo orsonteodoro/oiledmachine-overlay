@@ -602,17 +602,18 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	# https://github.com/ROCm/TheRock/blob/therock-10.1/README.md#optional-configuration-flags
 	# https://github.com/ROCm/TheRock/blob/therock-10.1/BUILD_TOPOLOGY.toml
 			-DTHEROCK_ENABLE_ALL=OFF
-			-DTHEROCK_ENABLE_COMPILER=ON
-			-DTHEROCK_ENABLE_CORE_RUNTIME=ON
-			-DTHEROCK_ENABLE_CV_LIBS=$(usex cv "ON" "OFF")
-			-DTHEROCK_ENABLE_DC_TOOLS=$(usex dc-tools "ON" "OFF")
-			-DTHEROCK_ENABLE_DEBUG_TOOLS=$(usex debug "ON" "OFF")
-			-DTHEROCK_ENABLE_EMULATION=$(usex emulation-tools "ON" "OFF")
-			-DTHEROCK_ENABLE_MATH_LIBS=$(usex math "ON" "OFF")
-			-DTHEROCK_ENABLE_MEDIA_LIBS=$(usex media "ON" "OFF")
-			-DTHEROCK_ENABLE_ML_LIBS=$(usex ml "ON" "OFF")
-			-DTHEROCK_ENABLE_OCL_RUNTIME=$(usex opencl "ON" "OFF")
-			-DTHEROCK_ENABLE_PROFILER=$(usex profiling "ON" "OFF")
+			-DTHEROCK_ENABLE_COMPILER=ON						# For comgr, device-libs, hipcc, rocm/llvm-project
+			-DTHEROCK_ENABLE_CORE_RUNTIME=ON					# For rocr-runtime, rocminfo
+			-DTHEROCK_ENABLE_CV_LIBS=$(usex cv "ON" "OFF")				# For rpp
+			-DTHEROCK_ENABLE_DC_TOOLS=$(usex dc-tools "ON" "OFF")			# For rdc
+			-DTHEROCK_ENABLE_DEBUG_TOOLS=$(usex debug "ON" "OFF")			# For rocgdb
+			-DTHEROCK_ENABLE_EMULATION=$(usex emulation-tools "ON" "OFF")		# For rocjitsu
+			-DTHEROCK_ENABLE_HIP_RUNTIME=ON						# For hip
+			-DTHEROCK_ENABLE_MATH_LIBS=$(usex math "ON" "OFF")			# For composable-kernel, hipblas, rocblas ...
+			-DTHEROCK_ENABLE_MEDIA_LIBS=$(usex media "ON" "OFF")			# For rocdecode
+			-DTHEROCK_ENABLE_ML_LIBS=$(usex ml "ON" "OFF")				# For miopen
+			-DTHEROCK_ENABLE_OCL_RUNTIME=$(usex opencl "ON" "OFF")			# For ocl-icd
+			-DTHEROCK_ENABLE_PROFILER=$(usex profiling "ON" "OFF")			# For rocprofiler, roctracer
 			-DTHEROCK_ENABLE_WSL=OFF
 	)
 

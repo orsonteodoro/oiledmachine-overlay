@@ -527,7 +527,7 @@ RDEPEND="
 		')
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=
+		~sci-ml/therock-${THEROCK_PV}:=[math,ml,profiling]
 
 		sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
 		|| (

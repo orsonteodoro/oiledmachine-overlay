@@ -2390,7 +2390,7 @@ RDEPEND="
 	)
 	rocm? (
 		>=x11-libs/libdrm-${LIBDRM_PV}:=[video_cards_amdgpu]
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},math,opencl]
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024:=[l0]

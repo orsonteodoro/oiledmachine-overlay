@@ -181,13 +181,13 @@ REQUIRED_USE="
 RDEPEND="
 	>=virtual/zlib-${ZLIB_PV}:=[minizip]
 	app-arch/lzma:=
-	virtual/opencl:=[iocl?,neo?,pocl?,rusticl?,video_cards_intel?,video_cards_nvidia?]
+	virtual/opencl:=[iocl?,neo?,pocl?,rocm?,rusticl?,video_cards_intel?,video_cards_nvidia?]
 	!cuda? (
 		dev-util/opencl-headers:=
 		virtual/opencl:=
 	)
 	rocm? (
-		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
 	)
 	video_cards_nvidia? (
 		!cuda? (

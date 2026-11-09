@@ -35,7 +35,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
 )
 
-inherit libcxx-slot libstdcxx-slot multilib-build
+inherit libcxx-slot libstdcxx-slot multilib-build secure-version
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}"
@@ -47,9 +47,9 @@ LICENSE="
 SLOT="0/3" # 0/API_VERSION
 IUSE+="
 ${_VIDEO_CARDS[@]}
-clover cpu iocl neo neo-legacy pocl opencl pal rocm rocm_7_2
+clover cpu iocl neo neo-legacy pocl opencl pal rocm
 rusticl vulkan
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	cpu? (
@@ -115,9 +115,7 @@ RDEPEND+="
 			media-libs/mesa[video_cards_radeonsi]
 		)
 		rocm? (
-			rocm_7_2? (
-				dev-libs/rocm-opencl-runtime:0/7.2[${LIBSTDCXX_USEDEP}]
-			)
+			>=sci-ml/therock-${THEROCK_PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
 		)
 	)
 	video_cards_v3d? (

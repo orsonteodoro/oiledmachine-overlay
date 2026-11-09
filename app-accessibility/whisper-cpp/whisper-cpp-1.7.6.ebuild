@@ -233,7 +233,7 @@ RDEPEND="
 		>=sci-ml/openvino-${OPENVINO_PV}:=
 	)
 	rocm? (
-		>=sci-ml/therock-${THEROCK_PV}:=
+		>=sci-ml/therock-${THEROCK_PV}:=[math]
 	)
 	sdl2? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}:=

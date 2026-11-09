@@ -49,7 +49,13 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
 )
 
-inherit check-compiler-switch cmake fix-rpath flag-o-matic fortran-2 libcxx-slot libstdcxx-slot python-any-r1 toolchain-funcs
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"sci-libs/openblas-9999"
+)
+
+inherit check-compiler-switch cmake fix-rpath flag-o-matic fortran-2 libcxx-slot
+inherit libstdcxx-slot python-any-r1 secure-version toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	inherit rocm-r1
 else
@@ -236,7 +242,7 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	"
 	RDEPEND+="
 		rocm? (
-			>=sci-ml/therock-${THEROCK_PV}:=
+			>=sci-ml/therock-${THEROCK_PV}:=[math]
 		)
 	"
 fi
@@ -266,9 +272,7 @@ REQUIRED_USE+="
 	)
 "
 # TODO: do not enforce openblas
-#	hip? ( sci-libs/hipBLAS )
 RDEPEND+="
-	sci-libs/hipBLAS:=
 	sys-devel/gcc:=[fortran]
 	!openblas? (
 		virtual/blas:*
@@ -282,10 +286,10 @@ RDEPEND+="
 	)
 	openblas? (
 		sci-libs/lapack:=
-		sci-libs/openblas:=
+		>=sci-libs/openblas-${OPENBLAS_PV}:=
 	)
 	tbb? (
-		dev-cpp/tbb:=
+		>=dev-cpp/tbb-${TBB_PV}:=
 	)
 "
 DEPEND="
@@ -469,6 +473,8 @@ get_cuda_flags() {
 }
 
 icl-magma-v2_10_src_configure() {
+	chkl_check_many_timestamps
+
 	replace-flags "-O0" "-O1"
 
 	check-compiler-switch_end

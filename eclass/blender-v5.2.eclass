@@ -978,7 +978,7 @@ RDEPEND+="
 		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[truetype]
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP_LTS}]
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 	rubberband? (
 		>=media-libs/rubberband-${RUBBERBAND_PV}:=
