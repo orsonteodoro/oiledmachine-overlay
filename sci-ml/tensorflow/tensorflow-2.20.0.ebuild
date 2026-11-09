@@ -48,19 +48,7 @@ PYTHON_COMPAT=( "python3_13" ) # NumPy needs >=3.13.  See https://github.com/ten
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 RE2_SLOT="20250512"
 
-AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/xla/stream_executor/device_description.h#L151
-	"gfx900"
-	"gfx908"
-	"gfx90a"
-	"gfx940"
-	"gfx942"
-	"gfx950"
-	"gfx1030"
-	"gfx1100"
-	"gfx1200"
-	"gfx1201"
-)
 
 CUDA_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.20.0/.bazelrc#L312  # Supported upstream
@@ -83,29 +71,6 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
-)
-
-inherit hip-versions
-HIP_SLOTS=(
-# See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
-	"${HIP_7_2_VERSION}" # Placeholder
-)
-
-gen_hip_slots2() {
-	local pv
-	for pv in "${HIP_SLOTS[@]}" ; do
-		local u=$(ver_cut 1-2 "${pv}")
-		u="${u/./_}"
-		echo "rocm_${u}"
-	done
-}
-
-HIP_SLOTS2=(
-	$(gen_hip_slots2)
-)
-
-declare -A LLD_SLOT=(
-	["${HIP_7_2_VERSION}"]="${HIP_7_2_LLVM_SLOT}" # Placeholder
 )
 
 # *seq* can only be done in the eclass.
@@ -131,7 +96,7 @@ gen_seq_inc() {
 
 inherit abseil-cpp bazel cflags-hardened check-compiler-switch check-reqs cuda cython distutils-r1
 inherit dhms flag-o-matic flag-o-matic-om grpc lcnr libcxx-slot libstdcxx-slot llvm multibuild
-inherit prefix protobuf re2 rocm toolchain-funcs
+inherit prefix protobuf re2 rocm-r1 secure-version toolchain-funcs
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
@@ -457,19 +422,8 @@ gen_required_use_cuda_targets() {
 		"
 	done
 }
-gen_required_use_rocm_targets() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
-	$(gen_required_use_rocm_targets)
 	!rocm
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -481,15 +435,6 @@ REQUIRED_USE="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
-	)
-	rocm? (
-		${ROCM_REQUIRED_USE}
-		^^ (
-			${HIP_SLOTS2[@]}
-		)
-	)
-	rocm_7_2? (
-		llvm_slot_22
 	)
 	test? (
 		python
@@ -510,69 +455,6 @@ CUDA_12_5_RDEPENDS="
 		virtual/cuda-compiler:0/12.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
-
-is_hipblastlt_compat() {
-	local t="${1}"
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		for y in "${!t}" ; do
-			[[ "${x}" == "${y}" ]] && return 0
-		done
-	done
-	return 1
-}
-
-gen_rocm_rdepend() {
-	local pv
-	for pv in "${HIP_SLOTS[@]}" ; do
-		local s="0/"$(ver_cut 1-2 "${pv}")
-		local ROCM_SLOT=$(ver_cut 1-2 "${pv}")
-		u="${ROCM_SLOT/./_}"
-	# Check both the direct top and indirect bottom dependencies
-		echo "
-			rocm_${u}? (
-				~dev-libs/rccl-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-				~dev-libs/rocm-device-libs-${pv}:=
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~dev-util/roctracer-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~sci-libs/hipBLAS-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT)]
-				~sci-libs/hipSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				~sci-libs/rocFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				~sci-libs/rocRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
-				~sci-libs/miopen-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-
-				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-build/rocm-cmake-${pv}:=
-				~dev-util/rocm-smi-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/rocminfo-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/Tensile-${pv}:=[${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP},$(get_rocm_usedep TENSILE)]
-			)
-		"
-
-		local t="HIPBLASLT_${u}_AMDGPU_TARGETS_COMPAT[@]"
-		local hipblastlt_compat=()
-		local x
-		for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-			[[ "${!t}" =~ "${x}"($|" ") ]] && hipblastlt_compat+=( "${x}" )
-		done
-
-		local x
-		for x in "${hipblastlt_compat[@]}" ; do
-			echo "
-				rocm_${u}? (
-					amdgpu_targets_${x}? (
-						~sci-libs/hipBLASLt-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-					)
-				)
-			"
-		done
-	done
-}
 
 GOOGLE_CLOUD_CPP_PROTOBUF_5="
 	python? (
@@ -731,7 +613,7 @@ RDEPEND="
 		=sci-visualization/tensorboard-${DEP_VER}*:=[${PYTHON_SINGLE_USEDEP}]
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP},comm,math,ml,profiling]
 	)
 "
 DEPEND="
@@ -888,12 +770,10 @@ eerror
 		die
 	fi
 
-	local _LLVM_COMPAT=(" ${LLVM_COMPAT[@]}" )
+	local _LLVM_COMPAT=( "${LLVM_COMPAT[@]}" )
 
 	if use rocm ; then
-		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-			_LLVM_COMPAT=( 22 )
-		fi
+		_LLVM_COMPAT=( ${ROCM_LLVM_SLOT} )
 	fi
 
 	local found=0
@@ -955,11 +835,7 @@ ewarn "ROCm support is a Work In Progress (WIP) and possibly broken"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-			LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-			ROCM_SLOT="7.2"
-			ROCM_VERSION="${HIP_7_2_VERSION}"
-		fi
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
 	elif use clang ; then
 		use_clang
 	else
@@ -968,8 +844,8 @@ ewarn "ROCm support is a Work In Progress (WIP) and possibly broken"
 	strip-unsupported-flags
 
 	if use rocm ; then
-		rocm_pkg_setup
-		rocm_set_default_hipcc
+		rocm-r1_pkg_setup
+		rocm-r1_set_default_hipcc
 	fi
 
 einfo "CC:  ${CC}"
@@ -1112,9 +988,6 @@ patch_rocm() {
 		done
 	fi
 
-	if use rocm ; then
-		rocm_src_prepare
-	fi
 	pushd "third_party/xla/third_party/gpus" || die
 		pigz -z -k "find_rocm_config.py" || die
 		mv \
@@ -1178,7 +1051,7 @@ einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	done
 
 	if use rocm ; then
-		rocm_set_default_gcc
+		rocm-r1_set_default_gcc
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=lld"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
@@ -1375,6 +1248,8 @@ einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 		fi
 		if use rocm ; then
+		# TODO:
+		# Update section for therock ebuild
 			export LD_LIBRARY_PATH="${ESYSROOT}/usr/bin/Tensile/$(get_libdir):${LD_LIBRARY_PATH}"
 			export PATH="${ESYSROOT}/usr/bin/Tensile/bin:${PATH}"
 			export PYTHONPATH="${ESYSROOT}/usr/lib/Tensile/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
@@ -1465,9 +1340,9 @@ einfo
 
 		if use rocm ; then
 		# From https://github.com/openxla/xla/blob/5fe17e380f0de323a4f56b1dcb9cb22a339e4250/xla/service/gpu/llvm_gpu_backend/amdgpu_backend.cc#L291
-			export LLVM_PATH="${EROCM_LLVM_PATH}"
-			echo "build --action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc" || die
-			echo "build --host_action_env=LLVM_PATH=\"${EROCM_LLVM_PATH}\"" >> ".bazelrc" || die
+			export LLVM_PATH="${ROCM_LLVM_PATH}"
+			echo "build --action_env=LLVM_PATH=\"${ROCM_LLVM_PATH}\"" >> ".bazelrc" || die
+			echo "build --host_action_env=LLVM_PATH=\"${ROCM_LLVM_PATH}\"" >> ".bazelrc" || die
 		fi
 
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
