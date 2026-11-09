@@ -813,6 +813,7 @@ ewarn "This ebuild is still in development"
 	sandbox-changes_no_network_sandbox "For downloading micropackages"
 	python-single-r1_pkg_setup
 	npm_pkg_setup
+	use rocm && rocm-r1_pkg_setup
 }
 
 gen_git_tag() {
