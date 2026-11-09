@@ -9,13 +9,9 @@ CUB_COMMIT="dcd5b06a417bdfdc2699678bddf7dd7ee38be466"
 CUTLASS_COMMIT="5d7be1ac1b0dae1e9b8ccbe98d494ccaa437ddc0"
 DISTUTILS_USE_PEP517="setuptools"
 PICOJSON_COMMIT="111c9be5188f7350c2eac9ddaedd8cca3d7bf394"
-PYTHON_COMPAT=( "python3_"{10..12} )
-inherit hip-versions
-ROCM_VERSIONS=(
-	"${HIP_7_2_VERSION}" # Same same major.minor version used in Composable Kernel, similar range to PyTorch 2.1, 2.2
-)
+PYTHON_COMPAT=( "python3_"{11..15} )
 
-inherit dep-prepare distutils-r1
+inherit dep-prepare rocm-r1 secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -69,32 +65,13 @@ ebuild_revision_5
 "
 # ROCm 6.4 is not version aligned with this release which uses 5.2.3.
 REQUIRED_USE="
+	!rocm
 	|| (
 		cuda
 		rocm
 	)
-	rocm? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_12
-		)
-	)
 "
 # The dependencies for GPUs are old.  Upstream uses CUDA 11.6.2 and ROCm 5.2.3
-gen_rocm_depends() {
-	local pv
-	for pv in "${ROCM_VERSIONS[@]}" ; do
-		local s="${pv%.*}"
-		echo "
-			(
-				~dev-build/rocm-cmake-${pv}:=
-				~dev-libs/rocm-device-libs-${pv}:=
-				~dev-util/hip-${pv}:=[numa,rocm]
-				~sys-devel/llvm-roc-${pv}:=[llvm_targets_AMDGPU,llvm_targets_X86,runtime]
-			)
-		"
-	done
-}
 RDEPEND+="
 	dev-python/jinja2[${PYTHON_USEDEP}]
 	dev-python/sympy[${PYTHON_USEDEP}]
@@ -104,13 +81,7 @@ RDEPEND+="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		dev-build/rocm-cmake:=
-		dev-libs/rocm-device-libs:=
-		dev-util/hip:=
-		sys-devel/llvm-roc:=
-		|| (
-			$(gen_rocm_depends)
-		)
+		>=sci-ml/therock-${THEROCK_PV}:=
 	)
 "
 DEPEND+="
@@ -122,11 +93,9 @@ DOCS=()
 
 pkg_setup() {
 	python_setup
-	if has "rocm_7_2" ${IUSE_EFFECTIVE} && use rocm_7_2 ; then
-		LLVM_SLOT="${HIP_7_2_LLVM_SLOT}"
-		ROCM_SLOT="7.2"
-		ROCM_VERSION="${HIP_7_2_VERSION}"
-		rocm_pkg_setup
+	if has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
 	fi
 }
 
