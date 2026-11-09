@@ -422,7 +422,7 @@ eerror
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 	elif has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
-		export gpu="$(get_amdgpu_flags)"
+		export gpu="${ROCM_TARGETS}"
 	fi
 
 	local backend
@@ -603,7 +603,7 @@ ewarn
 		strip-unsupported-flags
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
-			-DGPU_TARGET="$(get_amdgpu_flags)"
+			-DGPU_TARGET="${ROCM_TARGETS}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
