@@ -573,7 +573,7 @@ src_prepare() {
 
 src_configure() {
 	if use debug ; then
-ewarn "You are enabling debug-tools, this may increase the attack surface or be abused in Living off the Land (LotL) attacks."
+ewarn "You are enabling debug-tools.  This may increase the attack surface or be abused in Living off the Land (LotL) attacks."
 	fi
 	rocm-r1_set_default_gcc
 
