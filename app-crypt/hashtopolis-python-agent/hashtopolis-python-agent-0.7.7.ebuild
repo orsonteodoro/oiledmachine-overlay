@@ -53,23 +53,23 @@ BDEPEND="
 "
 PATCHES=(
 )
-DOCS=( changelog.md README.md )
+DOCS=( "changelog.md" "README.md" )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
 }
 
 src_install() {
-	python_moduleinto hashtopolis
-	python_domodule htpclient __main__.py
-	docinto licenses
-	dodoc LICENSE.txt
+	python_moduleinto "hashtopolis"
+	python_domodule "htpclient __main__.py"
+	docinto "licenses"
+	dodoc "LICENSE.txt"
 	einstalldocs
 
-	exeinto /usr/bin
+	exeinto "/usr/bin"
 cat <<EOF > "${T}/hashtopolis"
 #!/bin/bash
-python /usr/lib/${EPYTHON}/site-packages/hashtopolis
+python "/usr/lib/${EPYTHON}/site-packages/hashtopolis"
 EOF
 	doexe "${T}/hashtopolis"
 }
