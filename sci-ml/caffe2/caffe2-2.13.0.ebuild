@@ -118,50 +118,6 @@ TRITON_COMMIT="db82b800cd4b73e3fa586e1819b314f53bfbad4c" # aotriton dep
 VULKANMEMORYALLOCATOR_COMMIT="1d8f600fd424278486eade7ed3e877c99f0846b1"
 XNNPACK_COMMIT="51a0103656eff6fc9bfd39a4597923c4b542c883"
 
-AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/docker/libtorch/build.sh#L47
-	"gfx900"
-	"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1200"
-	"gfx1201"
-)
-
-AMDGPU_TARGETS_UNTESTED=(
-# Based on https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/build.sh#L160
-	"gfx900"
-	#"gfx906"
-	"gfx908"
-	"gfx90a"
-	"gfx942"
-	"gfx1030"
-	"gfx1100"
-	"gfx1101"
-	"gfx1102"
-	"gfx1200"
-	"gfx1201"
-)
-
-AMDGPU_TARGETS_FATTN=(
-# See https://github.com/ROCm/aotriton/blob/972223c501ffc22068bb035ac5d64cf54318d895/CMakeLists.txt#L61
-	"gfx90a"   # Full support
-	"gfx942"   # Full support
-	#"gfx950"  # Full support
-	"gfx1100"  # Full support
-	"gfx1101"  # Full support
-	"gfx1102"  # Full support
-	#"gfx1150" # Partial support
-	#"gfx1151" # Partial support
-	"gfx1200"  # Full support
-	"gfx1201"  # Full support
-)
-
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_bf16"
 	"cpu_flags_arm_dotprod"
@@ -234,25 +190,6 @@ CUDA_TARGETS_COMPAT=(
 	"compute_120"
 )
 
-inherit hip-versions
-ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/docker/build.sh#L190
-	"${HIP_7_2_VERSION}" # Placeholder
-)
-
-gen_rocm_slots() {
-	local s
-	for s in "${ROCM_SLOTS[@]}" ; do
-		local s="${s%.*}"
-		s="${s/./_}"
-		echo "rocm_${s}"
-	done
-}
-
-ROCM_SLOTS2=(
-	$(gen_rocm_slots)
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_GPU[@]}" # 11-14; 11-14 compatible with c++20 on compiler side.
@@ -262,13 +199,14 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}" # 18, 19
-	#"${LIBCXX_COMPAT_CXX20_ROCM_7_2[@]/llvm_slot_}" # 22
-	"${LIBCXX_COMPAT_CXX20_GPU[@]/llvm_slot_}" # 18, 19; 18-19 is compatibile with c++20 on compiler side.
+	#"${LIBCXX_COMPAT_CXX20_ROCM_10_1[@]/llvm_slot_}" # 24
+	"${LIBCXX_COMPAT_CXX17_GPU[@]/llvm_slot_}" # 18, 19, 21, 24
+	"${LIBCXX_COMPAT_CXX20_GPU[@]/llvm_slot_}" # 21, 24
 )
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms
-inherit fix-rpath flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm rocm
-inherit python-single-r1 toolchain-funcs
+inherit fix-rpath flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot llvm
+inherit rocm-r1 python-single-r1 secure-version toolchain-funcs
 
 #KEYWORDS="~amd64 ~arm64" # Unfinished ebuild
 S="${WORKDIR}/${MY_P}"
@@ -522,8 +460,6 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${ROCM_IUSE}
-${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
@@ -540,32 +476,16 @@ gen_cuda_required_use() {
 		"
 	done
 }
-gen_rocm_required_use() {
-	local x
-	for x in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
 # For libtorch_python.so: undefined symbol: _ZTIN5torch2nn6ModuleE see issue #60341
 #		kineto
 # clang breaks with python 3.10
 REQUIRED_USE="
 	!clang
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
 	?? (
 		cuda
 		rocm
-	)
-	amdgpu_targets_gfx942? (
-		|| (
-			rocm_7_2
-		)
 	)
 	arm? (
 		cpu_flags_arm_neon
@@ -699,9 +619,6 @@ REQUIRED_USE="
 		)
 		rocm? (
 			!system-libs
-			|| (
-				${AMDGPU_TARGETS_FATTN[@]/#/amdgpu_targets_}
-			)
 		)
 	)
 	gloo? (
@@ -748,81 +665,15 @@ REQUIRED_USE="
 		distributed
 	)
 	rocm? (
-		${ROCM_REQUIRED_USE}
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
+			${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]}
 		)
-		^^ (
-			${ROCM_SLOTS2[@]}
-		)
-		!python_single_target_python3_13
-		!python_single_target_python3_14
-		numpy? (
-			|| (
-				python_single_target_python3_11
-				python_single_target_python3_12
-			)
-		)
-		flash-attention? (
-			|| (
-				python_single_target_python3_11
-				python_single_target_python3_12
-			)
-		)
-	)
-	rocm_7_2? (
-		llvm_slot_22
+		llvm_slot_24
 	)
 	tensorpipe? (
 		distributed
 	)
 "
-gen_rocm_depends() {
-	local pv
-	for pv in "${ROCM_SLOTS[@]}" ; do
-		local s="0/"$(ver_cut 1-2 "${pv}")
-		local u=$(ver_cut 1-2 "${pv}")
-		local ROCM_SLOT="${u}"
-		u="${u/./_}"
-		echo "
-			rocm_${u}? (
-				~dev-libs/rocm-comgr-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocm-core-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-libs/rocr-runtime-${pv}:=[${LIBSTDCXX_USEDEP}]
-				~dev-util/hip-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipBLAS-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipBLASLt-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPBLASLT)]
-				~sci-libs/hipCUB-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPCUB),rocm]
-				~sci-libs/hipRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPRAND),rocm]
-				~sci-libs/hipSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipSPARSE-${pv}:=[${LIBSTDCXX_USEDEP},rocm]
-				~sci-libs/hipFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep HIPFFT),rocm]
-				~sci-libs/miopen-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MIOPEN)]
-				~sci-libs/rocBLAS-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCBLAS)]
-				~sci-libs/rocFFT-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCFFT)]
-				~sci-libs/rocRAND-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCRAND)]
-				~sci-libs/rocPRIM-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCPRIM)]
-				~sci-libs/rocSOLVER-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCSOLVER)]
-				~sci-libs/rocThrust-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep ROCTHRUST)]
-				magma? (
-					sci-libs/magma:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_10),rocm]
-					|| (
-						=sci-libs/magma-2.10h[${LIBSTDCXX_USEDEP},$(get_rocm_usedep MAGMA_2_10),rocm]
-					)
-				)
-				openmp? (
-					~sys-libs/llvm-roc-libomp-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep LLVM_ROC_LIBOMP)]
-				)
-				rccl? (
-					~dev-libs/rccl-${pv}:=[${LIBSTDCXX_USEDEP},$(get_rocm_usedep RCCL)]
-				)
-				roctracer? (
-					~dev-util/roctracer-${pv}:=[${LIBSTDCXX_USEDEP}]
-				)
-			)
-		"
-	done
-}
 
 CUDA_12_6_RDEPEND="
 (
@@ -1028,8 +879,18 @@ RDEPEND="
 		virtual/opencl
 	)
 	rocm? (
-		|| (
-			$(gen_rocm_depends)
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},math,ml]
+		magma? (
+			sci-libs/magma:=[${LIBSTDCXX_USEDEP},rocm]
+			|| (
+				=sci-libs/magma-2.10h[${LIBSTDCXX_USEDEP},rocm]
+			)
+		)
+		rccl? (
+			>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},comm]
+		)
+		roctracer? (
+			>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},profiling]
 		)
 	)
 	system-libs? (
@@ -1235,15 +1096,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.9.1-numpy-bool.patch"
 )
 
-warn_untested_gpu() {
-	local gpu
-	for gpu in "${AMDGPU_TARGETS_UNTESTED[@]}" ; do
-		if use "amdgpu_targets_${gpu}" ; then
-ewarn "${gpu} is not CI tested upstream."
-		fi
-	done
-}
-
 use_clang() {
 	local s
 	for s in "${LLVM_COMPAT[@]}" ; do
@@ -1278,7 +1130,6 @@ use_gcc() {
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
-	warn_untested_gpu
 
 	if tc-is-clang ; then
 		use clang || die "Enable the clang USE flag for ${CATEGORY}/${PN} to continue."
@@ -1290,15 +1141,14 @@ pkg_setup() {
 		unset CC
 		unset CXX
 		unset CPP
-	elif use rocm_7_2 ; then
-		LLVM_SLOT="22"
-		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		ROCM_SLOT="7.2"
-		rocm_pkg_setup
+	elif use rocm ; then
+		LLVM_SLOT="${ROCM_LLVM_SLOT}"
+		LLVM_MAX_SLOT="${ROCM_LLVM_SLOT}"
+		rocm-r1_pkg_setup
 
 	# Use GCC for relaxing C11 to avoid Python 3.11 atomics errors in host only code.
 	# It will still build kernels with HIP-Clang.
-		rocm_set_default_gcc
+		rocm-r1_set_default_gcc
 
 		export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "\|/opt/cuda|d" | tr $'\n' ":")
 	elif use clang ; then
@@ -1307,20 +1157,6 @@ pkg_setup() {
 		use_gcc
 	fi
 	strip-unsupported-flags
-
-	if use rocm ; then
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-		)
-		if use roctracer ; then
-			libs+=(
-				"roctracer64:dev-util/roctracer"
-			)
-		fi
-	fi
 
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
@@ -1466,9 +1302,8 @@ src_prepare() {
 		popd >/dev/null 2>&1 || die
 	fi
 	if use rocm ; then
-		rocm_src_prepare
 		ebegin "HIPifying cuda sources"
-			${EPYTHON} "tools/amd_build/build_amd.py" || die
+			"${EPYTHON}" "tools/amd_build/build_amd.py" || die
 		eend $?
 	fi
 
@@ -1844,33 +1679,33 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		)
 	fi
 	if use rocm ; then
-		export HCC_PATH="${ESYSROOT}${EROCM_PATH}"
-		export HIP_PATH="${ESYSROOT}${EROCM_PATH}"
-		export HIPCUB_PATH="${ESYSROOT}${EROCM_PATH}"
-		export HIPFFT_PATH="${ESYSROOT}${EROCM_PATH}"
-		export HIPRAND_PATH="${ESYSROOT}${EROCM_PATH}"
-		export HIPSPARSE_PATH="${ESYSROOT}${EROCM_PATH}"
-		export HSA_PATH="${ESYSROOT}${EROCM_PATH}"
-		export MAGMA_HOME="${ESYSROOT}${EROCM_PATH}/magma"
-		export MIOPEN_PATH="${ESYSROOT}${EROCM_PATH}"
-		export RCCL_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCBLAS_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCFFT_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCM_HOME="${ESYSROOT}${EROCM_PATH}"
-		export ROCM_INCLUDE_DIRS="${ESYSROOT}${EROCM_PATH}/include"
-		export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCPRIM_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCRAND_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCTRACER_PATH="${ESYSROOT}${EROCM_PATH}"
-		export ROCTHRUST_PATH="${ESYSROOT}${EROCM_PATH}"
-		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
+		export HCC_PATH="${ESYSROOT}${ROCM_PATH}"
+		export HIP_PATH="${ESYSROOT}${ROCM_PATH}"
+		export HIPCUB_PATH="${ESYSROOT}${ROCM_PATH}"
+		export HIPFFT_PATH="${ESYSROOT}${ROCM_PATH}"
+		export HIPRAND_PATH="${ESYSROOT}${ROCM_PATH}"
+		export HIPSPARSE_PATH="${ESYSROOT}${ROCM_PATH}"
+		export HSA_PATH="${ESYSROOT}${ROCM_PATH}"
+		export MAGMA_HOME="${ESYSROOT}${ROCM_PATH}/magma"
+		export MIOPEN_PATH="${ESYSROOT}${ROCM_PATH}"
+		export RCCL_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCBLAS_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCFFT_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCM_HOME="${ESYSROOT}${ROCM_PATH}"
+		export ROCM_INCLUDE_DIRS="${ESYSROOT}${ROCM_PATH}/include"
+		export ROCM_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCPRIM_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCRAND_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCTRACER_PATH="${ESYSROOT}${ROCM_PATH}"
+		export ROCTHRUST_PATH="${ESYSROOT}${ROCM_PATH}"
+		export THRUST_PATH="${ESYSROOT}${ROCM_PATH}/include"
 		mycmakeargs+=(
 			-DAOTRITON_DISABLE_VENV=ON
-			-DAOTRITON_TARGET_ARCH=$(get_amdgpu_flags)
+			-DAOTRITON_TARGET_ARCH="${ROCM_TARGETS}"
 			-DAOTRITON_USE_TORCH=OFF # Prevent error on fresh install
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
-			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
+			-DPYTORCH_ROCM_ARCH="${ROCM_TARGETS}"
 			-DUSE_NCCL=$(usex rccl)
 			-DUSE_RCCL=$(usex rccl)
 			-DUSE_SYSTEM_NCCL=ON
@@ -1885,13 +1720,13 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		:
 	elif use rocm ; then
 		mycmakeargs+=(
-			-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/include -fopenmp=libomp"
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}${ROCM_LLVM_PATH}/include -fopenmp=libomp"
 			-DOpenMP_C_LIB_NAMES="libomp"
 
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/include -fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${ROCM_LLVM_PATH}/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/llvm/lib/libomp.so"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${ROCM_LLVM_PATH}/lib/libomp.so"
 		)
 	elif use clang ; then
 		mycmakeargs+=(
