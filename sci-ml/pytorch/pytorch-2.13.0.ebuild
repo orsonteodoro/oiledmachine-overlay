@@ -60,7 +60,6 @@ RESTRICT="test"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE="
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda rocm
 ebuild_revision_2
