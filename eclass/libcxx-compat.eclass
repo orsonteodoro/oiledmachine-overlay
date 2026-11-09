@@ -51,141 +51,177 @@ _LIBCXX_COMPAT_ECLASS=1
 # )
 #
 
-LIBCXX_COMPAT_CXX11_CUDA_12_6=(
+LIBCXX_COMPAT_CXX11_CUDA_12_6=( # LTS
 	"llvm_slot_18"
 )
 
-LIBCXX_COMPAT_CXX11_CUDA_12_8=(
-	"llvm_slot_18"
-	"llvm_slot_19"
-)
-
-LIBCXX_COMPAT_CXX11_CUDA_12_9=(
+LIBCXX_COMPAT_CXX11_CUDA_12_8=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
-LIBCXX_COMPAT_CXX14_CUDA_12_6=(
-	"llvm_slot_18"
-)
-
-LIBCXX_COMPAT_CXX14_CUDA_12_8=(
+LIBCXX_COMPAT_CXX11_CUDA_12_9=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
-LIBCXX_COMPAT_CXX14_CUDA_12_9=(
+LIBCXX_COMPAT_CXX14_CUDA_12_6=( # LTS
+	"llvm_slot_18"
+)
+
+LIBCXX_COMPAT_CXX14_CUDA_12_8=( # LTS
+	"llvm_slot_18"
+	"llvm_slot_19"
+)
+
+LIBCXX_COMPAT_CXX14_CUDA_12_9=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
 # For latest CUDA 12
-LIBCXX_COMPAT_CXX17_CUDA_12=(
-	"llvm_slot_18" # c++17 or earlier compatible
-	"llvm_slot_19" # c++17 or earlier compatible
+LIBCXX_COMPAT_CXX17_CUDA_12=( # LTS
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 # For latest CUDA 13
-LIBCXX_COMPAT_CXX17_CUDA_13=(
-	"llvm_slot_18" # c++17 or earlier compatible
-	"llvm_slot_19" # c++17 or earlier compatible
-	"llvm_slot_21" # c++17 or earlier compatible
+LIBCXX_COMPAT_CXX17_CUDA_13=( # LTS
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+	"llvm_slot_22"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_12_6=(
+LIBCXX_COMPAT_CXX17_CUDA_12_6=( # LTS
 	"llvm_slot_18"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_12_8=(
+LIBCXX_COMPAT_CXX17_CUDA_12_8=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_12_9=(
+LIBCXX_COMPAT_CXX17_CUDA_12_9=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_13_0=(
+LIBCXX_COMPAT_CXX17_CUDA_13_0=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_13_1=(
+LIBCXX_COMPAT_CXX17_CUDA_13_1=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_13_2=(
+LIBCXX_COMPAT_CXX17_CUDA_13_2=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 	"llvm_slot_21"
 )
 
-LIBCXX_COMPAT_CXX17_CUDA_13_3=(
+LIBCXX_COMPAT_CXX17_CUDA_13_3=( # LTS
 	"llvm_slot_18"
 	"llvm_slot_19"
 	"llvm_slot_21"
+)
+
+LIBCXX_COMPAT_CXX17_CUDA_13_4=( # LTS
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+	"llvm_slot_22"
+)
+
+LIBCXX_COMPAT_CXX17_CUDA_13_5=( # LTS
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+	"llvm_slot_22"
 )
 
 # For latest CUDA 12
-#LIBCXX_COMPAT_CXX20_CUDA_12=(
-#	"llvm_slot_18" # c++20 or earlier compatible
-#	"llvm_slot_19" # c++20 or earlier compatible
-#)
-
-# For latest CUDA 13
-LIBCXX_COMPAT_CXX20_CUDA_13=(
-#	"llvm_slot_18" # c++20 or earlier compatible
-#	"llvm_slot_19" # c++20 or earlier compatible
-	"llvm_slot_21" # c++20 or earlier compatible
-)
-
-#LIBCXX_COMPAT_CXX20_CUDA_12_6=(
-#	"llvm_slot_18"
-#)
-
-#LIBCXX_COMPAT_CXX20_CUDA_12_8=(
-#	"llvm_slot_18"
-#	"llvm_slot_19"
-#)
-
-#LIBCXX_COMPAT_CXX20_CUDA_12_9=(
-#	"llvm_slot_18"
-#	"llvm_slot_19"
-#)
-
-#LIBCXX_COMPAT_CXX20_CUDA_13_0=(
-#	"llvm_slot_18"
-#	"llvm_slot_19"
-#)
-
-#LIBCXX_COMPAT_CXX20_CUDA_13_1=(
-#	"llvm_slot_18"
-#	"llvm_slot_19"
-#)
-
-LIBCXX_COMPAT_CXX20_CUDA_13_2=(
-#	"llvm_slot_18"
-#	"llvm_slot_19"
-	"llvm_slot_21"
-)
-
-LIBCXX_COMPAT_CXX20_CUDA_13_3=(
-#	"llvm_slot_18"
-#	"llvm_slot_19"
-	"llvm_slot_21"
+LIBCXX_COMPAT_CXX20_CUDA_12=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
 )
 
 # For latest CUDA 13
-LIBCXX_COMPAT_CXX23_CUDA_13=(
-#	"llvm_slot_18" # c++23 or earlier compatible
-#	"llvm_slot_19" # c++23 or earlier compatible
-	"llvm_slot_21" # c++23 or earlier compatible
+LIBCXX_COMPAT_CXX20_CUDA_13=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
 )
 
-LIBCXX_COMPAT_CXX23_CUDA_13_3=(
+LIBCXX_COMPAT_CXX20_CUDA_12_6=( # LTS + rolling
+	"llvm_slot_18"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_12_8=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_12_9=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_13_0=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_13_1=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_13_2=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
 	"llvm_slot_21"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_13_3=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_13_4=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+	"llvm_slot_22"
+)
+
+LIBCXX_COMPAT_CXX20_CUDA_13_5=( # LTS + rolling
+	"llvm_slot_18"
+	"llvm_slot_19"
+	"llvm_slot_21"
+	"llvm_slot_22"
+)
+
+# For latest CUDA 13
+LIBCXX_COMPAT_CXX23_CUDA_13=( # Rolling
+	"llvm_slot_21"
+	"llvm_slot_22"
+)
+
+LIBCXX_COMPAT_CXX23_CUDA_13_3=( # Rolling
+	"llvm_slot_21"
+)
+
+LIBCXX_COMPAT_CXX23_CUDA_13_4=( # Rolling
+	"llvm_slot_22"
+)
+
+LIBCXX_COMPAT_CXX23_CUDA_13_5=( # Rolling
+	"llvm_slot_22"
 )
 
 # For latest 12 on a c++11 or earlier project
@@ -221,131 +257,33 @@ LIBCXX_COMPAT_CXX23_CUDA=(
 	"llvm_slot_21" # Support CUDA 13.3
 )
 
-# For c++17 templates for ROCm 10.1
+# LLVM_COMPAT templates for ROCm for building libs.
 #
 # Status:  Production ready
 #
 # Example:
 #
 # LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]/llvm_slot_}
+#     ${LIBCXX_COMPAT_ROCM_LIB[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_CXX17_ROCM_10_1=(
-# https://github.com/ROCm/llvm-project/blob/therock-10.1/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
+LIBCXX_COMPAT_ROCM_LIB=( # Skip
+	# Disable ROCm when building libs
 )
 
-# For c++20 templates for ROCm 10.1
+# LLVM_COMPAT templates for ROCm for building pure applications or Python
+# packages with private libraries.
 #
 # Status:  Production ready
 #
 # Example:
 #
 # LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX20_ROCM_10_1[@]/llvm_slot_}
+#     ${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_CXX20_ROCM_10_1=(
-# https://github.com/ROCm/llvm-project/blob/therock-10.1/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# For c++23 templates for ROCm 10.1
-#
-# Status:  Production ready
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX23_ROCM_10_1[@]/llvm_slot_}
-# )
-#
-LIBCXX_COMPAT_CXX23_ROCM_10_1=(
-# https://github.com/ROCm/llvm-project/blob/therock-10.1/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# For c++26 templates for ROCm 10.1
-#
-# Status:  Production ready
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX26_ROCM_10_1[@]/llvm_slot_}
-# )
-#
-LIBCXX_COMPAT_CXX26_ROCM_10_1=(
-# https://github.com/ROCm/llvm-project/blob/therock-10.1/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# For c++17 templates for ROCm live (aka amd-staging)
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]/llvm_slot_}
-# )
-#
-LIBCXX_COMPAT_CXX17_ROCM_10_1=(
-# Based on https://github.com/ROCm/llvm-project/blob/amd-staging/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# For c++20 templates for ROCm live (aka amd-staging)
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX20_ROCM_9999[@]/llvm_slot_}
-# )
-#
-LIBCXX_COMPAT_CXX20_ROCM_9999=(
-# Based on https://github.com/ROCm/llvm-project/blob/amd-staging/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# For c++23 templates for ROCm live (aka amd-staging)
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX23_ROCM_9999[@]/llvm_slot_}
-# )
-#
-LIBCXX_COMPAT_CXX23_ROCM_9999=(
-# Based on https://github.com/ROCm/llvm-project/blob/amd-staging/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# For c++26 templates for ROCm live (aka amd-staging)
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX26_ROCM_9999[@]/llvm_slot_}
-# )
-#
-LIBCXX_COMPAT_CXX26_ROCM_9999=(
-# Based on https://github.com/ROCm/llvm-project/blob/amd-staging/cmake/Modules/LLVMVersion.cmake
-	"llvm_slot_24"
-)
-
-# LLVM_COMPAT templates for ROCm
-#
-# Status:  Production ready
-#
-# Example:
-#
-# LLVM_COMPAT=(
-#     ${LIBCXX_COMPAT_CXX17_ROCM[@]/llvm_slot_}
-# )
-#
-# For secure releases only
-LIBCXX_COMPAT_CXX17_ROCM=(
-	# Same as ROCm 10.1, live
+LIBCXX_COMPAT_ROCM_APP=( # Live
+# Align to ROCm/llvm-project
 	"llvm_slot_24"
 )
 
@@ -357,9 +295,8 @@ LIBCXX_COMPAT_CXX17_ROCM=(
 #     ${LIBCXX_COMPAT_CXX20_ROCM[@]/llvm_slot_}
 # )
 #
-# For secure releases only
-LIBCXX_COMPAT_CXX20_ROCM=(
-	# Same as ROCm 10.1, live
+LIBCXX_COMPAT_ROCM=( # Live
+# Align to ROCm/llvm-project
 	"llvm_slot_24"
 )
 
@@ -369,19 +306,25 @@ LIBCXX_COMPAT_CXX20_ROCM=(
 # CUDA:  c++11 <= x <= C++23
 # ROCm:  c++11 <= x <= C++20
 #
+# ROCm C++ standards supported:  https://rocm.docs.amd.com/projects/HIP/en/docs-10.1.0/how-to/kernel_language_cpp_support.html
 
-LIBCXX_COMPAT_CXX17_GPU=(
+LIBCXX_COMPAT_CXX17_GPU=( # LTS
 	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"llvm_slot_21" # Support CUDA 13.2, 13.3
-	"llvm_slot_24" # Support ROCm 10.1, live
+	"llvm_slot_22" # Support CUDA 13.4, 13.5
 )
 
-LIBCXX_COMPAT_CXX20_GPU=(
-#	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
-#	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+LIBCXX_COMPAT_CXX20_GPU=( # LTS + rolling
+	"llvm_slot_18" # Support CUDA 12.6, 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"llvm_slot_21" # Support CUDA 13.2, 13.3
-	"llvm_slot_24" # Support ROCm 10.1, live
+	"llvm_slot_22" # Support CUDA 13.4, 13.5
+)
+
+LIBCXX_COMPAT_CXX23_GPU=( # Rolling
+	"llvm_slot_21" # Support CUDA 13.2, 13.3
+	"llvm_slot_22" # Support CUDA 13.4, 13.5
 )
 
 # LIBCXX_COMPAT_LTS template for desktop based LTS distros
@@ -429,7 +372,7 @@ LIBCXX_COMPAT_ROLLING=(
 #     ${LIBCXX_COMPAT_RUST_LTS[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_RUST_LTS=(
+LIBCXX_COMPAT_RUST_LTS=( # Tagged aligned with LTS
 	# Based on Rust versions used in LTS distros
 	"llvm_slot_18"
 	"llvm_slot_19"
@@ -449,7 +392,7 @@ LIBCXX_COMPAT_RUST_LTS=(
 #     ${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_RUST_ROLLING=(
+LIBCXX_COMPAT_RUST_ROLLING=( # Tagged aligned with rolling
 	# Based on Rust versions used in Rolling distros
 	"llvm_slot_22"
 	"llvm_slot_23"
@@ -463,7 +406,7 @@ LIBCXX_COMPAT_RUST_ROLLING=(
 #     ${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_RUST_LIVE=(
+LIBCXX_COMPAT_RUST_LIVE=( # Untagged
 	# Based on https://github.com/rust-lang/rust/blob/main/.gitmodules#L28
 	"llvm_slot_23"
 )
@@ -478,7 +421,7 @@ LIBCXX_COMPAT_RUST_LIVE=(
 #     ${LIBCXX_COMPAT_RUST[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_RUST=(
+LIBCXX_COMPAT_RUST=( # LTS + rolling
 	# Based on live and earlier tagged releases for https://github.com/rust-lang/rust/blob/main/.gitmodules#L28
 	"llvm_slot_18"
 	"llvm_slot_19"
@@ -569,7 +512,7 @@ LIBCXX_COMPAT_STDCXX14=( # LTS
 # )
 #
 LIBCXX_COMPAT_STDCXX17=( # LTS
-# Set to LTS distros equivalent to reduce misalignment in dependencies
+	# Set to LTS distros equivalent to reduce misalignment in dependencies
 	"llvm_slot_18" # Support -std=c++17.  Defaults:  U24
 	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13
 	"llvm_slot_21" # Support -std=c++17.  Defaults:  U26, F43; Available:  D13
@@ -590,8 +533,9 @@ LIBCXX_COMPAT_STDCXX17=( # LTS
 # )
 #
 LIBCXX_COMPAT_STDCXX20=( # LTS + rolling
-	"llvm_slot_21" # Support -std=c++20.  Defaults:  U26, F43; Available:  D13
-	"llvm_slot_22" # Support -std=c++20.  Defaults:  F44
+	# From latest LTS distro release to newest rolling release
+	"llvm_slot_21" # Support -std=c++20.  Defaults:  U26, F43; Available:  D13, 4.3y
+	"llvm_slot_22" # Support -std=c++20.  Defaults:  F44, G23
 	"llvm_slot_23" # Support -std=c++20.  Defaults:  F45
 )
 
@@ -609,14 +553,15 @@ LIBCXX_COMPAT_STDCXX20=( # LTS + rolling
 # )
 #
 LIBCXX_COMPAT_STDCXX23=( # Rolling
+	# Oldest rolling supported
 	"llvm_slot_21" # Support -std=c++23.  Defaults:  F43
-	"llvm_slot_22" # Support -std=c++23.  Defaults:  F44
+	"llvm_slot_22" # Support -std=c++23.  Defaults:  F44, G23
 	"llvm_slot_23" # Support -std=c++23.  Defaults:  F45
 )
 
 # LLVM_COMPAT template for -std=c++26 projects or the compiler default
 #
-# Status:  Support is still in development
+# Status:  Support is still in development.  C++26 draft rejected (*disapproved*)
 #
 #    Missing feature count for core support for lowest common denominator:  9 red, 2 yellow
 # Missing feature count for library support for lowest common denominator:  60 red, 1 yellow
@@ -628,8 +573,7 @@ LIBCXX_COMPAT_STDCXX23=( # Rolling
 # )
 #
 LIBCXX_COMPAT_STDCXX26=( # Rolling
-	"llvm_slot_21" # Support -std=c++26.  Defaults:  F43
-	"llvm_slot_22" # Support -std=c++26.  Defaults:  F44
+	# Newest rolling supported
 	"llvm_slot_23" # Support -std=c++26.  Defaults:  F45
 )
 

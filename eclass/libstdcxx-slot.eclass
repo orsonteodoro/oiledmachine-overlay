@@ -92,6 +92,11 @@ inherit toolchain-funcs
 
 # See also https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/config/abi/pre/gnu.ver
 # GCC version to libstdc++ version mappings
+#
+# GLIBCXX_3.4.37 { # New version (Chosen)
+# [...]
+# } GLIBCXX_3.4.36; # Previous version
+#
 GCC_8_1="3.4.25"
 GCC_8_2="3.4.25"
 GCC_8_3="3.4.25"
@@ -107,7 +112,7 @@ GCC_10_2="3.4.28"
 GCC_10_3="3.4.28"
 GCC_10_4="3.4.28"
 GCC_10_5="3.4.28"
-GCC_11_1="3.4.29"
+GCC_11_1="3.4.29" # Same as source and doc
 GCC_11_2="3.4.29"
 GCC_11_3="3.4.29"
 GCC_11_4="3.4.29"
@@ -117,18 +122,19 @@ GCC_12_2="3.4.30"
 GCC_12_3="3.4.30"
 GCC_12_4="3.4.30"
 GCC_12_5="3.4.30"
-GCC_13_1="3.4.31"
+GCC_13_1="3.4.31" # Same as source and doc
 GCC_13_2="3.4.32"
 GCC_13_3="3.4.32"
 GCC_13_4="3.4.32"
-GCC_14_1="3.4.33"
+GCC_14_1="3.4.33" # Same as source and doc
 GCC_14_2="3.4.33"
 GCC_14_3="3.4.33"
-GCC_15_1="3.4.34"
+GCC_15_1="3.4.34" # Same as source and doc
 GCC_15_2="3.4.34"
 GCC_15_3="3.4.34"
-GCC_16_1="3.4.35"
-GCC_17_1="3.4.36"
+GCC_16_1="3.4.35" # Same as source but the doc is wrong
+GCC_16_2="3.4.36"
+GCC_17_1="3.4.37" # Same as source
 
 # @ECLASS_VARIABLE: _ALL_GCC_COMPAT
 # @DESCRIPTION:
@@ -136,6 +142,7 @@ GCC_17_1="3.4.36"
 # Live is not supported
 # Only the earliest $(ver_cut 1-2 ${GCC_X_Y}) bump need to be shown to reduce unnecessary rebuilds for libstdc++ compatibility.
 _ALL_GCC_COMPAT=(
+	"16_2" # Alias for 16_1
 	"16_1"
 	"15_3" # Alias for 15_1, 15_2
 	"15_2"
