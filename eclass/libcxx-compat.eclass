@@ -580,7 +580,7 @@ LIBCXX_COMPAT_STDCXX17=( # Traditional LTS
 	# Set to LTS distros equivalent to reduce misalignment in dependencies
 	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13
 	"llvm_slot_21" # Support -std=c++17.  Defaults:  U26, F43; Available:  D13
-	"llvm_slot_22" # Support -std=c++17.  Available:  U26; Available:  D13, U26
+	"llvm_slot_22" # Support -std=c++17.  Available:  U26; Available:  D13, U26, G
 )
 
 # LLVM_COMPAT template for -std=c++20 projects or the compiler default
@@ -601,7 +601,7 @@ LIBCXX_COMPAT_STDCXX20=( # LTS + rolling
 	"llvm_slot_19" # Support -std=c++20.  Defaults:  D13; Allow CUDA 12.9
 	"llvm_slot_21" # Support -std=c++20.  Defaults:  U26, F43; Available:  D13
 	"llvm_slot_22" # Support -std=c++20.  Defaults:  F44, G
-	"llvm_slot_23" # Support -std=c++20.  Defaults:  F45
+	"llvm_slot_23" # Support -std=c++20.  Defaults:  F45, G~
 )
 
 # LLVM_COMPAT template for -std=c++23 projects or the compiler default
@@ -621,7 +621,7 @@ LIBCXX_COMPAT_STDCXX23=( # Rolling
 	# Oldest rolling supported
 	"llvm_slot_21" # Support -std=c++23.  Defaults:  F43
 	"llvm_slot_22" # Support -std=c++23.  Defaults:  F44, G
-	"llvm_slot_23" # Support -std=c++23.  Defaults:  F45
+	"llvm_slot_23" # Support -std=c++23.  Defaults:  F45, G~
 )
 
 # LLVM_COMPAT template for -std=c++26 projects or the compiler default
