@@ -477,6 +477,6 @@ Overlay compatibility with open source projects
 | N26           | NixOS stable    | Yes                                                   |
 | Nunstable     | NixOS unstable  | Yes (e.g. Hyprland, scx)                              |
 | S15           | Slackware 15    | No (S15 based projects or S15 CI/CD testing)          |
-| U24           | Ubuntu 24       | No                                                    |
-| U26           | Ubuntu 26       | Yes (e.g. GitHub projects)                            |
-| Utenacious    | Ubuntu 27       | Available                                             |
+| U24           | Ubuntu 24 LTS   | No                                                    |
+| U26           | Ubuntu 26 LTS   | Yes (e.g. GitHub projects)                            |
+| Utenacious    | Ubuntu live     | Available                                             |
