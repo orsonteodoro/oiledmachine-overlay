@@ -21,7 +21,7 @@ PYTHON_COMPAT=( "python3_"{10..14} )
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot python-any-r1
 
 if [[ ${PV} == *9999* ]]; then
-	FALLBACK_COMMIT="ebe60e331c21d5c7f09734fbdcebbc46ee5d8507"
+	FALLBACK_COMMIT="b411a8fb8aa0f6ee727df17f3f8eafb3eb85ba9e"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -38,9 +38,9 @@ fi
 DESCRIPTION="Khronos reference front-end for GLSL and ESSL, and sample SPIR-V generator"
 HOMEPAGE="https://www.khronos.org/opengles/sdk/tools/Reference-Compiler/ https://github.com/KhronosGroup/glslang"
 LICENSE="BSD"
-INTERNAL_PV="16.5" # Versioning based on https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
+INTERNAL_PV="16.6" # Versioning based on https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
 SLOT="0/${INTERNAL_PV}"
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_4"
 BDEPEND="${PYTHON_DEPS}
 	>=dev-util/spirv-tools-${PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "

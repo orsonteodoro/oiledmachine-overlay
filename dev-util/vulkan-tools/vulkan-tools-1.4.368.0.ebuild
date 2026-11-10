@@ -23,8 +23,8 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib python-any-r1 secure-version
 
 if [[ ${PV} == *9999* ]]; then
-	INTERNAL_VERSION="1.4.362"
-	FALLBACK_COMMIT="532e2c0e1bce627c5188ed2c90819af2f52a12e1"
+	INTERNAL_VERSION="1.4.368" # https://github.com/KhronosGroup/Vulkan-Tools/blob/main/icd/VkICD_mock_icd.json.in#L5
+	FALLBACK_COMMIT="1d3fbab1ff5abce9f3eb9f3e7fcf66f455ae4475"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	EGIT_SUBMODULES=()
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then

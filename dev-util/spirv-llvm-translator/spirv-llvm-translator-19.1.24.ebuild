@@ -36,20 +36,17 @@ RESTRICT="!test? ( test )
 "
 
 RDEPEND="
-	dev-util/spirv-tools[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-util/spirv-tools:=
-	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	llvm-core/llvm:=
+	dev-util/spirv-tools:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	llvm-core/llvm:${SLOT}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
-	>=dev-util/spirv-headers-1.4.335.0
+	>=dev-util/spirv-headers-9999:=
 "
 BDEPEND="
 	virtual/pkgconfig
 	test? (
 		dev-python/lit
-		llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
+		llvm-core/clang:${SLOT}=[${LIBSTDCXX_USEDEP}]
 	)
 "
 

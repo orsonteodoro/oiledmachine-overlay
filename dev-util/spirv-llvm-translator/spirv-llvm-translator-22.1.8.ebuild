@@ -4,9 +4,11 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_COMPAT=( 17 )
+LLVM_COMPAT=( 22 )
 MY_PN="SPIRV-LLVM-Translator"
 MY_P="${MY_PN}-${PV}"
+# Header's version: https://github.com/KhronosGroup/SPIRV-LLVM-Translator/blob/v22.1.8/spirv-headers-tag.conf
+# https://github.com/KhronosGroup/SPIRV-Headers/commits/cb42dec3830d3ac67fa449ecdc0c0f73d5e74498/
 
 # Align libstdcxx to avoid symbol issues
 inherit libstdcxx-compat
@@ -14,7 +16,7 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
-inherit cmake flag-o-matic libstdcxx-slot llvm-r2 multiprocessing
+inherit cmake-multilib flag-o-matic libstdcxx-slot llvm-r2 multiprocessing
 
 DESCRIPTION="Bi-directional translator between SPIR-V and LLVM IR"
 HOMEPAGE="https://github.com/KhronosGroup/SPIRV-LLVM-Translator"
@@ -36,20 +38,17 @@ RESTRICT="!test? ( test )
 "
 
 RDEPEND="
-	dev-util/spirv-tools[${LIBSTDCXX_USEDEP}]
-	dev-util/spirv-tools:=
-	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP}]
-	llvm-core/llvm:=
+	dev-util/spirv-tools:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	llvm-core/llvm:${SLOT}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
-	>=dev-util/spirv-headers-1.4.335.0
+	>=dev-util/spirv-headers-9999:=
 "
 BDEPEND="
 	virtual/pkgconfig
 	test? (
 		dev-python/lit
-		llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
+		llvm-core/clang:${SLOT}=[${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -62,11 +61,12 @@ src_prepare() {
 	append-flags -fPIC
 	cmake_src_prepare
 
-	# https://github.com/KhronosGroup/SPIRV-LLVM-Translator/pull/2555
-	sed -i -e 's/%triple/x86_64-unknown-linux-gnu/' test/DebugInfo/X86/*.ll || die
+	# do not force a specific LLVM version to find_package(), this only
+	# causes issues and we force a specific path anyway
+	sed -i -e '/find_package/s:${BASE_LLVM_VERSION}::' CMakeLists.txt || die
 }
 
-src_configure() {
+multilib_src_configure() {
 	local mycmakeargs=(
 		-DCCACHE_ALLOWED="OFF"
 		-DCMAKE_INSTALL_PREFIX="$(get_llvm_prefix)"
@@ -78,6 +78,6 @@ src_configure() {
 	cmake_src_configure
 }
 
-src_test() {
+multilib_src_test() {
 	lit -vv "-j${LIT_JOBS:-$(makeopts_jobs)}" "${BUILD_DIR}/test" || die
 }

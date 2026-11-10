@@ -596,6 +596,11 @@ SPIDERMONKEY_153_PV=${SPIDERMONKEY_153_PV:-"153.5.1"}
 SPIDERMONKEY_140_PV=${SPIDERMONKEY_140_PV:-"140.17"}
 SPIRV_HEADERS_PV=${SPIRV_HEADERS_PV:-"9999"}
 SPIRV_TOOLS_PV=${SPIRV_TOOLS_PV:-"9999"}
+SPIRV_LLVM_TRANSLATOR_23_PV=${SPIRV_LLVM_TRANSLATOR_23_PV:-"23.1.3"}
+SPIRV_LLVM_TRANSLATOR_22_PV=${SPIRV_LLVM_TRANSLATOR_22_PV:-"22.1.8"}
+SPIRV_LLVM_TRANSLATOR_21_PV=${SPIRV_LLVM_TRANSLATOR_21_PV:-"21.1.13"}
+SPIRV_LLVM_TRANSLATOR_20_PV=${SPIRV_LLVM_TRANSLATOR_20_PV:-"20.1.19"}
+SPIRV_LLVM_TRANSLATOR_19_PV=${SPIRV_LLVM_TRANSLATOR_19_PV:-"19.1.24"}
 SRT_PV=${SRT_PV:-"9999"}
 SQLITE_PV=${SQLITE_PV:-"9999"}
 SUBRANDR_PV=${SUBRANDR_PV:-"9999"}
@@ -1192,5 +1197,17 @@ secure-version_gen_ruby_ng_depends() {
 	echo "${output}"
 }
 
+secure-version_gen_spirv_llvm_translator() {
+	[[ -z "${LLVM_COMPAT[@]}" ]] && die "QA:  Define LLVM_COMPAT"
+	local x
+	for x in "${LLVM_COMPAT[@]}" ; do
+		local x="SPIRV_LLVM_TRANSLATOR_${x}_PV"
+		echo "
+			llvm_slot_${x}? (
+				>=dev-util/spirv-llvm-translator-${!x}:${x}
+			)
+		"
+	done
+}
 
 fi

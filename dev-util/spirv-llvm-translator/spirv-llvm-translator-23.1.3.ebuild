@@ -4,9 +4,11 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_COMPAT=( 21 )
+LLVM_COMPAT=( 23 )
 MY_PN="SPIRV-LLVM-Translator"
 MY_P="${MY_PN}-${PV}"
+# Header's version: https://github.com/KhronosGroup/SPIRV-LLVM-Translator/blob/v23.1.3/spirv-headers-tag.conf
+# https://github.com/KhronosGroup/SPIRV-Headers/commits/cb42dec3830d3ac67fa449ecdc0c0f73d5e74498/
 
 # Align libstdcxx to avoid symbol issues
 inherit libstdcxx-compat
@@ -36,20 +38,17 @@ RESTRICT="!test? ( test )
 "
 
 RDEPEND="
-	dev-util/spirv-tools[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	dev-util/spirv-tools:=
-	llvm-core/llvm:${SLOT}[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
-	llvm-core/llvm:=
+	dev-util/spirv-tools:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	llvm-core/llvm:${SLOT}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
-	>=dev-util/spirv-headers-1.4.335.0
+	>=dev-util/spirv-headers-9999:=
 "
 BDEPEND="
 	virtual/pkgconfig
 	test? (
 		dev-python/lit
-		llvm-core/clang:${SLOT}[${LIBSTDCXX_USEDEP}]
-		llvm-core/clang:=
+		llvm-core/clang:${SLOT}=[${LIBSTDCXX_USEDEP}]
 	)
 "
 
