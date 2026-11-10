@@ -481,7 +481,7 @@ Overlay compatibility with open source projects
 | Nunstable     | NixOS unstable  | Limited (e.g. Hyprland, scx)                          |
 | S15           | Slackware 15    | Nope, no projects                                     |
 | U24           | Ubuntu 24 LTS   | No                                                    |
-| U26           | Ubuntu 26 LTS   | Yes (e.g. GitHub projects)                            |
+| U26           | Ubuntu 26 LTS   | Yes (e.g. projects on GitHub)                         |
 | Utenacious    | Ubuntu live     | Available but no projects                             |
 
 [1] Compatibility is focused on C/C++, moderately compatible with Python and
