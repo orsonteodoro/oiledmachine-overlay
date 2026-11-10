@@ -6,7 +6,6 @@ EAPI=8
 # LLVM-21 broken for nvtpx
 # https://github.com/llvm/llvm-project/issues/154772
 CXX_STANDARD=17
-LLVM_COMPAT=( {18..20} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -15,10 +14,15 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
-inherit cmake cuda libcxx-slot libstdcxx-slot llvm-r1 verify-sig
+CHKL_TIMESTAMPS=(
+	"dev-util/spirv-tools-9999"
+	"dev-util/spirv-llvm-translator-4.0.9999"
+)
+
+inherit chkl cmake cuda libcxx-slot libstdcxx-slot llvm-r1 secure-version verify-sig
 
 DESCRIPTION="Portable Computing Language (an implementation of OpenCL)"
 HOMEPAGE="http://portablecl.org https://github.com/pocl/pocl"
@@ -36,24 +40,22 @@ RESTRICT="!test? ( test )"
 
 gen_llvm_rdepend() {
 	local LLVM_SLOT
-	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
+	for LLVM_SLOT in "${LLVM_COMPAT[@]}" ; do
+		local x="SPIRV_LLVM_TRANSLATOR_${LLVM_SLOT}_PV"
 		echo "
-			!cuda? (
-				llvm-core/clang:${LLVM_SLOT}[${LIBSTDCXX_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/llvm:${LLVM_SLOT}[${LIBSTDCXX_USEDEP}]
-				llvm-core/llvm:=
-			)
-			cuda? (
-				llvm-core/clang:${LLVM_SLOT}[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
-				llvm-core/clang:=
-				llvm-core/llvm:${LLVM_SLOT}[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
-				llvm-core/llvm:=
-			)
-			spirv? (
-				dev-util/spirv-tools[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				dev-util/spirv-llvm-translator:${LLVM_SLOT}[${LIBSTDCXX_USEDEP}]
-				dev-util/spirv-llvm-translator:=
+			llvm_slot_${LLVM_SLOT}? (
+				!cuda? (
+					llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+					llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+				)
+				cuda? (
+					llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
+					llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
+				)
+				spirv? (
+					>=dev-util/spirv-tools-${SPIRV_TOOLS_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+					>=dev-util/spirv-llvm-translator-${!x}:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+				)
 			)
 		"
 	done
@@ -61,9 +63,9 @@ gen_llvm_rdepend() {
 CLANG_DEPS="$(gen_llvm_rdepend)"
 RDEPEND="
 	${CLANG_DEPS}
-	dev-libs/libltdl
-	dev-util/opencl-headers
-	virtual/opencl
+	dev-libs/libltdl:=
+	dev-util/opencl-headers:=
+	virtual/opencl:=
 	debug? ( dev-util/lttng-ust:= )
 	cuda? ( dev-util/nvidia-cuda-toolkit:= )
 	hwloc? ( sys-apps/hwloc:=[cuda?] )
@@ -93,6 +95,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local host_cpu_variants="generic"
 
 	if use amd64 ; then

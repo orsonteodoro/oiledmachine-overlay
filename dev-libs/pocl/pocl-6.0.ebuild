@@ -4,7 +4,6 @@
 EAPI=8
 
 CXX_STANDARD=11
-LLVM_COMPAT=( {15..18} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -13,10 +12,10 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
-inherit cmake cuda libcxx-slot libstdcxx-slot llvm-r1
+inherit cmake cuda libcxx-slot libstdcxx-slot llvm-r1 secure-version
 
 DESCRIPTION="Portable Computing Language (an implementation of OpenCL)"
 HOMEPAGE="http://portablecl.org https://github.com/pocl/pocl"
@@ -32,19 +31,17 @@ RESTRICT="!test? ( test ) test"
 
 gen_llvm_rdepend() {
 	local LLVM_SLOT
-	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
+	for LLVM_SLOT in "${LLVM_COMPAT[@]}" ; do
 		echo "
-			!cuda? (
-				llvm-core/clang:${LLVM_SLOT}[${LIBSTDCXX_USEDEP}]
-				llvm-core/clang:=
-				llvm-core/llvm:${LLVM_SLOT}[${LIBSTDCXX_USEDEP}]
-				llvm-core/llvm:=
-			)
-			cuda? (
-				llvm-core/clang:${LLVM_SLOT}[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
-				llvm-core/clang:=
-				llvm-core/llvm:${LLVM_SLOT}[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
-				llvm-core/llvm:=
+			llvm_slot_${LLVM_SLOT}? (
+				!cuda? (
+					llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+					llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP}]
+				)
+				cuda? (
+					llvm-core/clang:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
+					llvm-core/llvm:${LLVM_SLOT}=[${LIBSTDCXX_USEDEP},llvm_targets_NVPTX]
+				)
 			)
 		"
 	done
@@ -52,8 +49,8 @@ gen_llvm_rdepend() {
 CLANG_DEPS="$(gen_llvm_rdepend)"
 RDEPEND="
 	${CLANG_DEPS}
-	dev-libs/libltdl
-	virtual/opencl
+	dev-libs/libltdl:=
+	virtual/opencl:=
 	debug? ( dev-util/lttng-ust:= )
 	cuda? ( dev-util/nvidia-cuda-toolkit:= )
 	hwloc? ( sys-apps/hwloc:=[cuda?] )
