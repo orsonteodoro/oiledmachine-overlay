@@ -85,6 +85,9 @@ ebuild_revision_27
 "
 REQUIRED_USE+="
 	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	^^ (
 		clang
 		gcc
 	)
@@ -107,8 +110,11 @@ REQUIRED_USE+="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
-	^^ (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
+	video_cards_intel? (
+		^^ (
+			llvm_slot_23
+			llvm_slot_24
+		)
 	)
 	|| (
 		cpu
@@ -178,8 +184,13 @@ BDEPEND="
 	>=sys-devel/bison-3.8.2
 	>=sys-devel/flex-2.6.4
 	video_cards_intel? (
-		>=dev-util/spirv-llvm-translator-23.1.0
 		>=dev-libs/intel-vc-intrinsics-0.25
+		llvm_slot_23? (
+			>=dev-util/spirv-llvm-translator-${SPIRV_LLVM_TRANSLATOR_23_PV}:23
+		)
+		llvm_slot_24? (
+			>=dev-util/spirv-llvm-translator-${SPIRV_LLVM_TRANSLATOR_24_PV}:24
+		)
 	)
 "
 PATCHES=(
