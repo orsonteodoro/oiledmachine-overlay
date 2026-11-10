@@ -59,12 +59,12 @@ exist in build files.
 | Compiler                        | Ebuild level of support               | Distro or CI image correspondence                  |
 | ---                             | ---                                   | ---                                                |
 | Clang <= 16                     | Not supported                         | D12 (14.0), U22 (14.0)                             |
-| Clang 17                        | Limited support                       | G23 (17.0.6)                                       |
-| Clang 18                        | Fully supported                       | G23 (18.1.8), U24 (18.0)                           |
-| Clang 19                        | Supported                             | D13 (19.0), G23 (19.1.7)                           |
-| Clang 20                        | Not supported                         | G23 (20.1.8)                                       |
+| Clang 17                        | Not supported                         | G23 (17.0.6)                                       |
+| Clang 18                        | Not supported                         | G23 (18.1.8), U24 (18.0)                           |
+| Clang 19                        | Available                             | D13 (19.0), G23 (19.1.7)                           |
+| Clang 20                        | Available                             | G23 (20.1.8)                                       |
 | Clang 21                        | Available                             | F43 (21.1.8), G23 (21.1.8), U26 (21.1.8)           |
-| Clang 22                        | Available                             | F44 (22.1.8), G23 (22.1.8)                         |
+| Clang 22 [c]                    | Partially supported                   | F44 (22.1.8), G23 (22.1.8)                         |
 | Clang 23                        | Available                             | F45 (23.1.0)                                       |
 | Clang 24                        | Limited support                       |                                                    |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)                          |
@@ -73,12 +73,13 @@ exist in build files.
 | Cython 3.2.0                    | Not supported                         | F44 (3.2.4), F45 (3.2.8), G23 (3.2.8)              |
 | Cython 3.3.0                    | Not supported                         |                                                    |
 | GCC <= 10                       | Not supported                         |                                                    |
-| GCC 11                          | Fully supported                       | U22 (11.2), G23 (11.5.0)                           |
-| GCC 12                          | Fully supported                       | D12 (12.2), G23 (12.5.0)                           |
-| GCC 13                          | Fully supported                       | U24 (13.2), G23 (13.4.1_p20260603)                 |
+| GCC 11                          | Not supported                         | U22 (11.2), G23 (11.5.0)                           |
+| GCC 12                          | Not supported                         | D12 (12.2), G23 (12.5.0)                           |
+| GCC 13                          | Not supported                         | U24 (13.2), G23 (13.4.1_p20260603)                 |
 | GCC 14                          | Partially Supported                   | D13 (14.2), G23 (14.3.1_p20260604)                 |
-| GCC 15                          | Fully supported                       | F43 (15.3.1), G23 (15.3.0), U26 (15.2.0)           |
+| GCC 15 [c]                      | Fully supported                       | F43 (15.3.1), G23 (15.3.0), U26 (15.2.0)           |
 | GCC 16			  | Available                             | F44 (16.2.1), F45 (16.2.1)                         |
+| GCC 17                          | Available but not supported           |                                                    |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                                       |
 | Rust 1.74.1                     | Available                             |                                                    |
 | Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)                         |
@@ -98,6 +99,9 @@ exist in build files.
 | Rust 1.99.0                     | Not supported                         |                                                    |
 | Rust 1.99.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
 | Rust-9999 (1.101.0-nightly) [C] | Limited support                       |                                                    |
+
+Rows marked with [c] are the current development slots for C/C++ development for
+LTS.
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
@@ -164,11 +168,11 @@ Language defaults
 | LTS                      | gnu++17        | gnu++14          | gnu17        | gnu17          | 12          | 14            | gcc_slot_12_5, llvm_slot_14 [3]      | D12                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                |
 | LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 18            | gcc_slot_13_4, llvm_slot_18          | U24                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                |
 | LTS [11]                 | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 19 [4]        | gcc_slot_13_4, llvm_slot_19 [11][1]  | U24                     | SIMD, CUDA 12.8, CUDA 12.9, Vulkan                                      |
-| LTS [10]                 | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22 [10][12] | U24                     | SIMD, CUDA 13.4, ROCm 7.2, Vulkan                                       |
+| LTS [10]                 | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22 [10]     | U24                     | SIMD, CUDA 13.4, ROCm 7.2, Vulkan                                       |
 | LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 14          | 19            | gcc_slot_14_3, llvm_slot_19          | D13                     | SIMD, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                           |
 | Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | F43                     | SIMD, CUDA 13.2, Vulkan                                                 |
 | LTS                      | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | U26                     | SIMD, CUDA 13.4, Vulkan                                                 |
-| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22          | G23 [2]                 | SIMD, CUDA 13.4, Vulkan                                                 |
+| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22 [12]     | G23 [2]                 | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22          | F44                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 23            | gcc_slot_16_2, llvm_slot_23          | F45                     | SIMD, Vulkan                                                            |
 
@@ -193,7 +197,7 @@ Language defaults
   - Vulkan:  Gaming graphics (e.g. raytracing, particle systems, post-processing, procedural rendering), AI upscaling, video remastering, LLM inference
 * [10] Based on ROCm prebuilt packages and HIP-Clang 7.2.4 for U22, U24. (Recommended by overlay for ROCm support/testing)
 * [11] Based on ROCm prebuilt packages and HIP-Clang 6.4.4 for U22, U24. (Deprecated by overlay for ROCm support/testing)
-* [12] This will be the next overlay default.
+* [12] This is the current overlay default.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
@@ -389,7 +393,7 @@ Pairing rules and support
 | ROCm 7.0                             | Not supported                           | D12, D13, U22, U24                                                     |
 | ROCm 7.1                             | Not supported                           | D12, D13, U22, U24                                                     |
 | ROCm 7.2                             | Not supported                           | D12, D13, U22, U24                                                     |
-| ROCm live                            | In planning / WIP                       |                                                                        |
+| ROCm 10.1                            | In planning / WIP                       |                                                                        |
 | SYCL                                 | Not supported                           |                                                                        |
 | systemd                              | Partially supported                     |                                                                        |
 | Tauri 1.x                            | Not supported                           |                                                                        |
