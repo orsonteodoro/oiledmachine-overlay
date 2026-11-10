@@ -316,7 +316,7 @@ LIBCXX_COMPAT_CXX23_CUDA=( # Rolling
 )
 
 
-# LLVM_COMPAT templates for ROCm for building libs.
+# LLVM_COMPAT templates for ROCm for building C/C++ libs.
 #
 # Status:  Production ready
 #
@@ -330,8 +330,8 @@ LIBCXX_COMPAT_ROCM_LIB=( # Skip
 	# Disable ROCm when building libs
 )
 
-# LLVM_COMPAT templates for ROCm for building pure applications or Python
-# packages with private libraries.
+# LLVM_COMPAT templates for ROCm for building pure applications not hybrids
+# packages with public shared libraries.
 #
 # Status:  Production ready
 #
@@ -342,6 +342,21 @@ LIBCXX_COMPAT_ROCM_LIB=( # Skip
 # )
 #
 LIBCXX_COMPAT_ROCM_APP=( # Live
+# Align to ROCm/llvm-project
+	"llvm_slot_24"
+)
+
+# LLVM_COMPAT templates for ROCm for Python packages with private libraries.
+#
+# Status:  Production ready
+#
+# Example:
+#
+# LLVM_COMPAT=(
+#     ${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}
+# )
+#
+LIBCXX_COMPAT_ROCM_PYTHON=( # Live
 # Align to ROCm/llvm-project
 	"llvm_slot_24"
 )

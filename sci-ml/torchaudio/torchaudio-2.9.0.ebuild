@@ -23,6 +23,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}"
 )
 
 inherit distutils-r1 fix-rpath libcxx-slot libstdcxx-slot pypi secure-version rocm-r1
