@@ -466,7 +466,7 @@ Overlay compatibility with open source projects
 | Abbreviations | Meaning         | Supported open source projects [1]                    |
 | ---           | ---             | ---                                                   |
 | A             | Arch Linux      | Yes (e.g. projects on GitHub)                         |
-| Aedge         | Alpine edge     | WIP (e.g. Chromium based musl)                        |
+| Aedge         | Alpine edge     | Limited (e.g. WIP Chromium based musl)                |
 | D12           | Debian 12       | No                                                    |
 | D13           | Debian 13       | Yes (e.g. projects on GitHub)                         |
 | Dsid          | Debian Sid      | Yes (e.g. ca-certificates, WIP Chromium based ppc64)  |
