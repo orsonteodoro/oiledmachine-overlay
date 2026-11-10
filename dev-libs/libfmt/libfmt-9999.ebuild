@@ -21,9 +21,9 @@ DESCRIPTION="Small, safe and fast formatting library"
 HOMEPAGE="https://fmt.dev/dev/ https://github.com/fmtlib/fmt"
 
 if [[ ${PV} == *9999 ]] ; then
-	INTERNAL_VERSION="12.2.1" # See https://github.com/fmtlib/fmt/blob/main/include/fmt/base.h
+	INTERNAL_VERSION="12.2.2" # See https://github.com/fmtlib/fmt/blob/main/include/fmt/core.h
 	SOVER=$(ver_cut "1" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="e27cc20bd93a4e280fb9268d41cd131069a9c73f"
+	FALLBACK_COMMIT="e7e6e3f71033fbfc71eba1709789328bcb0ceb28"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/fmtlib/fmt.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -61,7 +61,7 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	local actual_sover=$(grep -e "FMT_VERSION" "${S}/include/fmt/base.h" | head -n 1 | cut -f 3 -d " " | cut -c "1-2")
+	local actual_sover=$(grep -e "FMT_VERSION" "${S}/include/fmt/core.h" | head -n 1 | cut -f 3 -d " " | cut -c "1-2")
 	local expected_sover="${SOVER}"
 	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
 eerror "QA:  Update PV or INTERNAL_VERSION"
