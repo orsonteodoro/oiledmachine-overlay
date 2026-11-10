@@ -198,7 +198,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_54
+ebuild_revision_55
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -828,7 +828,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use sysprof)
 		$(meson_use test build-tests)
 		-Dallow-broken-lto=true
-		-Damd-options=$(usex llvm "use-llvm" "virtio")
+		-Damd-options=$(usex llvm "use-llvm,virtio" "virtio")
 		-Db_ndebug=$(usex debug false true)
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
