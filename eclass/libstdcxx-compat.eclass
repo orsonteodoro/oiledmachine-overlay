@@ -105,7 +105,7 @@ LIBSTDCXX_COMPAT_ROCM_10=( # Rolling
 # )
 #
 LIBSTDCXX_COMPAT_CUDA=( # LTS + rolling
-	"gcc_slot_14_3" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+	"gcc_slot_14_4" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"gcc_slot_15_3" # Support CUDA 13.0, 13.1, 13.2, 13.3
 	"gcc_slot_16_2" # Support CUDA 13.4, 13.5;
 )
@@ -119,11 +119,11 @@ LIBSTDCXX_COMPAT_CUDA=( # LTS + rolling
 # )
 #
 LIBSTDCXX_COMPAT_CUDA_12=( # LTS
-	"gcc_slot_14_3" # Support CUDA 12.8, 12.9
+	"gcc_slot_14_4" # Support CUDA 12.8, 12.9
 )
 
 LIBSTDCXX_COMPAT_CUDA_13=( # LTS + rolling
-	"gcc_slot_14_3" # Support CUDA 13.0, 13.1, 13.2, 13.3
+	"gcc_slot_14_4" # Support CUDA 13.0, 13.1, 13.2, 13.3
 	"gcc_slot_15_3" # Support CUDA 13.0, 13.1, 13.2, 13.3
 	"gcc_slot_16_2" # Support CUDA 13.4, 13.5
 )
@@ -144,7 +144,7 @@ LIBSTDCXX_COMPAT_CUDA_13=( # LTS + rolling
 # )
 #
 LIBSTDCXX_COMPAT_GPU=( # LTS + rolling
-	"gcc_slot_14_3" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2
+	"gcc_slot_14_4" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2
 	"gcc_slot_15_3" # Support CUDA 13.0, 13.1, 13.2, 13.3
 	"gcc_slot_16_2" # Support CUDA 13.4, 13.5;  ROCm 10.1
 )
@@ -160,7 +160,7 @@ LIBSTDCXX_COMPAT_GPU=( # LTS + rolling
 # )
 #
 LIBSTDCXX_COMPAT_LTS=( # LTS
-	"gcc_slot_14_3" # Support D13
+	"gcc_slot_14_4" # Support D13
 	"gcc_slot_15_3" # Support U26
 )
 
@@ -175,7 +175,7 @@ LIBSTDCXX_COMPAT_LTS=( # LTS
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX98=( # LTS
-	"gcc_slot_14_3" # Support -std=c++98
+	"gcc_slot_14_4" # Support -std=c++98
 	"gcc_slot_15_3" # Support -std=c++98
 )
 
@@ -190,7 +190,7 @@ LIBSTDCXX_COMPAT_STDCXX98=( # LTS
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX03=( # LTS
-	"gcc_slot_14_3" # Support -std=c++03
+	"gcc_slot_14_4" # Support -std=c++03
 	"gcc_slot_15_3" # Support -std=c++03
 )
 
@@ -205,7 +205,7 @@ LIBSTDCXX_COMPAT_STDCXX03=( # LTS
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX11=( # LTS
-	"gcc_slot_14_3" # Support -std=c++11
+	"gcc_slot_14_4" # Support -std=c++11
 	"gcc_slot_15_3" # Support -std=c++11
 )
 
@@ -220,7 +220,7 @@ LIBSTDCXX_COMPAT_STDCXX11=( # LTS
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX14=( # LTS
-	"gcc_slot_14_3" # Support -std=c++14
+	"gcc_slot_14_4" # Support -std=c++14
 	"gcc_slot_15_3" # Support -std=c++14
 )
 
@@ -238,7 +238,7 @@ LIBSTDCXX_COMPAT_STDCXX14=( # LTS
 # )
 #
 LIBSTDCXX_COMPAT_STDCXX17=( # Traditional LTS
-	"gcc_slot_14_3" # Support -std=c++17.  Defaults:  D13
+	"gcc_slot_14_4" # Support -std=c++17.  Defaults:  D13
 	"gcc_slot_15_3" # Support -std=c++17.  Defaults:  U26
 )
 
@@ -257,7 +257,7 @@ LIBSTDCXX_COMPAT_STDCXX17=( # Traditional LTS
 #
 LIBSTDCXX_COMPAT_STDCXX20=( # LTS + rolling
 	# From the latest LTS releases to newest rolling release
-	"gcc_slot_14_3" # Support -std=c++20.  Defaults:  D13
+	"gcc_slot_14_4" # Support -std=c++20.  Defaults:  D13
 	"gcc_slot_15_3" # Support -std=c++20.  Defaults:  F43, U26
 	"gcc_slot_16_2" # Support -std=c++20.  Defaults:  F44, F45, G
 )
