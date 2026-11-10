@@ -26,15 +26,16 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	{20..23}
+	{20..24}
 ) # For supported LLVM, see https://github.com/ispc/ispc/blob/main/src/ispc_version.h#L36
 
-inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot python-any-r1 llvm secure-version toolchain-funcs uopts
+inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot
+inherit python-any-r1 llvm secure-version toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]]; then
-	INTERNAL_VERSION="1.32.0"
+	INTERNAL_VERSION="1.33.0" # See https://github.com/ispc/ispc/blob/main/common/version.h
 	SOVER=$(ver_cut "1" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT=""
+	FALLBACK_COMMIT="752011f5c4f59bbe9c5a60f2322d652830c6fb5f"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -80,7 +81,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang +cpu +examples -fast-math gcc lto +openmp pthread tbb test
 +video_cards_intel -xe
-ebuild_revision_25
+ebuild_revision_27
 "
 REQUIRED_USE+="
 	^^ (
@@ -119,6 +120,7 @@ REQUIRED_USE+="
 gen_llvm_depends() {
 	local s
 	for s in "${LLVM_COMPAT[@]}" ; do
+		local x="SPIRV_LLVM_TRANSLATOR_${s}_PV"
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}=
@@ -130,7 +132,7 @@ gen_llvm_depends() {
 					>=llvm-runtimes/openmp-${s}:=
 				)
 				video_cards_intel? (
-					>=dev-util/spirv-llvm-translator-${s}:${s}=
+					>=dev-util/spirv-llvm-translator-${!x}:${s}=
 				)
 			)
 		"

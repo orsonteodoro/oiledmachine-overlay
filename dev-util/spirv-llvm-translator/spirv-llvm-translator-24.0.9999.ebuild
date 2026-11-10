@@ -1,0 +1,105 @@
+# Copyright 1999-2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CXX_STANDARD=17
+LLVM_COMPAT=( 24 )
+MY_PN="SPIRV-LLVM-Translator"
+MY_P="${MY_PN}-${PV}"
+# Header's version: https://github.com/KhronosGroup/SPIRV-LLVM-Translator/blob/main/spirv-headers-tag.conf
+# https://github.com/KhronosGroup/SPIRV-Headers/commits/cb42dec3830d3ac67fa449ecdc0c0f73d5e74498/
+
+# Align libstdcxx to avoid symbol issues
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit cmake-multilib flag-o-matic libstdcxx-slot llvm-r2 multiprocessing
+
+DESCRIPTION="Bi-directional translator between SPIR-V and LLVM IR"
+HOMEPAGE="https://github.com/KhronosGroup/SPIRV-LLVM-Translator"
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git"
+	FALLBACK_COMMIT="3a4d67b2c538ea6048cf517d5b85401f86642cb0"
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
+	inherit git-r3
+else
+	SRC_URI="https://github.com/KhronosGroup/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+fi
+S="${WORKDIR}/${MY_P}"
+
+LICENSE="UoI-NCSA"
+SLOT="$(ver_cut 1)"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
+IUSE="
+test
+ebuild_revision_2
+"
+RESTRICT="!test? ( test )
+	arm? ( test )
+	arm64? ( test )
+	loong? ( test )
+	riscv? ( test )
+"
+
+RDEPEND="
+	dev-util/spirv-tools:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	llvm-core/llvm:${SLOT}=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+"
+DEPEND="${RDEPEND}
+	>=dev-util/spirv-headers-9999:=
+"
+BDEPEND="
+	virtual/pkgconfig
+	test? (
+		dev-python/lit
+		llvm-core/clang:${SLOT}=[${LIBSTDCXX_USEDEP}]
+	)
+"
+
+pkg_setup() {
+	libstdcxx-slot_verify
+	llvm-r2_pkg_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_prepare() {
+	append-flags -fPIC
+	cmake_src_prepare
+
+	# do not force a specific LLVM version to find_package(), this only
+	# causes issues and we force a specific path anyway
+	sed -i -e '/find_package/s:${BASE_LLVM_VERSION}::' CMakeLists.txt || die
+}
+
+multilib_src_configure() {
+	local mycmakeargs=(
+		-DCCACHE_ALLOWED="OFF"
+		-DCMAKE_INSTALL_PREFIX="$(get_llvm_prefix)"
+		-DLLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR="${ESYSROOT}/usr/include/spirv"
+		-DLLVM_SPIRV_INCLUDE_TESTS=$(usex test "ON" "OFF")
+		-Wno-dev
+	)
+
+	cmake_src_configure
+}
+
+multilib_src_test() {
+	lit -vv "-j${LIT_JOBS:-$(makeopts_jobs)}" "${BUILD_DIR}/test" || die
+}
