@@ -472,8 +472,8 @@ Overlay compatibility with open source projects
 | F45           | Fedora 45       | Yes (e.g. projects on GitLab)                         |
 | Frawhide      | Fedora rawhide  | Available                                             |
 | G             | Gentoo stable   | Yes (e.g. Portage, Genkernel)                         |
-| G~            | Gentoo unstable | Yes (e.g. Genkernel)                                  |
-| G**           | Gentoo live     | Available                                             |
+| G~            | Gentoo unstable | Limited (e.g. Genkernel)                              |
+| G**           | Gentoo live     | Limited                                               |
 | N26           | NixOS stable    | Yes                                                   |
 | Nunstable     | NixOS unstable  | Yes (e.g. Hyprland, scx)                              |
 | S15           | Slackware 15    | No (S15 based projects or S15 CI/CD testing)          |
