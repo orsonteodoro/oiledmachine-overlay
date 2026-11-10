@@ -824,11 +824,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature vulkan display-info)
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
-		$(meson_use llvm amd-use-llvm)
 		$(meson_use opengl)
 		$(meson_use sysprof)
 		$(meson_use test build-tests)
 		-Dallow-broken-lto=true
+		-Damd-options=$(usex llvm "use-llvm" "virtio")
 		-Db_ndebug=$(usex debug false true)
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
