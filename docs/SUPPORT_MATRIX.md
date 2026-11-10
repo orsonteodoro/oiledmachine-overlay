@@ -469,8 +469,8 @@ Overlay compatibility with open source projects
 | D13           | Debian 13       | Yes (e.g. projects on GitHub)                         |
 | Dsid          | Debian Sid      | Yes (e.g. ca-certificates, WIP Chromium based ppc64)  |
 | F43           | Fedora 43       | Limited but deprecated                                |
-| F44           | Fedora 44       | Yes (e.g. projects on GitLab)                         |
-| F45           | Fedora 45       | Yes (e.g. projects on GitLab)                         |
+| F44           | Fedora 44       | Yes (e.g. projects on freedesktop.org, GitLab)        |
+| F45           | Fedora 45       | Yes (e.g. projects on freedesktop.org, GitLab)        |
 | Frawhide      | Fedora rawhide  | Available but no projects                             |
 | G             | Gentoo stable   | Yes (e.g. Portage, Genkernel)                         |
 | G~            | Gentoo unstable | Limited (e.g. Genkernel)                              |
