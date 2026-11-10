@@ -467,10 +467,10 @@ Overlay compatibility with open source projects
 | D12           | Debian 12       | No                                                    |
 | D13           | Debian 13       | Yes (e.g. projects on GitHub)                         |
 | Dsid          | Debian Sid      | Yes (e.g. ca-certificates, WIP Chromium based ppc64)  |
-| F43           | Fedora 43       | Available but deprecated                              |
+| F43           | Fedora 43       | Limited but deprecated                                |
 | F44           | Fedora 44       | Yes (e.g. projects on GitLab)                         |
 | F45           | Fedora 45       | Yes (e.g. projects on GitLab)                         |
-| Frawhide      | Fedora rawhide  | Available                                             |
+| Frawhide      | Fedora rawhide  | Limited                                               |
 | G             | Gentoo stable   | Yes (e.g. Portage, Genkernel)                         |
 | G~            | Gentoo unstable | Limited (e.g. Genkernel)                              |
 | G**           | Gentoo live     | Limited                                               |
@@ -479,4 +479,4 @@ Overlay compatibility with open source projects
 | S15           | Slackware 15    | No (S15 based projects or S15 CI/CD testing)          |
 | U24           | Ubuntu 24 LTS   | No                                                    |
 | U26           | Ubuntu 26 LTS   | Yes (e.g. GitHub projects)                            |
-| Utenacious    | Ubuntu live     | Available                                             |
+| Utenacious    | Ubuntu live     | Limited                                               |
