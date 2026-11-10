@@ -5,6 +5,7 @@ EAPI=8
 
 INTERNAL_VERSION="3.1.91" # https://github.com/libjpeg-turbo/libjpeg-turbo/blob/main/CMakeLists.txt#L17
 
+CXX_STANDARD="ignore"
 CFLAGS_HARDENED_ASSEMBLERS="nasm inline yasm"
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
@@ -19,6 +20,7 @@ UOPTS_SUPPORT_TPGO=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libjpeg-turbo.asc"
 
 # LTS
+inherit libcxx-compat
 LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
@@ -99,14 +101,14 @@ RESTRICT="
 	)
 "
 IUSE+="
-${LLVM_COMPAT[@]}
 ${_TRAINERS[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 +asm cpu_flags_arm_neon debug java test pgo static-libs
 ebuild_revision_44
 "
 REQUIRED_USE="
 	?? (
-		${LLVM_COMPAT[@]}
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	pgo? (
 		libjpeg_turbo_trainers_decode
@@ -260,7 +262,22 @@ get_llvm_slot() {
 pkg_setup() {
 	check-compiler-switch_start
 	LLVM_SLOT=$(get_llvm_slot)
-	[[ -z "${LLVM_SLOT}" ]] && LLVM_SLOT="19"
+einfo "LLVM_SLOT:  ${LLVM_SLOT}"
+	if [[ -z "${LLVM_SLOT}" ]] ; then
+ewarn
+ewarn "You need to pick a llvm_slot USE flag the USE flag or"
+ewarn "change the CC=gcc and CXX=g++."
+ewarn
+ewarn "Valid values:  ${LIBCXX_COMPAT_STDCXX17[@]}"
+ewarn
+ewarn "Setting LLVM_SLOT to 22."
+ewarn
+		LLVM_SLOT="22"
+		if ! has_version "llvm-core/clang:22" ; then
+ewarn "Clang 22 is not installed.  Assuming Clang 22."
+		fi
+	fi
+
 ewarn
 ewarn "If the build fails for =${CATEGORY}/${PN}-${PVR}, do the following:"
 ewarn
@@ -304,8 +321,10 @@ ewarn
 		LLVM_SLOT=$(get_llvm_slot)
 		if [[ -z "${LLVM_SLOT}" ]] ; then
 eerror
-eerror "You need to pick either llvm_slot_18 or llvm_slot_19 for USE flag or"
+eerror "You need to pick a llvm_slot USE flag the USE flag or"
 eerror "change the CC=gcc and CXX=g++."
+eerror
+eerror "Valid values:  ${LIBCXX_COMPAT_STDCXX17[@]}"
 eerror
 			die
 		fi
