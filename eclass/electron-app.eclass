@@ -42,7 +42,7 @@ CHKL_TIMESTAMPS+=(
 	"app-misc/jq-9999"
 	#"dev-db/sqlite-9999"
 	"dev-libs/expat-9999"
-	"dev-libs/glib-2.90.9999"
+	"dev-libs/glib-2.91.9999"
 	"dev-libs/wayland-9999"
 	"media-libs/alsa-lib-9999"
 	"media-libs/libpulse-9999"
@@ -75,7 +75,7 @@ inherit chkl chromium-2 desktop linux-info secure-version web-kernel-config
 # Rust BDEPEND and Rust path preappend should be added.  See the
 # dev-util/jsonlint package for details.
 #
-# Use github search with commiter-date:YYYY-MM-DD to search for an
+# Use github search with committer-date:YYYY-MM-DD to search for an
 # approximation.
 #
 # Dependency graph:  Next.js -> @swc/core -> Rust
