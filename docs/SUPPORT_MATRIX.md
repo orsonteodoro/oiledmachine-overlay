@@ -73,7 +73,7 @@ exist in build files.
 | Cython 3.2.0                    | Not supported                         | F44 (3.2.4), F45 (3.2.8), G (3.2.8)                |
 | Cython 3.3.0                    | Not supported                         |                                                    |
 | GCC <= 10                       | Not supported                         |                                                    |
-| GCC 11                          | Not supported                         | U22 (11.2), G (11.5.0)                             |
+| GCC 11                          | Limited [1]                           | U22 (11.2), G (11.5.0)                             |
 | GCC 12                          | Not supported                         | D12 (12.2), G (12.5.0)                             |
 | GCC 13                          | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                   |
 | GCC 14                          | Partially Supported                   | D13 (14.2), G (14.3.1_p20260604)                   |
@@ -99,6 +99,8 @@ exist in build files.
 | Rust 1.99.0                     | Not supported                         |                                                    |
 | Rust 1.99.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
 | Rust-9999 (1.101.0-nightly) [C] | Limited support                       |                                                    |
+
+[1] Only Godot allowed.
 
 Rows marked with [c] are the current development slots for C/C++ development for
 LTS.
