@@ -304,7 +304,7 @@ LIBCXX_COMPAT_CXX17_CUDA=( # LTS
 
 # For latest CUDA 12 on a c++20 or earlier project
 LIBCXX_COMPAT_CXX20_CUDA=( # LTS + Rolling
-#	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
+	"llvm_slot_19" # Support CUDA 12.8, 12.9, 13.0, 13.1, 13.2, 13.3
 	"llvm_slot_21" # Support CUDA 13.2, 13.3
 	"llvm_slot_22" # Support CUDA 13.4, 13.5
 )
@@ -561,11 +561,11 @@ LIBCXX_COMPAT_STDCXX14=( # LTS
 #     ${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}
 # )
 #
-LIBCXX_COMPAT_STDCXX17=( # LTS
+LIBCXX_COMPAT_STDCXX17=( # Traditional LTS
 	# Set to LTS distros equivalent to reduce misalignment in dependencies
 	"llvm_slot_19" # Support -std=c++17.  Defaults:  D13
-	"llvm_slot_21" # Support -std=c++17.  Defaults:  U26, F43, N26; Available:  D13
-	"llvm_slot_22" # Support -std=c++17.  Available:  U26; Available:  D13, F44, F45, U26
+	"llvm_slot_21" # Support -std=c++17.  Defaults:  U26, F43; Available:  D13
+	"llvm_slot_22" # Support -std=c++17.  Available:  U26; Available:  D13, U26
 )
 
 # LLVM_COMPAT template for -std=c++20 projects or the compiler default

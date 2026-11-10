@@ -237,10 +237,9 @@ LIBSTDCXX_COMPAT_STDCXX14=( # LTS
 #     ${LIBSTDCXX_COMPAT_STDCXX17[@]}
 # )
 #
-LIBSTDCXX_COMPAT_STDCXX17=( # LTS
+LIBSTDCXX_COMPAT_STDCXX17=( # Traditional LTS
 	"gcc_slot_14_3" # Support -std=c++17.  Defaults:  D13
-	"gcc_slot_15_3" # Support -std=c++17.  Defaults:  U26, N26
-	"gcc_slot_16_2" # Support -std=c++17.  Available:  N26
+	"gcc_slot_15_3" # Support -std=c++17.  Defaults:  U26
 )
 
 # GCC_COMPAT template for -std=c++20 projects
