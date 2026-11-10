@@ -198,7 +198,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind virtio vulkan wayland +X +zstd
-ebuild_revision_57
+ebuild_revision_59
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -672,11 +672,7 @@ get_amd_options() {
 			echo "[]"
 		fi
 	else
-		if use llvm ; then
-			echo "llvm"
-		else
-			echo "[]"
-		fi
+		echo "[]"
 	fi
 }
 
