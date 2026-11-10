@@ -4,6 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=17
+LLVM_COMPAT=( 23 )
 PYTHON_COMPAT=( python3_{11..14} )
 
 # Align libstdcxx to avoid symbol issues
@@ -29,7 +30,7 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake libstdcxx-slot llvm.org multibuild python-any-r1
+inherit cmake libstdcxx-slot llvm.org multibuild python-any-r1 secure-version
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~riscv ~x86
@@ -42,7 +43,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( MIT BSD )"
 SLOT="0"
 IUSE+="
 +spirv test video_cards_nvidia video_cards_radeonsi
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
@@ -50,7 +51,7 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	spirv? (
-		dev-util/spirv-llvm-translator:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+		>=dev-util/spirv-llvm-translator-${SPIRV_LLVM_TRANSLATOR_23_PV}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 	test? (
 		$(python_gen_any_dep "

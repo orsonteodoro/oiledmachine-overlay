@@ -4,7 +4,7 @@
 EAPI=8
 
 CXX_STANDARD=17
-LLVM_COMPAT=( {17..19} )
+LLVM_COMPAT=( 19 )
 PYTHON_COMPAT=( python3_{11..13} )
 
 inherit llvm-ebuilds
@@ -15,7 +15,7 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
-inherit cmake libstdcxx-slot llvm.org llvm-r1 python-any-r1
+inherit cmake libstdcxx-slot llvm.org llvm-r1 python-any-r1 secure-version
 
 DESCRIPTION="OpenCL C library"
 HOMEPAGE="https://libclc.llvm.org/"
@@ -25,14 +25,14 @@ SLOT="0"
 KEYWORDS="amd64 ~arm arm64 ~loong ~riscv x86"
 IUSE="
 +spirv video_cards_nvidia video_cards_r600 video_cards_radeonsi
-ebuild_revision_1
+ebuild_revision_2
 "
 
 BDEPEND="
 	${PYTHON_DEPS}
 	>=llvm-core/clang-${LLVM_VERSION}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	spirv? (
-		dev-util/spirv-llvm-translator:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
+		>=dev-util/spirv-llvm-translator-${SPIRV_LLVM_TRANSLATOR_19_PV}:${LLVM_MAJOR}=[${LIBSTDCXX_USEDEP}]
 	)
 "
 
