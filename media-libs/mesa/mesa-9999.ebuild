@@ -17,7 +17,7 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO BOR DLH DOS IO NPD OOBA SYM"
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..15} )
 RUST_MAX_VER="1.97.1" # Inclusive
 RUST_MIN_VER="1.81.0"
 RUST_MULTILIB=1
@@ -198,7 +198,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind virtio vulkan wayland +X +zstd
-ebuild_revision_62
+ebuild_revision_63
 "
 REQUIRED_USE="
 	video_cards_i915? (
