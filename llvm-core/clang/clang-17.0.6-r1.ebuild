@@ -33,7 +33,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libxml2-9999"
 )
 
-inherit check-compiler-switch chkl cmake dhms flag-o-matic git-r3 hip-versions libstdcxx-slot llvm llvm.org llvm-utils multilib
+inherit check-compiler-switch chkl cmake dhms flag-o-matic git-r3 libstdcxx-slot llvm llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 secure-version toolchain-funcs
 
 KEYWORDS="
