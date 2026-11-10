@@ -38,7 +38,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 # Lift max allowed to avoid possible multiple LLVM bug
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 PATENT_STATUS=(
@@ -198,7 +198,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_52
+ebuild_revision_53
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -300,14 +300,15 @@ RDEPEND="
 # simultaneously. \
 gen_llvm_depstr() {
 	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	for s in "${LLVM_COMPAT[@]}" ; do
+		local x="SPIRV_LLVM_TRANSLATOR_${s}_PV"
 		echo "
 			llvm_slot_${s}? (
 				!opencl? (
 					=llvm-core/llvm-${s}*:=[${LLVM_USE_DEPS}]
 				)
 				opencl? (
-					=dev-util/spirv-llvm-translator-${s}*:=[${LIBSTDCXX_USEDEP}]
+					>=dev-util/spirv-llvm-translator-${!x}:${s}=[${LIBSTDCXX_USEDEP}]
 					=llvm-core/clang-${s}*:=[${LLVM_USE_DEPS}]
 				)
 			)
@@ -366,12 +367,6 @@ BDEPEND="
 	virtual/pkgconfig
 	opencl? (
 		>=dev-util/bindgen-0.71.1
-		llvm_slot_18? (
-			|| (
-				dev-lang/rust:1.81.0
-				dev-lang/rust-bin:1.81.0
-			)
-		)
 		llvm_slot_19? (
 			|| (
 				dev-lang/rust:1.86.0
@@ -407,12 +402,6 @@ BDEPEND="
 			${RUST_DEPEND}
 			>=dev-util/bindgen-0.71.1
 			>=dev-util/cbindgen-0.26.0
-			llvm_slot_18? (
-				|| (
-					dev-lang/rust:1.81.0
-					dev-lang/rust-bin:1.81.0
-				)
-			)
 			llvm_slot_19? (
 				|| (
 					dev-lang/rust:1.86.0
@@ -427,8 +416,8 @@ BDEPEND="
 			)
 			llvm_slot_22? (
 				|| (
-					dev-lang/rust:1.97.1
-					dev-lang/rust-bin:1.97.1
+					dev-lang/rust:1.98.1
+					dev-lang/rust-bin:1.98.1
 				)
 			)
 		)

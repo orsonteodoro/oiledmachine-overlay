@@ -1199,12 +1199,13 @@ secure-version_gen_ruby_ng_depends() {
 
 secure-version_gen_spirv_llvm_translator() {
 	[[ -z "${LLVM_COMPAT[@]}" ]] && die "QA:  Define LLVM_COMPAT"
+	local usedep="${1}" # [gmp], <empty string>
 	local x
 	for x in "${LLVM_COMPAT[@]}" ; do
 		local x="SPIRV_LLVM_TRANSLATOR_${x}_PV"
 		echo "
 			llvm_slot_${x}? (
-				>=dev-util/spirv-llvm-translator-${!x}:${x}
+				>=dev-util/spirv-llvm-translator-${!x}:${x}[${usedep}]
 			)
 		"
 	done
