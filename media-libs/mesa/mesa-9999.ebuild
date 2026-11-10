@@ -132,7 +132,7 @@ VIDEO_CARDS=(
 # Bug
 inherit cargo
 inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om
-inherit libcxx-slot libstdcxx-slot llvm-r1 python-any-r1 linux-info meson-multilib
+inherit libcxx-slot libstdcxx-slot llvm-r1 linux-info python-any-r1 linux-info meson-multilib
 inherit multilib-build secure-version toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
@@ -198,7 +198,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind virtio vulkan wayland +X +zstd
-ebuild_revision_59
+ebuild_revision_62
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -275,6 +275,9 @@ RDEPEND="
 	)
 	video_cards_i915? (
 		${LIBDRM_DEPSTRING}[video_cards_intel]
+	)
+	video_cards_nvk? (
+		virtual/libelf:0=[${MULTILIB_USEDEP}]
 	)
 	video_cards_radeonsi? (
 		${LIBDRM_DEPSTRING}[video_cards_amdgpu]
@@ -371,7 +374,7 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/meson-1.7.0
 	app-alternatives/yacc
-	app-alternatives/lex
+	sys-devel/flex
 	virtual/pkgconfig
 	opencl? (
 		>=dev-util/bindgen-0.71.1
@@ -405,6 +408,9 @@ BDEPEND="
 	)
 	vulkan? (
 		>=dev-util/glslang-${GLSLANG_PV}
+		video_cards_imagination? (
+			${CLC_DEPSTRING}
+		)
 		video_cards_nvk? (
 			${CLC_DEPSTRING}
 			${RUST_DEPEND}
@@ -514,6 +520,10 @@ tc-is-lto() {
 }
 
 pkg_pretend() {
+	if [[ "${MERGE_TYPE}" != "binary" ]] && use test ; then
+		tc-check-openmp
+	fi
+
 	ignore_video_card_use "vulkan" "asahi" "d3d12" "freedreno" "imagination" "intel" "lavapipe" "nouveau" "nvk" "panfrost" "radeonsi" "v3d" "virgl"
 	ignore_video_card_use "vaapi" "d3d12" "nouveau" "r600" "radeonsi" "virgl"
 
@@ -526,6 +536,11 @@ ewarn "Ignoring USE=opencl since USE does not contain llvm"
 
 pkg_setup() {
 	check-compiler-switch_start
+
+	if [[ "${MERGE_TYPE}" != "binary" ]] && use test ; then
+		tc-check-openmp
+	fi
+
 	# Warning message for bug 459306
 	if use llvm && has_version "llvm-core/llvm[!debug=]" ; then
 ewarn
@@ -715,6 +730,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-Dplatforms=${platforms#,}
 	)
 
+	if use virtio; then
+		use video_cards_freedreno && emesonargs+=(-Dfreedreno-kmds=msm,virtio)
+		use video_cards_intel && emesonargs+=(-Dintel-virtio-experimental=true)
+		use video_cards_panfrost && emesonargs+=(-Dpanfrost-virtio=true)
+		use video_cards_radeonsi && emesonargs+=(-Damd-options=$(get_amd_options))
+	fi
+
 	if use video_cards_d3d12 ||
 	   use video_cards_nouveau ||
 	   use video_cards_r600 ||
@@ -819,6 +841,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		|| use video_cards_intel \
 		|| use video_cards_nvk \
 		|| use video_cards_panfrost \
+		|| ( use vulkan && use video_cards_imagination ) \
 	; then
 		emesonargs+=(
 			-Dmesa-clc=system
