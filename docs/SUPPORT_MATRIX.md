@@ -484,5 +484,5 @@ Overlay compatibility with open source projects
 | U26           | Ubuntu 26 LTS   | Yes (e.g. projects on GitHub)                         |
 | Utenacious    | Ubuntu live     | Available but no projects                             |
 
-[1] Compatibility is focused on C/C++, moderately compatible with Python,
-and fully compatible with Rust and Go, but not for other languages.
+[1] Compatibility is focused on C/C++, and fully compatible with Rust and Go,
+but limited compatibility for Python and other languages.
