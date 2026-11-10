@@ -156,7 +156,7 @@ if [[ "${PV}" == "26.9999" ]] ; then
 elif [[ "${PV}" == "9999" ]] ; then
 	#EGIT_STORE_DIR="/usr/local/oiledmachine-overlay/media-libs/mesa/source/mesa" # For future git bisects
 	CARGO_EXPECTED_FINGERPRINT="b534cf1204007a41bd8db96b85da22dfb143570c9c0983d4e4aee7f8fad0ca9846a5d1804b544c6ebef0a70dd60b044047d36eb5432a04d19450ccb52ba5ff3e"
-	FALLBACK_COMMIT="05f848ed1bcc472060476e355b9278e437e76080"
+	FALLBACK_COMMIT="4f24077834328a9693b6e49dc58e92aa799f1379"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -198,7 +198,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi debug +llvm lm-sensors opencl +opengl +proprietary-codecs +shader-cache
 sysprof test unwind vaapi valgrind vulkan wayland +X +zstd
-ebuild_revision_53
+ebuild_revision_54
 "
 REQUIRED_USE="
 	video_cards_i915? (
@@ -381,8 +381,8 @@ BDEPEND="
 		)
 		llvm_slot_22? (
 			|| (
-				dev-lang/rust:1.97.1
-				dev-lang/rust-bin:1.97.1
+				dev-lang/rust:1.98.1
+				dev-lang/rust-bin:1.98.1
 			)
 		)
 	)
