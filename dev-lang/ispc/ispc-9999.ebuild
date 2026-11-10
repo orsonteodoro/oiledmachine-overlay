@@ -29,7 +29,16 @@ LLVM_COMPAT=(
 	{20..24}
 ) # For supported LLVM, see https://github.com/ispc/ispc/blob/main/src/ispc_version.h#L36
 
-inherit check-compiler-switch cflags-hardened cmake flag-o-matic libcxx-slot
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+	"dev-util/spirv-llvm-translator-24.0.9999"
+	"llvm-core/clang-24.0.0.9999"
+	"llvm-core/lld-24.0.0.9999"
+	"llvm-core/llvm-24.0.0.9999"
+	"llvm-runtimes/openmp-24.0.0.9999"
+)
+
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libcxx-slot
 inherit python-any-r1 llvm secure-version toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]]; then
@@ -81,7 +90,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang +cpu +examples -fast-math gcc lto +openmp pthread tbb test
 +video_cards_intel -xe
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE+="
 	^^ (
@@ -185,12 +194,6 @@ BDEPEND="
 	>=sys-devel/flex-2.6.4
 	video_cards_intel? (
 		>=dev-libs/intel-vc-intrinsics-0.25
-		llvm_slot_23? (
-			>=dev-util/spirv-llvm-translator-${SPIRV_LLVM_TRANSLATOR_23_PV}:23
-		)
-		llvm_slot_24? (
-			>=dev-util/spirv-llvm-translator-${SPIRV_LLVM_TRANSLATOR_24_PV}:24
-		)
 	)
 "
 PATCHES=(
@@ -306,6 +309,7 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	chkl_check_many_timestamps
 	local wants_llvm=0
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
