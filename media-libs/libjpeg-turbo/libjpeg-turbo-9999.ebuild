@@ -20,7 +20,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libjpeg-turbo.asc"
 
 # LTS
 LLVM_COMPAT=(
-	"llvm_slot_"{18..19}
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
 _TRAINERS=(
