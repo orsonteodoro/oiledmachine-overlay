@@ -14692,20 +14692,10 @@ ot-kernel_set_rust() {
 	unset BINDGEN
 	unset RUSTC
 
-	declare -A RUST_PV_TO_LLVM_SLOT=(
-		# Capped by LLVM_COMPAT
-		["str_1_86_0"]="19"
-		["str_1_85_1"]="19"
-		["str_1_85_0"]="19"
-		["str_1_84_1"]="19"
-		["str_1_84_0"]="19"
-		["str_1_83_0"]="19"
-		["str_1_82_0"]="19"
-		["str_1_81_0"]="18"
-		["str_1_80_1"]="18"
-		["str_1_79_0"]="18"
-		["str_1_78_0"]="18"
-	)
+	if (( ${#RUST_PV_TO_LLVM_SLOT[@]} == 0 )) ; then
+eerror "RUST_PV_TO_LLVM_SLOT is undefined."
+		die
+	fi
 
 	local found=0
 	local rust_pv=""
@@ -16527,14 +16517,20 @@ eerror
 		local args=()
 		MAKEOPTS_ORIG="${MAKEOPTS}"
 		MAKEOPTS=""
+einfo "gcc_slot:  |${gcc_slot}|"
 		if [[ -z "${gcc_slot}" ]] ; then
+ewarn
+ewarn "QA:  gcc_slot is not set."
 ewarn
 ewarn "OT_KERNEL_USE is missing a gcc_slot_<x> flag.  Please copy the"
 ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
 ewarn "the same and present for gcc_slot_<x> and in both environment variables."
 ewarn
 		fi
+einfo "llvm_slot:  |${llvm_slot}|"
 		if [[ -z "${llvm_slot}" ]] ; then
+ewarn
+ewarn "QA:  llvm_slot is not set."
 ewarn
 ewarn "OT_KERNEL_USE is missing a llvm_slot_<y> flag.  Please copy the"
 ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
@@ -16578,6 +16574,12 @@ ewarn
 get_llvm_slot() {
 	local llvm_slot=""
 	local x
+
+	if (( ${#LLVM_COMPAT[@]} == 0 )) ; then
+eerror "QA:  LLVM_COMPAT is empty."
+		die
+	fi
+
 	for x in "${LLVM_COMPAT[@]}" ; do
 		if ot-kernel_use "llvm_slot_${x}" ; then
 			llvm_slot="${x/llvm_slot_}"
@@ -16594,6 +16596,12 @@ get_llvm_slot() {
 get_gcc_slot() {
 	local gcc_slot=""
 	local x
+
+	if (( ${#GCC_COMPAT[@]} == 0 )) ; then
+eerror "QA:  GCC_COMPAT is empty."
+		die
+	fi
+
 	for x in "${GCC_COMPAT[@]/gcc_slot_}" ; do
 		if ot-kernel_use "gcc_slot_${x}" ; then
 			gcc_slot="${x/gcc_slot_}"
