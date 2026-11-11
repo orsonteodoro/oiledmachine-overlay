@@ -3364,8 +3364,8 @@ einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 		#local cpu_family=$(printf "%02x" $(cat "/proc/cpuinfo" | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat "/proc/cpuinfo" | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
 einfo
-einfo "llvm_slot:\t${llvm_slot}"
-einfo "gcc_slot:\t${gcc_slot}"
+einfo "llvm_slot:  ${llvm_slot}"
+einfo "gcc_slot:  ${gcc_slot}"
 einfo "Best GCC version:  ${gcc_pv}"
 einfo "Best Clang version:  ${clang_pv}"
 einfo
@@ -16517,7 +16517,6 @@ eerror
 		local args=()
 		MAKEOPTS_ORIG="${MAKEOPTS}"
 		MAKEOPTS=""
-einfo "gcc_slot:  |${gcc_slot}|"
 		if [[ -z "${gcc_slot}" ]] ; then
 ewarn
 ewarn "QA:  gcc_slot is not set."
@@ -16527,7 +16526,6 @@ ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
 ewarn "the same and present for gcc_slot_<x> and in both environment variables."
 ewarn
 		fi
-einfo "llvm_slot:  |${llvm_slot}|"
 		if [[ -z "${llvm_slot}" ]] ; then
 ewarn
 ewarn "QA:  llvm_slot is not set."
@@ -16575,11 +16573,6 @@ get_llvm_slot() {
 	local llvm_slot=""
 	local x
 
-	if (( ${#LLVM_COMPAT[@]} == 0 )) ; then
-eerror "QA:  LLVM_COMPAT is empty."
-		die
-	fi
-
 	for x in "${LLVM_COMPAT[@]}" ; do
 		if ot-kernel_use "llvm_slot_${x}" ; then
 			llvm_slot="${x/llvm_slot_}"
@@ -16596,11 +16589,6 @@ eerror "QA:  LLVM_COMPAT is empty."
 get_gcc_slot() {
 	local gcc_slot=""
 	local x
-
-	if (( ${#GCC_COMPAT[@]} == 0 )) ; then
-eerror "QA:  GCC_COMPAT is empty."
-		die
-	fi
 
 	for x in "${GCC_COMPAT[@]/gcc_slot_}" ; do
 		if ot-kernel_use "gcc_slot_${x}" ; then
@@ -16713,7 +16701,17 @@ eerror
 			die
 		fi
 
+		if [[ -z "${llvm_slot}" ]] ; then
+eerror
+eerror "You must choose a llvm_slot_<slot> USE flag."
+eerror
+eerror "Allowed values:  ${LLVM_COMPAT[@]}"
+eerror "Actual value:  ${llvm_slot}"
+eerror
+		else
 einfo "Using Clang ${llvm_slot}"
+		fi
+
 		ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" || die "llvm-core/llvm:${llvm_slot} is missing"
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
 		args+=(
@@ -16744,7 +16742,17 @@ einfo "PATH=${PATH} (before)"
 einfo "PATH=${PATH} (after)"
 		is_clang_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for Clang"
 	else
+		if [[ -z "${gcc_slot}" ]] ; then
+eerror
+eerror "You must choose a gcc_slot_<slot> USE flag."
+eerror
+eerror "Allowed values:  ${GCC_COMPAT[@]}"
+eerror "Actual value:  ${gcc_slot}"
+eerror
+		else
 einfo "Using GCC ${gcc_slot}"
+		fi
+
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
 			"CXX=${CHOST}-g++-${gcc_slot}"
