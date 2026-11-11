@@ -3,7 +3,8 @@
 
 EAPI=8
 
-inherit dot-a meson-multilib
+CFLAGS_HARNDED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
+inherit cflags-hardened dot-a meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	INTERNAL_VERSION="1.11.1"
@@ -28,7 +29,7 @@ SLOT="0/1.10.0-meson"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 static-libs test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
@@ -63,6 +64,7 @@ eerror "Expected SOVER:  ${expected_sover}"
 }
 
 src_configure() {
+	cflags-hardened_append
 	use static-libs && lto-guarantee-fat
 	multilib-minimal_src_configure
 }
