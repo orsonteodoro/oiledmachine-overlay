@@ -6,6 +6,8 @@ EAPI=8
 inherit dot-a meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	INTERNAL_VERSION="1.11.1"
+	SOVER=$(ver_cut 1 "${INTERNAL_VERSION}")
 	FALLBACK_COMMIT="92a08d0a3eab9208183891ff0f1a5d3a8c601cde"
 	EGIT_BRANCH="dev"
 	EGIT_REPO_URI="https://github.com/lz4/lz4.git"
@@ -14,6 +16,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	fi
 	inherit git-r3
 else
+	SOVER=$(ver_cut 1 "${PV}")
 	SRC_URI="https://github.com/lz4/lz4/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 fi
 
@@ -43,6 +46,19 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+	fi
+	local c1=$(grep -e "LZ4_VERSION_MAJOR" "${S}/lib/lz4.h" | head -n 1 | sed -E -e "s|[ ]+| |g"  | cut -f 3 -d " ")
+	local c2=$(grep -e "LZ4_VERSION_MINOR" "${S}/lib/lz4.h" | head -n 1 | sed -E -e "s|[ ]+| |g"  | cut -f 3 -d " ")
+	local c3=$(grep -e "LZ4_VERSION_RELEASE" "${S}/lib/lz4.h" | head -n 1 | sed -E -e "s|[ ]+| |g"  | cut -f 3 -d " ")
+	local pv="${c1}.${c2}.${c3}"
+einfo "Internal PV:  ${pv}"
+	local actual_sover="${c1}"
+	local expected_sover="${SOVER}"
+	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
+eerror "QA:  Update SOVER, INTERNAL_VERSION, PV, SLOT"
+eerror "Actual SOVER:  ${actual_sover}"
+eerror "Expected SOVER:  ${expected_sover}"
+		die
 	fi
 }
 
