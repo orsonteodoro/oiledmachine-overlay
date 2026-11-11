@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="a91337fb5e8e0127c8b5be87be9f3027f95b48bc" # 2026-11-06 09:38:11 -0800 @ Merge tag 'configfs-7.4-rc2' of
+LINUX_SOURCES_FALLBACK_COMMIT="067c5c24cef23d913b67eaaf71ae67e7169a6620" # 2026-11-10 08:58:21 -0800 @ Merge tag 'page_alloc-for-7.4-rc2'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.4
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_64"
+EBUILD_REV="ebuild_revision_65"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.3-r0"
 PATCH_RT_VER="7.3-rt2"

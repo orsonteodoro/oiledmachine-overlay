@@ -2287,7 +2287,7 @@ einfo "Verifying profraw version compatibility"
 	local found=0
 	local x
 	for x in "${PGO_SLOTS[@]}" ; do
-		if ot-kernel_use "llvm_slot_${x}" ; then
+		if in_iuse "llvm_slot_${x}" && ot-kernel_use "llvm_slot_${x}" ; then
 			local pv=$(best_version "=llvm-core/llvm-${x}*" | sed -e "s|llvm-core/llvm-||g")
 			found=1
 			break

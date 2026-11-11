@@ -143,7 +143,7 @@ C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
 C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
 C2TCP_VER="2.2"
-CLANG_PGO_SUPPORTED=1
+CLANG_PGO_SUPPORTED=0 # was 1
 # See
 # https://github.com/torvalds/linux/blob/v6.1/tools/build/feature/Makefile#L318
 # https://github.com/torvalds/linux/blob/v6.1/tools/perf/Makefile.config#L276
@@ -168,7 +168,7 @@ GCC_PV="5.1"
 # Only LTS compiler slots allowed to avoid issues with closed source or
 # out-of-source drivers
 GCC_MAX_SLOT="15"
-GCC_MIN_SLOT="11"
+GCC_MIN_SLOT="14"
 GCC_MIN_KCP_GENPATCHES_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
@@ -178,16 +178,16 @@ KMOD_PV="13"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 18, 19, 21
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
 LLVM_MAX_SLOT="22"
-LLVM_MIN_SLOT="18"
+LLVM_MIN_SLOT="19"
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
 LLVM_MIN_KCP_GENPATCHES_AMD64=15
@@ -284,15 +284,15 @@ d4e6f69ec4407163efcfd23e0dac5f9571b6ade1
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
+	["str_1_98_1"]="22"
 	["str_1_94_1"]="21"
 	["str_1_86_0"]="19"
-	["str_1_81_0"]="18"
 )
 RUST_SLOTS=(
 	# It may need the -Z flag for sanitizers.
+	"1.98.1" # LLVM 22
 	"1.94.1" # LLVM 21
 	"1.86.0" # LLVM 19
-	"1.81.0" # LLVM 18
 )
 RUST_MAX_VER="1.94.1" # Inclusive
 RUST_MIN_VER="1.81.0" # Inclusive

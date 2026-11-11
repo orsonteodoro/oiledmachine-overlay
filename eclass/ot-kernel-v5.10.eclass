@@ -182,7 +182,7 @@ GCC_PV="4.9"
 # Only LTS compiler slots allowed to avoid issues with closed source or
 # out-of-source drivers
 GCC_MAX_SLOT="15"
-GCC_MIN_SLOT="11"
+GCC_MIN_SLOT="14"
 GCC_MIN_KCP_GENPATCHES_AMD64="not supported"
 GCC_MIN_KCP_GRAYSKY2_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
@@ -192,16 +192,16 @@ KMOD_PV="13"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 18, 19, 21
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
 LLVM_MAX_SLOT="22"
-LLVM_MIN_SLOT="18"
+LLVM_MIN_SLOT="19"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
 LLVM_MIN_KCP_GENPATCHES_AMD64="not supported"

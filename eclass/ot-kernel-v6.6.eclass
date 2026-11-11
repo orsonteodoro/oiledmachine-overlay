@@ -205,7 +205,7 @@ GCC_PV="5.1"
 # Only LTS compiler slots allowed to avoid issues with closed source or
 # out-of-source drivers
 GCC_MAX_SLOT="15"
-GCC_MIN_SLOT="11"
+GCC_MIN_SLOT="14"
 GCC_MIN_KCP_GENPATCHES_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_AMD64=10
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
@@ -215,16 +215,16 @@ KMOD_PV="13"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 LLVM_MAX_SLOT="22"
-LLVM_MIN_SLOT="18"
+LLVM_MIN_SLOT="19"
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
 LLVM_MIN_KCP_GENPATCHES_AMD64=15
@@ -340,15 +340,15 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
+	["str_1_98_1"]="22"
 	["str_1_94_1"]="21"
 	["str_1_86_0"]="19"
-	["str_1_81_0"]="18"
 )
 RUST_SLOTS=(
 	# It may need the -Z flag for sanitizers.
+	"1.98.1" # LLVM 22
 	"1.94.1" # LLVM 21
 	"1.86.0" # LLVM 19
-	"1.81.0" # LLVM 18
 )
 RUST_MAX_VER="1.94.1" # Inclusive
 RUST_MIN_VER="1.81.0" # Inclusive
