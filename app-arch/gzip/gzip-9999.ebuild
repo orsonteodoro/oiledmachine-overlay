@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data system-set"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO OOBR TOCTOU"
 
 VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/gzip.asc
