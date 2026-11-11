@@ -16703,7 +16703,10 @@ eerror
 
 		if [[ -z "${llvm_slot}" ]] ; then
 eerror
-eerror "You must choose a llvm_slot_<slot> USE flag."
+eerror "You must choose a llvm_slot_<number> USE flag."
+eerror
+eerror "Both the USE flag variable and the OT_KERNEL_USE variable must be the"
+eerror "same llvm_slot_<number>."
 eerror
 eerror "Allowed values:  ${LLVM_COMPAT[@]}"
 eerror "Actual value:  ${llvm_slot}"
@@ -16744,7 +16747,10 @@ einfo "PATH=${PATH} (after)"
 	else
 		if [[ -z "${gcc_slot}" ]] ; then
 eerror
-eerror "You must choose a gcc_slot_<slot> USE flag."
+eerror "You must choose a gcc_slot_<number> USE flag."
+eerror
+eerror "Both the USE flag variable and the OT_KERNEL_USE variable must be the"
+eerror "same gcc_slot_<number>."
 eerror
 eerror "Allowed values:  ${GCC_COMPAT[@]}"
 eerror "Actual value:  ${gcc_slot}"
