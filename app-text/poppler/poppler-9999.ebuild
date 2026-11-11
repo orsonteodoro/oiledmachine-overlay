@@ -43,13 +43,13 @@ inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic flag-o-mat
 inherit libcxx-slot libstdcxx-slot python-any-r1 secure-version toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
-	FALLBACK_COMMIT="a45f83bdd75a7b1af73eef729383c4291abf27a3"
+	FALLBACK_COMMIT="55bc2203e8fc67b5fc72674c06ec21b8020fa664"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/poppler/poppler"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
 	inherit git-r3
-	SOVER="165"
+	SOVER="166"
 else
 	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/aacid.asc
 	inherit verify-sig
@@ -57,7 +57,7 @@ else
 	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
-	SOVER="165"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SOVER="166"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 SRC_URI+=" test? ( https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2 -> ${PN}-test-${TEST_COMMIT}.tar.bz2 )"
 
@@ -68,7 +68,7 @@ SLOT="0/${SOVER}"
 LICENSE="GPL-2"
 IUSE+="
 boost cairo cjk curl +cxx debug doc gpg +introspection +jpeg +jpeg2k +lcms nss png qt6 test tiff +utils
-ebuild_revision_11
+ebuild_revision_12
 "
 RESTRICT="
 	mirror
