@@ -4,6 +4,8 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
+
 inherit cflags-hardened dot-a meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
