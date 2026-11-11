@@ -354,7 +354,7 @@ einfo "IBCO = Incorrect Boundary Condition"
 einfo "IB = Integrity Bypass"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICU"($|" "|";"|",") ]] ; then
-einfo "ICU = Improper CleanUp"
+einfo "ICU = Improper Clean Up"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ICV"($|" "|";"|",") ]] ; then
 einfo "ICV = Insufficient Certificate Validation"
