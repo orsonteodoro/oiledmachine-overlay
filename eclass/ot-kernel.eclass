@@ -16517,31 +16517,13 @@ eerror
 		local args=()
 		MAKEOPTS_ORIG="${MAKEOPTS}"
 		MAKEOPTS=""
-		if [[ -z "${gcc_slot}" ]] ; then
-ewarn
-ewarn "QA:  gcc_slot is not set."
-ewarn
-ewarn "OT_KERNEL_USE is missing a gcc_slot_<x> flag.  Please copy the"
-ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
-ewarn "the same and present for gcc_slot_<x> and in both environment variables."
-ewarn
-		fi
-		if [[ -z "${llvm_slot}" ]] ; then
-ewarn
-ewarn "QA:  llvm_slot is not set."
-ewarn
-ewarn "OT_KERNEL_USE is missing a llvm_slot_<y> flag.  Please copy the"
-ewarn "corresponding value from USE.  Ensure both the USE and OT_KERNEL_USE are"
-ewarn "the same and present for llvm_slot_<y> and in both environment variables."
-ewarn
-		fi
 
 	# An explanation of why the grep issue exist for min/max compiler slot.
 	# ot-kernel_setup_tc -> args -> make defconfig ${args} or copy savedconfig -> saved ${BUILD_DIR}/.configure
 	#   -> skip grep -e "PAT" "${BUILD_DIR}/.configure" when src_configure because it doesn't exist
 	#   -> do grep -e "PAT" "${BUILD_DIR}/.configure" when src_compile
 	# Before the changes it will grep on a file not existing when *setup_tc is called from src_configure.
-	# This command must come after ot-kernel_src_copy_savedconfig.
+	# ot-kernel_setup_tc must be placed before ot-kernel_src_copy_savedconfig.
 		ot-kernel_setup_tc "src_configure"
 
 	# This command must come after ot-kernel_setup_tc to populate args variable.
@@ -16706,7 +16688,7 @@ eerror
 eerror "You must choose a llvm_slot_<number> USE flag."
 eerror
 eerror "Both the USE flag variable and the OT_KERNEL_USE variable must be the"
-eerror "same llvm_slot_<number>."
+eerror "same llvm_slot_<number> and set in both variables."
 eerror
 eerror "Allowed values:  ${LLVM_COMPAT[@]}"
 eerror "Actual value:  ${llvm_slot}"
@@ -16750,7 +16732,7 @@ eerror
 eerror "You must choose a gcc_slot_<number> USE flag."
 eerror
 eerror "Both the USE flag variable and the OT_KERNEL_USE variable must be the"
-eerror "same gcc_slot_<number>."
+eerror "same gcc_slot_<number> and set in both variables."
 eerror
 eerror "Allowed values:  ${GCC_COMPAT[@]}"
 eerror "Actual value:  ${gcc_slot}"
