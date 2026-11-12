@@ -418,7 +418,14 @@ RDEPEND+="
 	net-libs/grpc:=
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
-		>=dev-libs/cudnn-9:=
+		dev-libs/cudnn:=
+		|| (
+			=dev-libs/cudnn-9.8*
+			=dev-libs/cudnn-9.14*
+			=dev-libs/cudnn-9.17*
+			=dev-libs/cudnn-9.25*
+		)
+
 		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
 		|| (
 			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]

@@ -541,7 +541,7 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	cuda? (
-		dev-libs/cudnn:=
+		>=dev-libs/cudnn-9.8:=
 		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
 			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]

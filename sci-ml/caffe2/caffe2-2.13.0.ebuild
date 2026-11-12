@@ -436,7 +436,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_55
+ebuild_revision_56
 "
 # bin/torch_shm_manager requires openmp
 # For libtorch_python.so: undefined symbol: _ZTIN5torch2nn6ModuleE see issue #60341
@@ -635,7 +635,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	virtual/lapack:*
 	cuda? (
-		dev-libs/cudnn:=
+		>=dev-libs/cudnn-9:=
 		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
 		|| (
 			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
