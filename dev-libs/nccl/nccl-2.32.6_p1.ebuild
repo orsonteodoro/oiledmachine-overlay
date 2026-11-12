@@ -6,46 +6,36 @@ EAPI=8
 
 CXX_STANDARD=11
 
+MY_PV="2.32.6-1"
+NCCL_TESTS_PV="2.21.1"
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_CXX14_CUDA_12[@]/llvm_slot_}" # 19
+	"${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
-CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_50
-	sm_60
-	sm_61
-	sm_70
-	sm_80
-	sm_90
-
-	compute_61
-	compute_70
-	compute_80
-	compute_90
-)
-NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=2024-06-19
-S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
-PYTHON_COMPAT=( "python3_"{10..12} )
+S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_PV}"
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 # TODO:  Retest with clang
 # inherit libcxx-slot
-inherit autotools check-compiler-switch flag-o-matic libstdcxx-slot
-inherit linux-info python-any-r1
+inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
+inherit linux-info secure-version python-any-r1
 
-S="${WORKDIR}/${P}-1"
+S="${WORKDIR}/${PN}-${MY_PV}"
 KEYWORDS="~amd64"
 SRC_URI="
-https://github.com/NVIDIA/nccl/archive/refs/tags/v${PV}-1.tar.gz
-	-> ${P}.tar.gz
-https://github.com/NVIDIA/nccl-tests/archive/${NCCL_TESTS_COMMIT}.tar.gz
-	-> nccl-tests-${NCCL_TESTS_COMMIT:0:7}.tar.gz
+https://github.com/NVIDIA/nccl/archive/refs/tags/v${MY_PV}.tar.gz
+	-> ${PN}-${MY_PV}.tar.gz
+https://github.com/NVIDIA/nccl-tests/archive/refs/tags/v${NCCL_TESTS_PV}.tar.gz
+	-> nccl-tests-${NCCL_TESTS_PV}.tar.gz
 "
 
 DESCRIPTION="Optimized primitives for collective multi-GPU communication"
@@ -55,23 +45,29 @@ https://github.com/NVIDIA/nccl
 "
 LICENSE="
 	(
-		BSD-2
-		custom
+		Apache-2.0
+		BitstreamVera
+		BSD
+		matplotlib
+		NVIDIA-CUDA
 	)
+	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
+	BSD
 "
+# Apache-2.0 BitstreamVera BSD matplotlib NVIDIA-CUDA -  contrib/tide/ThirdPartyNotices.txt
 # Apache-2.0-with-LLVM-exceptions - NVTX/LICENSE.txt
 # Apache-2.0-with-LLVM-exceptions - src/include/nvtx3/nvtxDetail/nvtxExtPayloadHelperInternal.h
 RESTRICT="mirror test"
-SLOT="0"
+SOVER=$(ver_cut "1" "${PV}")
+SLOT="0/${SOVER}"
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
--gdrcopy peermem rdma roce test -verbs
-ebuild_revision_8
+-gdrcopy openssl peermem rdma roce test -verbs
+ebuild_revision_10
 "
 REQUIRED_USE="
-	|| (
-		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+	^^ (
+		${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 	)
 	rdma? (
 		|| (
@@ -80,145 +76,35 @@ REQUIRED_USE="
 		)
 	)
 "
-CUDA_TOOLKIT_11_8="
-	=dev-util/nvidia-cuda-toolkit-11.8*[rdma]
-"
-CUDA_TOOLKIT_12_3="
-	=dev-util/nvidia-cuda-toolkit-12.3*[rdma]
-"
-CUDA_TOOLKIT_12_4="
-	=dev-util/nvidia-cuda-toolkit-12.4*[rdma]
-"
-CUDA_TOOLKIT_12_5="
-	=dev-util/nvidia-cuda-toolkit-12.5*[rdma]
-"
-CUDA_TOOLKIT_12_6="
-	=dev-util/nvidia-cuda-toolkit-12.6*[rdma]
-"
 RDEPEND="
-	>=x11-drivers/nvidia-drivers-470[kernel-open,modules]
+	virtual/cuda:=[rdma]
 	|| (
-		${CUDA_TOOLKIT_12_6}
-		${CUDA_TOOLKIT_12_5}
-		${CUDA_TOOLKIT_12_4}
-		${CUDA_TOOLKIT_12_3}
-		${CUDA_TOOLKIT_11_8}
-	)
-	cuda_targets_compute_61? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_compute_70? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_compute_80? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_compute_90? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_sm_35? (
-		${CUDA_TOOLKIT_11_8}
-	)
-	cuda_targets_sm_50? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_sm_60? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_sm_61? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_sm_70? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_sm_80? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			${CUDA_TOOLKIT_12_6}
-			${CUDA_TOOLKIT_12_5}
-			${CUDA_TOOLKIT_12_4}
-			${CUDA_TOOLKIT_12_3}
-			${CUDA_TOOLKIT_11_8}
-		)
+		=virtual/cuda-12*[rdma]
+		=virtual/cuda-13*[rdma]
 	)
 	gdrcopy? (
-		dev-libs/gdrcopy
+		dev-libs/gdrcopy:=
+	)
+	openssl? (
+		$(secure-version_gen_openssl_depends '3.5-3.6')
 	)
 	peermem? (
-		dev-util/DOCA-Host[${LIBSTDCXX_USEDEP},mlnx-ofed-kernel]
-		x11-drivers/nvidia-drivers
+		dev-util/DOCA-Host:=[${LIBSTDCXX_USEDEP},mlnx-ofed-kernel]
+		x11-drivers/nvidia-drivers:=
 	)
 	verbs? (
-		sys-cluster/rdma-core
+		sys-cluster/rdma-core:=
 	)
 	dev-util/nvidia-cuda-toolkit:=
-	sys-libs/glibc
+	>=sys-libs/glibc-${GLIBC_PV}:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	dev-build/make
+	>=dev-build/cmake-3.25
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.22.3-libdir.patch"
-	"${FILESDIR}/${PN}-2.22.3-link-verbserbs-nccl.patch"
 )
 
 check_kernel_setup() {
@@ -325,16 +211,22 @@ pkg_setup() {
 	check-compiler-switch_start
 	check_kernel_setup
 	python-any-r1_pkg_setup
-	#libcxx-slot_verify # TODO retest with clang
+	libcxx-slot_verify
 	libstdcxx-slot_verify
 }
 
 src_prepare() {
-	default
-	pushd "${S_TESTS}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-2.22.3-link-verbserbs-tests.patch"
-	popd >/dev/null 2>&1 || die
+	cmake_src_prepare
+	cuda_src_prepare
+}
 
+_get_cuda_targets() {
+	local x
+	local out=""
+	for x in $(echo "${CUDA_TARGETS}" | tr ";" " ") ; do
+		out+=";${x#sm_}"
+	done
+	echo "${out:1}"
 }
 
 src_configure() {
@@ -350,51 +242,23 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	export CUDA_HOME="/opt/cuda"
-	local list=()
-	if use cuda_targets_sm_35 ; then
-		list+=( -gencode=arch=compute_35,code=sm_35 )
-	fi
-	if use cuda_targets_sm_50 ; then
-		list+=( -gencode=arch=compute_50,code=sm_50 )
-	fi
-	if use cuda_targets_sm_60 ; then
-		list+=( -gencode=arch=compute_60,code=sm_60 )
-	fi
-	if use cuda_targets_sm_70 ; then
-		list+=( -gencode=arch=compute_70,code=sm_70 )
-	fi
-	if use cuda_targets_sm_80 ; then
-		list+=( -gencode=arch=compute_80,code=sm_80 )
-	fi
-	if use cuda_targets_sm_90 ; then
-		list+=( -gencode=arch=compute_90,code=sm_90 )
+
+	if use openssl ; then
+		export TLS_BACKEND="OPENSSL3"
+	else
+		unset TLS_BACKEND
 	fi
 
-	# PTX
-	if use cuda_targets_compute_61 ; then
-		list+=( -gencode=arch=compute_61,code=compute_61 )
-	fi
-	if use cuda_targets_compute_70 ; then
-		list+=( -gencode=arch=compute_70,code=compute_70 )
-	fi
-	if use cuda_targets_compute_80 ; then
-		list+=( -gencode=arch=compute_80,code=compute_80 )
-	fi
-	if use cuda_targets_compute_90 ; then
-		list+=( -gencode=arch=compute_90,code=compute_90 )
-	fi
-	export NVCC_GENCODE="${list[@]}"
-	export RDMA_CORE=$(usex verbs "1" "0")
+einfo "Setting mycmakeargs"
+	local mycmakeargs=(
+		-DCMAKE_CUDA_ARCHITECTURES=$(_get_cuda_targets)
+		-DRDMA_CORE=$(usex verbs "ON" "OFF")
+	)
+	cmake_src_configure
 }
 
 src_compile() {
-	INSTALL_LIBDIR="$(get_libdir)" \
-	PREFIX="/usr" \
-	emake
-	pushd "${S_TESTS}" || die
-		export NCCL_HOME="${S}/build"
-		emake
-	popd
+	cmake_src_compile
 }
 
 src_test() {
@@ -414,11 +278,9 @@ EOF
 }
 
 src_install() {
-	emake \
-		INSTALL_LIBDIR="$(get_libdir)" \
-		PREFIX="${ED}/usr" \
-		install
+	cmake_src_install
 	dodoc "LICENSE.txt"
+	dodoc "ThirdPartyNotices.txt"
 	if use gdrcopy && [[ "${NCCL_GDRCOPY_FLUSH_ENABLE:-1}" == "1" ]] ; then
 einfo "Setting NCCL_GDRCOPY_FLUSH_ENABLE=1.  Set build time per-package environment variable to change it."
 		gen_enable_gdrcopy_flush_enable
