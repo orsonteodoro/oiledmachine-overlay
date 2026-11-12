@@ -10,36 +10,6 @@ EAPI=8
 
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda126.bat ; min
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda130.bat ; max
-CUDA_TARGETS_COMPAT=(
-# Builds for all cards
-	"auto"
-
-# Observed:
-	"sm_50"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_90"
-	"sm_100"
-	"sm_120"
-
-	"compute_50"
-	"compute_60"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_90"
-	"compute_100"
-	"compute_120"
-)
-CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}")
-CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_USEDEP[@]/%/?}")
-CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP[@]}"
-CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP// /,}"
 
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
@@ -60,7 +30,6 @@ RESTRICT="test"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda rocm
 ebuild_revision_2
 "
@@ -73,7 +42,7 @@ RDEPEND="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
-	~sci-ml/caffe2-${PV}:=[${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
+	~sci-ml/caffe2-${PV}:=[${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 "
 DEPEND="
 	$(python_gen_cond_dep '
