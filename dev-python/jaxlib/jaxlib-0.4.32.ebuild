@@ -187,26 +187,19 @@ CPU_FLAGS_X86_64=(
 	"cpu_flags_x86_avx"
 )
 
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L68
-	"sm_50"
-	"sm_60"
-	"sm_70"
-	"sm_80"
-	"compute_90"
-)
+# For CUDA targets, see https://github.com/google/jax/blob/jaxlib-v0.4.32/.bazelrc#L68
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]/llvm_slot_} # 24
-	#${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
 	# Upstream uses LLVM 18
-	${LIBCXX_COMPAT_CXX17_GPU[@]/llvm_slot_} # 18, 19, 21, 24
+	# ${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
+	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 24.  For Python use only.  Do not link with C/C++ lib/app.
 )
 
 inherit abseil-cpp bazel cflags-hardened check-compiler-switch cuda distutils-r1
@@ -354,24 +347,12 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 SLOT="0"
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm
 ebuild_revision_37
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
-
-gen_cuda_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo  "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 
 gen_llvm_slot_required_use() {
 	local s
@@ -389,7 +370,6 @@ gen_llvm_slot_required_use() {
 REQUIRED_USE+="
 	!cuda
 	!rocm
-	$(gen_cuda_required_use)
 	$(gen_llvm_slot_required_use)
 	|| (
 		clang
@@ -403,17 +383,15 @@ REQUIRED_USE+="
 	cuda? (
 		!clang
 		!rocm
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
 		)
 	)
 	rocm? (
 		!cuda
-		${ROCM_REQUIRED_USE}
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]}
+			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
 		)
-		llvm_slot_${ROCM_LLVM_SLOT}
 	)
 	|| (
 		cpu
@@ -440,13 +418,11 @@ RDEPEND+="
 	net-libs/grpc:=
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
-		=dev-util/nvidia-cuda-toolkit-12.3*
-		dev-util/nvidia-cuda-toolkit:=
-		=dev-libs/cudnn-9*
-		dev-libs/cudnn:=
-		virtual/cuda-compiler:0/12.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/cuda-compiler:=
-		>=x11-drivers/nvidia-drivers-545.23
+		>=dev-libs/cudnn-9:=
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+		|| (
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+		)
 	)
 	rocm? (
 		>=sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP},comm,math,ml,profiling]
@@ -794,17 +770,6 @@ src_prepare() {
 	distutils-r1_src_prepare
 }
 
-get_cuda_targets() {
-	local targets
-	local target
-	for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		if use "cuda_targets_${target}" ; then
-			targets+=",${target}"
-		fi
-	done
-	echo "${targets}" | sed -e "s|^,||g"
-}
-
 get_host() {
 	# See https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/repository/LocalConfigPlatformFunction.java#L106
 	if use arm ; then
@@ -992,7 +957,7 @@ einfo "Detected GPU compiler switch.  Disabling LTO."
 	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-jaxlib-from-source-on-windows
 		export JAX_CUDA_VERSION="$(cuda_toolkit_version)"
 		export JAX_CUDNN_VERSION="$(cuda_cudnn_version)"
-		export TF_CUDA_COMPUTE_CAPABILITIES="$(get_cuda_targets)"
+		export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets | tr ";" ",")
 		args+=(
 			--enable_cuda
 			--cuda_path="${ESYSROOT}/opt/cuda"
