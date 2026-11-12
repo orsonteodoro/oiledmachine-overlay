@@ -17,36 +17,16 @@ else
 die "MAGMA_ROCM=1 or MAGMA_CUDA=1 are only supported"
 fi
 
-CUDA_TARGETS_COMPAT=(
-#	"sm_20" # Dropped.  SDK version not in distro.  Fork ebuild for support.
-#	"sm_30" # Dropped.  SDK version not in distro.  Fork ebuild for support.
-	"sm_35"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_53"
-	"sm_60"
-	"sm_61"
-	"sm_62"
-	"sm_70"
-	"sm_72"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_87"
-	"sm_89"
-	"sm_90"
-	"sm_90a"
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
-)
-
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
+	#"${LIBCXX_COMPAT_CXX11_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX11_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
 CHKL_TIMESTAMPS=(
@@ -91,143 +71,21 @@ if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 fi
 
 if [[ "${MAGMA_CUDA}" == "1" ]] ; then
-	CUDA_TOOLKIT_11_8="
-		(
-			=dev-util/nvidia-cuda-toolkit-11.8*
-			>=x11-drivers/nvidia-drivers-520.61
-			virtual/cuda-compiler:0/11.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-	"
-	CUDA_TOOLKIT_12_3="
-		(
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			>=x11-drivers/nvidia-drivers-545.23
-			virtual/cuda-compiler:0/12.3[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-	"
-	CUDA_TOOLKIT_12_4="
-		(
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			>=x11-drivers/nvidia-drivers-550.54
-			virtual/cuda-compiler:0/12.4[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-	"
-	CUDA_TOOLKIT_12_5="
-		(
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			>=x11-drivers/nvidia-drivers-555.42
-			virtual/cuda-compiler:0/12.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-	"
-	CUDA_TOOLKIT_12_6="
-		(
-			=dev-util/nvidia-cuda-toolkit-12.6*
-			>=x11-drivers/nvidia-drivers-560.35
-			virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		)
-	"
 	IUSE+="
-		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		cuda
 	"
-	gen_cuda_required_use() {
-		local x
-		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-			echo "
-				cuda_targets_${x}? (
-					cuda
-				)
-			"
-		done
-	}
 	REQUIRED_USE+="
-		cuda? (
-			$(gen_cuda_required_use)
-			|| (
-				${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-			)
-		)
-		examples? (
-			cuda? (
-				|| (
-					cuda_targets_sm_70
-					cuda_targets_sm_75
-					cuda_targets_sm_80
-				)
-			)
-		)
 	"
 	GPU_FRAMEWORKS+="
 		cuda
 	"
 	RDEPEND+="
 		cuda? (
-			cuda_targets_sm_35? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-				)
+			virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			|| (
+				virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			)
-			cuda_targets_sm_37? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-				)
-			)
-			cuda_targets_sm_50? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-					${CUDA_TOOLKIT_12_3}
-					${CUDA_TOOLKIT_12_4}
-					${CUDA_TOOLKIT_12_5}
-					${CUDA_TOOLKIT_12_6}
-				)
-			)
-			cuda_targets_sm_60? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-					${CUDA_TOOLKIT_12_3}
-					${CUDA_TOOLKIT_12_4}
-					${CUDA_TOOLKIT_12_5}
-					${CUDA_TOOLKIT_12_6}
-				)
-			)
-			cuda_targets_sm_70? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-					${CUDA_TOOLKIT_12_3}
-					${CUDA_TOOLKIT_12_4}
-					${CUDA_TOOLKIT_12_5}
-					${CUDA_TOOLKIT_12_6}
-				)
-			)
-			cuda_targets_sm_75? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-					${CUDA_TOOLKIT_12_3}
-					${CUDA_TOOLKIT_12_4}
-					${CUDA_TOOLKIT_12_6}
-					${CUDA_TOOLKIT_12_5}
-				)
-			)
-			cuda_targets_sm_80? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-					${CUDA_TOOLKIT_12_3}
-					${CUDA_TOOLKIT_12_4}
-					${CUDA_TOOLKIT_12_5}
-					${CUDA_TOOLKIT_12_6}
-				)
-			)
-			cuda_targets_sm_90? (
-				|| (
-					${CUDA_TOOLKIT_11_8}
-					${CUDA_TOOLKIT_12_3}
-					${CUDA_TOOLKIT_12_4}
-					${CUDA_TOOLKIT_12_5}
-					${CUDA_TOOLKIT_12_6}
-				)
-			)
-			dev-util/nvidia-cuda-toolkit:=
-			virtual/cuda-compiler:=
 		)
 	"
 fi
@@ -413,7 +271,7 @@ eerror
 	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		addpredict "/proc/self/task/"
 		export CUDADIR="/opt/cuda"
-		export gpu="$(get_cuda_flags)"
+		export gpu="$(get_cuda_targets)"
 	fi
 
 	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
@@ -451,18 +309,6 @@ icl-magma-v2_10_src_prepare() {
 	rm -r blas_fix || die
 
 	sed -i -e "/CMP0037/d" "CMakeLists.txt" || die
-}
-
-get_cuda_flags() {
-	local list
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		if use "cuda_targets_${x}" ; then
-			list+=";${x}"
-		fi
-	done
-	list="${list:1}"
-	echo "${list}"
 }
 
 icl-magma-v2_10_src_configure() {
@@ -571,7 +417,7 @@ ewarn
 
 	if has "cuda" ${IUSE_EFFECTIVE} && use cuda ; then
 		mycmakeargs+=(
-			-DGPU_TARGET="$(get_cuda_flags)"
+			-DGPU_TARGET="$(get_cuda_targets)"
 		)
 	fi
 	if has "rocm" ${IUSE_EFFECTIVE} && use rocm ; then
