@@ -20,6 +20,7 @@ KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
 ${LLVM_COMPAT[@]}
+cudnn
 "
 REQUIRED_USE="
 	^^ (
@@ -33,6 +34,16 @@ REQUIRED_USE="
 RDEPEND+="
 	=dev-util/nvidia-cuda-toolkit-13.4*
 	>=x11-drivers/nvidia-drivers-575.57
+	cudnn? (
+		dev-libs/cudnn:=
+		|| (
+			=dev-libs/cudnn-9.17*
+			=dev-libs/cudnn-9.14*
+			=dev-libs/cudnn-9.8*
+			=dev-libs/cudnn-8.9*
+			=dev-libs/cudnn-8.8*
+		)
+	)
 	gcc_slot_14_3? (
 		=sys-devel/gcc-14.3*
 	)

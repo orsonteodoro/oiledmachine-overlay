@@ -89,46 +89,6 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_ssse3:SSSE3"
 )
 
-CUDA_TARGETS_COMPAT=(
-	"auto"
-	"compute_30"
-	"compute_35"
-	"compute_37"
-	"compute_50"
-	"compute_52"
-	"compute_60"
-	"compute_61"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_89"
-	"compute_90"
-	"compute_100"
-	"compute_103"
-	"compute_110"
-	"compute_120"
-	"compute_121"
-	"sm_30"
-	"sm_35"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_89"
-	"sm_90"
-	"sm_100"
-	"sm_103"
-	"sm_110"
-	"sm_120"
-	"sm_121"
-)
-
 declare -A CUDA_TARGETS_COMPAT_HT=(
 	["auto"]="3.0 3.5 3.7 5.0 5.2 6.0 6.1 7.0 7.5 8.0 8.6 8.9 9.0 10.0 10.3 11.0 12.0 12.1"
 	["compute_30"]="3.0"
@@ -433,7 +393,6 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE+="
 	${_CXX_STANDARD[@]}
-	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
@@ -640,9 +599,6 @@ REQUIRED_USE="
 	)
 	cuda? (
 		contrib
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
 		^^ (
 			cxx_standard_cxx14
 			cxx_standard_cxx17
@@ -750,48 +706,15 @@ REQUIRED_USE+="
 		!tbb
 	)
 "
-CUDA_12_6_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.6*
-		>=x11-drivers/nvidia-drivers-560.35
-		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-8.8
-		)
-	)
-"
-CUDA_12_8_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-8.8
-		)
-	)
-"
-CUDA_12_9_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.9*
-		>=x11-drivers/nvidia-drivers-575.57
-		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-8.8
-		)
-	)
-"
 CUDA_DEPEND="
-		dev-util/nvidia-cuda-toolkit:=
-		virtual/cuda-compiler:=
-		x11-drivers/nvidia-drivers:=
-		cudnn? (
-			dev-libs/cudnn:=
-		)
-		|| (
-			${CUDA_12_6_DEPEND}
-			${CUDA_12_8_DEPEND}
-			${CUDA_12_9_DEPEND}
-		)
+	virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+	|| (
+		virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+		virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+	)
+	cudnn? (
+		>=dev-libs/cudnn-8.8:=
+	)
 "
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/ea9240e39bc0d6a69d2b1f0ba4513bdc7612a41e/ffmpeg/download_src.sh#L24	# FFmpeg 4.x
@@ -1286,6 +1209,29 @@ eerror "The kleidicv USE flag is still Work In Progress (WIP)"
 	fi
 }
 
+get_cuda_targets() {
+	if [[ -z "${CUDA_TARGETS}" ]] ; then
+eerror
+eerror "You must specify CUDA_TARGETS in /etc/portage/make.conf or as per-package environment variables."
+eerror
+eerror "Contents of /etc/portage/env/cuda.conf:"
+eerror
+eerror "CUDA_TARGETS=\"sm_90;compute_90\""
+eerror "CUDA_TARGETS=\"auto\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} cuda.conf"
+eerror
+		die
+	fi
+	IFS=';' read -ra my_array <<< "$list"
+
+	# Loop through the array to verify
+	for item in "${my_array[@]}"; do
+		echo "$item"
+	done
+}
+
 multilib_src_configure() {
 	# bug #919101 and https://github.com/opencv/opencv/issues/19020
 	filter-lto
@@ -1510,14 +1456,14 @@ multilib_src_configure() {
 		local real_str=""
 		local virtual_str=""
 		local x
-		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-			if use "${x}" && [[ "${x}" =~ "auto" ]] ; then
+		for x in "${CUDA_TARGETS[@]}" $(get_cuda_targets) ; do
+			if [[ "${x}" =~ "auto" ]] ; then
 				real_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
 			fi
-			if use "${x}" && [[ "${x}" =~ "sm" ]] ; then
+			if [[ "${x}" =~ "sm" ]] ; then
 				real_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
 			fi
-			if use "${x}" && [[ "${x}" =~ "compute" ]] ; then
+			if [[ "${x}" =~ "compute" ]] ; then
 				virtual_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
 			fi
 		done
