@@ -32,19 +32,17 @@ _ROCM_R1_ECLASS=1
 HIP_CUDA_DEPEND_DISTRO="
 	virtual/cuda:=
 	|| (
-		virtual/cuda:13
-		virtual/cuda:12
+		=virtual/cuda-13*
+		=virtual/cuda-12*
 	)
 "
 
 # https://github.com/ROCm/HIPIFY/blob/therock-10.1/docs/how-to/hipify-clang.rst
 # Strict requirements
 HIP_CUDA_DEPEND_UPSTREAM="
-	dev-util/nvidia-cuda-toolkit:=
-	x11-drivers/nvidia-drivers:=
 	virtual/cuda:=
 	|| (
-		virtual/cuda:12
+		=virtual/cuda-12*
 	)
 "
 

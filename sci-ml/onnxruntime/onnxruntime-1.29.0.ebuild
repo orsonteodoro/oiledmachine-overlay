@@ -462,8 +462,8 @@ RDEPEND="
 	cuda? (
 		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
 		|| (
-			virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
-			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
 		)
 		cudnn? (
 			>=dev-libs/cudnn-9.6:=

@@ -83,8 +83,8 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		cuda? (
 			virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			|| (
-				virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 			)
 		)
 	"

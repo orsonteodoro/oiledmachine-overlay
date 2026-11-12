@@ -70,7 +70,7 @@ RDEPEND+="
 	cuda? (
 		virtual/cuda:=
 		|| (
-			virtual/cuda:12[${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	rocm? (

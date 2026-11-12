@@ -75,7 +75,7 @@ RDEPEND="
 	cuda? (
 		virtual/cuda:=[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		|| (
-			>=virtual/cuda:12[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+			=virtual/cuda-12*[${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 		)
 	)
 	gdb-plugin? (

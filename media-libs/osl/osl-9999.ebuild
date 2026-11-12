@@ -184,8 +184,8 @@ gen_llvm_bdepend() {
 CUDA_DEPENDS="
 	virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	|| (
-		virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 RDEPEND+="

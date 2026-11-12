@@ -421,7 +421,7 @@ RDEPEND+="
 		>=dev-libs/cudnn-9:=
 		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
 		|| (
-			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
 		)
 	)
 	rocm? (

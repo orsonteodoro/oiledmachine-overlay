@@ -2277,8 +2277,8 @@ gen_clang_bdepend() {
 CUDA_DEPEND="
 	virtual/cuda:=
 	|| (
-		virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 RDEPEND="

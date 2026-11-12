@@ -638,8 +638,8 @@ RDEPEND="
 		dev-libs/cudnn:=
 		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
 		|| (
-			virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
-			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
+			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
+			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
 		)
 		nccl? (
 			dev-libs/nccl:=

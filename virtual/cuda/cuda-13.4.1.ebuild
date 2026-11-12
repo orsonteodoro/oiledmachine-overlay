@@ -20,7 +20,7 @@ LLVM_COMPAT=(
 
 DESCRIPTION="CUDA requirements"
 LICENSE="metapackage"
-SLOT=$(ver_cut "1" "${PV}")"/"$(ver_cut "1-2" "${PV}")
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
@@ -37,6 +37,8 @@ REQUIRED_USE="
 "
 
 RDEPEND+="
+	!virtual/cuda:12
+	!virtual/cuda:13
 	=dev-util/nvidia-cuda-toolkit-13.4*[profiler?]
 	>=x11-drivers/nvidia-drivers-590
 	cudnn? (
