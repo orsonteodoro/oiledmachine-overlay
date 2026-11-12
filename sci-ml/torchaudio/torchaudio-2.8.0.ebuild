@@ -10,7 +10,7 @@ CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit ffmpeg
 FFMPEG_COMPAT_SLOTS=(
@@ -26,8 +26,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
-	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24.  For Python use only.
 )
 
 inherit distutils-r1 fix-rpath ffmpeg libcxx-slot libstdcxx-slot pypi secure-version rocm-r1
@@ -63,15 +63,6 @@ REQUIRED_USE="
 	)
 "
 
-CUDA_12_6_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
-		>=x11-drivers/nvidia-drivers-560.35
-		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
-	)
-"
-TRASH="
-"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/kaldi-io[${PYTHON_USEDEP}]
@@ -81,11 +72,9 @@ RDEPEND+="
 	$(secure-version_gen_ffmpeg_depends '4.4-6.1')
 	=sci-ml/pytorch-${PV%.*}*:=[${PYTHON_SINGLE_USEDEP}]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=
-		virtual/cuda-compiler:=
+		virtual/cuda:=
 		|| (
-			${CUDA_12_6_RDEPEND}
+			virtual/cuda:12[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	rocm? (
