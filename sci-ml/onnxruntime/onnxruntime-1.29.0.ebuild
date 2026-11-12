@@ -49,6 +49,9 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/README.md#tensorrt
 # https://github.com/microsoft/onnxruntime/blob/v1.29.0/dockerfiles/README.md#rocm
 # https://github.com/microsoft/onnxruntime/blob/v1.29.0/tools/ci_build/github/linux/docker/inference/x86_64/python/openvino/Dockerfile#L25
+# Emscripten/emsdk version:  https://github.com/microsoft/onnxruntime/blob/v1.29.0/.gitmodules#L10
+
+# For llvm_slot for emscripten, see typescrypt's @node/types version
 
 # clog has same version as cpuinfo
 
@@ -114,14 +117,15 @@ GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # external/flatbu
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
-	#${LIBCXX_COMPAT_CXX17_ROCM_9999[@]/llvm_slot_} # 24
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_} # 19, 21, 22
+	#${LIBCXX_COMPAT_ROCM_LIB[@]/llvm_slot_} # Disabled
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 CPU_FLAGS_X86=(
@@ -164,7 +168,7 @@ inherit cflags-hardened check-compiler-switch chkl cmake cuda edo dep-prepare
 inherit distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot llvm-r1 rocm-r1
 inherit secure-version toolchain-funcs
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Vulnerabilities.  TODO update
 
 SRC_URI+="
 https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/refs/tags/v1.4.344
@@ -395,14 +399,14 @@ REQUIRED_USE="
 		cudnn
 		!lto
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
 	cudnn? (
 		cuda
 	)
 	javascript? (
-		llvm_slot_18
+		llvm_slot_22
 	)
 	openvino? (
 		|| (
@@ -502,10 +506,10 @@ RDEPEND="
 		dev-libs/cudnn:=
 	)
 	javascript? (
-		llvm_slot_18? (
+		llvm_slot_22? (
 			>=dev-util/emscripten-3.1.59:=
 			|| (
-				dev-util/emscripten:18-3.1
+				dev-util/emscripten:22-4.0
 			)
 		)
 	)
