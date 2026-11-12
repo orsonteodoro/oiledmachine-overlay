@@ -42,7 +42,7 @@ LLVM_COMPAT=(
 	# The ^^ operator is bugged.
 	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
-	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 24
+	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 24.  For Python use only.
 )
 
 LLVM_TARGETS=(
