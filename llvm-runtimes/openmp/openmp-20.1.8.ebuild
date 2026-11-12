@@ -19,36 +19,10 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 # For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
 # For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/include/clang/Basic/Cuda.h#L41
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-20.1.8/clang/lib/CodeGen/CGOpenMPRuntimeGPU.cpp#L2269
-CUDA_TARGETS_COMPAT=(
-	"auto"
-	"sm_35"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_53"
-	"sm_60"
-	"sm_61"
-	"sm_62"
-	"sm_70"
-	"sm_72"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_87"
-	"sm_89"
-	"sm_90"
-	"sm_90a"
-	"sm_100"
-	"sm_100a"
-	"sm_101"
-	"sm_101a"
-	"sm_120"
-	"sm_120a"
-)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 19, 21, 22
 )
 
 inherit llvm-ebuilds
@@ -82,260 +56,29 @@ RESTRICT="
 "
 SLOT="0/${LLVM_SOABI}"
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_EBUILDS_LLVM20_REVISION}
 cuda debug gdb-plugin hwloc offload ompt remote-offloading test llvm_targets_NVPTX
 ebuild_revision_11
 "
-gen_cuda_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-				llvm_targets_NVPTX
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_cuda_required_use)
+	cuda? (
+		llvm_targets_NVPTX
+	)
 	gdb-plugin? (
 		${PYTHON_REQUIRED_USE}
 	)
 	llvm_targets_NVPTX? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
+		cuda
 	)
 	remote-offloading? (
 		offload
 	)
 "
-CUDA_11_8_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		>=x11-drivers/nvidia-drivers-520.61
-		virtual/cuda-compiler:0/11.8[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_3_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.3*
-		>=x11-drivers/nvidia-drivers-545.23
-		virtual/cuda-compiler:0/12.3[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_4_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.4*
-		>=x11-drivers/nvidia-drivers-550.54
-		virtual/cuda-compiler:0/12.4[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_5_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.5*
-		>=x11-drivers/nvidia-drivers-555.42
-		virtual/cuda-compiler:0/12.5[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_6_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.6*
-		>=x11-drivers/nvidia-drivers-560.35
-		virtual/cuda-compiler:0/12.6[${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_12_8_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler:0/12.8[${LIBSTDCXX_USEDEP}]
-	)
-"
 RDEPEND="
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=
-		virtual/cuda-compiler:=
-	)
-	cuda_targets_sm_35? (
-		${CUDA_11_8_RDEPEND}
-	)
-	cuda_targets_sm_37? (
-		${CUDA_11_8_RDEPEND}
-	)
-	cuda_targets_sm_50? (
+		virtual/cuda:=[${LIBSTDCXX_USEDEP}]
 		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_52? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_53? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_60? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_61? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_62? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_70? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_72? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_75? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_80? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_86? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_87? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_89? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_100? (
-		|| (
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_100a? (
-		|| (
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_101? (
-		|| (
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_101a? (
-		|| (
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_120? (
-		|| (
-			${CUDA_12_8_RDEPEND}
-		)
-	)
-	cuda_targets_sm_120a? (
-		|| (
-			${CUDA_12_8_RDEPEND}
+			virtual/cuda:12[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	gdb-plugin? (
@@ -343,16 +86,6 @@ RDEPEND="
 	)
 	hwloc? (
 		>=sys-apps/hwloc-2.5:=[${MULTILIB_USEDEP}]
-	)
-	llvm_targets_NVPTX? (
-		|| (
-			${CUDA_11_8_RDEPEND}
-			${CUDA_12_3_RDEPEND}
-			${CUDA_12_4_RDEPEND}
-			${CUDA_12_5_RDEPEND}
-			${CUDA_12_6_RDEPEND}
-			${CUDA_12_8_RDEPEND}
-		)
 	)
 	offload? (
 		>=dev-libs/libffi-${LIBFFI_PV}:=[${MULTILIB_USEDEP}]
@@ -418,15 +151,13 @@ src_prepare() {
 }
 
 gen_nvptx_list() {
-	if use cuda_targets_auto ; then
+	if [[ "${CUDA_TARGETS}" =~ "auto" ]] ; then
 		echo "auto"
 	else
 		local list
 		local x
-		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-			if use "cuda_targets_${x}" ; then
-				list+=";${x/sm_}"
-			fi
+		for x in $(get_cuda_targets) ; do
+			list+=";${x/sm_}"
 		done
 		list="${list:1}"
 		echo "${list}"
