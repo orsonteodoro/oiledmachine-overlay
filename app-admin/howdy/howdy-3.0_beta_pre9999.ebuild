@@ -51,33 +51,21 @@ LICENSE="MIT BSD CC0-1.0"
 # BSD - howdy/src/recorders/v4l2.py
 RESTRICT="mirror"
 SLOT="0"
-CUDA_TARGETS_COMPAT=(
-	sm_50
-)
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +bash-completion cuda -ffmpeg +gtk -pyv4l2
 ebuild_revision_61
 "
 REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
 	!ffmpeg
 	!pyv4l2
-	${PYTHON_REQUIRED_USE}
-	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
-	cuda_targets_sm_50? (
-		cuda
-	)
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
 		dev-libs/boost[${PYTHON_USEDEP},python]
 		virtual/numpy[${PYTHON_USEDEP}]
-		cuda_targets_sm_50? (
+		cuda? (
 			>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
 		)
 		ffmpeg? (
@@ -96,8 +84,11 @@ RDEPEND+="
 	dev-libs/libevdev
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},contribhdf,png,python,v4l]
 	sys-libs/pam
-	cuda_targets_sm_50? (
-		dev-util/nvidia-cuda-toolkit:=
+	cuda? (
+		virtual/cuda:=
+		|| (
+			=virtual/cuda-12*
+		)
 	)
 	ffmpeg? (
 		media-video/ffmpeg:0/56.58.58[v4l]
