@@ -197,15 +197,23 @@ cuda_src_prepare() {
 get_cuda_targets() {
 	if [[ -z "${CUDA_TARGETS}" ]] ; then
 eerror
+eerror "To reduce the number of GPU kernels built and to complete the build in"
+eerror "practical time, CUDA_TARGETS must be set."
+eerror
 eerror "You must specify semicolon separated list in CUDA_TARGETS in"
 eerror "/etc/portage/make.conf or as per-package environment variables."
 eerror
+eerror
 eerror "Sample contents of /etc/portage/env/cuda.conf:"
 eerror
+eerror "# Pick a row to add:"
+eerror "CUDA_TARGETS=\"auto\""
 eerror "CUDA_TARGETS=\"sm_75;sm_90\""
 eerror "CUDA_TARGETS=\"sm_90\""
 eerror
+eerror
 eerror "Contents of /etc/portage/package.env:"
+eerror
 eerror "${CATEGORY}/${PN} cuda.conf"
 eerror
 		die
