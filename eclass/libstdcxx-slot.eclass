@@ -263,6 +263,10 @@ _switch_gcc_to_continue_message2() {
 	local expected_slot="${2}"
 	local actual_slot="${3}"
 	local lang="${4}"
+
+	local installed_gcc_pv
+	installed_gcc_pv="${expected_slot_raw/gcc_slot_}"
+	installed_gcc_pv="${installed_gcc_pv/_/.}"
 eerror
 eerror "Detected C/CXX inconsistency between CC/CXX compiler and C++ standard library (libstdc++)."
 eerror
@@ -272,7 +276,7 @@ eerror "Target language:  ${lang}"
 eerror
 eerror "You must do the following to continue:"
 eerror
-eerror "Contents of /etc/portage/env/clang-${expected_slot}.conf:"
+eerror "Contents of /etc/portage/env/gcc-${expected_slot}.conf:"
 eerror "CC=\"gcc-${expected_slot}\""
 eerror "CXX=\"g++-${expected_slot}\""
 eerror "CPP=\"${CC} -E\""
@@ -287,8 +291,11 @@ eerror "Contents of /etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} gcc-${expected_slot}.conf"
 eerror
 eerror "You are requesting the gcc_slot_${expected_slot_raw} USE flag for"
-eerror "${CATEGORY}/${P}. You must ensure consistency between the USE flag and"
-eerror "the CC/CXX environment variables."
+eerror "${CATEGORY}/${P}. You must ensure consistency between:"
+eerror
+eerror "1. the USE flag"
+eerror "2. the CC/CXX environment variables"
+eerror "3. the =sys-devel/gcc-${installed_gcc_pv}* has been installed"
 eerror
 }
 

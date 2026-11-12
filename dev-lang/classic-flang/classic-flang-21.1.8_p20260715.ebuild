@@ -3,41 +3,53 @@
 
 EAPI=8
 
+# U24
+
 # Cuda compatibility:
-# https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/clang/include/clang/Basic/Cuda.h
-# https://github.com/flang-compiler/classic-flang-llvm-project/blob/llvmorg-15.0.3/clang/include/clang/Basic/Cuda.h#L37
+# https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_21x/clang/include/clang/Basic/Cuda.h
+# https://github.com/flang-compiler/classic-flang-llvm-project/blob/flang-21.1.8-20260715/clang/include/clang/Basic/Cuda.h#L52
+MY_PV=$(ver_cut "1-3" "${PV}") # See https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_21x/llvm/CMakeLists.txt#L18
+MY_TS=$(ver_cut "5" "${PV}")
 
-CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_80
-	sm_86
-	sm_89
-	sm_90
-	auto
-)
+CXX_STANDARD=17
 CMAKE_MAKEFILE_GENERATOR="emake"
-EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT="5c04f282bab1b2e24c3eccab15fe9ff6be7c8f62"
-EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV="16.0.4" # See https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/llvm/CMakeLists.txt#L18
-LLVM_MAX_SLOT=16 # Same as classic-flang-llvm-project llvm version
-PYTHON_COMPAT=( python3_{10..11} )
+LLVM_MAX_SLOT=21 # Same as classic-flang-llvm-project llvm version
+PYTHON_COMPAT=( "python3_"{12..15} )
 
-inherit cmake llvm python-any-r1
+EGIT_COMMIT_FLANG_COMPILER_CLASSIC_FLANG_LLVM_PROJECT="8bf9edc018464e391987d435b662a0b1e0b68c37"
 
+LLVM_TARGETS_CPU_COMPAT=(
+	"llvm_targets_AArch64"
+	"llvm_targets_PowerPC"
+	"llvm_targets_X86"
+)
+
+LLVM_TARGETS_GPU_COMPAT=(
+	"llvm_targets_NVPTX"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+)
+
+inherit cmake llvm libcxx-slot libstdcxx-slot python-any-r1
+
+S="${WORKDIR}/flang-flang_${MY_TS}"
+S_LLVM="${WORKDIR}/classic-flang-llvm-project-${EGIT_COMMIT_FLANG_COMPILER_CLASSIC_FLANG_LLVM_PROJECT}"
 SRC_URI="
-https://github.com/flang-compiler/flang/archive/refs/tags/flang_${PV}.tar.gz
-	-> classic-flang-${PV}.tar.gz
-https://github.com/flang-compiler/classic-flang-llvm-project/archive/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}.tar.gz
-	-> classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT:0:7}.tar.gz
+https://github.com/flang-compiler/flang/archive/refs/tags/flang_${MY_TS}.tar.gz
+	-> classic-flang-${MY_TS}.tar.gz
+https://github.com/flang-compiler/classic-flang-llvm-project/archive/${EGIT_COMMIT_FLANG_COMPILER_CLASSIC_FLANG_LLVM_PROJECT}.tar.gz
+	-> classic-flang-llvm-project-${EGIT_COMMIT_FLANG_COMPILER_CLASSIC_FLANG_LLVM_PROJECT:0:7}.tar.gz
+"
+SRC_URI_TRASH="
 https://github.com/flang-compiler/flang/pull/1381/commits/05a1be6663f43caad40e982c8501c6b6ea2ece27.patch
 	-> flang-pr1381-05a1be6.patch
 "
@@ -96,33 +108,13 @@ LICENSE="
 # ISC - classic-flang-llvm-project/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - classic-flang-llvm-project/llvm/test/YAMLParser/LICENSE.txt
 KEYWORDS="~arm64 ~amd64 ~ppc64"
-SLOT="${LLVM_MAX_SLOT}/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV}"
-LLVM_TARGETS_CPU_COMPAT=(
-	llvm_targets_AArch64
-	llvm_targets_PowerPC
-	llvm_targets_X86
-)
-LLVM_TARGETS_GPU_COMPAT=(
-	llvm_targets_NVPTX
-)
+SLOT="${LLVM_MAX_SLOT}/${MY_PV}"
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_TARGETS_CPU_COMPAT[@]}
 ${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
 "
-gen_cuda_required_use() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo "
-			cuda_targets_${x}? (
-				llvm_targets_NVPTX
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_cuda_required_use)
 	arm64? (
 		llvm_targets_AArch64
 	)
@@ -131,6 +123,12 @@ REQUIRED_USE="
 	)
 	cuda? (
 		llvm_targets_NVPTX
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
+		)
 	)
 	offload? (
 		cuda
@@ -139,9 +137,6 @@ REQUIRED_USE="
 	llvm_targets_NVPTX? (
 		offload
 		cuda
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
 	)
 	ppc64? (
 		llvm_targets_PowerPC
@@ -151,93 +146,22 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	cuda_targets_sm_35? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
-	)
-	cuda_targets_sm_37? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
-	)
-	cuda_targets_sm_50? (
+	cuda? (
+		virtual/cuda:=
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=virtual/cuda-12*
 		)
-	)
-	cuda_targets_sm_52? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_53? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_60? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_61? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_62? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_70? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_72? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_75? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_80? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_86? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_89? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-		)
-	)
-	llvm_targets_NVPTX? (
-		<dev-util/nvidia-cuda-toolkit-11.9:=
 	)
 	offload? (
 		dev-libs/libffi:=
 		virtual/libelf:=
-		cuda? (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-		)
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.9.0
+	>=dev-build/cmake-3.20.0
 	offload? (
 		virtual/pkgconfig
 	)
@@ -248,10 +172,8 @@ BDEPEND="
 		')
 	)
 "
-S="${WORKDIR}/flang-flang_${PV}"
-S_LLVM="${WORKDIR}/classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}"
 PATCHES=(
-	"${DISTDIR}/flang-pr1381-05a1be6.patch"
+#	"${DISTDIR}/flang-pr1381-05a1be6.patch"
 )
 
 gen_nvptx_list() {
@@ -260,10 +182,8 @@ gen_nvptx_list() {
 	else
 		local list
 		local x
-		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-			if use "cuda_targets_${x}" ; then
-				list+=";${x/sm_}"
-			fi
+		for x in $(get_cuda_targets) ; do
+			list+=";${x/sm_}"
 		done
 		list="${list:1}"
 		echo "${list}"
@@ -381,6 +301,8 @@ einfo "Building flang"
 pkg_setup() {
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
 }
 
 src_prepare() {
