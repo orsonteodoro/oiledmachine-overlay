@@ -27,7 +27,7 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 GOOGLETEST_PV="1.17.0" # https://github.com/triton-lang/triton/blob/v3.5.1/unittest/googletest.cmake
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..14} ) # See https://github.com/triton-lang/triton/blob/v3.5.1/.github/workflows/wheels.yml#L91
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
