@@ -3,7 +3,10 @@
 
 EAPI="8"
 
-LLVM_COMPAT=( 21 )
+# U26
+
+# U26 default LLVM is 21.
+LLVM_COMPAT=( 21 ) # Based on https://github.com/python/cpython/blob/v3.15.2/.github/workflows/reusable-ubuntu.yml#L54
 LLVM_OPTIONAL=1
 VERIFY_SIG_METHOD=sigstore
 WANT_LIBTOOL="none"

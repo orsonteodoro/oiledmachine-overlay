@@ -3,7 +3,10 @@
 
 EAPI="8"
 
-LLVM_COMPAT=( 19 )
+# U24
+
+# U24 default LLVM is 18.
+LLVM_COMPAT=( 19 ) # Based on https://github.com/python/cpython/blob/v3.14.10/.github/workflows/reusable-ubuntu.yml#L51
 LLVM_OPTIONAL=1
 VERIFY_SIG_METHOD=sigstore
 WANT_LIBTOOL="none"

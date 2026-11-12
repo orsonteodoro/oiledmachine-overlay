@@ -3,7 +3,11 @@
 
 EAPI="8"
 
-LLVM_COMPAT=( 18 )
+# U24
+
+# U24 default LLVM is 18.  U24 allows LLVM 17-22.
+#LLVM_COMPAT=( 18 ) # Based on https://github.com/python/cpython/blob/v3.13.18/.github/workflows/jit.yml#L69
+LLVM_COMPAT=( 19 ) # Testing
 LLVM_OPTIONAL=1
 WANT_LIBTOOL="none"
 

@@ -4,6 +4,8 @@
 EAPI="8"
 WANT_LIBTOOL="none"
 
+# U24
+
 CFLAGS_HARDENED_USE_CASES="login network security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO BOR CE CI DOS HO IO IL PE RC REDOS UAF"
 
