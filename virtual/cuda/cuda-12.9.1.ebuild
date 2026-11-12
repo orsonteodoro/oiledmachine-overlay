@@ -35,9 +35,15 @@ RDEPEND+="
 	!virtual/cuda:12
 	!virtual/cuda:13
 	=dev-util/nvidia-cuda-toolkit-13.4*[profiler?,rdma?]
-	>=x11-drivers/nvidia-drivers-575.57[kernel-open?]
+	>=x11-drivers/nvidia-drivers-575.57
+	|| (
+		=x11-drivers/nvidia-drivers-580*[kernel-open]
+		=x11-drivers/nvidia-drivers-595
+		=x11-drivers/nvidia-drivers-615*
+		=x11-drivers/nvidia-drivers-620*
+	)
 	cudnn? (
-		dev-libs/cudnn:=
+		dev-libs/cudnn
 		|| (
 			=dev-libs/cudnn-9.17*
 			=dev-libs/cudnn-9.14*
