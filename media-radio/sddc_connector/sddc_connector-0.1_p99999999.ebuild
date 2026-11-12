@@ -8,12 +8,12 @@ CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX11[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
 inherit check-compiler-switch cmake libcxx-slot libstdcxx-slot
@@ -37,29 +37,20 @@ DESCRIPTION="Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX88
 HOMEPAGE="https://github.com/jketterl/sddc_connector"
 LICENSE="GPL-3"
 # KEYWORDS="~amd64" # Not tagged or live snapshot
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 RESTRICT="mirror"
-CUDA_TARGETS_COMPAT=(
-	sm_60
-)
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
 ebuild_revision_5
 "
 REQUIRED_USE="
-	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 "
 RDEPEND+="
-	>=media-radio/csdr-0.19[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	media-radio/csdr:=
+	>=media-radio/csdr-0.19:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-radio/owrx_connector-0.7
-	cuda_targets_sm_60? (
+	|| (
+		virtual/cuda:=
 		|| (
-			=dev-util/nvidia-cuda-toolkit-8*:=
-			=dev-util/nvidia-cuda-toolkit-9*:=
-			=dev-util/nvidia-cuda-toolkit-10*:=
-			=dev-util/nvidia-cuda-toolkit-11*:=
-			=dev-util/nvidia-cuda-toolkit-12*:=
+			=virtual/cuda-12*
 		)
 	)
 	|| (
@@ -72,7 +63,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-0.19
-	sys-devel/gcc
+	sys-devel/gcc:=
 	virtual/pkgconfig
 "
 DOCS=( LICENSE )
