@@ -30,20 +30,10 @@ _ROCM_R1_ECLASS=1
 
 # The distro's release cycle is faster.
 HIP_CUDA_DEPEND_DISTRO="
-	dev-util/nvidia-cuda-toolkit:=
-	virtual/cuda-compiler:=
-	x11-drivers/nvidia-drivers:=
+	virtual/cuda:=
 	|| (
-		(
-			>=x11-drivers/nvidia-drivers-615
-			=dev-util/nvidia-cuda-toolkit-13.4*
-			=virtual/cuda-compiler-13.4*
-		)
-		(
-			>=x11-drivers/nvidia-drivers-575.57
-			=dev-util/nvidia-cuda-toolkit-12.9*
-			=virtual/cuda-compiler-12.9*
-		)
+		virtual/cuda:13
+		virtual/cuda:12
 	)
 "
 
@@ -51,28 +41,23 @@ HIP_CUDA_DEPEND_DISTRO="
 # Upstream supported, user is responsible for packaging it locally.
 HIP_CUDA_DEPEND_UPSTREAM="
 	dev-util/nvidia-cuda-toolkit:=
-	virtual/cuda-compiler:=
 	x11-drivers/nvidia-drivers:=
 	|| (
 		(
 			>=x11-drivers/nvidia-drivers-595
 			=dev-util/nvidia-cuda-toolkit-13.2*
-			=virtual/cuda-compiler-13.2*
 		)
 		(
 			>=x11-drivers/nvidia-drivers-575.57
 			=dev-util/nvidia-cuda-toolkit-12.9*
-			=virtual/cuda-compiler-12.9*
 		)
 		(
 			>=x11-drivers/nvidia-drivers-570.124
 			=dev-util/nvidia-cuda-toolkit-12.8*
-			=virtual/cuda-compiler-12.8*
 		)
 		(
 			>=x11-drivers/nvidia-drivers-560.35
 			=dev-util/nvidia-cuda-toolkit-12.6*
-			=virtual/cuda-compiler-12.6*
 		)
 	)
 "
