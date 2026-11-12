@@ -163,45 +163,19 @@ CPU_FLAGS_X86=(
 
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda126.bat ; min
 # See https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda130.bat ; max
-CUDA_TARGETS_COMPAT=(
-# Builds for all cards
-	"auto"
-
-# Observed:
-	"sm_50"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_90"
-	"sm_100"
-	"sm_120"
-
-	"compute_50"
-	"compute_60"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_90"
-	"compute_100"
-	"compute_120"
-)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_GPU[@]}" # 11-14; 11-14 compatible with c++20 on compiler side.
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 14, 15, 16.  Compatible with c++20 on compiler side.
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_}" # 18, 19
-	#"${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_}" # 18, 19
+	#"${LIBCXX_COMPAT_CXX20_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX20_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
 	#"${LIBCXX_COMPAT_CXX20_ROCM_10_1[@]/llvm_slot_}" # 24
-	"${LIBCXX_COMPAT_CXX17_GPU[@]/llvm_slot_}" # 18, 19, 21, 24
-	"${LIBCXX_COMPAT_CXX20_GPU[@]/llvm_slot_}" # 21, 24
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 19, 21, 22, 23
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24.  Python backend only.  Do not link as a C/C++ library.
 )
 
 inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms
@@ -458,7 +432,6 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
@@ -466,22 +439,11 @@ clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magm
 ebuild_revision_55
 "
 # bin/torch_shm_manager requires openmp
-gen_cuda_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 # For libtorch_python.so: undefined symbol: _ZTIN5torch2nn6ModuleE see issue #60341
 #		kineto
 # clang breaks with python 3.10
 REQUIRED_USE="
 	!clang
-	$(gen_cuda_required_use)
 	${PYTHON_REQUIRED_USE}
 	?? (
 		cuda
@@ -611,12 +573,6 @@ REQUIRED_USE="
 		)
 	)
 	flash-attention? (
-		cuda? (
-			|| (
-				cuda_targets_sm_80
-				cuda_targets_sm_90
-			)
-		)
 		rocm? (
 			!system-libs
 		)
@@ -675,166 +631,15 @@ REQUIRED_USE="
 	)
 "
 
-CUDA_12_6_RDEPEND="
-(
-	=dev-util/nvidia-cuda-toolkit-12.6*[profiler]
-	=dev-libs/cudnn-9*
-	>=x11-drivers/nvidia-drivers-560.35
-	virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-)
-"
-CUDA_12_8_RDEPEND="
-(
-	=dev-util/nvidia-cuda-toolkit-12.8*[profiler]
-	=dev-libs/cudnn-9*
-	>=x11-drivers/nvidia-drivers-570.124
-	virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-)
-"
-CUDA_13_0_RDEPEND="
-(
-	=dev-util/nvidia-cuda-toolkit-13.0*[profiler]
-	=dev-libs/cudnn-9*
-	>=x11-drivers/nvidia-drivers-580.82
-	virtual/cuda-compiler:0/13.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-)
-"
 RDEPEND="
 	${PYTHON_DEPS}
 	virtual/lapack:*
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=[profiler]
 		dev-libs/cudnn:=
-		x11-drivers/nvidia-drivers:=
-		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cuda_targets_auto? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_compute_50? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_compute_60? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_compute_70? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_compute_75? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_compute_80? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_compute_86? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_compute_90? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_compute_100? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_compute_120? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_sm_50? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_60? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_61? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_70? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_75? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_sm_80? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_sm_86? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_sm_90? (
-			|| (
-				${CUDA_12_6_RDEPEND}
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_sm_100? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
-		)
-		cuda_targets_sm_120? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-				${CUDA_13_0_RDEPEND}
-			)
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
+		|| (
+			virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
 		)
 		nccl? (
 			dev-libs/nccl:=
@@ -1353,27 +1158,25 @@ gen_cuda_arch_list() {
 	else
 		local list
 		local x
-		for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-			if use "cuda_targets_${x}" ; then
-				local gen
-				local ver
-				local suffix=""
-				if [[ "${x}" =~ "compute" ]] ; then
-					suffix="+PTX"
-					x="${x/_ptx/}"
-				fi
-				local val=",${x#*_}"
-				if (( "${#val}" == 2 )) ; then
-					# CC 3.5, 7.5
-					ver=${val:1:1}
-					gen=${val:0:1}
-				elif (( "${#val}" == 3 )) ; then
-					# Hypothentical CC 10.0
-					ver=${val:2:1}
-					gen=${val:0:2}
-				fi
-				list+=",${getn}.${val}${suffix}"
+		for x in $(get_cuda_targets) ; do
+			local gen
+			local ver
+			local suffix=""
+			if [[ "${x}" =~ "compute" ]] ; then
+				suffix="+PTX"
+				x="${x/_ptx/}"
 			fi
+			local val=",${x#*_}"
+			if (( "${#val}" == 2 )) ; then
+				# CC 3.5, 7.5
+				ver=${val:1:1}
+				gen=${val:0:1}
+			elif (( "${#val}" == 3 )) ; then
+				# Hypothentical CC 10.0
+				ver=${val:2:1}
+				gen=${val:0:2}
+			fi
+			list+=",${getn}.${val}${suffix}"
 		done
 		echo "${list:1}"
 	fi
@@ -1645,17 +1448,9 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		addpredict "/dev/nvidiactl" # bug 867706
 		addpredict "/dev/char"
 
-		if use cuda_targets_auto ; then
+		if [[ "${CUDA_TARGETS}" =~ "auto" ]] ; then
 	# See also https://github.com/pytorch/pytorch/blob/v2.13.0/.ci/pytorch/windows/cuda126.bat
-			if has_version "=dev-util/nvidia-cuda-toolkit-12.6*" ; then
-				mycmakeargs+=(
-					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"6.1 7.0 7.5 8.0 8.6 9.0"}
-				)
-			elif has_version "=dev-util/nvidia-cuda-toolkit-12.8*" ; then
-				mycmakeargs+=(
-					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"}
-				)
-			elif has_version "=dev-util/nvidia-cuda-toolkit-12.9*" ; then
+			if has_version "=dev-util/nvidia-cuda-toolkit-12.9*" ; then
 				mycmakeargs+=(
 					-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"6.1 7.0 7.5 8.0 8.6 9.0 10.0 12.0"}
 				)
