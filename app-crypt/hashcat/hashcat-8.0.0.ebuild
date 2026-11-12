@@ -9,12 +9,14 @@ EAPI=8
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 CFLAGS_HARDENED_USE_CASE="security-critical sensitive-data untrusted-data"
@@ -177,6 +179,11 @@ REQUIRED_USE="
 	^^ (
 		${BACKENDS[@]}
 	)
+	cuda? (
+		^^ (
+			${LIBCXX_COMPAT_CXX11_CUDA_13[@]}
+		)
+	)
 "
 RDEPEND="
 	>=virtual/zlib-${ZLIB_PV}:=[minizip]
@@ -195,9 +202,11 @@ RDEPEND="
 			virtual/opencl:*
 		)
 		cuda? (
-			virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			>=dev-util/nvidia-cuda-toolkit-12.9:=
-			>=x11-drivers/nvidia-drivers-575.57:=
+			virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			|| (
+				virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			)
 		)
 	)
 "
