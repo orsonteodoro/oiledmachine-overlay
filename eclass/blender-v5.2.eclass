@@ -155,15 +155,16 @@ CPU_FLAGS_3_3=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 13..16
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 14, 15, 16
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
-	#${LIBCXX_COMPAT_CXX20_CUDA_12_8[@]/llvm_slot_} # 18..19
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 21, 22, 23
+	#${LIBCXX_COMPAT_CXX20_CUDA_12_9[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX20_CUDA_13_4[@]/llvm_slot_} # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 19, 21, 22, 23
 	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
@@ -202,32 +203,10 @@ PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 
-CUDA_TARGETS_COMPAT=(
-	"compute_75"
-
-	"sm_50"
-	"sm_52"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_86"
-	"sm_89"
-	"sm_120"
-)
-
-OPTIX_RAYTRACE_TARGETS=(
-	"sm_75"
-	"sm_86"
-	"sm_89"
-	"sm_120"
-)
-
 # https://github.com/blender/blender/blob/v5.2.1/CMakeLists.txt#L699
 
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
@@ -381,17 +360,6 @@ LICENSE+="
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 
-gen_required_use_cuda_targets() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
-
 # The below are hardcoded enabled in the dependency builder but no explicit option
 IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 	libaom
@@ -417,7 +385,6 @@ PATENT_STATUS_REQUIRED_USE="
 	)
 "
 REQUIRED_USE+="
-	$(gen_required_use_cuda_targets)
 	${PATENT_STATUS_REQUIRED_USE}
 	!tbb? (
 		!cycles
@@ -447,12 +414,9 @@ REQUIRED_USE+="
 			nvcc
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX20_CUDA_12_8[@]}
+			${LIBCXX_COMPAT_CXX20_CUDA_12}
 		)
 		cycles
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
 	)
 	cycles? (
 		tbb
@@ -515,9 +479,6 @@ REQUIRED_USE+="
 		cuda
 		cycles
 		nvcc
-		|| (
-			${OPTIX_RAYTRACE_TARGETS[@]/#/cuda_targets_}
-		)
 	)
 	opus? (
 		ffmpeg
@@ -729,14 +690,6 @@ PATENT_STATUS_RDEPEND="
 	)
 "
 
-CUDA_12_8_RDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
-	)
-"
-
 # Upstream uses vendored numpy 2.3.4
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -782,53 +735,9 @@ RDEPEND+="
 		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=
-		virtual/cuda-compiler:=
-		cuda_targets_sm_50? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_52? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_60? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_61? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_70? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_75? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_86? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_sm_89? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
-		)
-		cuda_targets_compute_75? (
-			|| (
-				${CUDA_12_8_RDEPEND}
-			)
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		|| (
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	cycles? (
@@ -1373,13 +1282,10 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 	if use cuda ; then
 		local targets=""
 		local cuda_target
-		for cuda_target in "${CUDA_TARGETS_COMPAT[@]}" ; do
-			if use "${cuda_target/#/cuda_targets_}" ; then
-				targets+=";${cuda_target}"
-			fi
+		for cuda_target in $(get_cuda_targets) ; do
+			targets+=";${cuda_target}"
 		done
-		targets=$(echo "${targets}" \
-			| sed -e "s|^;||g")
+		targets="${targets:1}"
 		mycmakeargs+=(
 			-DCYCLES_CUDA_BINARIES_ARCH="${targets}"
 		)
