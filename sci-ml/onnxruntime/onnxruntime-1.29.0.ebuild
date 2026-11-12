@@ -134,22 +134,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx512"
 )
 
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/CMakeLists.txt#L1453
-	"sm_30"
-	"sm_37"
-	"sm_50"
-	"sm_52"
-	"sm_53"
-	"sm_60"
-	"sm_62"
-	"sm_70"
-	"sm_72"
-	"sm_75"
-	"sm_87"
-	"sm_80"
-	"sm_90"
-)
+# For CUDA targets, see https://github.com/microsoft/onnxruntime/blob/v1.29.0/cmake/CMakeLists.txt#L1453
 
 OPENVINO_TARGETS=(
 	"cpu"
@@ -363,7 +348,6 @@ RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 -abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
 -javascript -llvm -lto -migraphx -mimalloc -mpi -onednn -openvino
@@ -375,21 +359,10 @@ openvino-hetero
 openvino-multi
 ebuild_revision_31
 "
-gen_cuda_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 # For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.29.0/onnxruntime/test/perftest/command_args_parser.cc#L40
 # abseil-cpp is required for protobuf and still links to it if disabled.
 # webgpu banned because the G repo servers removed tarball downloads.
 REQUIRED_USE="
-	$(gen_cuda_required_use)
 	!rocm
 	abseil-cpp
 	composable-kernel? (
@@ -477,17 +450,6 @@ DISABLED_RDEPEND="
 		>=sci-ml/XNNPACK-2023.10.19
 	)
 "
-CUDA_12_6_DEPEND="
-	(
-		>=sci-ml/pytorch-2.6.0:=[${PYTHON_SINGLE_USEDEP}]
-		>=x11-drivers/nvidia-drivers-560.35:=
-		=dev-util/nvidia-cuda-toolkit-12.6*:=
-		=virtual/cuda-compiler-12.6:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		cudnn? (
-			>=dev-libs/cudnn-9.5:=
-		)
-	)
-"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=sys-cluster/openmpi-4.0.0:=[cuda?]
@@ -498,12 +460,14 @@ RDEPEND="
 		>=sci-ml/onnx-1.16.1:=[disableStaticReg]
 	)
 	cuda? (
-		${CUDA_12_6_DEPEND}
-		dev-util/nvidia-cuda-toolkit:=
-		virtual/cuda-compiler:=
-	)
-	cudnn? (
-		dev-libs/cudnn:=
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+		|| (
+			virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+		)
+		cudnn? (
+			>=dev-libs/cudnn-9.6:=
+		)
 	)
 	javascript? (
 		llvm_slot_22? (
