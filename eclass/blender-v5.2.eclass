@@ -414,7 +414,7 @@ REQUIRED_USE+="
 			nvcc
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX20_CUDA_12}
+			${LIBCXX_COMPAT_CXX20_CUDA_12[@]}
 		)
 		cycles
 	)
