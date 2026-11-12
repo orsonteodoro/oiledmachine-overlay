@@ -14,17 +14,6 @@ MY_P="${MY_PN}-${PV}"
 
 CXX_STANDARD=17
 
-CUDA_TARGETS_COMPAT=(
-	"sm_50"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_89"
-)
-
 CPU_FLAGS_LOONG=(
 	"cpu_flags_loong_lasx"
 	"cpu_flags_loong_lsx"
@@ -69,7 +58,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+	"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 CHKL_TIMESTAMP=(
@@ -95,23 +85,11 @@ ${CPU_FLAGS_LOONG[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +cpu -cuda -cuda-f16 -ffmpeg -mkl -openblas -opencl -openvino -rocm -sdl2 -vulkan
 video_cards_intel
 ebuild_revision_8
 "
-gen_cuda_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_cuda_required_use)
 	?? (
 		cpu
 		cuda
@@ -208,16 +186,15 @@ REQUIRED_USE="
 
 	cuda? (
 		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
 		)
 	)
 "
 RDEPEND="
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*
-			=dev-util/nvidia-cuda-toolkit-12.4*
+			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	ffmpeg? (
