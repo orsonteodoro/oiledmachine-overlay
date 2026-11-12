@@ -222,7 +222,7 @@ eerror
 	local L=()
 	local _L=()
 	if [[ "${CUDA_TARGETS}" =~ "auto" ]] ; then
-		if has_version "=dev-util/nvidia-cuda-toolkit-13" ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12" ; then
 			_L=(
 				50 52 53		# Maxwell
 				60 61 62		# Pascal
@@ -236,7 +236,7 @@ eerror
 			L=(
 				${_L[@]/#/sm_}
 			)
-		elif has_version "=dev-util/nvidia-cuda-toolkit-12" ; then
+		elif has_version "=dev-util/nvidia-cuda-toolkit-13" ; then
 			_L=(
 				75			# Turing
 				80 86 87 88		# Ampere
