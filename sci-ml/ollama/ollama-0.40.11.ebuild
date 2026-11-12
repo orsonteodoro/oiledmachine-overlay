@@ -154,49 +154,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_amx_int8"
 )
 
-CUDA_FATTN_TARGETS_COMPAT=(
 # https://github.com/ollama/ollama/blob/v0.40.11/discover/types.go#L173
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_89"
-	"sm_90"
-	"sm_90a"
-	"sm_120"
-
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_87"
-	"compute_89"
-	"compute_90"
-)
-
-CUDA_TARGETS_COMPAT=(
-	"sm_50"
-	"sm_52"
-	"sm_60"
-	"sm_61"
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_86"
-	"sm_89"
-	"sm_90"
-	"sm_90a"
-	"sm_120"
-
-	"compute_50"
-	"compute_60"
-	"compute_61"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_87"
-	"compute_89"
-	"compute_90"
-)
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -2192,24 +2150,12 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ai-agent blis cuda debug emoji +firejail flash lapack mkl openblas openrc
 rocm systemd unrestrict video_cards_intel -vulkan
 ebuild_revision_149
 "
-
-gen_cuda_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 
 #
 # There is a bug for ?? operator where 1 element causes it to be required.
@@ -2221,7 +2167,6 @@ REQUIRED_USE="
 	!external-editor
 	!cuda
 	!rocm
-	$(gen_cuda_required_use)
 	?? (
 		cuda
 		rocm
@@ -2298,9 +2243,6 @@ REQUIRED_USE="
 		cpu_flags_x86_amx_tile
 	)
 	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
 		)
@@ -2308,11 +2250,6 @@ REQUIRED_USE="
 	flash? (
 		|| (
 			cuda
-		)
-		cuda? (
-			|| (
-				${CUDA_FATTN_TARGETS_COMPAT[@]/#/cuda_targets_}
-			)
 		)
 	)
 	mlx? (
@@ -2323,20 +2260,6 @@ REQUIRED_USE="
 	)
 	|| (
 		${LLMS[@]/#/ollama_llms_}
-	)
-"
-CUDA_12_8_BDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-CUDA_13_0_BDEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-13.0*
-		>=x11-drivers/nvidia-drivers-580.82
-		virtual/cuda-compiler:0/13.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 gen_clang_bdepend() {
@@ -2351,12 +2274,22 @@ gen_clang_bdepend() {
 	done
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
+CUDA_DEPEND="
+	virtual/cuda:=
+	|| (
+		virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	)
+"
 RDEPEND="
 	!app-misc/ollama
 	acct-group/ollama:*
 	acct-user/ollama:*
 	blis? (
 		sci-libs/blis:=
+	)
+	cuda? (
+		${CUDA_DEPEND}
 	)
 	emoji? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:=
@@ -2421,140 +2354,7 @@ BDEPEND="
 	dev-vcs/git
 	virtual/pkgconfig
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		virtual/cuda-compiler:=
-		x11-drivers/nvidia-drivers:=
-		cuda_targets_sm_50? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_sm_52? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_sm_60? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_sm_61? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_sm_70? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_sm_75? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_80? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_86? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_89? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_90? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_90? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_90a? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_sm_120? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-
-
-		cuda_targets_compute_50? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_compute_60? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_compute_61? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_compute_70? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-			)
-		)
-		cuda_targets_compute_75? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_compute_80? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_compute_86? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_compute_89? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_compute_90? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
-		cuda_targets_compute_90? (
-			|| (
-				${CUDA_12_8_BDEPEND}
-				${CUDA_13_0_BDEPEND}
-			)
-		)
+		${CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -2941,13 +2741,33 @@ eerror
 	fi
 }
 
+get_cuda_targets() {
+	if [[ -z "${CUDA_TARGETS}" ]] ; then
+eerror
+eerror "You must specify CUDA_TARGETS in /etc/portage/make.conf or as per-package environment variables."
+eerror
+eerror "Contents of /etc/portage/env/cuda.conf:"
+eerror
+eerror "CUDA_TARGETS=\"sm_90\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} cuda.conf"
+eerror
+		die
+	fi
+	IFS=';' read -ra my_array <<< "$list"
+
+	# Loop through the array to verify
+	for item in "${my_array[@]}"; do
+		echo "$item"
+	done
+}
+
 get_cuda_flags() {
 	local arches=""
 	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		if use "cuda_targets_${x}" ; then
-			arches+=";${x#*_}"
-		fi
+	for x in $(get_cuda_targets) ; do
+		arches+=";${x#*_}"
 	done
 	arches="${arches:1}"
 	echo "${arches}"
