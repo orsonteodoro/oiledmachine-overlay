@@ -222,7 +222,15 @@ eerror
 	local L=()
 	local _L=()
 	if [[ "${CUDA_TARGETS}" =~ "auto" ]] ; then
-		if has_version "=dev-util/nvidia-cuda-toolkit-12" ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-11" ; then
+eerror
+eerror "dev-util/nvidia-cuda-toolkit-11 is not supported."
+eerror
+eerror "Disable the cuda USE flag or install nvidia-cuda-toolkit 12 or above"
+eerror "to continue."
+eerror
+			die
+		elif has_version "=dev-util/nvidia-cuda-toolkit-12" ; then
 			_L=(
 				50 52 53		# Maxwell
 				60 61 62		# Pascal
