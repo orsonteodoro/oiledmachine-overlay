@@ -39,15 +39,10 @@ GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
-LLVM_COMPAT_CUDA=(
-	19
-)
-
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LLVM_COMPAT_CUDA[@]} # 19
-	#${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 18, 19
-	{18..19}
+	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]} # 19, 21, 22
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
 )
 
 # TODO make this only relevant for binhost \
@@ -605,6 +600,9 @@ REQUIRED_USE="
 		)
 		tesseract? (
 			opencl
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
 	cudnn? (
