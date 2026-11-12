@@ -41,7 +41,8 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug where if you duplicate entry in LLVM_COMPAT it will mistaken as more than 1 when emerging.
-	#${LIBCXX_COMPAT_CXX17_CUDA[@]/llvm_slot_} # 19, 21, 22
+	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_} # 19, 21, 22
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
@@ -113,7 +114,7 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
 	optix? (
