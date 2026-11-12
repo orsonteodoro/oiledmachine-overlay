@@ -20,13 +20,6 @@ ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{8..14} )
 
-CUDA_TARGETS_COMPAT=(
-	"sm_70"
-	"sm_75"
-	"sm_80"
-	"sm_90"
-)
-
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
@@ -88,24 +81,12 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
 ebuild_revision_14
 "
-gen_required_use_cuda_targets() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 REQUIRED_USE+="
 	!rocm
-	$(gen_required_use_cuda_targets)
 	${PYTHON_REQUIRED_USE}
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -120,9 +101,6 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		gcc
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
 	)
 	rocm? (
 		^^ (
@@ -150,13 +128,18 @@ gen_clang_depends() {
 # roct-thunk-interface moved to rocr-runtime
 
 # See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
+CUDA_CDEPEND="
+	virtual/cuda:=
+	|| (
+		=virtual/cuda-12*
+	)
+"
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-cpp/tbb-${TBB_PV}:${ONETBB_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	virtual/libc:*
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-12.8:=
-		>=x11-drivers/nvidia-drivers-525.60.13:=
+		${CUDA_CDEPEND}
 	)
 	rocm? (
 		>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -182,8 +165,8 @@ BDEPEND+="
 		$(gen_clang_depends)
 	)
 	cuda? (
+		${CUDA_CDEPEND}
 		>=dev-build/cmake-3.18
-		>=dev-util/nvidia-cuda-toolkit-12.8:=
 		>=sys-devel/binutils-${BINUTILS_PV}:=[gold,plugins]
 	)
 	rocm? (
@@ -281,19 +264,6 @@ src_prepare() {
 	fi
 }
 
-get_cuda_targets() {
-	local targets=""
-	local cuda_target
-	for cuda_target in ${CUDA_TARGETS_COMPAT[@]} ; do
-		if use "${cuda_target/#/cuda_targets_}" ; then
-			targets+=";${cuda_target}"
-		fi
-	done
-	targets=$(echo "${targets}" \
-		| sed -e "s|^;||g")
-	echo "${targets}"
-}
-
 src_configure() {
 	chkl_check_many_timestamps
 
@@ -310,7 +280,7 @@ src_configure() {
 	fi
 
 	if use cuda && use openimageio ; then
-ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
+ewarn "media-libs/openimageio must be built with the same GCC for CUDA support."
 	fi
 
 	if use cuda ; then
@@ -396,15 +366,15 @@ einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
 	if use cuda ; then
 		local targets="$(get_cuda_targets)"
 einfo "CUDA_TARGETS:  ${targets}"
-		if use cuda_targets_sm_80 || use cuda_targets_sm_90 ; then
+		if [[ "${CUDA_TARGETS}" =~ ("sm_80"|"sm_90") ]] ; then
 			:
 		else
 			sed -i -e "/cutlass_conv_sm80.cu/d" "devices/cuda/CMakeLists.txt" || die
 		fi
-		if use cuda_targets_sm_70 ; then
+		if [[ "${CUDA_TARGETS}" =~ "sm_70" ]] ; then
 			sed -i -e "/cutlass_conv_sm70.cu/d" "devices/cuda/CMakeLists.txt" || die
 		fi
-		if use cuda_targets_sm_75 ; then
+		if [[ "${CUDA_TARGETS}" =~ "sm_75" ]] ; then
 			sed -i -e "/cutlass_conv_sm75.cu/d" "devices/cuda/CMakeLists.txt" || die
 		fi
 	fi
