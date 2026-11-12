@@ -16,10 +16,6 @@ OIIO_PV="2.2"
 PYTHON_COMPAT=( "python3_"{7..14} )
 TEST_MODE="distroV2" # Can be upstream or distroV1 distroV2
 
-CUDA_TARGETS_COMPAT=(
-	"sm_60"
-)
-
 CPU_FEATURES_X86=(
 	"avx:avx"
 	"avx2:avx2"
@@ -45,8 +41,8 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug where if you duplicate entry in LLVM_COMPAT it will mistaken as more than 1 when emerging.
-	#${LIBCXX_COMPAT_CXX17_CUDA[@]/llvm_slot_} # 16..19
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19, 21, 22
+	#${LIBCXX_COMPAT_CXX17_CUDA[@]/llvm_slot_} # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 CHKL_TIMESTAMPS=(
@@ -101,10 +97,9 @@ RESTRICT="
 "
 IUSE+="
 ${CPU_FEATURES[@]%:*}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cuda doc gcc gui icc icx libcxx nofma optix partio python qt6 static-libs test wayland X
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE+="
 	^^ (
@@ -120,18 +115,9 @@ REQUIRED_USE+="
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA[@]}
 		)
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
-	cuda_targets_sm_60? (
-		cuda
 	)
 	optix? (
 		cuda
-		|| (
-			cuda_targets_sm_60
-		)
 	)
 	qt6? (
 		|| (
@@ -194,31 +180,13 @@ gen_llvm_bdepend() {
 # Multilib requires openexr built as multilib.
 # >= python_single_target_python3_11 : openimageio-2.4.12.0
 # >= python_single_target_python3_10 : openimageio-2.3.19.0
-
-CUDA_12_6_CDEPEND="
-	(
-		>=x11-drivers/nvidia-drivers-560.35
-		=dev-util/nvidia-cuda-toolkit-12.6*
-		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+CUDA_DEPENDS="
+	virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	|| (
+		virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
-
-CUDA_12_8_CDEPEND="
-	(
-		>=x11-drivers/nvidia-drivers-570.124
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
-CUDA_12_9_CDEPEND="
-	(
-		>=x11-drivers/nvidia-drivers-575.57
-		=dev-util/nvidia-cuda-toolkit-12.9*
-		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
 RDEPEND+="
 	$(gen_llvm_depend)
 	media-libs/openimageio:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_SINGLE_USEDEP}]
@@ -232,22 +200,7 @@ RDEPEND+="
 	>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=
-		virtual/cuda-compiler:=
-		llvm_slot_18? (
-			|| (
-				${CUDA_12_6_CDEPEND}
-				${CUDA_12_8_CDEPEND}
-				${CUDA_12_9_CDEPEND}
-			)
-		)
-		llvm_slot_19? (
-			|| (
-				${CUDA_12_8_CDEPEND}
-				${CUDA_12_9_CDEPEND}
-			)
-		)
+		${CUDA_DEPENDS}
 	)
 	optix? (
 		>=dev-libs/optix-7.0:=
@@ -298,22 +251,7 @@ BDEPEND+="
 			>=media-libs/openimageio-'${OIIO_PV}':=['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'truetype]
 		')
 		cuda? (
-			dev-util/nvidia-cuda-toolkit:=
-			x11-drivers/nvidia-drivers:=
-			virtual/cuda-compiler:=
-			llvm_slot_18? (
-				|| (
-					${CUDA_12_6_CDEPEND}
-					${CUDA_12_8_CDEPEND}
-					${CUDA_12_9_CDEPEND}
-				)
-			)
-			llvm_slot_19? (
-				|| (
-					${CUDA_12_8_CDEPEND}
-					${CUDA_12_9_CDEPEND}
-				)
-			)
+			${CUDA_DEPENDS}
 		)
 	)
 "
@@ -590,10 +528,10 @@ einfo "Fast-math optimizations off"
 				)
 			fi
 
-			if [[ -n "${OSL_CUDA_TARGET_ARCH}" ]] ; then
-				# Example:  OSL_CUDA_TARGET_ARCH="sm_60"
+			if [[ -n "${CUDA_TARGETS}" ]] ; then
+				# Example:  CUDA_TARGETS="sm_60"
 				mycmakeargs+=(
-					-DCUDA_TARGET_ARCH="${OSL_CUDA_TARGET_ARCH}"
+					-DCUDA_TARGET_ARCH="${CUDA_TARGETS}"
 				)
 			fi
 
