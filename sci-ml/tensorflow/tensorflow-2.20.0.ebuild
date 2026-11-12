@@ -50,14 +50,7 @@ RE2_SLOT="20250512"
 
 # See https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/xla/stream_executor/device_description.h#L151
 
-CUDA_TARGETS_COMPAT=(
-# See https://github.com/tensorflow/tensorflow/blob/v2.20.0/.bazelrc#L312  # Supported upstream
-	"sm_60" # Supported
-	"sm_70" # Supported
-	"sm_80" # Supported
-	"sm_89" # Supported
-	"compute_90" # Supported
-)
+# For CUDA targets, see https://github.com/tensorflow/tensorflow/blob/v2.20.0/.bazelrc#L312  # Supported upstream
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -70,7 +63,8 @@ GCC_COMPAT=(
 # https://github.com/tensorflow/tensorflow/blob/v2.20.0/third_party/xla/third_party/gpus/rocm_configure.bzl#L210
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 # *seq* can only be done in the eclass.
@@ -405,35 +399,23 @@ CPU_USE_FLAGS_X86=(
 # * Checks only but does no work.
 IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
 ebuild_revision_35
 "
-gen_required_use_cuda_targets() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 # Re-add when CXX_STANDARD is not 17 (LTS)
 #	rocm? (
 #		llvm_slot_${ROCM_LLVM_SLOT}
 #	)
 REQUIRED_USE="
-	$(gen_required_use_cuda_targets)
 	!rocm
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		^^ (
+			${LIBCXX_COMPAT_CXX20_CUDA_12[@]}
 		)
 	)
 	python? (
@@ -451,13 +433,6 @@ REQUIRED_USE="
 # Apache-2.0 is only license compatible with >=openssl-3
 # The distro only has 11.8, 12.3 for cuda.  The exact version preferred due
 # to binary compatibility.
-CUDA_12_5_RDEPENDS="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.5*[profiler]
-		>=x11-drivers/nvidia-drivers-555.42
-		virtual/cuda-compiler:0/12.5[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
 
 GOOGLE_CLOUD_CPP_PROTOBUF_5="
 	python? (
@@ -566,17 +541,10 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=[profiler]
-		x11-drivers/nvidia-drivers:=
-		virtual/cuda-compiler:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		|| (
-			${CUDA_12_5_RDEPENDS}
-		)
 		dev-libs/cudnn:=
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		|| (
-			=dev-libs/cudnn-9*
-			=dev-libs/cudnn-8.9*
-			=dev-libs/cudnn-8.8*
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
 		)
 	)
 	mpi? (
@@ -690,9 +658,9 @@ BDEPEND="
 		)
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},profiler]
 		|| (
-			${CUDA_12_5_RDEPENDS}
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},profiler]
 		)
 	)
 	python? (
@@ -1150,17 +1118,6 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	fi
 }
 
-get_cuda_targets() {
-	local targets
-	local target
-	for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		if use "cuda_targets_${target}" ; then
-			targets+=",${target}"
-		fi
-	done
-	echo "${targets}" | sed -e "s|^,||g"
-}
-
 src_configure() {
 	if [[ $(tc-endian) == "big" ]] && ! use big-endian ; then
 eerror
@@ -1217,7 +1174,7 @@ ewarn
 		if use cuda ; then
 			export GCC_SLOT_WITH_CUDA=$(gcc-major-version)
 			export TF_NEED_CLANG=0
-			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
+			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets | tar ";" ",")
 			export TF_CUDA_PATHS="${ESYSROOT}/opt/cuda"
 
 			has_version "sys-devel/gcc:${GCC_SLOT_WITH_CUDA}" || die "Reinstall gcc:${GCC_SLOT_WITH_CUDA}"

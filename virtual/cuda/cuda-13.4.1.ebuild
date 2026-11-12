@@ -25,7 +25,7 @@ KEYWORDS="~amd64"
 IUSE="
 ${GCC_COMPAT[@]}
 ${LLVM_COMPAT[@]}
-cudnn
+cudnn profiler
 "
 REQUIRED_USE="
 	^^ (
@@ -37,7 +37,7 @@ REQUIRED_USE="
 "
 
 RDEPEND+="
-	=dev-util/nvidia-cuda-toolkit-13.4*
+	=dev-util/nvidia-cuda-toolkit-13.4*[profiler?]
 	>=x11-drivers/nvidia-drivers-590
 	cudnn? (
 		dev-libs/cudnn:=
