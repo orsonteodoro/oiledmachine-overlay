@@ -1430,7 +1430,7 @@ multilib_src_configure() {
 		local real_str=""
 		local virtual_str=""
 		local x
-		for x in "${CUDA_TARGETS[@]}" $(get_cuda_targets) ; do
+		for x in $(get_cuda_targets) ; do
 			if [[ "${x}" =~ "auto" ]] ; then
 				real_str+=" ${CUDA_TARGETS_COMPAT_HT[${x}]}"
 			fi
