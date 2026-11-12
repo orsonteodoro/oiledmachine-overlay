@@ -27,11 +27,10 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]/llvm_slot_} # 24
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_6[@]/llvm_slot_} # 18
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 18, 19
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_} # 18, 19
-	${LIBCXX_COMPAT_CXX17_GPU[@]/llvm_slot_} # 18, 19, 21, 24
+	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_} # 19, 21, 22
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
+	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 14.  Slot for Python use only.
 )
 
 inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot secure-version rocm-r1
@@ -94,14 +93,10 @@ REQUIRED_USE="
 	)
 	cuda? (
 		^^ (
-			gcc_slot_11_5
-			gcc_slot_12_5
-			gcc_slot_13_4
-			gcc_slot_14_3
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
 		)
 		^^ (
-			llvm_slot_18
-			llvm_slot_19
+			${LIBCXX_COMPAT_STDCXX17[@]}
 		)
 	)
 	rocm? (
@@ -112,30 +107,6 @@ REQUIRED_USE="
 	^^ (
 		cuda
 		rocm
-	)
-"
-
-CUDA_12_6_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.6*
-		>=x11-drivers/nvidia-drivers-560.35
-		virtual/cuda-compiler:0/12.6[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
-CUDA_12_8_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	)
-"
-
-CUDA_12_9_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.9*
-		>=x11-drivers/nvidia-drivers-575.57
-		virtual/cuda-compiler:0/12.9[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 
@@ -151,12 +122,11 @@ RDEPEND+="
 		sci-ml/pytorch:=
 	)
 	cuda? (
+		virtual/cuda:=
 		|| (
-			${CUDA_12_6_DEPEND}
-			${CUDA_12_8_DEPEND}
-			${CUDA_12_9_DEPEND}
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			virtual/cuda:13[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
-		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
 		>=sci-ml/therock-${THEROCK_PV}:=
