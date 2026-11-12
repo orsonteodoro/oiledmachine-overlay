@@ -757,7 +757,6 @@ RDEPEND="
 	)
 	cuda? (
 		${CUDA_DEPEND}
-		>=x11-drivers/nvidia-drivers-450.51:=
 	)
 	contribdnn? (
 		system-flatbuffers? (
