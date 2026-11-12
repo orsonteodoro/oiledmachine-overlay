@@ -8,24 +8,20 @@ EAPI=8
 
 MY_PV="${PV/_/-}"
 
-CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_60
-	sm_70
-	sm_72
-	sm_75
-)
-
 CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
+	"${LIBSTDCXX_COMPAT_ROCM[@]}" # 16
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}"
+	#"${LIBCXX_COMPAT_CXX11_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX11_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
 )
 
 RDMA_CORE_PV="28.0"
@@ -53,24 +49,12 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
 ebuild_revision_8
 "
-get_cuda_targets_required_use() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(get_cuda_targets_required_use)
 	?? (
 		cuda
 		rocm
@@ -87,6 +71,9 @@ REQUIRED_USE="
 	)
 	cuda? (
 		gcc
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
 	)
 	gdrcopy? (
 		cuda
@@ -103,73 +90,42 @@ REQUIRED_USE="
 			rocm
 		)
 	)
-"
-CUDA_TOOLKIT_11_8_DEPENDS="
-	(
-		=dev-util/nvidia-cuda-toolkit-11.8*
-	)
-"
-CUDA_TOOLKIT_12_3_DEPENDS="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.3*
-	)
-"
-CUDA_TOOLKIT_12_4_DEPENDS="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.4*
-	)
-"
-CUDA_TOOLKIT_12_5_DEPENDS="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.5*
+	rocm? (
+		gcc? (
+			^^ (
+				${LIBSTDCXX_COMPAT_ROCM[@]}
+			)
+		)
+		clang? (
+			^^ (
+				${LIBCXX_COMPAT_ROCM_APP[@]}
+			)
+		)
 	)
 "
 RDEPEND="
 	cma? (
 		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
-	cuda_targets_sm_35? (
-		${CUDA_TOOLKIT_11_8_DEPENDS}
-	)
-	cuda_targets_sm_60? (
+	cuda? (
+		virtual/cuda:=
 		|| (
-			${CUDA_TOOLKIT_11_8_DEPENDS}
-			${CUDA_TOOLKIT_12_3_DEPENDS}
-			${CUDA_TOOLKIT_12_4_DEPENDS}
-			${CUDA_TOOLKIT_12_5_DEPENDS}
-		)
-	)
-	cuda_targets_sm_70? (
-		|| (
-			${CUDA_TOOLKIT_11_8_DEPENDS}
-			${CUDA_TOOLKIT_12_3_DEPENDS}
-			${CUDA_TOOLKIT_12_4_DEPENDS}
-			${CUDA_TOOLKIT_12_5_DEPENDS}
-		)
-	)
-	cuda_targets_sm_72? (
-		|| (
-			${CUDA_TOOLKIT_11_8_DEPENDS}
-			${CUDA_TOOLKIT_12_3_DEPENDS}
-			${CUDA_TOOLKIT_12_4_DEPENDS}
-			${CUDA_TOOLKIT_12_5_DEPENDS}
-		)
-	)
-	cuda_targets_sm_75? (
-		|| (
-			${CUDA_TOOLKIT_11_8_DEPENDS}
-			${CUDA_TOOLKIT_12_3_DEPENDS}
-			${CUDA_TOOLKIT_12_4_DEPENDS}
-			${CUDA_TOOLKIT_12_5_DEPENDS}
+			=virtual/cuda-12*
 		)
 	)
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-8.0:=
-		dmabuf? (
-			>=dev-util/nvidia-cuda-toolkit-11.7:=[rdma]
-			x11-drivers/nvidia-drivers:=[kernel-open]
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		|| (
+			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
-		dev-util/nvidia-cuda-toolkit:=
+		dmabuf? (
+			virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},kernel-open,rdma]
+			|| (
+				=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},kernel-open,rdma]
+				=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},kernel-open,rdma]
+			)
+		)
 	)
 	dc? (
 		>=sys-cluster/rdma-core-${RDMA_CORE_PV}:=
@@ -393,16 +349,12 @@ _configure() {
 	chkl_check_many_timestamps
 	if use gcc ; then
 		local gcc_slot=12
-		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
-			gcc_slot="12"
-		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.3*" ; then
-			gcc_slot="12"
-		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
-			gcc_slot="13"
-		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.5*" ; then
-			gcc_slot="13"
+		if use gcc_slot_14_4 ; then
+			gcc_slot="14"
+		elif use gcc_slot_15_3 ; then
+			gcc_slot="15"
 		elif use rocm ; then
-			gcc_slot="12"
+			gcc_slot="16"
 		fi
 		export CC="${CHOST}-gcc-${gcc_slot}"
 		export CXX="${CHOST}-g++-${gcc_slot}"
