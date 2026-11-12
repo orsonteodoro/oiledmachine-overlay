@@ -22,8 +22,6 @@ EAPI=8
 #   https://github.com/triton-lang/triton/blob/v3.5.1/.github/workflows/integration-tests-amd.yml#L18
 #
 
-inherit hip-versions
-
 CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
@@ -33,7 +31,8 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	${LIBSTDCXX_COMPAT_STDCXX17[@]} # 14, 15
+	${LIBSTDCXX_COMPAT_ROCM[@]} # For Python use only.
 )
 
 inherit libcxx-compat
@@ -41,14 +40,9 @@ LLVM_COMPAT=(
 	# Support object code version 5 for ROCm
 	# https://github.com/ROCm/llvm-project/blob/d366fa84f3fdcbd4b10847ebd5db572ae12a34fb/clang/lib/Driver/ToolChains/AMDGPU.h#L93
 	# The ^^ operator is bugged.
-	#${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]/llvm_slot_} # 22
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]/llvm_slot_} # 18, 19
-	{18..22}
-)
-
-ROCM_SLOTS=(
-# No LLVM 19 release for ROCm yet.  Use 3.0.0 without _p1.
-	"rocm_7_2" # Upstream uses ROCm 6.2 but relaxed to avoid issues
+	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
+	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
+	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 24
 )
 
 LLVM_TARGETS=(
@@ -56,7 +50,7 @@ LLVM_TARGETS=(
 	"NVPTX"
 )
 
-inherit dep-prepare distutils-r1 flag-o-matic hip-versions libcxx-slot libstdcxx-slot
+inherit dep-prepare flag-o-matic libcxx-slot libstdcxx-slot rocm-r1 secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="release/3.0.x"
@@ -96,21 +90,8 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-${ROCM_SLOTS[@]}
 cuda rocm test tutorials video_cards_intel
-ebuild_revision_9
-"
-gen_rocm_required_use() {
-	local u
-	for u in ${ROCM_SLOTS[@]} ; do
-		echo "
-			${u}? (
-				rocm
-			)
-		"
-	done
-}
-TRASH="
+ebuild_revision_10
 "
 # The oiledmachine-overlay has strict version requirements for GPU support.  No testing means it is disabled.
 # If tested, then the disabled ROCm support can be removed.
@@ -124,22 +105,15 @@ REQUIRED_USE="
 	)
 	cuda? (
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
 		)
 	)
 	rocm? (
 		^^ (
-			${LIBSTDCXX_COMPAT_ROCM_7_2[@]}
+			${LIBSTDCXX_COMPAT_ROCM[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_7_2[@]}
-		)
-		^^ (
-			$(gen_rocm_required_use)
-		)
-		^^ (
-			python_single_target_python3_10
-			python_single_target_python3_12
+			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
 		)
 	)
 "
@@ -149,6 +123,8 @@ gen_llvm_rdepend() {
 	for u in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${u}? (
+				llvm-core/llvm:=
+				llvm-core/mlir:=
 				amd64? (
 					llvm-core/llvm:${u}[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_NVPTX?]
 					llvm-core/mlir:${u}[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_NVPTX?]
@@ -185,33 +161,24 @@ gen_llvm_rdepend() {
 					llvm-core/llvm:${u}[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_NVPTX?]
 					llvm-core/mlir:${u}[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_NVPTX?]
 				)
-				llvm-core/llvm:=
-				llvm-core/mlir:=
 			)
 		"
 	done
 }
-
-CUDA_12_8_DEPEND="
-	(
-		=dev-util/nvidia-cuda-toolkit-12.8*
-		dev-util/nvidia-cuda-toolkit:=
-		>=x11-drivers/nvidia-drivers-570.124
-		virtual/cuda-compiler:0/12.8[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		virtual/cuda-compiler:=
-	)
-"
 
 RDEPEND+="
 	!rocm? (
 		$(gen_llvm_rdepend)
 	)
 	llvm_targets_NVPTX? (
-		${CUDA_12_8_DEPEND}
+		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		|| (
+			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		)
 	)
 	rocm? (
-		rocm_7_2? (
-			~sys-devel/llvm-roc-${HIP_7_2_VERSION}:=[${LIBSTDCXX_USEDEP},llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		rocm? (
+			>=sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
 		)
 	)
 	tutorials? (
@@ -269,6 +236,9 @@ _PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	if use rocm ; then
+		rocm-r1_pkg_setup
+	fi
 }
 
 src_unpack() {
@@ -320,9 +290,14 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_7_2 ; then
-		llvm_root_dir="/opt/rocm/lib/llvm" # LLVM 22.0.0git
-		export ROCM_VERSION="${HIP_7_2_VERSION}"
+	if use rocm ; then
+		llvm_root_dir="${ROCM_LLVM_PATH}"
+	elif use llvm_slot_22 && has_version "llvm-core/llvm:22" && has_version "llvm-core/mlir:22" ; then
+		llvm_root_dir="/usr/lib/llvm/22"
+		dynlib=1
+	elif use llvm_slot_21 && has_version "llvm-core/llvm:21" && has_version "llvm-core/mlir:21" ; then
+		llvm_root_dir="/usr/lib/llvm/21"
+		dynlib=1
 	elif use llvm_slot_19 && has_version "llvm-core/llvm:19" && has_version "llvm-core/mlir:19" ; then
 		llvm_root_dir="/usr/lib/llvm/19"
 		dynlib=1
@@ -413,7 +388,7 @@ src_install() {
 		local x
 		for x in ${paths[@]} ; do
 einfo "Fixing RPATH for ${x}"
-			patchelf --add-rpath "/opt/rocm-${ROCM_VERSION}/llvm/lib" "${x}" || die
+			patchelf --add-rpath "${ROCM_LLVM_PATH}/lib" "${x}" || die
 		done
 	fi
 }
