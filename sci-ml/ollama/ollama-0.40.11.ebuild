@@ -2741,28 +2741,6 @@ eerror
 	fi
 }
 
-get_cuda_targets() {
-	if [[ -z "${CUDA_TARGETS}" ]] ; then
-eerror
-eerror "You must specify CUDA_TARGETS in /etc/portage/make.conf or as per-package environment variables."
-eerror
-eerror "Contents of /etc/portage/env/cuda.conf:"
-eerror
-eerror "CUDA_TARGETS=\"sm_90\""
-eerror
-eerror "Contents of /etc/portage/package.env:"
-eerror "${CATEGORY}/${PN} cuda.conf"
-eerror
-		die
-	fi
-	IFS=';' read -ra my_array <<< "$list"
-
-	# Loop through the array to verify
-	for item in "${my_array[@]}"; do
-		echo "$item"
-	done
-}
-
 get_cuda_flags() {
 	local arches=""
 	local x
