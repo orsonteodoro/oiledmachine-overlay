@@ -47,7 +47,7 @@ DESCRIPTION="GNU Image Manipulation Program"
 HOMEPAGE="https://www.gimp.org/"
 
 if [[ ${PV} == 9999 ]]; then
-	FALLBACK_COMMIT="342405acfbb623fa0c068a0cd4ae9b737b0325ad"
+	FALLBACK_COMMIT="c377664c0571288a1d3fecfd20ecad06a42917aa"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/gimp.git"
 	inherit git-r3
@@ -76,7 +76,7 @@ SLOT="0/${MAJOR_VERSION}"
 
 IUSE="
 X aalib alsa bash-completion doc fits gnome heif javascript jpeg2k jpegxl lua mng openexr openmp postscript test udev unwind vala vector-icons wayland webp wmf xpm
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -274,7 +274,7 @@ src_configure() {
 		-Denable-multiproc=true
 		-Dappdata-test=disabled
 		-Dbug-report-url="${BRANDING_OS_BUG_REPORT_URL}"
-		-Dilbm=disabled
+		#-Dilbm=disabled
 		-Dlibbacktrace=false
 		$(meson_feature aalib aa)
 		$(meson_feature alsa)
