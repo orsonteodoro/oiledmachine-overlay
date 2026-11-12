@@ -53,11 +53,6 @@ _TRAINERS=(
 	"ffmpeg_trainers_video_lossless_quick"
 )
 
-CUDA_TARGETS_COMPAT=(
-	"sm_30"
-	"sm_60"
-)
-
 FFTOOLS=(
 	"aviocat"
 	"cws2fws"
@@ -613,7 +608,6 @@ LICENSE="
 IUSE+="
 ${_TRAINERS[@]}
 ${CPU_FEATURES_MAP[@]%:*}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFMPEG_UNSLOTTED:+chromium}
@@ -782,19 +776,9 @@ REQUIRED_USE+="
 	)
 	cuda-llvm? (
 		cuda-filters
-		cuda_targets_sm_30
 	)
 	cuda-nvcc? (
 		cuda-filters
-		cuda_targets_sm_60
-	)
-	cuda_targets_sm_30? (
-		cuda
-		cuda-llvm
-	)
-	cuda_targets_sm_60? (
-		cuda
-		cuda-nvcc
 	)
 	fftools_cws2fws? (
 		zlib
@@ -942,16 +926,9 @@ RDEPEND+="
 		media-libs/codec2:=[${MULTILIB_USEDEP}]
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=
-	)
-	cuda-nvcc? (
-		cuda_targets_sm_60? (
-			dev-util/nvidia-cuda-toolkit:=
-			|| (
-				=dev-util/nvidia-cuda-toolkit-11*
-				=dev-util/nvidia-cuda-toolkit-12*
-			)
+		virtual/cuda:=
+		|| (
+			=virtual/cuda-12
 		)
 	)
 	dav1d? (
@@ -1265,7 +1242,10 @@ DEPEND+="
 		>=media-libs/amf-headers-1.5.0:=
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		virtual/cuda:=
+		|| (
+			=virtual/cuda-12*
+		)
 		media-libs/nv-codec-headers:=
 	)
 	ladspa? (
