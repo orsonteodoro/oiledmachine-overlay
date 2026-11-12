@@ -23,20 +23,6 @@ LLVM_COMPAT=(
 )
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-CUDA_TARGETS_COMPAT=(
-	"compute_50"
-	"compute_52"
-	"compute_53"
-	"compute_60"
-	"compute_61"
-	"compute_62"
-	"compute_70"
-	"compute_75"
-	"compute_80"
-	"compute_86"
-	"compute_89"
-	"compute_90"
-)
 
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( "python3_"{10..14} ) # U22 (3.10 - 3.11), Relaxed
@@ -79,76 +65,22 @@ SLOT="0/${SOVER}"
 # cuda is default on upstream
 # test is default on upstream
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
 ebuild_revision_6
 "
-gen_required_use_cuda_targets() {
-	local x
-	for x in "${CUDA_TARGETS_COMPAT[@]}" ; do
-		echo  "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_required_use_cuda_targets)
-	cuda? (
-		^^ (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
 	X? (
 		glfw
 	)
 "
-CUDA_12_6_RDEPEND="
-	dev-util/nvidia-cuda-toolkit:=
-	|| (
-		=dev-util/nvidia-cuda-toolkit-12.6*
-	)
-	>=x11-drivers/nvidia-drivers-560.35.05:=
-"
 RDEPEND="
 	${PYTHON_DEPS}
-	cuda_targets_compute_50? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_52? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_53? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_60? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_61? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_62? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_70? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_75? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_80? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_86? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_89? (
-		${CUDA_12_6_RDEPEND}
-	)
-	cuda_targets_compute_90? (
-		${CUDA_12_6_RDEPEND}
+	cuda? (
+		virtual/cuda:=
+		|| (
+			=virtual/cuda-12*
+		)
 	)
 	glew? (
 		media-libs/glew:=
@@ -280,7 +212,7 @@ einfo "CXX:\t\t${CXX}"
 
 	local cc_bin
 	if use cuda ; then
-		cc_bin="-ccbin "$(realpath "${ESYSROOT}/usr/bin/${CHOST}-gcc-11")
+		cc_bin="-ccbin "$(realpath "${ESYSROOT}/usr/bin/${CHOST}-gcc")
 	fi
 
 	if ! use cuda ; then
@@ -292,12 +224,17 @@ einfo "CXX:\t\t${CXX}"
 		mycmakeargs+=(
 			-DOSD_CUDA_NVCC_FLAGS="${cc_bin} ${OSD_CUDA_NVCC_FLAGS}"
 		)
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" ; then
+	else
 		local x
-		for x in "${!CUDA_TARGET_TO_COMPUTE[@]}" ; do
-			if use "${x}" ; then
+		for x in $(get_cuda_targets) ; do
+			if [[ "${x}" =~ "compute_" ]] ; then
 				mycmakeargs+=(
 					-DOSD_CUDA_NVCC_FLAGS="${cc_bin} --gpu-architecture ${x}"
+				)
+				break
+			elif [[ "${x}" =~ "sm_" ]] ; then
+				mycmakeargs+=(
+					-DOSD_CUDA_NVCC_FLAGS="${cc_bin} --gpu-architecture ${x/compute_/sm_}"
 				)
 				break
 			fi
