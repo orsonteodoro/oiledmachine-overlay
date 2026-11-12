@@ -991,8 +991,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	if use cuda ; then
 		local CA
-		for CA in ${CUDA_TARGETS_COMPAT[*]}; do
-			use "${CA/#/cuda_targets_}" && CUDA_ARCH+="${CA#sm_*}-real;"
+		for CA in $(get_cuda_targets) ; do
+			CUDA_ARCH+="${CA#sm_*}-real;"
 		done
 		mycmakeargs+=(
 			-DCMAKE_CUDA_ARCHITECTURES="${CUDA_ARCH%%;}"
