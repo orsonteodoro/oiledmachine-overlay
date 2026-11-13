@@ -16,13 +16,13 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 
-MITIGATION_DATE="Oct 27, 2026" # Official annoucement (advisories)
-MITIGATION_LAST_UPDATE=1793081520 # From `date +%s -d "26-Oct-2026 23:12"` From ftp source code
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-120/"
+MITIGATION_DATE="Nov 10, 2026" # Official annoucement (advisories)
+MITIGATION_LAST_UPDATE=1794287280 # From `date +%s -d "09-Nov-2026 21:08"` From ftp source code
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2026-127/"
 VULNERABILITIES_FIXED=(
 )
 
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-05.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-153-patches-01.tar.xz"
 
 RUST_LIVE_TIMESTAMP="Fri, 14 Aug 2026 09:23:13 -0700"
@@ -132,8 +132,8 @@ BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
 	llvm_slot_22? (
 		|| (
-			dev-lang/rust:1.97.1
-			dev-lang/rust-bin:1.97.1
+			dev-lang/rust:1.98.1
+			dev-lang/rust-bin:1.98.1
 		)
 	)
 	llvm_slot_23? (
