@@ -12,12 +12,13 @@ CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 EXPECTED_CARGO_HASH="fe59f1b94c8c549a27ae977606d9b886e31f13a1b1c774f558c167c2973c8683324f89c7e8940721f318f91e9a8d8599b422569622aa4f5e73197572e208e82e"
-PYTHON_COMPAT=( python3_{11..14} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 RUST_LIVE_TIMESTAMP="Fri, 22 May 2026 00:33:25 -0700" # Same as 1.98.0 version bump
-RUST_MAX_VER="1.97.1" # LLVM 22.1
-RUST_MIN_VER="1.90.0" # LLVM 20.1 for harfbuzz_rust@0.0.0
+# For harfbuzz_rust@0.0.0 which needs LLVM >= 20
+RUST_MAX_VER="1.98.1" # LLVM 22.1
+RUST_MIN_VER="1.86.0" # LLVM 19.1 # Placeholder
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_NIGHTLY_PV="1.100.0"
 
@@ -70,8 +71,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
-	{20..22} # For Rust
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	# 21 22 # For Rust
 )
 
 inherit cargo cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot meson-multilib python-any-r1 secure-version rustflags-hardened xdg-utils
@@ -122,7 +123,10 @@ IUSE+="
 +introspection test -thinlto +truetype +utilities +vector +zlib
 ebuild_revision_15
 "
+# fatlto and thinlto need llvm_slot_20
 RESTRICT="
+	!fatlto
+	!thinlto
 	mirror
 	!test? (
 		test
@@ -133,12 +137,13 @@ REQUIRED_USE="
 		thinlto
 		fatlto
 	)
-	fatlto? (
-		llvm_slot_20
+	?? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	fontations? (
 		^^ (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
+			llvm_slot_21
+			llvm_slot_22
 		)
 		|| (
 			amd64
@@ -147,7 +152,8 @@ REQUIRED_USE="
 	)
 	harfrust? (
 		^^ (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
+			llvm_slot_21
+			llvm_slot_22
 		)
 		|| (
 			amd64
@@ -159,9 +165,6 @@ REQUIRED_USE="
 	)
 	test? (
 		utilities
-	)
-	thinlto? (
-		llvm_slot_20
 	)
 "
 
@@ -205,10 +208,10 @@ DEPEND="
 	${RDEPEND}
 "
 RUST_BDEPEND="
-	llvm_slot_20? (
+	llvm_slot_19? (
 		|| (
-			dev-lang/rust-bin:1.90.0
-			dev-lang/rust:1.90.0
+			dev-lang/rust-bin:1.86.0
+			dev-lang/rust:1.86.0
 		)
 	)
 	llvm_slot_21? (
@@ -219,8 +222,8 @@ RUST_BDEPEND="
 	)
 	llvm_slot_22? (
 		|| (
-			dev-lang/rust-bin:1.97.1
-			dev-lang/rust:1.97.1
+			dev-lang/rust-bin:1.98.1
+			dev-lang/rust:1.98.1
 		)
 	)
 	|| (
@@ -444,7 +447,7 @@ multilib_src_configure() {
 		-Dwasm=disabled
 	)
 
-	if is_rust && ( use fatlto || use thinlto ) && use llvm_slot_20 ; then
+	if is_rust && ( use fatlto || use thinlto ) && in_iuse llvm_slot_20 && use llvm_slot_20 ; then
 # People will still insist to mix different IR versions.
 ewarn "Using Rust may break LTS userland with LTO for ${CATEGORY}/${PN}."
 ewarn "To reduce the risk of runtime failure disable thinlto and fatlto USE flags."
