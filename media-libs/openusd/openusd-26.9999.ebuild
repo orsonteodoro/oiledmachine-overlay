@@ -6,9 +6,9 @@ EAPI=8
 # U22
 
 # For dependencies, see
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/VERSIONS.md
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/build_scripts/build_usd.py#L2019
-# https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/build_scripts/build_usd.py#L763
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/dev/VERSIONS.md
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/dev/build_scripts/build_usd.py#L2019
+# https://github.com/PixarAnimationStudios/OpenUSD/blob/dev/build_scripts/build_usd.py#L763
 
 BOOST_PV="1.80.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
@@ -50,9 +50,9 @@ inherit cflags-hardened check-compiler-switch chkl libcxx-slot libstdcxx-slot
 inherit python-single-r1 flag-o-matic secure-version cmake
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	INTERNAL_VERSION="0.26.11"
+	INTERNAL_VERSION="0.27.2" # See https://github.com/PixarAnimationStudios/OpenUSD/blob/dev/cmake/defaults/Version.cmake
 	SUBSLOT="${INTERNAL_VERSION}"
-	FALLBACK_COMMIT="2a9a571d0f9957bad5c4a59ba859ebb8df518c51"
+	FALLBACK_COMMIT="39c5ce8fa2255956c18c6ea34c33733980708acd"
 	EGIT_BRANCH="dev"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenUSD-${PV}"
 	EGIT_REPO_URI="https://github.com/PixarAnimationStudios/OpenUSD.git"
@@ -91,7 +91,7 @@ LICENSE="
 	MIT
 	OpenUSD-23.11
 "
-# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/dev/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0/${SUBSLOT}"
@@ -230,7 +230,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.26.5
+	>=dev-build/cmake-3.27
 	>=sys-devel/bison-2.4.1
 	>=sys-devel/flex-2.5.39
 	dev-cpp/argparse
@@ -328,7 +328,7 @@ ewarn "Uninstall ${PN} to avoid build failure the re-emerge ${PN}."
 			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/v26.05/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/OpenUSD/blob/dev/cmake/defaults/Options.cmake
 	local mycmakeargs+=(
 		$(usex jemalloc "-DPXR_MALLOC_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so" "")
 		$(usex usdview "-DPYSIDEUICBINARY:PATH=${S}/pyside2-uic" "")
