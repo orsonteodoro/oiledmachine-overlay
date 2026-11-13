@@ -465,7 +465,7 @@ Unsupported or rejected projects/ebuilds
 
 Overlay compatibility with open source projects
 
-| Abbreviations | Meaning         | Supported open source projects? [1]                       |
+| Abbreviations | Meaning         | Supported open source projects? [1][2]                    |
 | ---           | ---             | ---                                                       |
 | A             | Arch Linux      | Yes (e.g. projects on GitHub)                             |
 | Aedge         | Alpine edge     | Limited (e.g. WIP Chromium based musl)                    |
@@ -488,3 +488,4 @@ Overlay compatibility with open source projects
 
 [1] Compatibility is focused on C/C++, and fully compatible with Rust and Go,
 but limited compatibility for Python and other languages.
+[2] Mostly based on CI/CD images and logs or version control branches
