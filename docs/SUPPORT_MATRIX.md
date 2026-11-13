@@ -465,7 +465,7 @@ Unsupported or rejected projects/ebuilds
 
 Overlay compatibility with open source projects
 
-| Abbreviations | Meaning         | Supported open source projects [1]                        |
+| Abbreviations | Meaning         | Supported open source projects? [1]                       |
 | ---           | ---             | ---                                                       |
 | A             | Arch Linux      | Yes (e.g. projects on GitHub)                             |
 | Aedge         | Alpine edge     | Limited (e.g. WIP Chromium based musl)                    |
