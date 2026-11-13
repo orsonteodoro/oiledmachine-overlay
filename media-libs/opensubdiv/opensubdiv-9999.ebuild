@@ -31,8 +31,8 @@ inherit check-compiler-switch cmake cuda flag-o-matic libcxx-slot libstdcxx-slot
 inherit python-any-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	SOVER="3.7.0"
-	FALLBACK_COMMIT="3e685669767c7441f11a0cf2c2ac08ca7d08bd43"
+	SOVER="3.8.0"
+	FALLBACK_COMMIT="86b1a462e50e25017c6e5b23fada23d42d644d62"
 	EGIT_BRANCH="dev"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenSubdiv-${MY_PV}"
 	EGIT_REPO_URI="https://github.com/PixarAnimationStudios/OpenSubdiv.git"
