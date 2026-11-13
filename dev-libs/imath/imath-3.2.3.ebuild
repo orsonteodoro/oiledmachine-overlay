@@ -20,7 +20,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed
+PYTHON_COMPAT=( "python3_"{11..14} ) # Relaxed
 
 inherit cmake flag-o-matic libcxx-slot libstdcxx-slot python-single-r1
 
@@ -34,7 +34,7 @@ https://github.com/AcademySoftwareFoundation/${MY_PN}/archive/refs/tags/v${PV}.t
 DESCRIPTION="Imath basic math package"
 HOMEPAGE="https://imath.readthedocs.io"
 LICENSE="BSD"
-# For slotting, see https://github.com/AcademySoftwareFoundation/Imath/blob/v3.2.2/CMakeLists.txt#L41
+# For slotting, see https://github.com/AcademySoftwareFoundation/Imath/blob/v3.2.3/CMakeLists.txt#L41
 SLOT_MAJOR="${PV%%.*}"
 SOVER="30"
 SLOT="${SLOT_MAJOR}/${SOVER}"
