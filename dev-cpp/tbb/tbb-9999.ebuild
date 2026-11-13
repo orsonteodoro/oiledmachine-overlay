@@ -18,7 +18,7 @@ LLVM_COMPAT=(
 inherit cmake-multilib flag-o-matic libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="8976636cbd8962464cebabf4e097626ceda64809"
+	FALLBACK_COMMIT="a27db6338855cf197ff03f8e5b5daa30362a587e"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/oneTBB-${PV}"
 	EGIT_REPO_URI="https://github.com/uxlfoundation/oneTBB.git"
@@ -37,14 +37,14 @@ S="${WORKDIR}/oneTBB-${PV}"
 LICENSE="Apache-2.0"
 # https://github.com/oneapi-src/oneTBB/blob/master/CMakeLists.txt#L53
 # libtbb<SONAME>-libtbbmalloc<SONAME>-libtbbbind<SONAME>
-SOVER_TBB="12.20"
-SOVER_TBBMALLOC="2.20"
-SOVER_TBBBIND="3.20"
+SOVER_TBB="12.21"
+SOVER_TBBMALLOC="2.21"
+SOVER_TBBBIND="3.21"
 SLOT="0/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~x64-macos"
 IUSE+="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
