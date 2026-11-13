@@ -1788,7 +1788,7 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# use the build information for 64-bit linking, which should be 32-bit.
 
 	# Prevent tab crash
-	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-143.0.3-disable-broken-flags-dom-bindings.patch"
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-160.0-disable-broken-flags-dom-bindings.patch"
 
 	# Prevent video seek bug
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disable-broken-flags-ipc-chromium-chromium-config.patch"

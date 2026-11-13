@@ -1,0 +1,23 @@
+--- a/dom/bindings/moz.build.orig	2026-11-04 13:25:28.000000000 -0800
++++ b/dom/bindings/moz.build	2026-11-13 04:12:30.632435261 -0800
+@@ -226,6 +226,20 @@ if CONFIG["COMPILE_ENVIRONMENT"]:
+ if CONFIG["CC_TYPE"] == "gcc" and 10 <= int(CONFIG["CC_VERSION"].split(".")[0]) < 12:
+     CXXFLAGS += ["-Wno-stringop-overflow"]
+ 
++if CONFIG["CC_TYPE"] in ("clang"):
++    # Prevent tab crash
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent tab crash
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
+ SOURCE_HEADERS += [
+     "nsScriptError.h",
+ ]
