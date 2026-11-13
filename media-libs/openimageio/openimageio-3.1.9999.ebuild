@@ -73,9 +73,9 @@ inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic font
 inherit libcxx-slot libstdcxx-slot llvm secure-version virtualx python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	INTERNAL_VERSION="3.1.17.0"
+	INTERNAL_VERSION="3.1.19.0"
 	SOVER=$(ver_cut "1-3" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="6afe7ba033071df0d02e378387910315ab329000"
+	FALLBACK_COMMIT="0225b1d4129c77ff8c7d32187c585cb60ca77436"
 	EGIT_BRANCH="dev-3.1"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenImageIO-${PV}"
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenImageIO.git"
@@ -138,7 +138,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 aom avif clang color-management cuda dds dicom +doc ffmpeg field3d fits
 gcc gif gui heif icc j2c jpeg2k jxl opencv opengl openvdb png ptex +python +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-ebuild_revision_47
+ebuild_revision_48
 "
 gen_llvm_required_use() {
 	local s
