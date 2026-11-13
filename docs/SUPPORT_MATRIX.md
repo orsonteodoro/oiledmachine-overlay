@@ -56,51 +56,53 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Compiler                        | Ebuild level of support               | Distro or CI image correspondence                  |
-| ---                             | ---                                   | ---                                                |
-| Clang <= 16                     | Not supported                         | D12 (14.0), U22 (14.0)                             |
-| Clang 17                        | Not supported                         | G (17.0.6)                                         |
-| Clang 18                        | Not supported                         | G (18.1.8), U24 (18.0)                             |
-| Clang 19                        | Available                             | D13 (19.0), G (19.1.7)                             |
-| Clang 20                        | Available                             | G (20.1.8)                                         |
-| Clang 21                        | Available                             | F43 (21.1.8), G (21.1.8), U26 (21.1.8)             |
-| Clang 22 [c]                    | Partially supported                   | F44 (22.1.8), G (22.1.8)                           |
-| Clang 23                        | Available                             | F45 (23.1.0)                                       |
-| Clang 24                        | Limited support                       |                                                    |
-| Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)                          |
-| Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)                          |
-| Cython 3.1.0                    | Fully supported                       | F43 (3.1.3), U26 (3.1.6)                           |
-| Cython 3.2.0                    | Not supported                         | F44 (3.2.4), F45 (3.2.8), G (3.2.8)                |
-| Cython 3.3.0                    | Not supported                         |                                                    |
-| GCC <= 10                       | Not supported                         |                                                    |
-| GCC 11                          | Limited [1]                           | U22 (11.2), G (11.5.0)                             |
-| GCC 12                          | Not supported                         | D12 (12.2), G (12.5.0)                             |
-| GCC 13                          | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                   |
-| GCC 14                          | Partially Supported                   | D13 (14.2), G (14.3.1_p20260604)                   |
-| GCC 15 [c]                      | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)             |
-| GCC 16			  | Available                             | F44 (16.2.1), F45 (16.2.1)                         |
-| GCC 17                          | Available but not supported           |                                                    |
-| Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                                       |
-| Rust 1.74.1                     | Available                             |                                                    |
-| Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)                         |
-| Rust 1.85.1                     | Available                             | D13 (1.85.0)                                       |
-| Rust 1.86.0                     | Available                             |                                                    |
-| Rust 1.88.0                     | Available                             |                                                    |
-| Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)                         |
-| Rust 1.91.0                     | Not supported                         |                                                    |
-| Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)           |
-| Rust 1.92.0                     | Available                             | U26 (1.92.0)                                       |
-| Rust 1.93.1 [C]                 | Fully supported                       | U26 (1.93.1)                                       |
-| Rust 1.94.1                     | Available                             |                                                    |
-| Rust 1.95.0                     | Available                             |                                                    |
-| Rust 1.96.1                     | Available                             |                                                    |
-| Rust 1.97.1                     | Available                             |                                                    |
-| Rust 1.98.1                     | Available                             | G (1.98.1)                                         |
-| Rust 1.99.0                     | Not supported                         |                                                    |
-| Rust 1.99.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)           |
-| Rust-9999 (1.101.0-nightly) [C] | Limited support                       |                                                    |
+| Compiler                        | Ebuild level of support               | Distro or CI image correspondence                          |
+| ---                             | ---                                   | ---                                                        |
+| Clang <= 16                     | Not supported                         | D12 (14.0), U22 (14.0)                                     |
+| Clang 17                        | Not supported                         | G (17.0.6)                                                 |
+| Clang 18                        | Not supported                         | G (18.1.8), U24 (18.0)                                     |
+| Clang 19                        | Available                             | D13 (19.0), G (19.1.7)                                     |
+| Clang 20                        | Not supported [2]                     | G (20.1.8)                                                 |
+| Clang 21                        | Available                             | Nunstable (21.1.8), F43 (21.1.8), G (21.1.8), U26 (21.1.8) |
+| Clang 22 [c]                    | Partially supported                   | F44 (22.1.8), G (22.1.8)                                   |
+| Clang 23                        | Available                             | F45 (23.1.5)                                               |
+| Clang 24                        | Limited support                       |                                                            |
+| Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32), U22 (0.29)                                  |
+| Cython 3.0.12                   | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)                                  |
+| Cython 3.1.0                    | Fully supported                       | F43 (3.1.3), U26 (3.1.6)                                   |
+| Cython 3.2.0                    | Not supported                         | F44 (3.2.4), F45 (3.2.8), G (3.2.8)                        |
+| Cython 3.3.0                    | Not supported                         |                                                            |
+| GCC <= 10                       | Not supported                         |                                                            |
+| GCC 11                          | Limited [1]                           | U22 (11.2), G (11.5.0)                                     |
+| GCC 12                          | Not supported                         | D12 (12.2), G (12.5.0)                                     |
+| GCC 13                          | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                           |
+| GCC 14                          | Partially Supported                   | D13 (14.2), G (14.3.1_p20260604)                           |
+| GCC 15 [c]                      | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)                     |
+| GCC 16			  | Available                             | Nunstable (16.2.0), F44 (16.2.1), F45 (16.2.1)             |
+| GCC 17                          | Available but not supported           |                                                            |
+| Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                                               |
+| Rust 1.74.1                     | Available                             |                                                            |
+| Rust 1.75.0                     | Available                             | U22 (1.75.0), U24 (1.75.0)                                 |
+| Rust 1.85.1                     | Available                             | D13 (1.85.0)                                               |
+| Rust 1.86.0                     | Available                             |                                                            |
+| Rust 1.88.0                     | Available                             |                                                            |
+| Rust 1.89.0                     | Available                             | U22 (1.89.0), U24 (1.89.0)                                 |
+| Rust 1.91.0                     | Not supported                         |                                                            |
+| Rust 1.91.1                     | Available                             | U22 (1.91.1), U24 (1.91.1), U26 (1.91.1)                   |
+| Rust 1.92.0                     | Available                             | U26 (1.92.0)                                               |
+| Rust 1.93.1 [C]                 | Fully supported                       | U26 (1.93.1)                                               |
+| Rust 1.94.1                     | Available                             |                                                            |
+| Rust 1.95.0                     | Available                             |                                                            |
+| Rust 1.96.1                     | Available                             |                                                            |
+| Rust 1.97.1                     | Available                             |                                                            |
+| Rust 1.98.1                     | Available                             | G (1.98.1)                                                 |
+| Rust 1.99.0                     | Not supported                         |                                                            |
+| Rust 1.99.1 [C]                 | Fully supported                       | F43 (1.98.1), F44 (1.98.1), F45 (1.98.1)                   |
+| Rust-9999 (1.101.0-nightly) [C] | Limited support                       |                                                            |
 
 [1] Only Godot allowed.
+
+[2] Skipped since most projects use either F45, Nunstable, U22, U24, U26 for CI/CD testing.
 
 Rows marked with [c] are the current development slots for C/C++ development for
 LTS.
