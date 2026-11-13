@@ -116,7 +116,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-12.3-fix-pyproject.patch"
 	"${FILESDIR}/${PN}-12.3-optionalize-hibp.patch"
 	"${FILESDIR}/${PN}-12.3-reduce-database-lock-time.patch"
-	"${FILESDIR}/${PN}-12.3-change-default-password-generator-length.patch"
+	"${FILESDIR}/${PN}-14.0-change-default-password-generator-length.patch"
 	"${FILESDIR}/${PN}-12.3-enable-numbers-as-default-for-password-generator.patch"
 	"${FILESDIR}/${PN}-12.3-symbol-set-change-and-enable-symbols-by-default.patch"
 )
