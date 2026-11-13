@@ -21,7 +21,7 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{9..14} )
+PYTHON_COMPAT=( "python3_"{11..15} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -69,9 +69,9 @@ inherit check-compiler-switch chkl cmake flag-o-matic libcxx-slot libstdcxx-slot
 inherit secure-version virtualx python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	INTERNAL_VERSION="2.6.0"
+	INTERNAL_VERSION="2.7.0"
 	SOVER=$(ver_cut "1-2" "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="5a808fb57a94c7229640a97835c420c9a1fbd1fe"
+	FALLBACK_COMMIT="22dd9c4faa0d1b7cfb3d64d1a6e9cb454acc6cfd"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/OpenColorIO-${PV}"
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenColorIO.git"
@@ -108,7 +108,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 doc minizip-ng opengl python static-libs test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	doc? (
