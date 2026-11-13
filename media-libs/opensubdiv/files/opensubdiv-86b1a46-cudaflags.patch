@@ -1,0 +1,20 @@
+--- a/CMakeLists.txt.orig	2026-11-13 07:06:24.622185930 -0800
++++ b/CMakeLists.txt	2026-11-13 07:07:57.921524032 -0800
+@@ -594,7 +594,7 @@ if(CUDAToolkit_FOUND)
+     )
+     set(OSD_GPU TRUE)
+ 
+-    if (UNIX)
++    if (FALSE)
+         # Use OSD_CUDA_NVCC_FLAGS to specify --gpu-architecture or other CUDA
+         # compilation options. The overrides here are only for compatibility
+         # with older OpenSubdiv releases and obsolete CUDA versions.
+@@ -607,7 +607,7 @@ if(CUDAToolkit_FOUND)
+         endif()
+     endif()
+ 
+-    if (DEFINED OSD_CUDA_NVCC_FLAGS)
++    if (FALSE)
+         string(REPLACE ";" " " OSD_CUDA_NVCC_FLAGS_STR "${OSD_CUDA_NVCC_FLAGS}")
+         string(APPEND CMAKE_CUDA_FLAGS " ${OSD_CUDA_NVCC_FLAGS_STR}")
+     endif()

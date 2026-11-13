@@ -126,7 +126,7 @@ BDEPEND="
 "
 PATCHES_=(
 	"${FILESDIR}/${PN}-3.6.0-use-gnuinstalldirs.patch"
-	"${FILESDIR}/${PN}-3.6.0-cudaflags.patch"
+	"${FILESDIR}/${PN}-86b1a46-cudaflags.patch"
 )
 DOCS=( "README.md" )
 
