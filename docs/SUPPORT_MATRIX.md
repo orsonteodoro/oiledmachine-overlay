@@ -488,4 +488,4 @@ Overlay compatibility with open source projects
 
 * [1] Compatibility is focused on C/C++, and fully compatible with Rust and Go,
 but limited compatibility for Python and other languages.
-* [2] Mostly based on CI/CD images and logs or version control branches
+* [2] Mostly based on CI/CD or Dockerfile images, CI/CD logs or configuration, or version control branches
