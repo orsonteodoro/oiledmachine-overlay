@@ -1,0 +1,53 @@
+diff '--color=auto' -urp ollama-0.40.16.orig/cmd/launch/hermes.go ollama-0.40.16/cmd/launch/hermes.go
+--- ollama-0.40.16.orig/cmd/launch/hermes.go	2026-11-07 16:36:53.000000000 -0800
++++ ollama-0.40.16/cmd/launch/hermes.go	2026-11-13 20:45:14.025865006 -0800
+@@ -367,6 +367,8 @@ func (h *Hermes) ensureInstalledFor(comm
+ 		return nil
+ 	}
+ 
++	return fmt.Errorf("hermes installation cancelled") // DISABLE_HERMES
++
+ 	var missing []string
+ 	if hermesGOOS != "windows" {
+ 		for _, dep := range []string{"bash", "curl", "git"} {
+Only in ollama-0.40.16/cmd/launch: hermes.go.orig
+diff '--color=auto' -urp ollama-0.40.16.orig/cmd/launch/kimi.go ollama-0.40.16/cmd/launch/kimi.go
+--- ollama-0.40.16.orig/cmd/launch/kimi.go	2026-11-07 16:36:53.000000000 -0800
++++ ollama-0.40.16/cmd/launch/kimi.go	2026-11-13 20:47:44.034154303 -0800
+@@ -668,6 +668,8 @@ func ensureKimiInstalled() (string, erro
+ 		return "", err
+ 	}
+ 
++	return "", fmt.Errorf("kimi installation cancelled") // DISABLE_KIMI
++
+ 	prompt := "Kimi is not installed. Install now?"
+ 	if existing != "" {
+ 		prompt = fmt.Sprintf("kimi-cli %s is no longer maintained and has been replaced by Kimi Code. Install Kimi Code now?", version)
+Only in ollama-0.40.16/cmd/launch: kimi.go.orig
+Only in ollama-0.40.16/cmd/launch: kimi.go.rej
+diff '--color=auto' -urp ollama-0.40.16.orig/cmd/launch/openclaw.go ollama-0.40.16/cmd/launch/openclaw.go
+--- ollama-0.40.16.orig/cmd/launch/openclaw.go	2026-11-07 16:36:53.000000000 -0800
++++ ollama-0.40.16/cmd/launch/openclaw.go	2026-11-13 20:45:14.026571091 -0800
+@@ -596,6 +596,8 @@ func ensureOpenclawInstalled() (string,
+ 		return "clawdbot", nil
+ 	}
+ 
++	return "", fmt.Errorf("openclaw installation cancelled") // DISABLE_OPENCLAW
++
+ 	_, npmErr := exec.LookPath("npm")
+ 	_, gitErr := exec.LookPath("git")
+ 	if npmErr != nil || gitErr != nil {
+Only in ollama-0.40.16/cmd/launch: openclaw.go.orig
+diff '--color=auto' -urp ollama-0.40.16.orig/cmd/launch/pi.go ollama-0.40.16/cmd/launch/pi.go
+--- ollama-0.40.16.orig/cmd/launch/pi.go	2026-11-07 16:36:53.000000000 -0800
++++ ollama-0.40.16/cmd/launch/pi.go	2026-11-13 20:45:14.026836974 -0800
+@@ -436,6 +436,8 @@ func ensurePiInstalled() (string, error)
+ 		return "pi", nil
+ 	}
+ 
++	return "", fmt.Errorf("pi installation cancelled") // DISABLE_PI
++
+ 	if _, err := exec.LookPath("npm"); err != nil {
+ 		return "", fmt.Errorf("pi is not installed and required dependencies are missing\n\nInstall the following first:\n  npm (Node.js): https://nodejs.org/\n\nThen re-run:\n  ollama launch pi")
+ 	}
+Only in ollama-0.40.16/cmd/launch: pi.go.orig
