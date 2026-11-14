@@ -2484,7 +2484,7 @@ einfo "Checking toolchain"
 	else
 		ragel --version || die
 		ragel_pv=$(ragel --version | head -n 1 | cut -f 6 -d " ")
-		if ver_test ${ragel_pv} -lt "7.0.0.10" ; then
+		if ver_test "${ragel_pv}" -lt "7.0.0.10" ; then
 			:
 		else
 eerror
@@ -2788,7 +2788,7 @@ einfo "DEBUG:  CPU_FEATURES edited file:  ${S_LLAMA_CPP}/ggml/src/CMakeLists.txt
 	local arm_ext=""
 	if use cpu_flags_arm_i8mm ; then
 		local found=0
-		for a in ${I8MM_ARCHES[@]} ; do
+		for a in "${I8MM_ARCHES[@]}" ; do
 			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
 				arm_ext+="+i8mm"
 				found=1
@@ -2803,7 +2803,7 @@ eerror "You need to set -march= to one of ${I8MM_ARCHES[@]}"
 
 	if use cpu_flags_arm_sve ; then
 		local found=0
-		for a in ${SVE_ARCHES[@]} ; do
+		for a in "${SVE_ARCHES[@]}" ; do
 			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
 				arm_ext+="+sve"
 				found=1
@@ -3076,59 +3076,59 @@ ewarn "ollama_llms_${n} is a community provided LLM.  Use at your own risk."
 	local gpu_args=()
 
 	if use cpu_flags_x86_sse ; then
-		gpu_args+=( sse )
+		gpu_args+=( "sse" )
 	fi
 
 	if use cpu_flags_x86_sse2 ; then
-		gpu_args+=( sse2 )
+		gpu_args+=( "sse2" )
 	fi
 
 	if use cpu_flags_x86_sse3 ; then
-		gpu_args+=( sse3 )
+		gpu_args+=( "sse3" )
 	fi
 
 	if use cpu_flags_x86_ssse3 ; then
-		gpu_args+=( ssse3 )
+		gpu_args+=( "ssse3" )
 	fi
 
 	if use cpu_flags_x86_avx ; then
-		gpu_args+=( avx )
+		gpu_args+=( "avx" )
 	fi
 
 	if use cpu_flags_x86_avx2 ; then
-		gpu_args+=( avx2 )
+		gpu_args+=( "avx2" )
 	fi
 
 	if use cpu_flags_x86_avxvnni ; then
-		gpu_args+=( avxvnni )
+		gpu_args+=( "avxvnni" )
 	fi
 
 	if use cpu_flags_x86_avxvnniint8 ; then
-		gpu_args+=( avxvnniint8 )
+		gpu_args+=( "avxvnniint8" )
 	fi
 
 	if use cpu_flags_x86_avx512f ; then
-		gpu_args+=( avx512f )
+		gpu_args+=( "avx512f" )
 	fi
 
 	if use cpu_flags_x86_fma ; then
-		gpu_args+=( fma )
+		gpu_args+=( "fma" )
 	fi
 
 	if use cpu_flags_x86_f16c ; then
-		gpu_args+=( f16c )
+		gpu_args+=( "f16c" )
 	fi
 
 	if use cpu_flags_x86_avx512vbmi ; then
-		gpu_args+=( avx512vbmi )
+		gpu_args+=( "avx512vbmi" )
 	fi
 
 	if use cpu_flags_x86_avx512vnni ; then
-		gpu_args+=( avx512vnni )
+		gpu_args+=( "avx512vnni" )
 	fi
 
 	if use cpu_flags_x86_avx512bf16 ; then
-		gpu_args+=( avx512bf16 )
+		gpu_args+=( "avx512bf16" )
 	fi
 
 	if [[ -n "${gpu_args[@]}" ]] ; then
@@ -3148,19 +3148,19 @@ ewarn "ollama_llms_${n} is a community provided LLM.  Use at your own risk."
 		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
 		mkl_pv=$(ver_cut "1-3" "${pv}")
 	# We force tbb to dedupe thread libs.  GPU acceleration already uses tbb unconditionally.
-		local cflags=$(pkg-config --cflags mkl-dynamic-lp64-tbb)
-		local libs=$(pkg-config --libs mkl-dynamic-lp64-tbb)
+		local cflags=$(pkg-config --cflags "mkl-dynamic-lp64-tbb")
+		local libs=$(pkg-config --libs "mkl-dynamic-lp64-tbb")
 		local path="/opt/intel/oneapi/mkl/${mkl_pv}/env/vars.sh"
 		[[ -e "${path}" ]] || die
 		source "${path}"
 # TODO:  Append CFLAG
 	elif use lapack ; then
-		local cflags=$(pkg-config --cflags blas)
-		local libs=$(pkg-config --libs blas)
+		local cflags=$(pkg-config --cflags "blas")
+		local libs=$(pkg-config --libs "blas")
 # TODO:  Append CFLAG
 	elif use openblas ; then
-		local cflags=$(pkg-config --cflags openblas)
-		local libs=$(pkg-config --libs openblas)
+		local cflags=$(pkg-config --cflags "openblas")
+		local libs=$(pkg-config --libs "openblas")
 # TODO:  Append CFLAG
 	fi
 
@@ -3238,26 +3238,26 @@ build_new_runner_cpu() {
 		cpu_flag_args="${cpu_flag_args:1}"
 		go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
 		go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
-		export CGO_CFLAGS_ALLOW=${cpu_flag_args}
-		export CGO_CXXFLAGS_ALLOW=${cpu_flag_args}
+		export CGO_CFLAGS_ALLOW="${cpu_flag_args}"
+		export CGO_CXXFLAGS_ALLOW="${cpu_flag_args}"
 	fi
 
 	if use cpu_flags_arm_sve ; then
 		args+=(
-			-tags sve
+			-tags "sve"
 		)
 		cpu_flags="sve"
 		unset OLLAMA_SKIP_CPU_RUNNER_GENERIC
 	elif use cpu_flags_x86_avx2 ; then
 		args+=(
-			-tags avx,avx2
+			-tags "avx,avx2"
 		)
 		cpu_flags="avx2,avx"
 		unset OLLAMA_SKIP_CPU_RUNNER_AVX
 		unset OLLAMA_SKIP_CPU_RUNNER_AVX2
 	elif use cpu_flags_x86_avx ; then
 		args+=(
-			-tags avx
+			-tags "avx"
 		)
 		cpu_flags="avx"
 		unset OLLAMA_SKIP_CPU_RUNNER_AVX
@@ -3270,7 +3270,7 @@ einfo "CUSTOM_CPU_FLAGS:  ${CUSTOM_CPU_FLAGS}"
 	if ! tc-enables-pie ; then
 		args+=(
 	# ASLR (buffer overflow mitigation)
-			-buildmode=pie
+			-buildmode="pie"
 		)
 	fi
 
@@ -3375,38 +3375,38 @@ einfo "Skipping GPU build"
 
 	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
-			-tags avx,avx2,cuda,${cuda_impl}
+			-tags "avx,avx2,cuda,${cuda_impl}"
 		)
 		cpu_flags="avx,avx2"
 	elif use cpu_flags_x86_avx && use cuda ; then
 		args+=(
-			-tags avx,cuda,${cuda_impl}
+			-tags "avx,cuda,${cuda_impl}"
 		)
 		cpu_flags="avx"
 	elif use cuda ; then
 		args+=(
-			-tags cuda,${cuda_impl}
+			-tags "cuda,${cuda_impl}"
 		)
 	elif use cpu_flags_x86_avx2 && use rocm ; then
 		args+=(
-			-tags avx,avx2,rocm
+			-tags "avx,avx2,rocm"
 		)
 		cpu_flags="avx,avx2"
 	elif use cpu_flags_x86_avx && use rocm ; then
 		args+=(
-			-tags avx,rocm
+			-tags "avx,rocm"
 		)
 		cpu_flags="avx"
 	elif use rocm ; then
 		args+=(
-			-tags rocm
+			-tags "rocm"
 		)
 	fi
 
 	if ! tc-enables-pie ; then
 		args+=(
 	# ASLR (buffer overflow mitigation)
-			-buildmode=pie
+			-buildmode="pie"
 		)
 	fi
 
@@ -3550,7 +3550,7 @@ src_compile() {
 		:
 	else
 		export GOPATH="${WORKDIR}/go-mod"
-		export GO111MODULE=on
+		export GO111MODULE="on"
 		pushd "${WORKDIR}/${P}" >/dev/null 2>&1 || die
 			:
 		popd >/dev/null 2>&1 || die
@@ -3613,7 +3613,7 @@ install_gpu_runners() {
 mv_exes() {
 	local L
 	L=(
-		$(find "${ED}/usr/lib/ollama" -type f)
+		$(find "${ED}/usr/lib/ollama" -type "f")
 	)
 	local x
 	for x in "${L[@]}" ; do
