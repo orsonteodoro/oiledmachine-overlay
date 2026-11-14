@@ -2258,7 +2258,9 @@ einfo "Replace EGO_SUM contents with the following:"
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if in_iuse fallback-commit && use fallback-commit ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_src_unpack
 		go-module_live_vendor
 		unpack "llama.cpp-${LLAMA_CPP_TAG}.tar.gz"
