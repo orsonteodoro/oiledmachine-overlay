@@ -16767,6 +16767,7 @@ einfo "Using GCC ${gcc_slot}"
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for GCC"
 	fi
 
+einfo
 einfo "Requested CC:  ${original_cc}"
 einfo "Adjusted CC:  ${CC}"
 einfo
@@ -16775,7 +16776,7 @@ einfo
 einfo "The requested CC is associated with /etc/portage/package.env."
 einfo "The adjusted CC is associated with USE or OT_KERNEL_USE flags."
 einfo
-ewarn "The two should not disagree."
+ewarn "Both the requested/adjusted CC should not disagree."
 einfo
 einfo "Solution:"
 einfo
