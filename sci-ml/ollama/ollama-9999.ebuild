@@ -3801,11 +3801,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/go-mod"
 	LCNR_TAG="third_party"
-#	lcnr_install_files
+	lcnr_install_files
 
 	LCNR_SOURCE="${S}"
 	LCNR_TAG="ollama"
-#	lcnr_install_files
+	lcnr_install_files
 }
 
 pkg_preinst() {
