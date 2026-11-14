@@ -3618,6 +3618,8 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     * default - Uses "integrity,selinux,bpf" with default subsettings
       equivalent to upstream defaults.  It is implied capability and
       integrity are loaded.
+    * landlock - An unprivileged sandbox module used to allow a process to
+      sandbox itself as unprivileged.
     * integrity - Is for trusted boot and runtime protection for continuous
       integrity enforcement.  Maintenence requires either ima_appraise=off, lsm=
       integrity exclusion, or CONFIG_IMA disablement.  It doesn't require TPM.
@@ -3665,14 +3667,15 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     For integrity LSM, lockdown LSM, loadpin LSM, it is recommended to have a
     bootloader entry to fix all/some of the mentioned LSMs to produce new
     signatures/hashes so that appraisal succeeds in the production kernel.
-    Ask the AI to generate an update script to update integrity and loadpin
-    for signatures/hashes in a single script and to sign out-of-tree modules.
-    The Plan B is a fix entry or rescue CD that is used to unbreak the init
-    process from misconfiguration or from forgetting to update the
-    signatures/hashes after updating parts of the init process.  For Secure
-    Boot for Plan C, you need to recovery plans early like having an extra
-    signed kernel with CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT.  Ask AI to help
-    setup recovery plans ahead of time.
+    The bootloader entry could be a rescue partition.  Ask the AI to generate
+    an update script to update integrity and loadpin for signatures/hashes in
+    a single script and to sign out-of-tree modules.  The Plan B is a fix
+    entry or rescue CD that is used to unbreak the init process from
+    misconfiguration or from forgetting to update the signatures/hashes after
+    updating parts of the init process.  For Secure Boot for Plan C, you need
+    to recovery plans early like having an extra signed kernel with
+    CONFIG_LOCK_DOWN_IN_EFI_SECURE_BOOT.  Ask AI to help setup recovery plans
+    ahead of time.
 
 
 
