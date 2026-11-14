@@ -56,8 +56,9 @@ EAPI=8
 #
 # To update the ebuild run `ebuild ollama-0.12.9.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 (clear EGO_SUM)
-# -> 1 -> 2 -> 0 (replace EGO_SUM results from phase 1 (direct-depends) with the
+# -> 1 -> 2 -> 3 -> 0 (replace EGO_SUM results from phase 1 (direct-depends) with the
 # list produced in phase 2 (direct-depends + depends-of-depends))
+# list produced in phase 3 (direct-depends + depends-of-depends + depends-of-depends-of-depends))
 #
 
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
@@ -2653,7 +2654,7 @@ src_unpack() {
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then
 	# Phase 1, direct deps
 			gen_unpack
-		elif [[ "${GEN_EBUILD}" == "2" ]] ; then
+		elif [[ "${GEN_EBUILD}" -ge "2" ]] ; then
 	# Phase 2, dep of dep [of dep ...]
 			go-module_src_unpack
 			gen_unpack
