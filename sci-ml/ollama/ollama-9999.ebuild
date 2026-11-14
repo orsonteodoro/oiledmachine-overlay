@@ -4087,6 +4087,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.30.7, 20260608) vulkan test with smollm:135m and firejail
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.32.4, 20260726) vulkan test with smollm:135m and firejail
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.35.1, 20261005) vulkan test with smollm:135m and firejail
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.40.17-rc0-6-ga5864fc-dirty, 20261114) vulkan test with smollm:135m and firejail
 # cpu test:  passed
 # vulkan test:  passed
 # Use `ollama ps` to check if 100% GPU or 100% CPU or view with _OLLAMA_DEBUG=1
