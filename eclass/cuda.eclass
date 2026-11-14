@@ -195,6 +195,7 @@ cuda_src_prepare() {
 }
 
 get_cuda_targets() {
+einfo "Called get_cuda_targets"
 	if [[ -z "${CUDA_TARGETS}" ]] ; then
 eerror
 eerror "To reduce the number of GPU kernels built and to complete the build in"
@@ -264,9 +265,11 @@ eerror "dev-util/nvidia-cuda-toolkit not installed"
 		IFS=';' read -ra L <<< "${CUDA_TARGETS}"
 	fi
 
+einfo "${L[@]}"
 	# Loop through the array to verify
-	for item in "${L[@]}"; do
-		echo "${item}"
+	local x
+	for x in "${L[@]}"; do
+		echo "${x}"
 	done
 }
 
