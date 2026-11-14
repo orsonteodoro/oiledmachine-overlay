@@ -9017,7 +9017,7 @@ einfo "Changing config to auto-signed modules with ${sign_modules_upper}"
 		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${sign_modules_lower}\""
 		SIGNED_MODULE_EXTRAVERSIONS+=( "${extraversion}" )
 
-		ot-kernel_fix_config_for_boot		# Force m->y for FDE
+		ot-kernel_fix_config_for_boot		# Force m -> y for the stupid config verifier for dm-crypt.  Prevent lockout.
 		ot-kernel_convert_tristate_fix		# Part 2 of fixes.
 	elif [[ "${sign_modules}" == "0" ]] ; then
 einfo "Disabling auto-signed modules"
@@ -13601,14 +13601,14 @@ ot-kernel_fix_config_for_boot() {
 			${OT_KERNEL_BOOT_SUBSYSTEMS}
 		)
 	else
-	# This also applies to FDE.
+	# This also applies to dm-crypt.
 		subsystems=(
 	# All related to boot initialization and logins
 			"crypto"
 			"drivers/ata"
 			"drivers/block"
 			"drivers/hid"
-			"drivers/md"
+			"drivers/md"			# dm-crypt
 			"drivers/scsi"
 			"drivers/usb"
 			"drivers/input/keyboard"
