@@ -64,6 +64,8 @@ inherit ot-kernel-v7.4
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 0fcb05b (20261014) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 65ba8f3 (20261028) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.3.9999 abf8c33 (20261030) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 7.4.9999 7e1392a (20261114) with builder profile with -O2 and -march=native, KFENCE off, KCFI off, UBSAN off, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM off, yama LSM on, usb autosuspend -1 (off)
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7.4.9999 7e1392a (20260914) with hardened profile with -O2 and -march=native, KASAN on, KCFI on, UBSAN on, -D_FORTIFY_SOURCE on, apparmor LSM on, capability LSM on, landlock LSM on, yama LSM on, usb autosuspend -1 (off)
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
 
