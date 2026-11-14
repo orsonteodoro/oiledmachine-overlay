@@ -68,14 +68,14 @@ EGO_PN="github.com/ollama/ollama"
 GEN_EBUILD=0
 LLAMA_CPP_UPDATE=0
 
-LLAMA_CPP_TAG="b12177" # See https://github.com/ollama/ollama/blob/v0.40.16/LLAMA_CPP_VERSION
+LLAMA_CPP_TAG="b12257" # See https://github.com/ollama/ollama/blob/main/LLAMA_CPP_VERSION
 
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.40.16/CMakePresets.json#L71
-# CUDA:  https://github.com/ollama/ollama/blob/v0.40.16/CMakePresets.json#L33
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.40.16/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/main/CMakePresets.json#L71
+# CUDA:  https://github.com/ollama/ollama/blob/main/CMakePresets.json#L33
+# Hardware support:  https://github.com/ollama/ollama/blob/main/docs/gpu.md
 
 I8MM_ARCHES=(
 	"armv8.2-a"
@@ -156,7 +156,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_amx_int8"
 )
 
-# https://github.com/ollama/ollama/blob/v0.40.16/discover/types.go#L173
+# https://github.com/ollama/ollama/blob/main/discover/types.go#L173
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -556,10 +556,6 @@ LLMS=(
 	"${COMMUNITY_LLMS[@]}"
 )
 
-if ! [[ "${PV}" =~ "9999" ]] ; then
-	export S_GO="${WORKDIR}/go-mod"
-fi
-
 CHKL_TIMESTAMPS=(
 	"app-shells/bash-9999"
 	"dev-lang/go-9999"
@@ -592,14 +588,13 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${P}"
-	S_LLAMA_CPP="${WORKDIR}/llama.cpp-${LLAMA_CPP_TAG}"
 
 	die "Building with tagged go is broken"
 	EGO_SUM=(
 	)
 	go-module_set_globals
 
-	if [[ "${GEN_EBUILD}" != "1" ]] ; then
+	if (( ${GEN_EBUILD} != 1 )) ; then
 		SRC_URI+="
 			${EGO_SUM_SRC_URI}
 		"
@@ -607,10 +602,15 @@ else
 	SRC_URI+="
 https://github.com/ollama/ollama/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/ggml-org/llama.cpp/archive/refs/tags/${LLAMA_CPP_TAG}.tar.gz
-	-> llama.cpp-${LLAMA_CPP_TAG}.tar.gz
 	"
 fi
+
+S_GO="${WORKDIR}/go-mod"
+S_LLAMA_CPP="${WORKDIR}/llama.cpp-${LLAMA_CPP_TAG}"
+SRC_URI+="
+https://github.com/ggml-org/llama.cpp/archive/refs/tags/${LLAMA_CPP_TAG}.tar.gz
+	-> llama.cpp-${LLAMA_CPP_TAG}.tar.gz
+"
 
 DESCRIPTION="Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs) synonymous with AI chatbots or AI assistants."
 HOMEPAGE="https://ollama.com"
@@ -2261,16 +2261,17 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_src_unpack
 		go-module_live_vendor
+		unpack "llama.cpp-${LLAMA_CPP_TAG}.tar.gz"
 	else
 		unpack "${P}.tar.gz"
 		unpack "llama.cpp-${LLAMA_CPP_TAG}.tar.gz"
 		#die
 
 	# Generating requires 2 phases for dependency of dependency
-		if [[ "${GEN_EBUILD}" == "1" ]] ; then
+		if (( ${GEN_EBUILD} == 1 )) ; then
 	# Phase 1, direct deps
 			gen_unpack
-		elif [[ "${GEN_EBUILD}" -ge "2" ]] ; then
+		elif (( ${GEN_EBUILD} >= 2 )) ; then
 	# Phase 2, dep of dep [of dep ...]
 			go-module_src_unpack
 			gen_unpack
@@ -2280,6 +2281,19 @@ src_unpack() {
 
 		cd "${S}" || die
 		gen_git_tag "${S}" "v${PV}"
+	fi
+	local llama_cpp_version=$(cat "${S}/LLAMA_CPP_VERSION")
+	if [[ "${llama_cpp_version}" != "${LLAMA_CPP_TAG}" ]] ; then
+eerror
+eerror "Update LLAMA_CPP_TAG"
+eerror
+eerror "Actual LLAMA_CPP_VERSION:  ${llama_cpp_version}"
+eerror "Expected LLAMA_CPP_VERSION:  ${LLAMA_CPP_TAG}"
+eerror
+		die
+	else
+einfo "Actual LLAMA_CPP_VERSION:  ${llama_cpp_version}"
+einfo "Expected LLAMA_CPP_VERSION:  ${LLAMA_CPP_TAG}"
 	fi
 }
 
