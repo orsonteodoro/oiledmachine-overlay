@@ -285,7 +285,7 @@
       7.3:  x                   ; x ROCm develop            ; x ROCm develop
       7.2:  x                   ; x ROCm develop            ; x ROCm develop
      6.18:  x -                 ; x -                       ; W ROCm 7.1, 7.1, 7.2
-     6.12:  A CUDA 13.0 - 13.3  ; W ROCm 7.1 - ROCm develop ; x ROCm 6.3, 6.4
+     6.12:  A CUDA 13.0 - 13.4  ; W ROCm 7.1 - ROCm develop ; x ROCm 6.3, 6.4
       6.6:  A CUDA 13.0 - 13.3  ; x ROCm 6.0 - 7.1          ; x ROCm 6.0
       6.1:  A CUDA 12.3 - 13.3  ; W ROCm 6.4 - ROCm develop ; x ROCm 5.3, 5.4, 5.5
      5.15:  x CUDA 11.8 - 12.9  ; W ROCm 6.0 - ROCm develop ; x ROCm 4.5, 5.0
@@ -849,9 +849,16 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     menuconfig then emerge, then change it back to disabled then emerge.
     The menuconfig can be used to enable drivers.
 
-    For the dj profile use case, it is assumed to be a typical laptop with DJ
+    For the sample dj profile env, it is assumed to be a typical laptop with DJ
     software.  These should be at least have 2 core, SSD, 4 GiB RAM, 8 GiB RAM
     recommended.  The software (e.g. Mixxx) sets the limit.
+
+    For the sample secure profile env, the swap is off to mitigate leaking keys
+    as plaintext to the HDD/SSD to the swap file or swap partition against
+    forensic exfiltration or attacks.  The secure profile is not suitable for
+    building software.  To emerge or update packages, use the builder profile
+    instead.  The performance of the secure profile does  well without jitter or
+    studder for watching live video at 1080p.
 
 
     Example use case table
