@@ -18,6 +18,8 @@ LLVM_COMPAT=(
 	"llvm_slot_22"
 )
 
+inherit secure-version
+
 DESCRIPTION="CUDA requirements"
 LICENSE="metapackage"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
@@ -40,7 +42,7 @@ RDEPEND+="
 	!virtual/cuda:12
 	!virtual/cuda:13
 	=dev-util/nvidia-cuda-toolkit-13.4*[profiler?,rdma?]
-	>=x11-drivers/nvidia-drivers-590
+	$(secure-version_gen_nvidia_drivers '590-')
 	cudnn? (
 		dev-libs/cudnn
 		|| (

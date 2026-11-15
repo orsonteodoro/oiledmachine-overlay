@@ -930,7 +930,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 fi
 PDEPEND+="
 	video_cards_nvidia? (
-		x11-drivers/nvidia-drivers
+		$(secure-version_gen_nvidia_drivers '580-')
 	)
 "
 

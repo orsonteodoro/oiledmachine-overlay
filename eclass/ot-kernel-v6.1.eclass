@@ -817,7 +817,6 @@ BDEPEND+="
 		')
 	)
 "
-
 PDEPEND+="
 	amdgpu-dkms? (
 		|| (
@@ -825,7 +824,7 @@ PDEPEND+="
 		)
 	)
 	video_cards_nvidia? (
-		x11-drivers/nvidia-drivers
+		$(secure-version_gen_nvidia_drivers '580-')
 	)
 "
 

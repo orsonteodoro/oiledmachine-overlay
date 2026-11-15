@@ -146,28 +146,7 @@ RDEPEND="
 			$(gen_render_disabled_drivers 'spow')
 		)
 		video_cards_nvidia? (
-			x11-drivers/nvidia-drivers:=
-			|| (
-				>=x11-drivers/nvidia-drivers-615.71.01:0/615
-				>=x11-drivers/nvidia-drivers-610.57.04:0/610
-				>=x11-drivers/nvidia-drivers-595.91.07:0/595
-				>=x11-drivers/nvidia-drivers-580.178.04:0/580
-
-				>=x11-drivers/nvidia-drivers-615.71.09:0/615
-				>=x11-drivers/nvidia-drivers-610.57.04:0/610
-				>=x11-drivers/nvidia-drivers-595.91.07:0/595
-				>=x11-drivers/nvidia-drivers-580.178.04:0/580
-
-				>=x11-drivers/nvidia-drivers-615.71.09:0/615
-				>=x11-drivers/nvidia-drivers-610.57.04:0/610
-				>=x11-drivers/nvidia-drivers-595.91.07:0/595
-				>=x11-drivers/nvidia-drivers-580.178.04:0/580
-			)
-
-			!=x11-drivers/nvidia-drivers-390*
-			!=x11-drivers/nvidia-drivers-470*
-			!=x11-drivers/nvidia-drivers-535*
-			!=x11-drivers/nvidia-drivers-595.44*
+			$(secure-version_gen_nvidia_drivers '580-')
 		)
 	)
 "

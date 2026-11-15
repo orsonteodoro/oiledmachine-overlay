@@ -485,6 +485,11 @@ NODEJS_22_PV=${NODEJS_22_PV:-"22.23.4"}
 NSPR_PV=${NSPR_PV:-"4.39"}
 NSS_PV=${NSS_PV:-"3.133"}
 NUMACTL_PV=${NUMACTL_PV:-"9999"}
+NVIDIA_DRIVERS_620_PV=${NVIDIA_DRIVERS_620_PV:-"620.70"} # RTM
+NVIDIA_DRIVERS_615_PV=${NVIDIA_DRIVERS_615_PV:-"615.71"}
+NVIDIA_DRIVERS_610_PV=${NVIDIA_DRIVERS_610_PV:-"610.57"}
+NVIDIA_DRIVERS_595_PV=${NVIDIA_DRIVERS_595_PV:-"595.91"}
+NVIDIA_DRIVERS_580_PV=${NVIDIA_DRIVERS_580_PV:-"580.178"}
 PAMBASE_PV=${PAMBASE_PV:-"20251104"}
 PGVECTOR_PV=${PGVECTOR_PV:-"0.8.7"}
 OFONO_PV=${OFONO_PV:-"2.17"}
@@ -726,7 +731,7 @@ secure-version_gen_openssl_depends() {
 		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
 			local u="OPENSSL_PV_${x/./_}_PV"
 			t+="
-				~dev-libs/openssl-${x}.9999${usedep}
+				~dev-libs/openssl-${!u}${usedep}
 			"
 		fi
 	done
@@ -1202,13 +1207,74 @@ secure-version_gen_spirv_llvm_translator() {
 	local usedep="${1}" # [gmp], <empty string>
 	local x
 	for x in "${LLVM_COMPAT[@]}" ; do
-		local x="SPIRV_LLVM_TRANSLATOR_${x}_PV"
+		local u="SPIRV_LLVM_TRANSLATOR_${x}_PV"
 		echo "
 			llvm_slot_${x}? (
-				>=dev-util/spirv-llvm-translator-${!x}:${x}[${usedep}]
+				>=dev-util/spirv-llvm-translator-${!u}:${x}${usedep}
 			)
 		"
 	done
+}
+
+secure-version_gen_nvidia_drivers() {
+	local range="${1}"
+	local usedep="${2}" # [gmp], <empty string>
+
+	local t=""
+	# Ban EOL.
+	# Ban beta which typically doesn't receive audit checks across packages.
+	t+="
+		!=x11-drivers/nvidia-drivers-390*
+		!=x11-drivers/nvidia-drivers-470*
+		!=x11-drivers/nvidia-drivers-535*
+		!=x11-drivers/nvidia-drivers-595.44*
+		x11-drivers/nvidia-drivers:=
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+		l="580"
+		r="620"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ -z "${l}" ]] ; then
+			l="580"
+		fi
+		if [[ -z "${r}" ]] ; then
+			r="620"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"620"
+		"615"
+		"610"
+		"595"
+		"580"
+	)
+
+	local x
+	for x in "${L[@]}" ; do
+		local u="NVIDIA_DRIVERS_${x}_PV"
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			t+="
+				>=x11-drivers/nvidia-drivers-${!u}:0/${x}${usedep}
+			"
+		fi
+	done
+	t+="
+		)
+	"
+
+	local output=""
+
+	output="${t}"
+#einfo "${output}"
+	echo "${output}"
 }
 
 fi

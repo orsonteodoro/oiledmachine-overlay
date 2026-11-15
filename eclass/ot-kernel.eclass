@@ -16186,9 +16186,7 @@ ot-kernel_set_kconfig_recon_mitigation() {
 	]] ; then
 einfo "Allowing dmesg reconaissance with non-root user, for ${work_profile} work profile."
 		ot-kernel_n_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
-	elif [[ \
-		|| ( n_iuse "debug" && ot-kernel_use "debug" ) \
-	]] ; then
+	elif in_iuse "debug" && ot-kernel_use "debug" ; then
 ewarn "Allowing dmesg reconaissance with non-root user, when OT_KERNEL_USE contains debug."
 		ot-kernel_n_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
 	else
