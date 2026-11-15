@@ -16170,6 +16170,23 @@ einfo "DEBUG:  Still detected CONFIG_ENCRYPTED_KEYS=m"
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_recon_mitigation
+# @DESCRIPTION:
+# Reconnaissance mitigation
+ot-kernel_set_kconfig_recon_mitigation() {
+	# Force off because the default settings don't disable it.
+	if [[ \
+		   "${work_profile}" == "red-team-devlab-baremetal-mem" \
+		|| "${work_profile}" == "red-team-devlab-baremetal-cpu" \
+		|| "${work_profile}" == "red-team-devlab-baremetal-vm" \
+		|| "${work_profile}" == "red-team-prey" \
+	]] ; then
+		ot-kernel_n_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
+	else
+		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -16336,6 +16353,7 @@ einfo "Disabling all debug and shortening logging buffers"
 		ot-kernel_set_kconfig_bpf_spectre_mitigation		# This call goes after the call to ot-kernel-pkgflags_apply.
 	ot-kernel_set_kconfig_iommu_domain_type
 	ot-kernel-pkgflags_cipher_optional
+	ot-kernel_set_kconfig_recon_mitigation
 	ot-kernel_set_kconfig_cold_boot_mitigation
 	ot-kernel_set_kconfig_dma_attack_mitigation
 	ot-kernel_set_kconfig_memory_protection
