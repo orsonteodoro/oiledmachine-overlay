@@ -1,0 +1,35 @@
+--- a/build/config/rust.gni.orig	2026-11-10 15:35:17.000000000 -0800
++++ b/build/config/rust.gni	2026-11-15 12:01:34.941308344 -0800
+@@ -453,7 +453,7 @@ rustc_wrapper_inputs = [
+ ]
+ 
+ if (host_os == "win") {
+-  rustc_wrapper_inputs += [ "//third_party/rust-toolchain/bin/rustc.exe" ]
++  rustc_wrapper_inputs += [ "$rust_sysroot/bin/rustc.exe" ]
+ } else {
+-  rustc_wrapper_inputs += [ "//third_party/rust-toolchain/bin/rustc" ]
++  rustc_wrapper_inputs += [ "$rust_sysroot/bin/rustc" ]
+ }
+--- a/build/rust/gni_impl/rust_target.gni.orig	2026-11-10 15:35:18.000000000 -0800
++++ b/build/rust/gni_impl/rust_target.gni	2026-11-15 12:06:37.405495682 -0800
+@@ -733,9 +733,9 @@ template("rust_target") {
+           # `import`ed for `LoadRustEnvAndFlags`, etc.
+           inputs = rustc_wrapper_inputs
+           if (host_os == "win") {
+-            inputs += [ "//third_party/rust-toolchain/bin/clippy-driver.exe" ]
++            inputs += [ "$rust_sysroot/bin/clippy-driver.exe" ]
+           } else {
+-            inputs += [ "//third_party/rust-toolchain/bin/clippy-driver" ]
++            inputs += [ "$rust_sysroot/bin/clippy-driver" ]
+           }
+           if (rust_clippy_conf_file != "") {
+             inputs += [ rust_clippy_conf_file ]
+@@ -743,7 +743,7 @@ template("rust_target") {
+ 
+           args = [
+             "--clippy-driver",
+-            rebase_path("//third_party/rust-toolchain/bin/clippy-driver",
++            rebase_path("$rust_sysroot/bin/clippy-driver",
+                         root_build_dir),
+             "--rustc-env-and-flags",
+             rebase_path(_rustc_env_and_flags, root_build_dir),

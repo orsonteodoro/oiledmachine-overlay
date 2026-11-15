@@ -1,0 +1,78 @@
+--- build/rust/rust_bindgen_generator.gni.orig	2026-11-15 08:37:31.114699190 -0800
++++ build/rust/rust_bindgen_generator.gni	2026-11-15 09:36:00.735357481 -0800
+@@ -22,14 +22,18 @@ if (!use_chromium_rust_toolchain &&
+ 
+ # On Windows, the libclang.dll is beside the bindgen.exe, otherwise it is in
+ # ../lib.
+-_libclang_path = rust_bindgen_root
+-if (!use_chromium_rust_toolchain &&
+-    (host_cpu == "ppc64" || host_cpu == "s390x")) {
+-  _libclang_path = rust_sysroot_absolute + "/lib64"
+-} else if (host_os == "win") {
+-  _libclang_path += "/bin"
++if (bindgen_libclang_path != "") {
++  _libclang_path = bindgen_libclang_path
+ } else {
+-  _libclang_path += "/lib"
++  _libclang_path = rust_bindgen_root
++  if (!use_chromium_rust_toolchain &&
++      (host_cpu == "ppc64" || host_cpu == "s390x")) {
++    _libclang_path = rust_sysroot_absolute + "/lib64"
++  } else if (host_os == "win") {
++    _libclang_path += "/bin"
++  } else {
++    _libclang_path += "/lib"
++  }
+ }
+ 
+ # Template to build Rust/C bindings with bindgen.
+@@ -190,10 +194,17 @@ template("rust_bindgen_generator") {
+     if (is_linux) {
+       # Linux clang, and clang libs, use a shared libstdc++, which we must
+       # point to.
+-      args += [
+-        "--ld-library-path",
+-        rebase_path(clang_base_path + "/lib", root_build_dir),
+-      ]
++      if (bindgen_libclang_path != "") {
++        args += [
++          "--ld-library-path",
++          rebase_path(bindgen_libclang_path, root_build_dir),
++        ]
++      } else {
++        args += [
++          "--ld-library-path",
++          rebase_path(clang_base_path + "/lib", root_build_dir),
++        ]
++      }
+     }
+ 
+     args += [ "--bindgen-flags" ]
+--- build/rust/gni_impl/libclang_args.gni.orig	2026-11-15 09:47:51.448181784 -0800
++++ build/rust/gni_impl/libclang_args.gni	2026-11-15 09:44:51.278123681 -0800
+@@ -36,10 +36,21 @@ _libclang_extra_args = []
+ # says the wrong thing. We point it to our clang's resource dir which will
+ # make it behave consistently with our other command line flags and allows
+ # system headers to be found.
+-_libclang_extra_args += [
+-  "-resource-dir",
+-  rebase_path(clang_base_path + "/lib/clang/" + clang_version, root_build_dir),
+-]
++if (bindgen_clang_resource_dir != "") {
++  _libclang_extra_args += [
++    "-resource-dir",
++    rebase_path(bindgen_clang_resource_dir, root_build_dir),
++  ]
++else {
++  _libclang_extra_args += [
++    "-resource-dir",
++    rebase_path(clang_base_path + "/lib/clang/" + clang_version, root_build_dir),
++  ]
++}
++
++if (bindgen_extra_clang_args != []) {
++  _libclang_extra_args += bindgen_extra_clang_args
++}
+ 
+ if (is_win) {
+   # On Windows we fall back to using system headers from a sysroot from

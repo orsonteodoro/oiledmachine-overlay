@@ -4004,9 +4004,9 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")	
 
 		PATCHES+=(
 "${base_path}/toolchain/cr146-empty-parsed_rustc_args.patch"									# Unique patch
-"${base_path}/toolchain/cr149-bindgen-libclang-paths.patch"									# Unique patch
+#"${base_path}/toolchain/cr149-bindgen-libclang-paths.patch"									# Unique patch.  Updated in chromium-157.0.8103.78-bindgen-libclang-paths.patch
 #"${base_path}/toolchain/cr149-fix-rust.patch"											# Using copium cr149-rust-toolchain-var.patch instead
-"${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"									# Unique patch
+#"${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"									# Unique patch.  Updated in chromium-157.0.8103.78-fix-rust-2-oxidize-harder.patch
 #"${base_path}/toolchain/cr150-compiler.patch"											# Dropping patch, oiledmachine-overlay patch used instead
 "${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"								# Unique patch, same as cr151-dawn-system-go.patch but with updated context
 "${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"								# Unique patch, same as cr151-mold-unbundle.patch
@@ -4285,6 +4285,8 @@ einfo "Removing SupportedLaneCount"
 	PATCHES+=(
 #		"${FILESDIR}/extra-patches/chromium-155-crubit.patch"
 #		"${FILESDIR}/extra-patches/chromium-155-remove-private_verification_tokens.patch"
+		"${FILESDIR}/extra-patches/chromium-157.0.8103.78-bindgen-libclang-paths.patch"
+		"${FILESDIR}/extra-patches/chromium-157.0.8103.78-fix-rust-2-oxidize-harder.patch"
 	)
 }
 
