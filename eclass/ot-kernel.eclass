@@ -3464,6 +3464,10 @@ einfo "Applying the Nest scheduler patch"
 # @DESCRIPTION:
 # Add patch to avoid panic_on_warn for sanitizers
 ot-kernel_apply_kcmdline_for_sanitizers() {
+	if n_iuse "debug" && ot-kernel_use "debug" ; then
+ewarn "Detected debug USE flag.  Skipping sanitizers-kcmdline-panic patch."
+		return
+	fi
 	if ver_test "${KV_MAJOR_MINOR}" "-ge" "6.16" ; then
 		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.16.1.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" "-gt" "6.6" ; then
@@ -16174,15 +16178,22 @@ einfo "DEBUG:  Still detected CONFIG_ENCRYPTED_KEYS=m"
 # @DESCRIPTION:
 # Reconnaissance mitigation
 ot-kernel_set_kconfig_recon_mitigation() {
-	# Force off because the default settings don't disable it.
 	if [[ \
 		   "${work_profile}" == "red-team-devlab-baremetal-mem" \
 		|| "${work_profile}" == "red-team-devlab-baremetal-cpu" \
 		|| "${work_profile}" == "red-team-devlab-baremetal-vm" \
 		|| "${work_profile}" == "red-team-prey" \
 	]] ; then
+einfo "Allowing dmesg reconaissance with non-root user, for ${work_profile} work profile."
+		ot-kernel_n_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
+	elif [[ \
+		|| ( n_iuse "debug" && ot-kernel_use "debug" ) \
+	]] ; then
+ewarn "Allowing dmesg reconaissance with non-root user, when OT_KERNEL_USE contains debug."
 		ot-kernel_n_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
 	else
+	# Force dmesg from non-root because the default settings don't disable it.
+einfo "Disallowing dmesg reconaissance with non-root user."
 		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
 	fi
 }
