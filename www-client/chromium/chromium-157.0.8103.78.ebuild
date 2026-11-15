@@ -312,9 +312,9 @@ QT6_PV="${QTBASE6_PV}"
 # disable the V8 sandbox, or pointer compression and DrumBrake.  Before it was \
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
-V8_PV="15.7.112.23" # Nov 2, 2026.   The V8 current version for 157.
-# tools/builtins-pgo/profiles/ folder contains the PGO profile for V8.
-# The AI said no version guarantees for compatibility.
+V8_PV="15.7.112.43" # Nov 10, 2026.  From v8/include/v8-version.h.  The V8
+# current version for 157.  tools/builtins-pgo/profiles/ folder contains the PGO
+# profile for V8.  The AI said no version guarantees for V8 compatibility.
 
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT_UNGOOGLED_CHROMIUM="5471e1a25446f0dce041e08a866a083b54c35c227bcff2a77fa027b198f2844f501e4e3dcea019874146ba063beb82e563c214bae97fb0863df6ddebce984f9c"
