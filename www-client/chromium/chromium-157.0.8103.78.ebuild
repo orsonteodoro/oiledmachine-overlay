@@ -206,7 +206,7 @@ EAPI=8
 TC_COUNT_EXPECTED_CLANG=419
 TC_COUNT_EXPECTED_GN=1332
 TC_COUNT_EXPECTED_RUST=7268
-SOURCES_COUNT_EXPECTED=607611 # Update with DOWNLOAD_FLAVOR change
+SOURCES_COUNT_EXPECTED=607620 # Update with DOWNLOAD_FLAVOR change
 MAINTENANCE_MODE=1 # Also set GEN_LICENSE_FILE
 GEN_LICENSE_FILE=1
 
@@ -3548,7 +3548,6 @@ einfo "Applying the Alpine patchset..."
 
 # TODO:  finish
 
-"${base_path}/0001-hotfix-ignore-a-new-warning-in-rust-1.89.patch"
 #"${base_path}/compiler.patch"						# TODO rework for G23, it needs the Rust targets patch hunks changed
 "${base_path}/disable-dns_config_service.patch"
 "${base_path}/disable-failing-tests.patch"
@@ -3581,26 +3580,28 @@ einfo "Applying the Arch patchset..."
 # DO NOT ENABLE ALL PATCHES!
 # ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
+# See PKGBUILD for patch order.
+
 #"${base_path}/chromium-138-nodejs-version-check.patch"			# Enabled like the MJ patchset, using copium instead
-#"${base_path}/chromium-144-fix-hdr-issue.patch"
 "${base_path}/chromium-145-fix-SYS_SECCOMP.patch"			# Enabled like the MJ patchset
 #"${base_path}/chromium-147-rust-1.95-bytemuck.patch"
+#"${base_path}/chromium-147-simdutf-8.0-base-char.patch"
 #"${base_path}/chromium-149-use-of-undeclared-identifier-ERROR.patch"
 #"${base_path}/chromium-150-revert-avx-flag-change.patch"
 #"${base_path}/chromium-152-unbundle-minizip-undo-unicode.patch"
 #"${base_path}/chromium-152-unbundle-opus-devtools.patch"
 #"${base_path}/chromium-153-hermetic-python.patch"
 #"${base_path}/chromium-153-iamf-tools-unbundled-opus.patch"
-"${base_path}/chromium-154-typescript.patch"				# Unvendor
-"${base_path}/chromium-155-crubit.patch"				# For fixing build files initial compile time issue
-#"${base_path}/chromium-155-isolatedDeclarations.patch"
-"${base_path}/chromium-155-remove-private_verification_tokens.patch"	# For fixing build files initial compile time issue
 #"${base_path}/chromium-155-use-system-esbuild.patch"
+#"${base_path}/chromium-156-isolatedDeclarations.patch"
+#"${base_path}/chromium-157-revert-gn-check-includes.patch"
+"${base_path}/chromium-157-typescript.patch"				# Unvendor
+"${base_path}/chromium-157-crubit.patch"				# For fixing build files initial compile time issue
 #"${base_path}/compiler-rt-adjust-paths.patch"
-#"${base_path}/enable-widevine-arm64.patch"
-#"${base_path}/glibc-2.42-baud-rate-fix.patch"
 #"${base_path}/increase-fortify-level.patch"
+#"${base_path}/enable-widevine-arm64.patch"
 "${base_path}/use-oauth2-client-switches-as-default.patch"		# Enabled like the MJ patchset
+#"${base_path}/glibc-2.42-baud-rate-fix.patch"
 	)
 }
 
@@ -3614,13 +3615,36 @@ einfo "Applying the Debian patchset..."
 	local base_path="${WORKDIR}/chromium-debian-${DEBIAN_PATCHSET_PV}-${DEBIAN_PATCHSET_REV}${DEBIAN_PATCHSET_TAG}/debian/patches"
 
 	PATCHES+=(
+# From `grep -r -e "^fixes/" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-156.0.8078.79-1/debian/patches/series`
+#"${base_path}/fixes/ps-print.patch"
+#"${base_path}/fixes/widevine-locations.patch"
 "${base_path}/fixes/rust-clanglib.patch"				# Original used in MJ, Fedora patchsets
+#"${base_path}/fixes/material-utils.patch"
+#"${base_path}/fixes/gentoo-stylesheet.patch"
+#"${base_path}/fixes/libcpp-headers.patch"
+#"${base_path}/fixes/memory-allocator-dcheck-assert-fix.patch"
+#"${base_path}/fixes/predictor-denial-of-service.patch"
+#"${base_path}/fixes/fix-assert-in-vnc-sessions.patch"
+#"${base_path}/fixes/armhf-timespec.patch"
+#"${base_path}/fixes/updater-test.patch"
+#"${base_path}/fixes/armhf-no-thumb.patch"
+#"${base_path}/fixes/armhf-icf.patch"
+#"${base_path}/fixes/libpng-testonly.patch"
+#"${base_path}/fixes/autofill-binarypb.patch"
+#"${base_path}/fixes/bindgen-paths.patch"
+#"${base_path}/fixes/swiftshader-dependencies.patch"
+#"${base_path}/fixes/bytemuck.patch"
+#"${base_path}/fixes/arm-logging.patch"
+#"${base_path}/fixes/only-address-sanitizer.patch"
+#"${base_path}/fixes/tsc-split-comp.patch"
+#"${base_path}/fixes/crubit.patch"
+#"${base_path}/fixes/verification-tokens.patch"
 	)
 
 # For using system-libs instead
 # Only enable if build breakage.
 	PATCHES+=(
-# From `grep "^system/" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
+# From `grep "^system/" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-156.0.8078.79-1/debian/patches/series`
 #"${base_path}/system/golang.patch"
 #"${base_path}/system/icu-shim.patch"
 #"${base_path}/system/jpeg.patch"
@@ -3632,11 +3656,12 @@ einfo "Applying the Debian patchset..."
 #"${base_path}/system/python.patch"
 #"${base_path}/system/tsc.patch"
 #"${base_path}/system/tsc2.patch"
+#"${base_path}/system/node-ts.patch"
 	)
 
 	# LLVM support like G23 distro patchset.
 	PATCHES+=(
-# From `grep -r -e "^llvm-22" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
+# From `grep -r -e "^llvm-22" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-156.0.8078.79-1/debian/patches/series`
 "${base_path}/llvm-22/ignore-for-ubsan.patch"				# Equivalent to cr149-ubsan-feature.patch in MJ patchset
 "${base_path}/llvm-22/clang22.patch"					# Equivalent to cr147-disable-fno-lifetime-dse.patch and cr151-fdiagnostics-show-inlining-chain.patch in MJ patchset
 "${base_path}/llvm-22/clone-traits.patch"
@@ -3647,7 +3672,7 @@ einfo "Applying the Debian patchset..."
 	)
 
 	if [[ "${CHOST}" =~ "powerpc64le" && "${PPC64_PATCHSET_PROVIDER}" == "debian" ]] && use ppc64 ; then
-#From `grep -r -e "^ppc64le" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-155.0.8059.79-1/debian/patches/series`
+#From `grep -r -e "^ppc64le" /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-debian-156.0.8078.79-1/debian/patches/series`
 		PATCHES+=(
 "${base_path}/ppc64le/sandbox/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
 "${base_path}/ppc64le/sandbox/0009-sandbox-ignore-byte-span-error.patch"
@@ -3719,7 +3744,6 @@ $(use cpu_flags_ppc_vsx3 && echo "${base_path}/ppc64le/core/baseline-isa-3-0.pat
 "${base_path}/loongarch64/0021-components-metrics-add-loongarch64-support.patch"
 "${base_path}/loongarch64/0022-blink-fix-lsx-code-of-webgl_image_conversion_lsx.patch"
 "${base_path}/loongarch64/0023-loongarch64-enable-lsx-by-default.patch"
-"${base_path}/loongarch64/0024-optimize-nested-128-bit-additions.patch"
 		)
 	fi
 }
@@ -3735,6 +3759,7 @@ einfo "Applying the copium patchset..."
 # ENABLE ONLY MINIMAL REQUIRED TO BUILD.
 
 	if use elibc_glibc ; then
+
 		PATCHES+=(
 #"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
 #"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
@@ -3752,23 +3777,25 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cr147-is-musl-libcxx.patch"
 #"${WORKDIR}/copium/cr147-simdutf-8.0-base-char.patch"
 #"${WORKDIR}/copium/cr148-rust-1.95-bytemuck.patch"
-#"${WORKDIR}/copium/cr148-v8-no-san-trap.patch"
 #"${WORKDIR}/copium/cr149-musl-alloc-shim-dispatch.patch"
 "${WORKDIR}/copium/cr149-rust-toolchain-var.patch"				# Equivalent to MJ patchset
 #"${WORKDIR}/copium/cr151-dawn-cgo_enabled.patch"
 #"${WORKDIR}/copium/cr152-dawn-clang-22.patch"
-#"${WORKDIR}/copium/cr152-ffmpeg-no-agtm.patch"
 "${WORKDIR}/copium/cr152-unbundle-minizip-undo-unicode.patch"			# Used in G23 build
 #"${WORKDIR}/copium/cr152-unbundle-opus-devtools.patch"
 #"${WORKDIR}/copium/cr153-typescript-break-definitions.patch"
 #"${WORKDIR}/copium/cr153-unbundle-opus-iamf.patch"
 #"${WORKDIR}/copium/cr154-dawn-armv7-is-real.patch"
 #"${WORKDIR}/copium/cr154-rust-1.96-no-windows-sys.patch"
-#"${WORKDIR}/copium/cr155-devtools-typescript-6.x-isolated-declarations.patch"
 #"${WORKDIR}/copium/cr155-no-python-vendoring.patch"
+#"${WORKDIR}/copium/cr156-unbundle-icu-remoting.patch"
+#"${WORKDIR}/copium/cr156-v8-no-san-trap.patch"
+#"${WORKDIR}/copium/cr157-crubit-fix-rs_bindings_from_cc-breakages.patch"
+#"${WORKDIR}/copium/cr157-ffmpeg-no-agtm.patch"
+#"${WORKDIR}/copium/cr157-unbundle-brotli-pdfium.patch"
 		)
 	elif use elibc_musl ; then
-# Same as Alpine enabled set
+# Same as Alpine enabled set in APKBUILD
 		PATCHES+=(
 #"${WORKDIR}/copium/cbit152-rust-1.97-2026-05-18.patch"
 #"${WORKDIR}/copium/cbit152-rust-1.97-trivial.patch"
@@ -3786,20 +3813,22 @@ einfo "Applying the copium patchset..."
 "${WORKDIR}/copium/cr147-is-musl-libcxx.patch"					# Used in Alpine
 "${WORKDIR}/copium/cr147-simdutf-8.0-base-char.patch"				# Used in Alpine
 "${WORKDIR}/copium/cr148-rust-1.95-bytemuck.patch"				# Used in Alpine
-"${WORKDIR}/copium/cr148-v8-no-san-trap.patch"					# Used in Alpine
 "${WORKDIR}/copium/cr149-musl-alloc-shim-dispatch.patch"			# Used in Alpine
 "${WORKDIR}/copium/cr149-rust-toolchain-var.patch"				# Used in Alpine and equivalent to MJ patchset
 "${WORKDIR}/copium/cr151-dawn-cgo_enabled.patch"				# Used in Alpine
 #"${WORKDIR}/copium/cr152-dawn-clang-22.patch"
-"${WORKDIR}/copium/cr152-ffmpeg-no-agtm.patch"					# Used in Alpine
 "${WORKDIR}/copium/cr152-unbundle-minizip-undo-unicode.patch"			# Used in Alpine and in G23 build
 "${WORKDIR}/copium/cr152-unbundle-opus-devtools.patch"				# Used in Alpine
 "${WORKDIR}/copium/cr153-typescript-break-definitions.patch"			# Used in Alpine
 "${WORKDIR}/copium/cr153-unbundle-opus-iamf.patch"				# Used in Alpine
 "${WORKDIR}/copium/cr154-dawn-armv7-is-real.patch"				# Used in Alpine
 #"${WORKDIR}/copium/cr154-rust-1.96-no-windows-sys.patch"
-"${WORKDIR}/copium/cr155-devtools-typescript-6.x-isolated-declarations.patch"	# Used in Alpine
 "${WORKDIR}/copium/cr155-no-python-vendoring.patch"				# Used in Alpine
+"${WORKDIR}/copium/cr156-unbundle-icu-remoting.patch"				# Used in Alpine
+"${WORKDIR}/copium/cr156-v8-no-san-trap.patch"					# Used in Alpine
+"${WORKDIR}/copium/cr157-crubit-fix-rs_bindings_from_cc-breakages.patch"	# Used in Alpine
+"${WORKDIR}/copium/cr157-ffmpeg-no-agtm.patch"					# Used in Alpine
+"${WORKDIR}/copium/cr157-unbundle-brotli-pdfium.patch"				# Used in Alpine
 		)
 	fi
 }
@@ -3824,7 +3853,7 @@ eerror "Expected version:  ${expected_version}"
 einfo "Applying the Fedora patchset..."
 	fi
 
-# Generated from `localhost /usr/local/oiledmachine-overlay/www-client/chromium # grep -E "^Patch[0-9]+:" /var/tmp/portage/www-client/chromium-157.0.8103.78/work//fedora-patchset/chromium.spec | cut -f 2 -d " "`
+# Generated from `for x in $(grep -E "^Patch[0-9]+:" /var/tmp/portage/www-client/chromium-157.0.8103.78/work//fedora-patchset/chromium.spec | cut -f 2 -d " ") ; do echo "#\"\${basepath}/${x}\"" ; done`
 	PATCHES+=(
 #"${basepath}/chromium-115-initial_prefs-etc-path.patch"
 #"${basepath}/chromium-117-widevine-other-locations.patch"
@@ -3833,15 +3862,16 @@ einfo "Applying the Fedora patchset..."
 #"${basepath}/chromium-disable-font-tests.patch"
 #"${basepath}/chromium-123-screen-ai-service.patch"
 #"${basepath}/chromium-131-fix-qt-ui.pach"
-#"${basepath}/chromium-152-build-error-libpng_for_testonly.patch"
+#"${basepath}/chromium-build-error-libpng_for_testonly.patch"
 #"${basepath}/glibc-2.42-baud-rate-fix.patch"
 #"${basepath}/chromium-153-ftbfs-pipewire-api.patch"
+#"${basepath}/chromium-typescript-vendor.patch"
 #"${basepath}/chromium-145-disable-enterprise_companion_integration_tests.patch"
 #"${basepath}/chromium-142-system-brotli.patch"
 #"${basepath}/chromium-121-system-libxml.patch"
 #"${basepath}/chromium-108-system-opus.patch"
 #"${basepath}/chromium-138-checkversion-nodejs.patch"
-#"${basepath}/chromium-141-csss_style_sheet.patch"
+#"${basepath}/chromium-csss_style_sheet.patch"
 #"${basepath}/chromium-148-v8-sanitize-build-error.patch"
 #"${basepath}/chromium-142-crabbyavif-ftbfs-old-rust.patch"
 #"${basepath}/chromium-138-el9-ffmpeg-deprecated-apis.patch"
@@ -3855,6 +3885,7 @@ einfo "Applying the Fedora patchset..."
 #"${basepath}/chromium-133-workaround-system-ffmpeg-whitelist.patch"
 #"${basepath}/chromium-147-system-ffmpeg.patch"
 #"${basepath}/chromium-150-ffmpeg-AVDynamicHDRSmpte2094App5.patch"
+#"${basepath}/chromium-156-system-ffmpeg-api.patch"
 #"${basepath}/chromium-153-el9-python-3.9-build-error.patch"
 #"${basepath}/chromium-118-dma_buf_export_sync_file-conflict.patch"
 #"${basepath}/chromium-149-rust-1.88-build-error.patch"
@@ -3872,8 +3903,8 @@ einfo "Applying the Fedora patchset..."
 #"${basepath}/chromium-132-el8-unsupport-rustc-flags.patch"
 #"${basepath}/chromium-139-rust-FTBFS-suppress-warnings.patch"
 #"${basepath}/chromium-123-fstack-protector-strong.patch"
-#"${basepath}/chromium-154-ftbfs-crubit.patch"
-#"${basepath}/chromium-154-ftbfs-private-verification-tokens.patch"
+#"${basepath}/chromium-ftbfs-crubit.patch"
+#"${basepath}/chromium-ftbfs-private-verification-tokens.patch"
 #"${basepath}/chromium-136-rust-skrifa-build-error.patch"
 #"${basepath}/chromium-145-rustc-ftbfs.patch"
 #"${basepath}/chromium-153-clang++-unknown-argument.patch"
@@ -3888,7 +3919,7 @@ einfo "Applying the Fedora patchset..."
 #"${basepath}/chromium-130-hardware_destructive_interference_size.patch"
 #"${basepath}/chromium-141-use_libcxx_modules.patch"
 #"${basepath}/chromium-134-type-mismatch-error.patch"
-#"${basepath}/chromium-144-rust-clanglib.patch"
+#"${basepath}/chromium-rust-clanglib.patch"
 #"${basepath}/chromium-148-rust-1.95-bytemuck-ftbfs.patch"
 #"${basepath}/add-ppc64-architecture-string.patch"
 #"${basepath}/0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch"
