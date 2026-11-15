@@ -857,7 +857,7 @@ OT_KERNEL_KCONFIG[CONFIG_AF_RXRPC]=n      # Dirty Frag affected module
     as plaintext to the HDD/SSD to the swap file or swap partition against
     forensic exfiltration or attacks.  The secure profile is not suitable for
     building software.  To emerge or update packages, use the builder profile
-    instead.  The performance of the secure profile does  well without jitter or
+    instead.  The performance of the secure profile does well without jitter or
     studder for watching live video at 1080p.
 
 
