@@ -9017,6 +9017,7 @@ einfo "Changing config to auto-signed modules with ${sign_modules_upper}"
 		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${sign_modules_lower}\""
 		SIGNED_MODULE_EXTRAVERSIONS+=( "${extraversion}" )
 
+		local orig="${BUILD_DIR}/.config"
 		ot-kernel_fix_config_for_boot		# Force m -> y for the stupid config verifier for dm-crypt.  Prevent lockout.
 		ot-kernel_convert_tristate_fix		# Part 2 of fixes.
 	elif [[ "${sign_modules}" == "0" ]] ; then
@@ -13647,14 +13648,30 @@ ewarn
 		)
 	fi
 
-	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
+	symbols=(
+		$(echo "${symbols[@]}" \
+			| tr " " "\n" \
+			| sort)
+	)
+	[[ -z "${orig}" ]] && die "QA:  Set orig variable before calling ot-kernel_fix_config_for_boot."
 einfo "Fixing config for boot"
-	for s in ${symbols[@]} ; do
+	for s in "${symbols[@]}" ; do
 		if grep -q -e "^${s}=m" "${orig}" ; then
 einfo "${s}=y"
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 		fi
 	done
+
+	if grep -q -e "^CONFIG_DM_CRYPT=m" "${orig}" ; then
+einfo "Forcing CONFIG_DM_CRYPT=y"
+		ot-kernel_y_configopt "CONFIG_DM_CRYPT"
+	fi
+
+	# Prevent dm-crypt as module
+	if grep -q -e "^CONFIG_ENCRYPTED_KEYS=m" "${orig}" ; then
+einfo "Forcing CONFIG_ENCRYPTED_KEYS=y"
+		ot-kernel_y_configopt "CONFIG_ENCRYPTED_KEYS"
+	fi
 
 	# Fix default TCP congestion
 	if grep -q -e "^CONFIG_DEFAULT_TCP_CONG=" "${orig}" ; then
@@ -16137,6 +16154,22 @@ ot-kernel_set_red_team() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_check_dm_crypt
+# @DESCRIPTION:
+# Prevent boot failure check
+ot-kernel_check_dm_crypt() {
+	local orig="${BUILD_DIR}/.config"
+	[[ -z "${orig}" ]] && die "QA:  Assign orig before CONFIG_DM_CRYPT=m check."
+	if grep -q -e "^CONFIG_DM_CRYPT=m" "${orig}" ; then
+einfo "DEBUG:  Still detected CONFIG_DM_CRYPT=m"
+		die
+	fi
+	if grep -q -e "^CONFIG_ENCRYPTED_KEYS=m" "${orig}" ; then
+einfo "DEBUG:  Still detected CONFIG_ENCRYPTED_KEYS=m"
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -16368,6 +16401,8 @@ einfo "Running:  make olddefconfig ${args[@]}"
 	edo make olddefconfig "${args[@]}"
 
 	ot-kernel_set_globals_post
+
+	ot-kernel_check_dm_crypt
 
 	ot-kernel_menuconfig "post"					# Uses llvm_slot
 }
