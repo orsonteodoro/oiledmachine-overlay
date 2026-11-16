@@ -166,6 +166,9 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
 	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 14, 15, 16.  Compatible with c++20 on compiler side.
 )
 
@@ -173,7 +176,6 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX20_CUDA_12[@]/llvm_slot_}" # 19
 	#"${LIBCXX_COMPAT_CXX20_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
-	#"${LIBCXX_COMPAT_CXX20_ROCM_10_1[@]/llvm_slot_}" # 24
 	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 19, 21, 22, 23
 	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24.  Python backend only.  Do not link as a C/C++ library.
 )
@@ -449,6 +451,9 @@ REQUIRED_USE="
 		cuda
 		rocm
 	)
+	!rocm? (
+		${LIBCXX_COMPAT_ROCM_PYTHON[@]/#/\!}
+	)
 	arm? (
 		cpu_flags_arm_neon
 	)
@@ -534,8 +539,10 @@ REQUIRED_USE="
 
 	cuda? (
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA_12_8[@]}
-			${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]}
+			${LIBCXX_COMPAT_CXX20_CUDA_13[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_13[@]}
 		)
 	)
 	distributed? (
@@ -622,9 +629,11 @@ REQUIRED_USE="
 	)
 	rocm? (
 		^^ (
-			${LIBCXX_COMPAT_CXX17_ROCM_10_1[@]}
+			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
 		)
-		llvm_slot_${ROCM_LLVM_SLOT}
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
 	)
 	tensorpipe? (
 		distributed
@@ -636,13 +645,13 @@ RDEPEND="
 	virtual/lapack:*
 	cuda? (
 		>=dev-libs/cudnn-9:=
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn,profiler]
 		|| (
-			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn,profiler]
+			=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn,profiler]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn,profiler]
 		)
 		nccl? (
-			dev-libs/nccl:=
+			dev-libs/nccl:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 		)
 	)
 	flash-attention? (
