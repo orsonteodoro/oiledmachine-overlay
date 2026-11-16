@@ -77,8 +77,9 @@ _LIBSTDCXX_COMPAT_ECLASS=1
 #     ${LIBSTDCXX_COMPAT_ROCM[@]}
 # )
 #
-LIBSTDCXX_COMPAT_ROCM=( # Rolling
-	"gcc_slot_16_2" # Support ROCm 10.1
+LIBSTDCXX_COMPAT_ROCM=( # LTS, Both
+	"gcc_slot_14_4" # Support ROCm 10.1, D13, host compiler (CPU)
+	"gcc_slot_15_3"	# Support ROCm 10.1, U26, host compiler (CPU)
 )
 
 # GCC_COMPAT template for ROCm 10 based apps/libs with latest security update
@@ -90,10 +91,11 @@ LIBSTDCXX_COMPAT_ROCM=( # Rolling
 #     ${LIBSTDCXX_COMPAT_ROCM_10[@]}
 # )
 #
-LIBSTDCXX_COMPAT_ROCM_10=( # Rolling
+LIBSTDCXX_COMPAT_ROCM_10=( # LTS, Both
 	# C++26 is needed to build libcxx
 	# C++20 is needed for miopen, rocfft
-	"gcc_slot_16_2" # Support C++20, C++26; ROCm 10.1
+	"gcc_slot_14_4" # Support ROCm 10.1, D13
+	"gcc_slot_15_3"	# Support ROCm 10.1, U26
 )
 
 # GCC_COMPAT template for CUDA based apps/libs

@@ -343,7 +343,7 @@ LIBCXX_COMPAT_ROCM_LIB=( # Skip
 #
 LIBCXX_COMPAT_ROCM_APP=( # Live
 # Align to ROCm/llvm-project
-	"llvm_slot_24"
+	"llvm_slot_24" # For ROCM 10.1, device compiler (GPU)
 )
 
 # LLVM_COMPAT templates for ROCm for Python packages with private libraries.
@@ -358,7 +358,7 @@ LIBCXX_COMPAT_ROCM_APP=( # Live
 #
 LIBCXX_COMPAT_ROCM_PYTHON=( # Live
 # Align to ROCm/llvm-project
-	"llvm_slot_24"
+	"llvm_slot_24" # For ROCM 10.1, device compiler (GPU)
 )
 
 # LLVM_COMPAT templates for ROCm
@@ -371,7 +371,7 @@ LIBCXX_COMPAT_ROCM_PYTHON=( # Live
 #
 LIBCXX_COMPAT_ROCM=( # Live
 # Align to ROCm/llvm-project
-	"llvm_slot_24"
+	"llvm_slot_24" # For ROCM 10.1, device compiler (GPU)
 )
 
 #
