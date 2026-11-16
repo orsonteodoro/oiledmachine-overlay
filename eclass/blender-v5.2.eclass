@@ -389,7 +389,7 @@ PATENT_STATUS_REQUIRED_USE="
 REQUIRED_USE+="
 	${PATENT_STATUS_REQUIRED_USE}
 	!rocm? (
-		!llvm_slot_24
+		${LIBCXX_COMPAT_ROCM_APP[@]/#/\!}
 	)
 	!tbb? (
 		!cycles

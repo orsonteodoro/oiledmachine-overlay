@@ -1940,9 +1940,9 @@ REQUIRED_USE="
 		!ollama_llms_x-z-image-turbo
 	)
 	!rocm? (
-		!llvm_slot_24
+		${LIBCXX_COMPAT_ROCM_APP[@]/#/\!}
 		^^ (
-			${LIBSTDCXX_COMPAT_ROCM[@]}
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
 		)
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}

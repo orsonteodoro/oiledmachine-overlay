@@ -393,7 +393,7 @@ REQUIRED_USE+="
 		!openvdb
 	)
 	!rocm? (
-		!llvm_slot_24
+		${LIBCXX_COMPAT_ROCM_APP[@]/#/\!}
 	)
 	!tbb? (
 		!cycles
