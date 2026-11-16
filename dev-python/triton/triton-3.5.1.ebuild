@@ -31,8 +31,9 @@ PYTHON_COMPAT=( "python3_"{11..14} ) # See https://github.com/triton-lang/triton
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]} # 14, 15
-	${LIBSTDCXX_COMPAT_ROCM[@]} # For Python use only.
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
+	"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15.  For Python use only.
 )
 
 inherit libcxx-compat
@@ -40,9 +41,9 @@ LLVM_COMPAT=(
 	# Support object code version 5 for ROCm
 	# https://github.com/ROCm/llvm-project/blob/d366fa84f3fdcbd4b10847ebd5db572ae12a34fb/clang/lib/Driver/ToolChains/AMDGPU.h#L93
 	# The ^^ operator is bugged.
-	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
-	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 24.  For Python use only.
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24.  For Python use only.
 )
 
 LLVM_TARGETS=(
@@ -99,6 +100,7 @@ ebuild_revision_10
 REQUIRED_USE="
 	!rocm
 	!rocm? (
+		${LIBCXX_COMPAT_ROCM_PYTHON[@]/#/\!}
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
@@ -107,13 +109,16 @@ REQUIRED_USE="
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
 		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
 	)
 	rocm? (
 		^^ (
-			${LIBSTDCXX_COMPAT_ROCM[@]}
+			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
+			${LIBSTDCXX_COMPAT_ROCM[@]}
 		)
 	)
 "
