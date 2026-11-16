@@ -8,21 +8,25 @@ CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
+	"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_CXX11_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
 inherit check-compiler-switch cmake libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "99999999" ]] ; then
-	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/jketterl/sddc_connector.git"
 	EGIT_BRANCH="master"
 	FALLBACK_COMMIT="c39c26103c5412dbae27d8ce91c861cd6e1a3911" # Jul 4, 2023
+	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
+		IUSE+=" fallback-commit"
+	fi
 	inherit git-r3
 else
 	EGIT_COMMIT="c39c26103c5412dbae27d8ce91c861cd6e1a3911" # Jul 4, 2023
@@ -43,14 +47,20 @@ IUSE+="
 ebuild_revision_5
 "
 REQUIRED_USE="
+	^^ (
+		${LIBCXX_COMPAT_CXX11_CUDA_12[@]}
+	)
+	^^ (
+		${LIBSTDCXX_COMPAT_CUDA_12[@]}
+	)
 "
 RDEPEND+="
 	>=media-radio/csdr-0.19:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	>=media-radio/owrx_connector-0.7
 	|| (
-		virtual/cuda:=
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	|| (
@@ -66,7 +76,7 @@ BDEPEND+="
 	sys-devel/gcc:=
 	virtual/pkgconfig
 "
-DOCS=( LICENSE )
+DOCS=( "LICENSE" )
 
 pkg_setup() {
 	check-compiler-switch_start
@@ -76,7 +86,7 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ "${PV}" =~ "99999999" ]] ; then
-		if use fallback-commit ; then
+		if in_iuse fallback-commit && use fallback-commit ; then
 			EGIT_COMMIT="${FALLBACK_COMMIT}"
 		fi
 		git-r3_fetch
