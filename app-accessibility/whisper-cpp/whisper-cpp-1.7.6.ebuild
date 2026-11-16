@@ -53,12 +53,15 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_ROCM}" # 14, 15
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	"${LIBCXX_COMPAT_ROCM_LIB[@]}" # Disable support
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
@@ -90,6 +93,7 @@ video_cards_intel
 ebuild_revision_8
 "
 REQUIRED_USE="
+	!rocm
 	?? (
 		cpu
 		cuda
@@ -185,8 +189,16 @@ REQUIRED_USE="
 	)
 
 	cuda? (
-		|| (
+		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
+	)
+	rocm? (
+		^^ (
+			${LIBCXX_COMPAT_ROCM_LIB[@]}
 		)
 	)
 "
