@@ -204,9 +204,9 @@ REQUIRED_USE="
 "
 RDEPEND="
 	cuda? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	ffmpeg? (
