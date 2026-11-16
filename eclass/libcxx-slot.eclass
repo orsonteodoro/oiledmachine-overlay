@@ -308,7 +308,7 @@ eerror "QA:  LLVM_COMPAT must be defined"
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"${x}"($|" ") ]] ; then
 			iuse="${iuse} llvm_slot_${x}"
 			usedep="${usedep},llvm_slot_${x}(-)?"
-			usedep_eq="${usedep},llvm_slot_${x}="
+			usedep_eq="${usedep_eq},llvm_slot_${x}="
 		fi
 	done
 
