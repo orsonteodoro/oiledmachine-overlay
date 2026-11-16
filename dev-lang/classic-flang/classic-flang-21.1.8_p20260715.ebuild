@@ -30,12 +30,13 @@ LLVM_TARGETS_GPU_COMPAT=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
@@ -109,7 +110,7 @@ LICENSE="
 # MIT - classic-flang-llvm-project/llvm/test/YAMLParser/LICENSE.txt
 KEYWORDS="~arm64 ~amd64 ~ppc64"
 SLOT="${LLVM_MAX_SLOT}/${MY_PV}"
-IUSE="
+IUSE+="
 ${LLVM_TARGETS_CPU_COMPAT[@]}
 ${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
@@ -124,10 +125,10 @@ REQUIRED_USE="
 	cuda? (
 		llvm_targets_NVPTX
 		^^ (
-			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
 		)
 	)
 	offload? (
@@ -135,8 +136,8 @@ REQUIRED_USE="
 		llvm_targets_NVPTX
 	)
 	llvm_targets_NVPTX? (
-		offload
 		cuda
+		offload
 	)
 	ppc64? (
 		llvm_targets_PowerPC
@@ -147,9 +148,9 @@ REQUIRED_USE="
 "
 RDEPEND="
 	cuda? (
-		virtual/cuda:=
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	offload? (
