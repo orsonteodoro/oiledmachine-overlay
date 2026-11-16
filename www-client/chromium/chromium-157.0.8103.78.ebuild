@@ -4116,7 +4116,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-pic.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-libjpeg-turbo-optionalize-simd.patch"	# Fix missing symbols for disabled SIMD
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-opus-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-libwebp-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-crc32c-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-lzma_sdk-optionalize-simd.patch"
@@ -4131,15 +4131,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-155.0.8059.84-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-155.0.8059.84-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
 		)
 	fi
 
@@ -4172,7 +4172,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-clang-paths.patch"
 		)
 	fi
 
@@ -7234,6 +7234,7 @@ einfo "CFI:  OFF"
 			"use_mold=true"
 			"use_thin_lto=false"
 			"is_cfi=false"
+			"experimental_linker_path=${ESYSROOT}/usr/bin/mold"
 		)
 
 	# 4. Fallback: No LTO
