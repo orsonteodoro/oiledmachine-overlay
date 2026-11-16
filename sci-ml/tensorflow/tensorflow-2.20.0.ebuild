@@ -407,10 +407,6 @@ alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
 ebuild_revision_35
 "
-# Re-add when CXX_STANDARD is not 17 (LTS)
-#	rocm? (
-#		llvm_slot_${ROCM_LLVM_SLOT}
-#	)
 REQUIRED_USE="
 	!rocm
 	?? (
