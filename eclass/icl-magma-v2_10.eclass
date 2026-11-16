@@ -19,6 +19,9 @@ fi
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
 	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
 )
 
@@ -26,6 +29,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX11_CUDA_12[@]/llvm_slot_}" # 19
 	#"${LIBCXX_COMPAT_CXX11_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_LIB[@]}" # Disable support
 	"${LIBCXX_COMPAT_STDCXX11[@]/llvm_slot_}" # 19, 21, 22
 )
 
@@ -75,16 +79,24 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		cuda
 	"
 	REQUIRED_USE+="
+		cuda? (
+			^^ (
+				${LIBCXX_COMPAT_CXX11_CUDA_13[@]}
+			)
+			^^ (
+				${LIBSTDCXX_COMPAT_STDCXX11[@]}
+			)
+		)
 	"
 	GPU_FRAMEWORKS+="
 		cuda
 	"
 	RDEPEND+="
 		cuda? (
-			virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 			|| (
-				=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-				=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+				=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+				=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 			)
 		)
 	"
@@ -94,6 +106,14 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
 		rocm
 		system-llvm
+	"
+	REQUIRED_USE+="
+		!rocm
+		rocm? (
+			^^ (
+				${LIBSTDCXX_COMPAT_ROCM[@]}
+			)
+		)
 	"
 	GPU_FRAMEWORKS+="
 		rocm
