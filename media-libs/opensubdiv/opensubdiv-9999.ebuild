@@ -16,7 +16,7 @@ inherit libstdcxx-compat
 GCC_COMPAT=(
 	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
 	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
-	"${LIBSTDCXX_COMPAT_STDCXX14[@]}" # 14, 15
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
