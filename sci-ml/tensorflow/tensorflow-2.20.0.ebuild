@@ -412,6 +412,9 @@ REQUIRED_USE="
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
+	!rocm? (
+		${LIBCXX_COMPAT_ROCM_PYTHON[@]/#/\!}
+	)
 	cuda? (
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
