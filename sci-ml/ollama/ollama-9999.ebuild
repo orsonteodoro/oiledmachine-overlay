@@ -2005,11 +2005,10 @@ REQUIRED_USE="
 	)
 	cuda? (
 		^^ (
-			gcc_slot_14_4
-			gcc_slot_15_3
+			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
 		)
 	)
 	flash? (
@@ -2022,10 +2021,10 @@ REQUIRED_USE="
 	)
 	rocm? (
 		^^ (
-			${LIBSTDCXX_COMPAT_ROCM[@]}
+			${LIBCXX_COMPAT_ROCM_APP[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_ROCM_APP[@]}
+			${LIBSTDCXX_COMPAT_ROCM[@]}
 		)
 	)
 	video_cards_intel? (
