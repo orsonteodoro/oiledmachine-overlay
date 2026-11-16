@@ -160,7 +160,7 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
@@ -1917,8 +1917,8 @@ ebuild_revision_149
 # to limit the blast radius by keeping the lid on access to home.
 #
 REQUIRED_USE="
-	!external-editor
 	!cuda
+	!external-editor
 	!rocm
 	?? (
 		cuda
@@ -1938,7 +1938,7 @@ REQUIRED_USE="
 		!ollama_llms_x-z-image-turbo
 	)
 	!rocm? (
-		|| (
+		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
@@ -2028,10 +2028,10 @@ gen_clang_bdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 CUDA_DEPEND="
-	virtual/cuda:=
+	virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 	|| (
-		=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+		=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 	)
 "
 RDEPEND="
