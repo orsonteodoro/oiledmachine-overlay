@@ -169,7 +169,7 @@ LLVM_COMPAT=(
 
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
 # It uses LLVM 17 as default.
-LLVM_MAX_SLOT="22"
+LLVM_MAX_SLOT="24"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 inherit ffmpeg
@@ -837,6 +837,12 @@ RDEPEND+="
 			=media-libs/mesa-26.0*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 			=media-libs/mesa-26.1*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 			=media-libs/mesa-26.2*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+			=media-libs/mesa-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
+		)
+	)
+	llvm_slot_24? (
+		media-libs/mesa:=
+		|| (
 			=media-libs/mesa-9999[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},X?]
 		)
 	)
