@@ -22,7 +22,8 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 19, 21, 22
+	#${LIBSTDCXX_COMPAT_CUDA_12[@]} # 14
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit llvm-ebuilds
@@ -63,6 +64,9 @@ ebuild_revision_11
 REQUIRED_USE="
 	cuda? (
 		llvm_targets_NVPTX
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
 	)
 	gdb-plugin? (
 		${PYTHON_REQUIRED_USE}
@@ -76,9 +80,9 @@ REQUIRED_USE="
 "
 RDEPEND="
 	cuda? (
-		virtual/cuda:=[${LIBSTDCXX_USEDEP}]
+		virtual/cuda:=[${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	gdb-plugin? (
