@@ -117,6 +117,9 @@ GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # external/flatbu
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
@@ -365,6 +368,10 @@ ebuild_revision_31
 REQUIRED_USE="
 	!rocm
 	abseil-cpp
+	?? (
+		cuda
+		rocm
+	)
 	composable-kernel? (
 		rocm
 	)
@@ -373,6 +380,9 @@ REQUIRED_USE="
 		!lto
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
 		)
 	)
 	cudnn? (
@@ -401,6 +411,9 @@ REQUIRED_USE="
 	)
 	rocm? (
 		migraphx
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
 		^^ (
 			python_single_target_python3_11
 			python_single_target_python3_12
@@ -460,10 +473,10 @@ RDEPEND="
 		>=sci-ml/onnx-1.16.1:=[disableStaticReg]
 	)
 	cuda? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn?]
 		|| (
-			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn?]
+			=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn?]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn?]
 		)
 		cudnn? (
 			>=dev-libs/cudnn-9.6:=
@@ -495,7 +508,7 @@ RDEPEND="
 		')
 	)
 	rocm? (
-		~sci-ml/therock-${THEROCK_PV}:=[math,ml,profiling]
+		>=sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP_EQ},math,ml,profiling]
 
 		sci-ml/pytorch:=[${PYTHON_SINGLE_USEDEP}]
 		|| (
