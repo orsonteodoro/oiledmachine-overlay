@@ -382,6 +382,7 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE+="
 	${PATENT_STATUS_REQUIRED_USE}
+	!rocm
 	!boost? (
 		!alembic
 		!color-management
@@ -418,6 +419,9 @@ REQUIRED_USE+="
 		)
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
 		)
 		cycles
 	)
@@ -734,9 +738,9 @@ RDEPEND+="
 		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	cycles? (

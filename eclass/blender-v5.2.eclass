@@ -416,6 +416,9 @@ REQUIRED_USE+="
 		^^ (
 			${LIBCXX_COMPAT_CXX20_CUDA_12[@]}
 		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
 		cycles
 	)
 	cycles? (
@@ -538,7 +541,12 @@ REQUIRED_USE+="
 	rocm? (
 		!nanovdb
 		cycles
-		llvm_slot_${ROCM_LLVM_SLOT}
+		^^ (
+			${LIBCXX_COMPAT_ROCM_APP[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
 	)
 	tbb-malloc-proxy? (
 		tbb
@@ -735,9 +743,9 @@ RDEPEND+="
 		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	cycles? (
