@@ -35,7 +35,9 @@ CPU_FEATURES=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	#${LIBSTDCXX_COMPAT_CUDA_12[@]} # 14
+	#${LIBSTDCXX_COMPAT_CUDA_13[@]} # 14, 15, 16
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
@@ -114,6 +116,9 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		^^ (
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
+		)
+		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
@@ -182,10 +187,10 @@ gen_llvm_bdepend() {
 # >= python_single_target_python3_11 : openimageio-2.4.12.0
 # >= python_single_target_python3_10 : openimageio-2.3.19.0
 CUDA_DEPENDS="
-	virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 	|| (
-		=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+		=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 	)
 "
 RDEPEND+="
