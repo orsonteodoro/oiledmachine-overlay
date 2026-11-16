@@ -4,20 +4,22 @@
 
 EAPI=8
 
-CXX_STANDARD=11
+CXX_STANDARD=17 # CUDA 13 = c++17, CUDA 12 = c++14
 
 MY_PV="2.32.6-1"
 NCCL_TESTS_PV="2.21.1"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_CXX14_CUDA_12[@]/llvm_slot_}" # 19
-	"${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	#"${LIBCXX_COMPAT_CXX14_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
@@ -69,6 +71,9 @@ REQUIRED_USE="
 	^^ (
 		${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 	)
+	^^ (
+		${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	)
 	rdma? (
 		|| (
 			roce
@@ -77,10 +82,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	virtual/cuda:=[rdma]
+	virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},rdma]
 	|| (
-		=virtual/cuda-12*[rdma]
-		=virtual/cuda-13*[rdma]
+		=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},rdma]
+		=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},rdma]
 	)
 	gdrcopy? (
 		dev-libs/gdrcopy:=
