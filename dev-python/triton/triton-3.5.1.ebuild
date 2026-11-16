@@ -176,14 +176,14 @@ RDEPEND+="
 		$(gen_llvm_rdepend)
 	)
 	llvm_targets_NVPTX? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	rocm? (
 		rocm? (
-			>=sci-ml/therock-${THEROCK_PV}:=[${LIBSTDCXX_USEDEP}]
+			>=sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	tutorials? (
