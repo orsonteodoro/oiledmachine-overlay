@@ -198,21 +198,27 @@ eerror "QA:  GCC_COMPAT must be defined"
 
 	local iuse=""
 	local usedep=""
-	local usedep2=""
+	local usedep_rdepend=""
+	local usedep_eq=""
 	local x
 	for x in ${_ALL_GCC_COMPAT[@]} ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			iuse="${iuse} gcc_slot_${x}"
 			usedep="${usedep},gcc_slot_${x}(-)?"
-			usedep2="${usedep2},gcc_slot_${x}(-)?"
+			usedep_rdepend="${usedep_rdepend},gcc_slot_${x}(-)?"
+			usedep_eq="${usedep_eq},gcc_slot_${x}="
 		fi
 	done
+
+	usedep="${usedep:1}"
+	usedep_rdepend="${usedep_rdepend:1}"
+	usedep_eq="${usedep_eq:1}"
+
 	required_use="
 		^^ (
 			${iuse}
 		)
 	"
-	usedep2="${usedep2:1}"
 
 	if [[ -z "${CXX_STANDARD}" ]] ; then
 ewarn "QA:  CXX_STANDARD is undefined."
@@ -229,14 +235,15 @@ ewarn "Valid values:  98, 03, 11, 14, 17, 20, 23, 26, ignore"
 	"
 	RDEPEND="
 		${RDEPEND}
-		virtual/libstdcxx[${usedep2}]
+		virtual/libstdcxx[${usedep_rdepend}]
 	"
 
 	if [[ "${LIBSTDCXX_USEDEP_SKIP}" == "1" ]] ; then
 	# Skip resolution but mark packages as having C++ version symbols.
 		LIBSTDCXX_USEDEP="gcc_slot_skip(+)"
 	else
-		LIBSTDCXX_USEDEP="${usedep:1}"
+		LIBSTDCXX_USEDEP="${usedep}"
+		LIBSTDCXX_USEDEP_EQ="${usedep_eq}"
 	fi
 }
 _libstdcxx_slot_set_globals

@@ -302,13 +302,19 @@ eerror "QA:  LLVM_COMPAT must be defined"
 
 	local iuse=""
 	local usedep=""
+	local usedep_eq=""
 	local x
 	for x in ${_ALL_LLVM_COMPAT[@]} ; do
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"${x}"($|" ") ]] ; then
 			iuse="${iuse} llvm_slot_${x}"
 			usedep="${usedep},llvm_slot_${x}(-)?"
+			usedep_eq="${usedep},llvm_slot_${x}="
 		fi
 	done
+
+	usedep="${usedep:1}"
+	usedep_eq="${usedep_eq:1}"
+
 	local required_use=""
 	if [[ "${LIBCXX_SLOT_CONFIG:-core}" =~ ("core+lib"|"lib") ]] ; then
 		required_use="
@@ -412,7 +418,8 @@ ewarn "QA:  Add LIBCXX_USEDEP_SKIP=1 for libcxx-slot to avoid LIBCXX_USEDEP issu
 	# Skip resolution but mark packages as having C++ version symbols.
 		LIBCXX_USEDEP="llvm_slot_skip(+)"
 	else
-		LIBCXX_USEDEP="${usedep:1}"
+		LIBCXX_USEDEP="${usedep}"
+		LIBCXX_USEDEP_EQ="${usedep_eq}"
 	fi
 }
 if [[ "${LIBCXX_GLOBALS}" == "auto" ]] ; then
