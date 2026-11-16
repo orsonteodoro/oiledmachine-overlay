@@ -4009,7 +4009,7 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")	
 #"${base_path}/toolchain/cr149-fix-rust-2-oxidize-harder.patch"									# Unique patch.  Updated in chromium-157.0.8103.78-fix-rust-2-oxidize-harder.patch
 #"${base_path}/toolchain/cr150-compiler.patch"											# Dropping patch, oiledmachine-overlay patch used instead
 "${FILESDIR}/extra-patches/${PN}-151.0.7922.108-dawn-system-go.patch"								# Unique patch, same as cr151-dawn-system-go.patch but with updated context
-"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"								# Unique patch, same as cr151-mold-unbundle.patch
+#"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-mold-unbundle.patch"								# Unique patch, same as cr151-mold-unbundle.patch; Dropped.  Used the one in oiledmachine-overlay.
 		)
 
 		PATCHES+=(
@@ -4100,7 +4100,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-zlib-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-disable-speech.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-simd-defaults.patch"
@@ -4127,18 +4127,19 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-linker-warn-missing-symbols.patch"
 	)
 
+	# See also chromium-151.0.7922.108-mold-unbundle.patch in MJ set
 	if in_iuse "ungoogled-chromium" && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-155.0.8059.84-mold-ungoogled-chromium.patch"
+			"A${FILESDIR}/extra-patches/${PN}-155.0.8059.84-mold-ungoogled-chromium.patch"
 		)
 	elif in_iuse "cromite" && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
+			"A${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
+			"A${FILESDIR}/extra-patches/${PN}-155.0.8059.39-mold.patch"
 		)
 	fi
 

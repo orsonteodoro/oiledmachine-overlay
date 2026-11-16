@@ -1,0 +1,10 @@
+--- a/chrome/test/BUILD.gn.orig	2026-11-15 16:17:47.843763088 -0800
++++ b/chrome/test/BUILD.gn	2026-11-15 16:27:25.381452333 -0800
+@@ -3445,7 +3445,6 @@ test("unit_tests") {
+       "//chrome/browser/ui/webui/top_chrome:unit_tests",
+       "//chrome/browser/ui/window_sizer:unit_tests",
+       "//chrome/browser/ui/zoom:unit_tests",
+-      "//chrome/services/speech:unit_tests",
+       "//components/lens:buildflags",
+       "//components/services/app_service/public/cpp:unit_tests",
+       "//components/signin/public/base:signin_buildflags",
