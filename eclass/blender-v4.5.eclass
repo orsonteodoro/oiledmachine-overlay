@@ -155,6 +155,7 @@ CPU_FLAGS_3_3=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
 	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
@@ -438,9 +439,6 @@ REQUIRED_USE+="
 			)
 		)
 	)
-	sycl? (
-		cycles
-	)
 	dbus? (
 		wayland
 	)
@@ -557,6 +555,9 @@ REQUIRED_USE+="
 		^^ (
 			${LIBSTDCXX_COMPAT_ROCM[@]}
 		)
+	)
+	sycl? (
+		cycles
 	)
 	theora? (
 		ffmpeg
