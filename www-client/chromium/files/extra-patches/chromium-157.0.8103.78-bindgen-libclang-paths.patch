@@ -1,5 +1,5 @@
---- build/rust/rust_bindgen_generator.gni.orig	2026-11-15 08:37:31.114699190 -0800
-+++ build/rust/rust_bindgen_generator.gni	2026-11-15 09:36:00.735357481 -0800
+--- a/build/rust/rust_bindgen_generator.gni.orig	2026-11-16 13:39:25.863938256 -0800
++++ b/build/rust/rust_bindgen_generator.gni	2026-11-16 14:01:12.020297611 -0800
 @@ -22,14 +22,18 @@ if (!use_chromium_rust_toolchain &&
  
  # On Windows, the libclang.dll is beside the bindgen.exe, otherwise it is in
@@ -48,31 +48,35 @@
      }
  
      args += [ "--bindgen-flags" ]
---- build/rust/gni_impl/libclang_args.gni.orig	2026-11-15 09:47:51.448181784 -0800
-+++ build/rust/gni_impl/libclang_args.gni	2026-11-15 09:44:51.278123681 -0800
-@@ -36,10 +36,21 @@ _libclang_extra_args = []
+--- a/build/rust/gni_impl/libclang_args.gni.orig	2026-11-16 13:39:39.731602946 -0800
++++ b/build/rust/gni_impl/libclang_args.gni	2026-11-16 14:08:23.645461600 -0800
+@@ -36,7 +36,12 @@ _libclang_extra_args = []
  # says the wrong thing. We point it to our clang's resource dir which will
  # make it behave consistently with our other command line flags and allows
  # system headers to be found.
--_libclang_extra_args += [
--  "-resource-dir",
--  rebase_path(clang_base_path + "/lib/clang/" + clang_version, root_build_dir),
--]
+-if (use_system_clang) {
 +if (bindgen_clang_resource_dir != "") {
 +  _libclang_extra_args += [
 +    "-resource-dir",
 +    rebase_path(bindgen_clang_resource_dir, root_build_dir),
 +  ]
-+else {
-+  _libclang_extra_args += [
-+    "-resource-dir",
++} else if (use_system_clang) {
+   _libclang_extra_args += [
+     "-resource-dir",
+     rebase_path(clang_base_path + "../../clang/" + clang_version, root_build_dir),
+@@ -44,10 +49,14 @@ if (use_system_clang) {
+ } else {
+   _libclang_extra_args += [
+     "-resource-dir",
+-    rebase_path(clang_base_path + "/clang/" + clang_version, root_build_dir),
 +    rebase_path(clang_base_path + "/lib/clang/" + clang_version, root_build_dir),
-+  ]
-+}
-+
+   ]
+ }
+ 
 +if (bindgen_extra_clang_args != []) {
 +  _libclang_extra_args += bindgen_extra_clang_args
 +}
- 
++
  if (is_win) {
    # On Windows we fall back to using system headers from a sysroot from
+   # depot_tools. This is negotiated by python scripts and the result is

@@ -4229,7 +4229,7 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}"
 #		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-system-libsecret-includes-path.patch"
 		"${FILESDIR}/extra-patches/${PN}-143.0.7499.192-custom-march.patch"
 		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-optionalize-sanitize-array-bounds.patch"
-		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-xnnpack-scalar-fallback.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-xnnpack-scalar-fallback.patch"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
@@ -4284,10 +4284,10 @@ einfo "Removing SupportedLaneCount"
 		|| die
 
 	PATCHES+=(
-#		"${FILESDIR}/extra-patches/chromium-155-crubit.patch"
-#		"${FILESDIR}/extra-patches/chromium-155-remove-private_verification_tokens.patch"
-		"${FILESDIR}/extra-patches/chromium-157.0.8103.78-bindgen-libclang-paths.patch"
-		"${FILESDIR}/extra-patches/chromium-157.0.8103.78-fix-rust-2-oxidize-harder.patch"
+#		"${FILESDIR}/extra-patches/${PN}-155-crubit.patch"
+#		"${FILESDIR}/extra-patches/${PN}-155-remove-private_verification_tokens.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-bindgen-libclang-paths.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-fix-rust-2-oxidize-harder.patch"
 	)
 }
 

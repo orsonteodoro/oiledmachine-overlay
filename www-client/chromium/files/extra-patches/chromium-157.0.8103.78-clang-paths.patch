@@ -75,7 +75,7 @@
 +} else {
 +  _libclang_extra_args += [
 +    "-resource-dir",
-+    rebase_path(clang_base_path + "/clang/" + clang_version, root_build_dir),
++    rebase_path(clang_base_path + "/lib/clang/" + clang_version, root_build_dir),
 +  ]
 +}
  

@@ -1,0 +1,47 @@
+--- a/third_party/xnnpack/src/src/configs/gemm-config.c.orig	2026-11-10 15:35:17.000000000 -0800
++++ b/third_party/xnnpack/src/src/configs/gemm-config.c	2026-11-16 12:14:32.522412448 -0800
+@@ -2881,7 +2881,7 @@ static void init_f32_qc4w_gemm_config(vo
+       (xnn_packw_gemm_goi_ukernel_fn)xnn_pack_f32_qc4w_gemm_goi_w;
+   f32_qc4w_gemm_config.mr = 6;
+   f32_qc4w_gemm_config.nr = 8;
+-#elif XNN_ARCH_X86 || XNN_ARCH_X86_64
++#elif (XNN_ARCH_X86 || XNN_ARCH_X86_64) && XNN_ENABLE_SSE41
+   const struct xnn_hardware_config* hardware_config =
+       xnn_init_hardware_config();
+   assert(hardware_config != NULL);
+@@ -3123,7 +3123,7 @@ static void init_f32_qc8w_gemm_config(vo
+     }
+   }
+ #endif  // XNN_MAX_UARCH_TYPES > 1
+-#elif XNN_ARCH_X86 || XNN_ARCH_X86_64
++#elif (XNN_ARCH_X86 || XNN_ARCH_X86_64) && XNN_ENABLE_SSE41
+   const struct xnn_hardware_config* hardware_config =
+       xnn_init_hardware_config();
+   assert(hardware_config != NULL);
+@@ -4880,7 +4880,7 @@ static void init_qd8_f32_qb4w_gemm_confi
+     qd8_f32_qb4w_gemm_config.nr = 16;
+     qd8_f32_qb4w_gemm_config.planes = 2;
+   }
+-#elif XNN_ARCH_X86 || XNN_ARCH_X86_64
++#elif (XNN_ARCH_X86 || XNN_ARCH_X86_64) && (XNN_ENABLE_SSE41 || XNN_ENABLE_SSE2)
+   const struct xnn_hardware_config* hardware_config =
+       xnn_init_hardware_config();
+   assert(hardware_config != NULL);
+@@ -7162,7 +7162,7 @@ static void init_qd8_f32_qc8w_gemm_confi
+     }
+ #endif  // XNN_ENABLE_ASSEMBLY
+ #endif  // XNN_PLATFORM_IOS || XNN_PLATFORM_MAC || XNN_PLATFORM_WINDOWS
+-#elif XNN_ARCH_X86 || XNN_ARCH_X86_64
++#elif (XNN_ARCH_X86 || XNN_ARCH_X86_64) && (XNN_ENABLE_SSE41 || XNN_ENABLE_SSE2)
+   const struct xnn_hardware_config* hardware_config =
+       xnn_init_hardware_config();
+   assert(hardware_config != NULL);
+@@ -9060,7 +9060,7 @@ static void init_qs8_qc8w_gemm_config(vo
+   }
+ #endif  // XNN_ENABLE_ASSEMBLY && XNN_MAX_UARCH_TYPES > 1
+ #endif  // XNN_PLATFORM_IOS || XNN_PLATFORM_MAC || XNN_PLATFORM_WINDOWS
+-#elif XNN_ARCH_X86 || XNN_ARCH_X86_64
++#elif (XNN_ARCH_X86 || XNN_ARCH_X86_64) && (XNN_ENABLE_SSE41 || XNN_ENABLE_SSE2)
+   const struct xnn_hardware_config* hardware_config =
+       xnn_init_hardware_config();
+   assert(hardware_config != NULL);
