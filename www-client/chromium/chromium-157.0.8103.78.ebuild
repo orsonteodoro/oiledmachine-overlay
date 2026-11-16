@@ -4107,7 +4107,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-150.0.7871.46-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.45-libaom-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-libvpx-optionalize-simd.patch"		# Fix missing symbols for disabled SIMD
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-148.0.7778.167-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-perfetto-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
