@@ -524,6 +524,12 @@ gen_protobuf_rdepend() {
 	done
 }
 # The abseil-cpp rdepends is handled by protobuf package.
+CUDA_CDEPEND="
+	virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},profiler]
+	|| (
+		=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn,profiler]
+	)
+"
 RDEPEND="
 	python? (
 		net-libs/google-cloud-cpp:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -554,11 +560,8 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	cuda? (
+		${CUDA_CDEPEND}
 		>=dev-libs/cudnn-9.8:=
-		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
-		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
-		)
 	)
 	mpi? (
 		virtual/mpi:*
@@ -671,10 +674,7 @@ BDEPEND="
 		)
 	)
 	cuda? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},profiler]
-		|| (
-			virtual/cuda:12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},profiler]
-		)
+		${CUDA_CDEPEND}
 	)
 	python? (
 		!big-endian? (
