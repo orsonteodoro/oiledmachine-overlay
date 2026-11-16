@@ -183,6 +183,9 @@ REQUIRED_USE="
 	^^ (
 		${BACKENDS[@]}
 	)
+	!rocm? (
+		!llvm_slot_24
+	)
 	cuda? (
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
