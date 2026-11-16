@@ -1921,9 +1921,7 @@ ebuild_revision_149
 # to limit the blast radius by keeping the lid on access to home.
 #
 REQUIRED_USE="
-	!cuda
 	!external-editor
-	!rocm
 	?? (
 		cuda
 		rocm
