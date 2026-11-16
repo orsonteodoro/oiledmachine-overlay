@@ -384,13 +384,15 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE+="
 	${PATENT_STATUS_REQUIRED_USE}
-	!rocm
 	!boost? (
 		!alembic
 		!color-management
 		!cycles
 		!nls
 		!openvdb
+	)
+	!rocm? (
+		!llvm_slot_24
 	)
 	!tbb? (
 		!cycles
