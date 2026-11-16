@@ -54,7 +54,9 @@ RE2_SLOT="20250512"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	#${LIBSTDCXX_COMPAT_CUDA_12[@]} # 14
+	#${LIBSTDCXX_COMPAT_ROCM[@]} # 14, 15
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 # See "deps versioning" section above for details.
@@ -65,6 +67,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24, for Python use only
 )
 
 # *seq* can only be done in the eclass.
@@ -415,11 +418,22 @@ REQUIRED_USE="
 	)
 	cuda? (
 		^^ (
-			${LIBCXX_COMPAT_CXX20_CUDA_12[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
 		)
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+	)
+	rocm? (
+		^^ (
+			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
 	)
 	test? (
 		python
@@ -542,9 +556,9 @@ RDEPEND="
 	)
 	cuda? (
 		>=dev-libs/cudnn-9.8:=
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
 		)
 	)
 	mpi? (
