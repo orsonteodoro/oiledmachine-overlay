@@ -47,13 +47,13 @@ ROCM_SLOT=$(ver_cut "1-2" "${PV}")
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX20[@]}"
+        "gcc_slot_14_4" # Support ROCm 10.1, D13, host compiler (CPU)
+        "gcc_slot_15_3" # Support ROCm 10.1, U26, host compiler (CPU)
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX20[@]}" # 21-23
-	24 # Align with HIP-Clang
+	24 # Align with HIP-Clang, device compiler (GPU)
 )
 
 inherit ccache-changes cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic git-r3 libcxx-slot libstdcxx-slot python-r1 secure-version rocm-r1
