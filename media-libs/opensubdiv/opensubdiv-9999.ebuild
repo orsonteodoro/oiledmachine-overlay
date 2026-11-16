@@ -10,16 +10,20 @@ EAPI=8
 MY_PV=$(ver_rs "1-3" '_')
 
 # Some parts synced with opensubdiv-3.4.4-r2.
-CXX_STANDARD=14
+CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX14[@]}"
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
+	"${LIBSTDCXX_COMPAT_STDCXX14[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX14[@]/llvm_slot_}"
+	#"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
+	#"${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
 CMAKE_MAKEFILE_GENERATOR="emake"
@@ -70,6 +74,14 @@ cuda doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 ebuild_revision_6
 "
 REQUIRED_USE="
+	cuda? (
+		^^ (
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
+		)
+	)
 	X? (
 		glfw
 	)
@@ -77,9 +89,10 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	cuda? (
-		virtual/cuda:=
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+			=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	glew? (
