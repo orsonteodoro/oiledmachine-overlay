@@ -191,6 +191,8 @@ CPU_FLAGS_X86_64=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
@@ -198,8 +200,8 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	# Upstream uses LLVM 18
 	# ${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
-	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 24.  For Python use only.  Do not link with C/C++ lib/app.
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24.  For Python use only.  Do not link with C/C++ lib/app.
 )
 
 inherit abseil-cpp bazel cflags-hardened check-compiler-switch cuda distutils-r1
@@ -368,12 +370,17 @@ gen_llvm_slot_required_use() {
 # CUDA is disabled because version is not supported on overlay.
 # ROCm needs NumPy 1.x
 REQUIRED_USE+="
-	!cuda
-	!rocm
 	$(gen_llvm_slot_required_use)
 	|| (
 		clang
 		rocm
+	)
+	?? (
+		cuda
+		rocm
+	)
+	!rocm? (
+		${LIBCXX_COMPAT_ROCM_PYTHON[@]/#/\!}
 	)
 	clang? (
 		^^ (
@@ -382,15 +389,19 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		!clang
-		!rocm
 		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_12[@]}
 		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
 	)
 	rocm? (
-		!cuda
 		^^ (
 			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
 		)
 	)
 	|| (
@@ -426,9 +437,9 @@ RDEPEND+="
 			=dev-libs/cudnn-9.25*
 		)
 
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
 		)
 	)
 	rocm? (
