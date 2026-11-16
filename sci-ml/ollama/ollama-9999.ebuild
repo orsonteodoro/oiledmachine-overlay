@@ -160,6 +160,9 @@ CPU_FLAGS_X86=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
@@ -167,6 +170,7 @@ inherit libcxx-compat
 LLVM_COMPAT=(
 	#"${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_}" # 19
 	#"${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
@@ -1938,6 +1942,10 @@ REQUIRED_USE="
 		!ollama_llms_x-z-image-turbo
 	)
 	!rocm? (
+		!llvm_slot_24
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
@@ -1997,6 +2005,10 @@ REQUIRED_USE="
 	)
 	cuda? (
 		^^ (
+			gcc_slot_14_4
+			gcc_slot_15_3
+		)
+		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
@@ -2007,6 +2019,14 @@ REQUIRED_USE="
 	)
 	mlx? (
 		kernel_Darwin
+	)
+	rocm? (
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_ROCM_APP[@]}
+		)
 	)
 	video_cards_intel? (
 		openrc

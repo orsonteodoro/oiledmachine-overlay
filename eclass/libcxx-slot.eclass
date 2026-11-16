@@ -300,11 +300,19 @@ eerror "QA:  LLVM_COMPAT must be defined"
 		die
 	fi
 
+	for x in "${LLVM_COMPAT[@]}" ; do
+		if [[ "${x}" =~ "llvm_compat_" ]] ; then
+eerror "QA:  Remove the llvm_slot_ prefix in LLVM_COMPAT."
+eerror "Example:  \${LLVM_COMPAT[@]/llvm_compat_}"
+			die
+		fi
+	done
+
 	local iuse=""
 	local usedep=""
 	local usedep_eq=""
 	local x
-	for x in ${_ALL_LLVM_COMPAT[@]} ; do
+	for x in "${_ALL_LLVM_COMPAT[@]}" ; do
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"${x}"($|" ") ]] ; then
 			iuse="${iuse} llvm_slot_${x}"
 			usedep="${usedep},llvm_slot_${x}(-)?"
@@ -462,7 +470,7 @@ libcxx-slot_verify() {
 
 	# Verify core compiler
 	local x
-	for x in ${_ALL_LLVM_COMPAT[@]} ; do
+	for x in "${_ALL_LLVM_COMPAT[@]}" ; do
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"llvm_slot_${x}"($|" ") ]] ; then
 			if ver_test "${llvm_slot}" -ne "${x}" && in_iuse "llvm_slot_${x}" && use "llvm_slot_${x}" ; then
 				_switch_clang_to_continue_message ${x%_*}

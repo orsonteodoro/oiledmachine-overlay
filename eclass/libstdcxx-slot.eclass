@@ -201,7 +201,7 @@ eerror "QA:  GCC_COMPAT must be defined"
 	local usedep_rdepend=""
 	local usedep_eq=""
 	local x
-	for x in ${_ALL_GCC_COMPAT[@]} ; do
+	for x in "${_ALL_GCC_COMPAT[@]}" ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			iuse="${iuse} gcc_slot_${x}"
 			usedep="${usedep},gcc_slot_${x}(-)?"
@@ -323,7 +323,7 @@ libstdcxx-slot_verify() {
 
 	# Verify libstdcxx
 	local x
-	for x in ${_ALL_GCC_COMPAT[@]} ; do
+	for x in "${_ALL_GCC_COMPAT[@]}" ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local k="GCC_${x/./_}"
 			local expected_libstdcxx_ver="${!k}"
@@ -361,7 +361,7 @@ libstdcxx-slot_verify() {
 
 	# Verify CC/CXX
 	local x
-	for x in ${_ALL_GCC_COMPAT[@]} ; do
+	for x in "${_ALL_GCC_COMPAT[@]}" ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local expected_cc_ver="${x/_/.}"
 			if tc-is-gcc && ver_test "${actual_cc_ver}" "-ne" "${expected_cc_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
@@ -381,7 +381,7 @@ eerror
 		fi
 	done
 	local x
-	for x in ${_ALL_GCC_COMPAT[@]} ; do
+	for x in "${_ALL_GCC_COMPAT[@]}" ; do
 		if [[ ${GCC_COMPAT[@]} =~ (^|" ")"gcc_slot_${x}"($|" ") ]] ; then
 			local expected_cxx_ver="${x/_/.}"
 			if tc-is-gcc && ver_test "${actual_cxx_ver}" "-ne" "${expected_cxx_ver}" && in_iuse "gcc_slot_${x}" && use "gcc_slot_${x}" ; then
