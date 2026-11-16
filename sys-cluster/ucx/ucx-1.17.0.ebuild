@@ -12,8 +12,10 @@ CXX_STANDARD=11
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
 	"${LIBSTDCXX_COMPAT_STDCXX11[@]}" # 14, 15
-	"${LIBSTDCXX_COMPAT_ROCM[@]}" # 16
+	"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
 )
 
 inherit libcxx-compat
@@ -64,6 +66,9 @@ REQUIRED_USE="
 		clang
 		hip-clang
 	)
+	!rocm? (
+		${LIBCXX_COMPAT_ROCM_APP[@]/#/\!}
+	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -72,7 +77,10 @@ REQUIRED_USE="
 	cuda? (
 		gcc
 		^^ (
-			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+			${LIBCXX_COMPAT_CXX11_CUDA_13[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_STDCXX11[@]}
 		)
 	)
 	gdrcopy? (
@@ -91,15 +99,11 @@ REQUIRED_USE="
 		)
 	)
 	rocm? (
-		gcc? (
-			^^ (
-				${LIBSTDCXX_COMPAT_ROCM[@]}
-			)
+		^^ (
+			${LIBCXX_COMPAT_ROCM_APP[@]}
 		)
-		clang? (
-			^^ (
-				${LIBCXX_COMPAT_ROCM_APP[@]}
-			)
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
 		)
 	)
 "
@@ -108,22 +112,16 @@ RDEPEND="
 		>=sys-libs/glibc-${GLIBC_PV}:=
 	)
 	cuda? (
-		virtual/cuda:=
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*
-		)
-	)
-	cuda? (
-		virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+			=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 		dmabuf? (
-			virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},kernel-open,rdma]
+			virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},kernel-open(+),rdma]
 			|| (
-				=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},kernel-open,rdma]
-				=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},kernel-open,rdma]
+				=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},kernel-open,rdma]
+				=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},kernel-open(+),rdma]
 			)
 		)
 	)
