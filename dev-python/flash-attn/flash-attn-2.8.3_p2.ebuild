@@ -22,15 +22,18 @@ PYTHON_COMPAT=( "python3_"{11..13} ) # Lists up to 3.13
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
+	#"${LIBCXX_COMPAT_CXX11_CUDA_12[@]}" # 14
+	#"${LIBCXX_COMPAT_CXX11_CUDA_13[@]}" # 14, 15, 16
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
 	#${LIBCXX_COMPAT_CXX17_CUDA_12[@]/llvm_slot_} # 19
 	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_} # 19, 21, 22
-	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
-	${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_} # 14.  Slot for Python use only.
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_ROCM_PYTHON[@]/llvm_slot_}" # 24.  Slot for Python use only.
 )
 
 inherit dep-prepare distutils-r1 libcxx-slot libstdcxx-slot secure-version rocm-r1
@@ -91,16 +94,24 @@ REQUIRED_USE="
 	^^ (
 		${GCC_COMPAT[@]/#/gcc_slot_}
 	)
+	!rocm? (
+		${LIBCXX_COMPAT_ROCM_PYTHON[@]/#/\!}
+	)
 	cuda? (
 		^^ (
 			${LIBSTDCXX_COMPAT_STDCXX17[@]}
 		)
 		^^ (
-			${LIBCXX_COMPAT_STDCXX17[@]}
+			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
 	rocm? (
-		llvm_slot_${ROCM_LLVM_SLOT}
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
+		^^ (
+			${LIBCXX_COMPAT_ROCM_PYTHON[@]}
+		)
 	)
 "
 REQUIRED_USE="
@@ -122,10 +133,10 @@ RDEPEND+="
 		sci-ml/pytorch:=
 	)
 	cuda? (
-		virtual/cuda:=
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		|| (
-			=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-			=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+			=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
 		)
 	)
 	rocm? (
