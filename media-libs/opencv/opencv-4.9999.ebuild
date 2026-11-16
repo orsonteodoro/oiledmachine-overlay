@@ -36,12 +36,16 @@ _CXX_STANDARD=(
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]} # 19, 21, 22
+	#${LIBCXX_COMPAT_ROCM_LIB[@]} # Disable support
+	#${LIBCXX_COMPAT_CXX17_CUDA_13[@]/llvm_slot_} # 19, 21, 22
 	${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_} # 19, 21, 22
 )
 
@@ -459,6 +463,7 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
+	!rocm
 	?? (
 		carotene
 		fastcv
@@ -602,6 +607,9 @@ REQUIRED_USE="
 			opencl
 		)
 		^^ (
+			${LIBSTDCXX_COMPAT_STDCXX17[@]}
+		)
+		^^ (
 			${LIBCXX_COMPAT_CXX17_CUDA_13[@]}
 		)
 	)
@@ -667,6 +675,11 @@ REQUIRED_USE="
 			gstreamer
 		)
 	)
+	rocm? (
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
+	)
 	tesseract? (
 		contrib
 	)
@@ -705,10 +718,10 @@ REQUIRED_USE+="
 	)
 "
 CUDA_DEPEND="
-	virtual/cuda:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+	virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
 	|| (
-		=virtual/cuda-13*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
-		=virtual/cuda-12*[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cudnn]
+		=virtual/cuda-13*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
+		=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ},cudnn]
 	)
 	cudnn? (
 		>=dev-libs/cudnn-8.8:=
