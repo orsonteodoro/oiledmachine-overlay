@@ -316,7 +316,7 @@ eerror "Example:  \${LLVM_COMPAT[@]/llvm_compat_}"
 		if [[ ${LLVM_COMPAT[@]} =~ (^|" ")"${x}"($|" ") ]] ; then
 			iuse="${iuse} llvm_slot_${x}"
 			usedep="${usedep},llvm_slot_${x}(-)?"
-			usedep_eq="${usedep_eq},llvm_slot_${x}="
+			usedep_eq="${usedep_eq},llvm_slot_${x}(-)="
 		fi
 	done
 

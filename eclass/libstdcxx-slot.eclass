@@ -206,7 +206,7 @@ eerror "QA:  GCC_COMPAT must be defined"
 			iuse="${iuse} gcc_slot_${x}"
 			usedep="${usedep},gcc_slot_${x}(-)?"
 			usedep_rdepend="${usedep_rdepend},gcc_slot_${x}(-)?"
-			usedep_eq="${usedep_eq},gcc_slot_${x}="
+			usedep_eq="${usedep_eq},gcc_slot_${x}(-)="
 		fi
 	done
 
