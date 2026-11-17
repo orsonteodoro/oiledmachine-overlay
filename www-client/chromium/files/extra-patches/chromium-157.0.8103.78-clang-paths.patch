@@ -47,9 +47,9 @@
  
 -      _clang_lib_dir = "$clang_base_path/lib/clang/$clang_version/lib"
 +      if (use_system_clang) {
-+        # It's the same as /usr/lib/clang/<clang_version_major>/lib.
-+        # clang_base_path is /usr/lib/llvm/<LLVM_SLOT>.
 +        # /usr/lib/clang/24/lib/linux is valid without 64 suffix for second right most lib path fragment.
++        # The distro assumes clang_base_path is /usr/lib/clang/<clang_version_major>.
++        # _clang_lib_dir the same as /usr/lib/clang/<clang_version_major>/lib.
 +        _clang_lib_dir = "$clang_base_path/../../clang/$clang_version/lib"
 +      } else {
 +        _clang_lib_dir = "$clang_base_path/lib/clang/$clang_version/lib"

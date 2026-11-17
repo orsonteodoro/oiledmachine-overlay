@@ -5732,11 +5732,12 @@ einfo "Using the system toolchain"
 		fi
 	fi
 
-	if tc-is-clang ; then
-		myconf_gn+=(
-			"clang_base_path=\"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}\""
-		)
-	fi
+# Looks wrong
+#	if tc-is-clang ; then
+#		myconf_gn+=(
+#			"clang_base_path=\"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}\""
+#		)
+#	fi
 
 	if tc-is-cross-compiler ; then
 		tc-export "BUILD_"{"AR","CC","CXX","NM"}

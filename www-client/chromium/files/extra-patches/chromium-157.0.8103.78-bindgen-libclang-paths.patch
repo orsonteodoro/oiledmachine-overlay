@@ -1,5 +1,5 @@
---- a/build/rust/rust_bindgen_generator.gni.orig	2026-11-16 13:39:25.863938256 -0800
-+++ b/build/rust/rust_bindgen_generator.gni	2026-11-16 14:01:12.020297611 -0800
+--- a/build/rust/rust_bindgen_generator.gni.orig	2026-11-16 15:22:46.289757475 -0800
++++ b/build/rust/rust_bindgen_generator.gni	2026-11-16 15:26:45.281548816 -0800
 @@ -22,14 +22,18 @@ if (!use_chromium_rust_toolchain &&
  
  # On Windows, the libclang.dll is beside the bindgen.exe, otherwise it is in
@@ -48,8 +48,8 @@
      }
  
      args += [ "--bindgen-flags" ]
---- a/build/rust/gni_impl/libclang_args.gni.orig	2026-11-16 13:39:39.731602946 -0800
-+++ b/build/rust/gni_impl/libclang_args.gni	2026-11-16 14:08:23.645461600 -0800
+--- a/build/rust/gni_impl/libclang_args.gni.orig	2026-11-16 15:23:01.585386644 -0800
++++ b/build/rust/gni_impl/libclang_args.gni	2026-11-16 15:27:43.551705136 -0800
 @@ -36,7 +36,12 @@ _libclang_extra_args = []
  # says the wrong thing. We point it to our clang's resource dir which will
  # make it behave consistently with our other command line flags and allows
@@ -64,12 +64,7 @@
    _libclang_extra_args += [
      "-resource-dir",
      rebase_path(clang_base_path + "../../clang/" + clang_version, root_build_dir),
-@@ -44,10 +49,14 @@ if (use_system_clang) {
- } else {
-   _libclang_extra_args += [
-     "-resource-dir",
--    rebase_path(clang_base_path + "/clang/" + clang_version, root_build_dir),
-+    rebase_path(clang_base_path + "/lib/clang/" + clang_version, root_build_dir),
+@@ -48,6 +53,10 @@ if (use_system_clang) {
    ]
  }
  
