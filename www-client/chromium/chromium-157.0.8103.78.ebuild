@@ -3608,7 +3608,7 @@ einfo "Applying the Arch patchset..."
 #"${base_path}/chromium-156-isolatedDeclarations.patch"
 "${base_path}/chromium-157-revert-gn-check-includes.patch"		# For pre-build step
 "${base_path}/chromium-157-typescript.patch"				# Unvendor
-"${base_path}/chromium-157-crubit.patch"				# Fix early compile issue
+#"${base_path}/chromium-157-crubit.patch"				# Fix early compile issue; Using chromium-157.0.8103.78-crubit.patch instead
 #"${base_path}/compiler-rt-adjust-paths.patch"
 #"${base_path}/increase-fortify-level.patch"
 #"${base_path}/enable-widevine-arm64.patch"
@@ -3992,7 +3992,7 @@ einfo "Applying the MJ patchset (Gentoo patchset)..."
 
 	# Generated from:  find /var/tmp/portage/www-client/chromium-157.0.8103.78/work/chromium-patches-151-3/ -name "*.patch" | sort -V
 	local base_path="${WORKDIR}/chromium-patches-${MJ_PATCHSET_PV}-${MJ_PATCHSET_REV}"
-	PATCHES=(
+	PATCHES+=(
 $(use system-zlib && echo "${base_path}/common/cr109-system-zlib.patch")							# Unique patch
 $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")							# Unique patch
 #"${base_path}/common/cr138-nodejs-version-check.patch"										# Using Arch chromium-138-nodejs-version-check.patch instead
@@ -4007,7 +4007,7 @@ $(use system-icu && echo "${base_path}/common/cr131-unbundle-icu-target.patch")	
 
 	if use system-clang ; then
 		if use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
-			PATCHES=(
+			PATCHES+=(
 "${base_path}/ppc64le/cr151-ppc64-libpng.patch"											# Unique patch
 "${base_path}/ppc64le/libpng-pdfium-compile-98.patch"										# Unique patch
 #"${base_path}/ppc64le/rust-clanglib.patch"											# Using Debian rust-clanglib.patch instead
@@ -4245,7 +4245,7 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
-		"${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-clang-flags.patch"
+		"A${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
@@ -4296,7 +4296,7 @@ einfo "Removing SupportedLaneCount"
 		|| die
 
 	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-155-crubit.patch" # outdated?
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-crubit.patch"
 #		"${FILESDIR}/extra-patches/${PN}-155-remove-private_verification_tokens.patch" # obsolete
 		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-bindgen-libclang-paths.patch")
 		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-fix-rust-2-oxidize-harder.patch")
