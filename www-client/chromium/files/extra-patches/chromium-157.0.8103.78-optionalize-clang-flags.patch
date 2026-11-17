@@ -1,0 +1,43 @@
+--- a/build/config/compiler/BUILD.gn.orig	2026-11-17 09:46:31.137854412 -0800
++++ b/build/config/compiler/BUILD.gn	2026-11-17 10:19:05.915191227 -0800
+@@ -255,6 +255,9 @@ declare_args() {
+   use_mtune=""
+ 
+   use_sanitize_array_bounds = true
++
++  use_color_diagnostics = true
++  use_merge_all_constants = true
+ }
+ 
+ declare_args() {
+@@ -826,7 +829,9 @@ config("compiler") {
+   # ------------------------------------
+   if (is_clang) {
+     # Flags for diagnostics.
+-    cflags += [ "-fcolor-diagnostics" ]
++    if (use_color_diagnostics) {
++      cflags += [ "-fcolor-diagnostics" ]
++    }
+     cflags_cc += [ "-Wno-gcc-install-dir-libstdcxx" ]
+     if (!is_wasm) {
+       if (!is_win) {
+@@ -845,7 +850,9 @@ config("compiler") {
+     # disabling this (https://bugs.llvm.org/show_bug.cgi?id=18538#c13),
+     # but for now it looks like our build might rely on it
+     # (https://crbug.com/829795).
+-    cflags += [ "-fmerge-all-constants" ]
++    if (use_merge_all_constants) {
++      cflags += [ "-fmerge-all-constants" ]
++    }
+ 
+     if (!use_sized_deallocation) {
+       if (is_win) {
+@@ -1502,7 +1509,7 @@ config("linker") {
+     }
+   }
+ 
+-  if (use_lld) {
++  if (use_lld && use_color_diagnostics) {
+     # TODO(thakis): Make the driver pass --color-diagnostics to the linker
+     # if -fcolor-diagnostics is passed to it, and pass -fcolor-diagnostics
+     # in ldflags instead.

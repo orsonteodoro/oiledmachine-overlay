@@ -4245,7 +4245,7 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}"
 		"${FILESDIR}/extra-patches/${PN}-144.0.7559.59-pdfium-system-deps.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-use-system-opus-alt.patch"
 #		$(use system-libpng && echo "${FILESDIR}/extra-patches/${PN}-144.0.7559.59-libpng-test-only.patch")
-		"A${FILESDIR}/extra-patches/${PN}-151.0.7922.108-optionalize-clang-flags.patch"
+		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-optionalize-clang-flags.patch"
 		"${FILESDIR}/extra-patches/${PN}-153.0.8010.36-optionalize-omit-frame-pointer.patch"
 		"${FILESDIR}/extra-patches/${PN}-152.0.7977.82-dedupe-use-system-zlib.patch" # It appears twice in cromite build
 		"${FILESDIR}/extra-patches/${PN}-145.0.7632.159-optionalize-clang-warning-suppression-mappings.patch"
@@ -4264,7 +4264,7 @@ einfo "V8 version:  ${v8_pv_c1}.${v8_pv_c2}.${v8_pv_c3}.${v8_pv_c4}"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-fix-cookie-util-iterator-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-HOST_NAME_MAX-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-mojom-bool_values-for-system-clang.patch"
-			"${FILESDIR}/extra-patches/${PN}-146.0.7680.80-private_key_factory-find-increment-change-for-system-clang.patch"
+			"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-private_key_factory-find-increment-change-for-system-clang.patch"
 			"${FILESDIR}/extra-patches/${PN}-146.0.7680.164-qt_shim-avoid-toStdString-for-system-libcxx.patch"
 		)
 	fi
