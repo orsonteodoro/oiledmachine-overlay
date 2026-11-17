@@ -171,8 +171,8 @@
  }
  
  # The `cref` crate provides `CRef<T>` and `CMut<T>` - Rust types that represent
---- a/build/rust/gni_impl/cpp_api_from_rust.gni.orig	2026-11-10 15:35:18.000000000 -0800
-+++ b/build/rust/gni_impl/cpp_api_from_rust.gni	2026-11-17 03:13:50.666361482 -0800
+--- a/build/rust/gni_impl/cpp_api_from_rust.gni.orig	2026-11-10 15:35:17.000000000 -0800
++++ b/build/rust/gni_impl/cpp_api_from_rust.gni	2026-11-17 15:02:01.889434651 -0800
 @@ -27,15 +27,22 @@ _globally_enabled_crubit_features = [
  #   rust_target
  #     Label of the Rust library to generate the bindings for.
@@ -310,7 +310,7 @@
      args += [
        "--",
  
--      # TODO(https://gn.issues.ch40m1um.qjz9zk/490160737): Enable this interface
+-      # TODO(https://gn.issues.chromium.org/490160737): Enable this interface
 -      # once we can get paths to rmeta files in GN.
 -      "--enable-rmeta-interface=false",
 +      "--enable-rmeta-interface=true",

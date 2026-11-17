@@ -4296,7 +4296,8 @@ einfo "Removing SupportedLaneCount"
 		|| die
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-crubit.patch"
+		$(( in_iuse "ungoogled-chromium" && use ungoogled-chromium ) && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-crubit-ungoogled-chromium.patch")
+		$(( in_iuse "ungoogled-chromium" && use ungoogled-chromium ) || echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-crubit.patch")
 #		"${FILESDIR}/extra-patches/${PN}-155-remove-private_verification_tokens.patch" # obsolete
 		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-bindgen-libclang-paths.patch")
 		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-fix-rust-2-oxidize-harder.patch")
