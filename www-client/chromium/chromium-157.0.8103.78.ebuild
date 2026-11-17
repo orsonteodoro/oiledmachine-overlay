@@ -3335,6 +3335,7 @@ einfo "RUSTC:  ${RUSTC}"
 	verify_compiler_flags_hardening
 	chkl_check_many_timestamps
 
+	sandbox-changes_no_network_sandbox "To download the Crubit cargo crates.  Crubit is a bindings generator for interoperability between C++ and Rust."
 	if [[ "${FEDORA_PATCHSET}" == "1" ]] ; then
 		sandbox-changes_no_network_sandbox "To download the Fedora patchset for security fixes"
 	fi
