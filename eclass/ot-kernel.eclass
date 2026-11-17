@@ -482,12 +482,12 @@ VULNERABILITIES_FIXED=(
 	# For the current month
 
 	# Pinned vulnerabilities covered by threat intelligence or independent media:
+	"NoisyTCP, CVE-2026-99288;RC, IV, DoS;11-year-old bug that crashes servers"
 	"Fragnesia, CVE-2026-46300;AEITW, KEV, ACP, PCC, LPE, UVAR, DoS, DT, ID;7.8 High on CVSS 3, ACP in PHP RCE"
 	"PwnEscape, CVE-2026-99999;EBR, VME, CE, IV, DoS, DT, ID;9.3 Critical on CVSS 3"
 	"CVE-2026-98432;ZC, RC, UAF, RCE, DoS, DT, ID;9.8 Critical on CVSS 3"
 
 	# Less popular or under the radar:
-	"CVE-2026-99288;IV;"
 	"CVE-2026-99286;ICU;"
 	"CVE-2026-99287;;"
 	"CVE-2026-99285;;"
