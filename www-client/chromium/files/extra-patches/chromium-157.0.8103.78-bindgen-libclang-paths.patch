@@ -1,3 +1,47 @@
+--- a/build/config/clang/clang.gni.orig	2026-11-16 21:21:37.275903179 -0800
++++ b/build/config/clang/clang.gni	2026-11-16 21:29:30.090063701 -0800
+@@ -94,6 +94,19 @@ declare_args() {
+   lld_emit_indexes_and_imports = false
+ 
+   use_system_clang = false
++
++  # Directory under which to find one of `libclang.{dll,so}` (a `lib[64]` or
++  # `bin` directory containing the libclang shared library).
++  # We don't need to worry about multlib, but specify the full path here
++  # in case a distribution does.
++  bindgen_libclang_path = ""
++
++  # Directory under which to find the `clang` resource directory.
++  # This is used by bindgen to find system headers.
++  bindgen_clang_resource_dir = ""
++
++  # Additional arguments to pass to clang when running bindgen.
++  bindgen_extra_clang_args = []
+ }
+ 
+ # Siso's remote execution rules are based off the prefix
+--- a/build/config/rust.gni.orig	2026-11-16 19:19:39.036836975 -0800
++++ b/build/config/rust.gni	2026-11-16 19:46:07.666910025 -0800
+@@ -63,6 +63,19 @@ declare_args() {
+   # the bindgen exectuable).
+   rust_bindgen_root = "//third_party/rust-toolchain"
+ 
++  # Directory under which to find one of `libclang.{dll,so}` (a `lib[64]` or
++  # `bin` directory containing the libclang shared library).
++  # We don't need to worry about multlib, but specify the full path here
++  # in case a distribution does.
++  bindgen_libclang_path = ""
++
++  # Directory under which to find the `clang` resource directory.
++  # This is used by bindgen to find system headers.
++  bindgen_clang_resource_dir = ""
++
++  # Additional arguments to pass to clang when running bindgen.
++  bindgen_extra_clang_args = []
++
+   # If you're using a Rust toolchain as specified by rust_sysroot_absolute,
+   # set this to the output of `rustc -V`. Changing this string will cause all
+   # Rust targets to be rebuilt, which allows you to update your toolchain and
 --- a/build/rust/rust_bindgen_generator.gni.orig	2026-11-16 15:22:46.289757475 -0800
 +++ b/build/rust/rust_bindgen_generator.gni	2026-11-16 15:26:45.281548816 -0800
 @@ -22,14 +22,18 @@ if (!use_chromium_rust_toolchain &&

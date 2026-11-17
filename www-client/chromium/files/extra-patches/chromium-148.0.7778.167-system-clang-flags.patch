@@ -1,9 +1,8 @@
 --- a/build/config/compiler/BUILD.gn.orig	2026-05-16 23:51:25.045416037 -0700
 +++ b/build/config/compiler/BUILD.gn	2026-05-17 00:01:50.920138009 -0700
-@@ -53,6 +53,7 @@ declare_args() {
+@@ -53,5 +53,6 @@ declare_args() {
  
    enable_frame_pointers = true
-   use_system_clang = false
 +  use_glibc = true
  }
  

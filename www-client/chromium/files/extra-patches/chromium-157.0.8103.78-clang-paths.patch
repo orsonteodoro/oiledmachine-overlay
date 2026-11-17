@@ -1,10 +1,9 @@
 --- a/build/toolchain/toolchain.gni.orig	2026-11-10 15:35:17.000000000 -0800
 +++ b/build/toolchain/toolchain.gni	2026-11-16 10:26:27.727390828 -0800
-@@ -42,6 +42,8 @@ declare_args() {
+@@ -42,6 +42,7 @@ declare_args() {
  
  declare_args() {
    clang_version = "24"
-+  use_system_clang = false
 +  llvm_libdir = "lib64" # /usr/lib/llvm/24/lib64, the 6 component with / as delimiter.
  }
  
@@ -81,3 +80,14 @@
  
  if (is_win) {
    # On Windows we fall back to using system headers from a sysroot from
+--- a/build/config/clang/clang.gni.orig	2026-11-10 15:35:18.000000000 -0800
++++ b/build/config/clang/clang.gni	2026-11-16 18:39:51.433210696 -0800
+@@ -92,6 +92,8 @@ declare_args() {
+   # Set to true to enable output of ThinLTO index and import files used for
+   # creating a Chromium MLGO corpus in the ThinLTO case.
+   lld_emit_indexes_and_imports = false
++
++  use_system_clang = false
+ }
+ 
+ # Siso's remote execution rules are based off the prefix

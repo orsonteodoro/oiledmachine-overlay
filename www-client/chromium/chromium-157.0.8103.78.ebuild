@@ -3594,7 +3594,7 @@ einfo "Applying the Arch patchset..."
 #"${base_path}/chromium-153-iamf-tools-unbundled-opus.patch"
 #"${base_path}/chromium-155-use-system-esbuild.patch"
 #"${base_path}/chromium-156-isolatedDeclarations.patch"
-#"${base_path}/chromium-157-revert-gn-check-includes.patch"
+"${base_path}/chromium-157-revert-gn-check-includes.patch"		# For pre-build step
 "${base_path}/chromium-157-typescript.patch"				# Unvendor
 "${base_path}/chromium-157-crubit.patch"				# For fixing build files initial compile time issue
 #"${base_path}/compiler-rt-adjust-paths.patch"
@@ -4284,10 +4284,10 @@ einfo "Removing SupportedLaneCount"
 		|| die
 
 	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-155-crubit.patch"
-#		"${FILESDIR}/extra-patches/${PN}-155-remove-private_verification_tokens.patch"
-		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-bindgen-libclang-paths.patch"
-		"${FILESDIR}/extra-patches/${PN}-157.0.8103.78-fix-rust-2-oxidize-harder.patch"
+#		"${FILESDIR}/extra-patches/${PN}-155-crubit.patch" # obsolete?
+#		"${FILESDIR}/extra-patches/${PN}-155-remove-private_verification_tokens.patch" # obsolete
+		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-bindgen-libclang-paths.patch")
+		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-fix-rust-2-oxidize-harder.patch")
 	)
 }
 
@@ -4457,6 +4457,7 @@ einfo "Removing ${x} from ungoogled-chromium"
 			-c "${WORKDIR}/domsubcache.tar.gz" \
 			"${S}" \
 			|| die
+
 	popd >/dev/null 2>&1 || die
 }
 
@@ -7235,7 +7236,7 @@ einfo "CFI:  OFF"
 			"use_mold=true"
 			"use_thin_lto=false"
 			"is_cfi=false"
-			"experimental_linker_path=${ESYSROOT}/usr/bin/mold"
+			"experimental_linker_path=\"${ESYSROOT}/usr/bin/mold\""
 		)
 
 	# 4. Fallback: No LTO
