@@ -30,14 +30,14 @@
 +  # `bin` directory containing the libclang shared library).
 +  # We don't need to worry about multlib, but specify the full path here
 +  # in case a distribution does.
-+  bindgen_libclang_path = ""
++  #bindgen_libclang_path = ""
 +
 +  # Directory under which to find the `clang` resource directory.
 +  # This is used by bindgen to find system headers.
-+  bindgen_clang_resource_dir = ""
++  #bindgen_clang_resource_dir = ""
 +
 +  # Additional arguments to pass to clang when running bindgen.
-+  bindgen_extra_clang_args = []
++  #bindgen_extra_clang_args = []
 +
    # If you're using a Rust toolchain as specified by rust_sysroot_absolute,
    # set this to the output of `rustc -V`. Changing this string will cause all

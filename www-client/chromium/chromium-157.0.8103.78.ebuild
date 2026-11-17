@@ -301,6 +301,7 @@ MJ_PATCHSET_REV="3"
 OPENPOWER_PATCHES_COMMIT="fccedec8b13e2b874cda5746097065dac26286a2" # Same as latest for the chromium-156 branch
 UNGOOGLED_CHROMIUM_PV="157.0.8103.78-1"
 
+CRUBIT_COMMIT="20dc640430bd60ff2f7f8dbf69c311c5f807adde" # See https://github.com/chromium/chromium/blob/157.0.8103.78/tools/rust/update_rust.py#L48
 GN_PV="0.2595"
 ESBUILD_PV="0.28.2" # third_party/devtools-frontend/src/node_modules/esbuild/package.json
 ROLLUP_WASM_NODE_PV="4.63.1" # third_party/chromium-bidi/node_modules/@rollup/wasm-node/package.json
@@ -1078,7 +1079,7 @@ SYSTEM_USE=(
 # Rust needs LLVM 22, but LLVM 23 is not allowed in rust.eclass
 # We avoid inheriting llvm and rust because the custom rust eclass mod breaks with LLVM 23 present in LLVM_COMPAT.
 inherit abseil-cpp cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chkl chromium-2 dhms
-inherit desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
+inherit dep-prepare desktop edo flag-o-matic flag-o-matic-om lcnr libcxx-slot libstdcxx-slot linux-info
 inherit multilib-minimal multiprocessing ninja-utils node pax-utils python-any-r1
 inherit re2 readme.gentoo-r1 sandbox-changes systemd toolchain-funcs vf web-kernel-config xdg-utils
 
@@ -1235,6 +1236,8 @@ SRC_URI+="
 	${MJ_PATCHSET_URI}
 	${OPENPOWER_PATCHSET_URI}
 	${V8_URI}
+https://github.com/google/crubit/archive/${CRUBIT_COMMIT}.tar.gz
+	-> crubit-${CRUBIT_COMMIT:0:7}.tar.gz
 	test? (
 https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
         -> chromium-testfonts-${TEST_FONT:0:10}.tar.gz
@@ -3396,6 +3399,8 @@ src_unpack() {
 		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
 	fi
 
+	unpack "crubit-${CRUBIT_COMMIT:0:7}.tar.gz"
+
 	#die # For reviewing and updating patch sections.
 
 	cp -aT "${CHROMIUM_SOURCES_PREFIX}" "${S}" || die
@@ -3442,8 +3447,14 @@ eerror "gn >= ${GN_MIN_VER} is required"
 		ln -s "${CHROMIUM_TOOLCHAIN_PREFIX}/clang" "${S}/third_party/llvm-build/Release+Asserts" || die
 
 		rm -rf "${S}/third_party/rust-toolchain" || true
-		ln -s "${CHROMIUM_TOOLCHAIN_PREFIX}/rust" "${S}/third_party/rust-toolchain" || die
+		dep_prepare_cp "${CHROMIUM_TOOLCHAIN_PREFIX}/rust" "${S}/third_party/rust-toolchain" || die
 	fi
+
+	dep_prepare_mv "${WORKDIR}/crubit-${CRUBIT_COMMIT}" "${S}/third_party/rust-toolchain/crubit/lib/third_party/crubit"
+	pushd "${S}/third_party/rust-toolchain/crubit/lib/third_party/crubit" >/dev/null 2>&1 || die
+einfo "Downloading Crubit cargo packages ..."
+		edo cargo fetch --locked --target "host-tuple"
+	popd >/dev/null 2>&1 || die
 
 	mkdir -p "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin" || die
 	ln -s "/usr/bin/go" "${S}/third_party/dawn/tools/golang/linux-${golang_arch}/bin/go" || die
@@ -3596,7 +3607,7 @@ einfo "Applying the Arch patchset..."
 #"${base_path}/chromium-156-isolatedDeclarations.patch"
 "${base_path}/chromium-157-revert-gn-check-includes.patch"		# For pre-build step
 "${base_path}/chromium-157-typescript.patch"				# Unvendor
-"${base_path}/chromium-157-crubit.patch"				# For fixing build files initial compile time issue
+"${base_path}/chromium-157-crubit.patch"				# Fix early compile issue
 #"${base_path}/compiler-rt-adjust-paths.patch"
 #"${base_path}/increase-fortify-level.patch"
 #"${base_path}/enable-widevine-arm64.patch"
@@ -4284,7 +4295,7 @@ einfo "Removing SupportedLaneCount"
 		|| die
 
 	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-155-crubit.patch" # obsolete?
+#		"${FILESDIR}/extra-patches/${PN}-155-crubit.patch" # outdated?
 #		"${FILESDIR}/extra-patches/${PN}-155-remove-private_verification_tokens.patch" # obsolete
 		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-bindgen-libclang-paths.patch")
 		$(use system-clang && echo "${FILESDIR}/extra-patches/${PN}-157.0.8103.78-fix-rust-2-oxidize-harder.patch")
@@ -5521,6 +5532,7 @@ _configure_compiler_common() {
 
 	myconf_gn+=(
 		"use_glibc=$(usex elibc_glibc true false)"
+		"rust_crubit_root=\"//third_party/rust-toolchain/crubit/\""
 	)
 
 	# Set in system-clang-flags.patch
@@ -8848,6 +8860,17 @@ _src_compile() {
 
 	_update_licenses
 	__clean_build
+
+	pushd "${S}/third_party/rust-toolchain/crubit/lib/third_party/crubit" >/dev/null 2>&1 || die
+einfo "Building Crubit"
+		local host_tuple=$("${RUSTC}" --print "host-tuple")
+		local rustc_libs="/usr/lib/rustlib/${host_tuple}/lib"
+		export CARGO_TARGET_DIR=target
+		export RUSTC_BOOTSTRAP=1
+		export RUSTFLAGS+=" -Clink-args=-Wl,-z,origin -Clink-args=-Wl,-rpath,${rustc_libs}"
+		edo cargo build --frozen --release -p "cc_bindings_from_rs" --bin "cc_bindings_from_rs"
+		edo install -Dm755 -t "${S}/third_party/rust-toolchain/crubit/bin/" "target/release/cc_bindings_from_rs"
+	popd >/dev/null 2>&1 || die
 
 	if check_mksnapshot_benefit && use v8-snapshot ; then
 einfo "mksnapshot:  ON (Optimizing load time)"
