@@ -125,14 +125,14 @@ causing errors or vulnerabilities which could lead to the worst case RCE).
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-| LLVM slot          | Rust slot  | Allowed in network facing [1] | Allowed to be used in security-critical packages [1] | Time released since Nov 2026? |
-| ---                | ---        | ---                           | ---                                                  | ---                           |
-| 23 (Live)          | 9999 [2]   | Y                             | Y                                                    | 2 weeks ago to now            |
-| 23 (Rolling)       | 1.99.1     | Y                             | Y                                                    | 1 month ago                   |
-| 22 (Rolling)       | 1.98.1     | Y                             | Y                                                    | 3 months ago                  |
-| 21 (LTS)           | 1.94.1     | N                             | N                                                    | 8 months ago                  |
-| 20 (Not supported) | 1.90.0     | N                             | N                                                    | 1 year ago                    |
-| 19 (LTS)           | 1.86.0     | N                             | N                                                    | 1 year ago                    |
+| LLVM slot          | Rust slot  | Allowed in network facing? [1] | Allowed to be used in security-critical? [1] | Time released since Nov 2026? |
+| ---                | ---        | ---                            | ---                                          | ---                           |
+| 23 (Live)          | 9999 [2]   | Y                              | Y                                            | 2 weeks ago to now            |
+| 23 (Rolling)       | 1.99.1     | Y                              | Y                                            | 1 month ago                   |
+| 22 (Rolling)       | 1.98.1     | Y                              | Y                                            | 3 months ago                  |
+| 21 (LTS)           | 1.94.1     | N                              | N                                            | 8 months ago                  |
+| 20 (Not supported) | 1.90.0     | N                              | N                                            | 1 year ago                    |
+| 19 (LTS)           | 1.86.0     | N                              | N                                            | 1 year ago                    |
 
 * [1] - Only allowed in these contexts if within 6 months of tagged release, based on [Tokio MSRV (Minimum Supported Rust Version) recommendation](https://github.com/tokio-rs/tokio#supported-rust-versions).
 * [2] - With timestamp verification associated with latest [version](https://github.com/rust-lang/rust/blob/main/src/version)
