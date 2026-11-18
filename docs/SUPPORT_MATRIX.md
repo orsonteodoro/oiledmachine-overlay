@@ -114,7 +114,7 @@ pinning are as follows:
 - Network facing packages will use the rolling security-critical Rust compiler, marked [RSC].
 - Non-network facing packages that are security-critical will use the rolling security-critical Rust compiler, marked [RSC].
 - Balanced or performance critical will use the LTS compiler if able to, marked [LTS].
-- If a package cannot use [LTS] but requires > (1.93.1), it will use [RSC].
+- If a package cannot use [LTS] but requires > 1.93.1, it will use [RSC].
 
 Packages are pinned to a particular Rust slot for reproducible reasons and to
 reduce Rust slot verification code creep.
