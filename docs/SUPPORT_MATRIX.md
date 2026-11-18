@@ -130,7 +130,8 @@ Rust compiler slot.  The 1 month policy is to mitigate miscompilation RCE or
 memory corruption miscompilation that leads to RCE or other critical
 vulnerability possibilities similar to eMudhra intermediate certificate store
 compromise where 15 days is the remediation standard for lower scoring critical
-severity or lower scoring RCEs.  The recommendations are to be as close as
+severity or lower scoring RCEs.  In comparison, CISA uses 3 or 14 days
+remediation deadline for KEV.  The recommendations are to be as close as
 possible to the remediation practices during the
 [2026 Black October](https://en.wikipedia.org/wiki/Black_October_(information_security))
 to reduce the accumulation of miscompilation vulnerabilities.

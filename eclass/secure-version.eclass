@@ -584,7 +584,7 @@ RTMPDUMP_PV=${RTMPDUMP_PV:-"9999"}
 RUBBERBAND_PV=${RUBBERBAND_PV:-"4.0.0"}
 RUSTLS_FFI_PV=${RUSTLS_FFI_PV:-"0.15.1"}
 # <x> ago was last evaluated on Nov 17, 2026.
-# We use 1 month because 15 days remediation deadline is assumed worst case RCE from miscompilation vulnerability.
+# We use 1 month because 14 or 3 days remediation CISA deadline is assumed for the worst case RCE from miscompilation vulnerability.
 RUST_PV=${RUST_PV:-"1.99.1"} # 1m ago, LLVM 23, within 1 month or latest security update, cpe:2.3:a:rust-lang:rust:*:*:*:*:*:*:*:*
 RUST_LLVM_ROLLING_PV=${RUST_LLVM_ROLLING_PV:-"1.99.1"} # 1m ago, LLVM 23, for build time stability, network facing allowed
 RUST_LLVM_LTS_PV=${RUST_LLVM_LTS_PV:-"1.93.1"} # 9m ago, LLVM 21, for build time stability, network facing disallowed
