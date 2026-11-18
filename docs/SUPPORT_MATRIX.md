@@ -130,11 +130,10 @@ Rust compiler slot.  The 1 month policy is to mitigate miscompilation RCE or
 memory corruption miscompilation that leads to RCE or other critical
 vulnerability possibilities similar to eMudhra intermediate certificate store
 compromise where 15 days is the remediation standard for lower scoring critical
-severity or lower scoring RCEs.  While the Tokio package uses the
-[6 months](https://github.com/tokio-rs/tokio/tree/master#supported-rust-versions)
-policy, the recommendations do not fit the remediation practices during the
+severity or lower scoring RCEs.  The recommendations are to be as close as
+possible to the remediation practices during the
 [2026 Black October](https://en.wikipedia.org/wiki/Black_October_(information_security))
-scenario.
+to reduce the accumulation of miscompilation vulnerabilities.
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
