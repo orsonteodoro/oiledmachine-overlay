@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manage the /usr/bin/tsc and /usr/bin/tsserver symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20210620"
+VERSION="20261118"
 PN="typescript"
 
 # find a list of TypeScript symlink targets
@@ -38,9 +38,9 @@ set_symlink() {
     [[ -z ${target} || ! -e ${EROOT}/opt/${PN}/${target}/bin/tsc ]] \
         && die -q "Target \"$1\" doesn't appear to be valid!"
 
-    ln -s "${EROOT}/opt/${PN}/${target}/bin/tsc" \
+    ln -s "${EROOT}/opt/${PN}/${target}/.bin/tsc" \
         "${EROOT}/usr/bin/tsc"
-    ln -s "${EROOT}/opt/${PN}/${target}/bin/tsserver" \
+    ln -s "${EROOT}/opt/${PN}/${target}/.bin/tsserver" \
         "${EROOT}/usr/bin/tsserver"
 }
 
