@@ -77,7 +77,8 @@ do_list() {
     for (( i = 0; i < ${#targets[@]}; i++ )); do
         lnk_pv=$(realpath "/usr/bin/tsc" \
 		| sed -e "s|/usr/lib64/node/typescript/||" \
-			-e "s|/bin/tsc||")
+			-e "s|/bin/tsc||" \
+		| cut -f 4 -d "/")
         # highlight the target where the symlink is pointing to
         [[ "${targets[i]}" == "${lnk_pv}" ]] \
             && targets[i]=$(highlight_marker "${targets[i]}")

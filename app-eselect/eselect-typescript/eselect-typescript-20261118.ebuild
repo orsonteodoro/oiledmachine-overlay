@@ -4,24 +4,30 @@
 
 EAPI=8
 
+SRC_URI=""
+
 DESCRIPTION="Manages the /usr/bin/tsc /usr/bin/tsserver symlinks"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-typescript"
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~arm64"
-SLOT="0"
-SRC_URI=""
 RESTRICT="fetch"
+SLOT="0"
+IUSE+="
+ebuild_revision_1
+"
 
 src_unpack() {
 	default
 	mkdir -p "${S}" || die
-	cp "${FILESDIR}/typescript-${PV}.eselect" \
-		"${S}/typescript.eselect" || die
+	cp \
+		"${FILESDIR}/typescript-${PV}.eselect" \
+		"${S}/typescript.eselect" \
+		|| die
 }
 
 src_install() {
-	insinto /usr/share/eselect/modules
-	doins typescript.eselect
+	insinto "/usr/share/eselect/modules"
+	doins "typescript.eselect"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
