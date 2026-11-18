@@ -936,7 +936,7 @@ PDEPEND+="
 		)
 	)
 	video_cards_nvidia? (
-		$(secure-version_gen_nvidia_drivers '580-')
+		$(secure-version_gen_nvidia_drivers_depends '580-')
 	)
 "
 

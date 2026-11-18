@@ -1218,7 +1218,7 @@ secure-version_gen_ruby_ng_depends() {
 	echo "${output}"
 }
 
-secure-version_gen_spirv_llvm_translator() {
+secure-version_gen_spirv_llvm_translator_depends() {
 	[[ -z "${LLVM_COMPAT[@]}" ]] && die "QA:  Define LLVM_COMPAT"
 	local usedep="${1}" # [gmp], <empty string>
 	local x
@@ -1232,7 +1232,7 @@ secure-version_gen_spirv_llvm_translator() {
 	done
 }
 
-secure-version_gen_nvidia_drivers() {
+secure-version_gen_nvidia_drivers_depends() {
 	local range="${1}"
 	local usedep="${2}" # [gmp], <empty string>
 
@@ -1293,7 +1293,7 @@ secure-version_gen_nvidia_drivers() {
 	echo "${output}"
 }
 
-gen_nginx_depends() {
+secure-version_gen_nginx_depends() {
 	local range="${1}"
 	local usedep="${2}" # [http], <empty string>
 

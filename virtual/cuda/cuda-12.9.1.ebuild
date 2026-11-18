@@ -37,7 +37,7 @@ RDEPEND+="
 	!virtual/cuda:12
 	!virtual/cuda:13
 	=dev-util/nvidia-cuda-toolkit-13.4*[profiler?,rdma?]
-	$(secure-version_gen_nvidia_drivers '580-' '[kernel-open(+)]')
+	$(secure-version_gen_nvidia_drivers_depends '580-' '[kernel-open(+)]')
 	cudnn? (
 		dev-libs/cudnn
 		|| (
