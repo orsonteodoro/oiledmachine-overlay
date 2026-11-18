@@ -355,14 +355,14 @@ Pairing rules and support
 | CUDA 12.3                            | Not supported                           | D10, D11, D12, F37, U20, U22                                            |
 | CUDA 12.4                            | Not supported                           | D10, D11, D12, F39, U20, U22                                            |
 | CUDA 12.5                            | Not supported                           | D10, D11, D12, F39, U20, U22, U24                                       |
-| CUDA 12.6                            | Available                               | D11, D12, F39, U20, U22, U24                                            |
-| CUDA 12.8                            | Available                               | D12, F41, U20, U22, U24                                                 |
+| CUDA 12.6                            | Not supported                           | D11, D12, F39, U20, U22, U24                                            |
+| CUDA 12.8                            | Not supported                           | D12, F41, U20, U22, U24                                                 |
 | CUDA 12.9                            | Available                               | D12, F41, G~, U20, U22, U24                                             |
-| CUDA 13.0                            | Available [6]                           | D12, F42, U22, U24                                                      |
-| CUDA 13.1                            | Available [6]                           | D12, D13, F42, U22, U24                                                 |
-| CUDA 13.2                            | Available [6]                           | D12, D13, F43, U22, U24                                                 |
-| CUDA 13.3                            | Available [6]                           | D12, D13, F44, U22, U24, U26                                            |
-| CUDA 13.4                            | Planned                                 | D12, D13, F44, G~, U22, U24, U26                                        |
+| CUDA 13.0                            | Not supported                           | D12, F42, U22, U24                                                      |
+| CUDA 13.1                            | Not supported                           | D12, D13, F42, U22, U24                                                 |
+| CUDA 13.2                            | Not supported                           | D12, D13, F43, U22, U24                                                 |
+| CUDA 13.3                            | Not supported                           | D12, D13, F44, U22, U24, U26                                            |
+| CUDA 13.4                            | Available                               | D12, D13, F44, G~, U22, U24, U26                                        |
 | Electron (amd64)                     | Fully supported                         |                                                                         |
 | Electron (arm64)                     | Available (WIP)                         |                                                                         |
 | Electron (armv7)                     | Not supported                           |                                                                         |
