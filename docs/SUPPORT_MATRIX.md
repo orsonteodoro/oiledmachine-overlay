@@ -141,7 +141,7 @@ vulnerabilities on both sides.
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-| LLVM slot          | Rust slot  | Allowed in network facing? [1] | Allowed to be used in security-critical? [1] | Time released since Nov 2026? |
+| LLVM slot          | Rust slot  | Allowed in network facing? [1] | Allowed to be used in security-critical? [1] | Last update since Nov 2026?   |
 | ---                | ---        | ---                            | ---                                          | ---                           |
 | 23 (Live)          | 9999 [2]   | Y                              | Y                                            | 2 weeks ago to now            |
 | 23 (Rolling)       | 1.99.1     | Y                              | Y                                            | 1 month ago                   |
