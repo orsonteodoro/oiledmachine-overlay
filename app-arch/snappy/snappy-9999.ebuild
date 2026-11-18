@@ -80,7 +80,7 @@ DOCS=( format_description.txt framing_format.txt NEWS README.md )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.2.0_external-gtest.patch"
 	"${FILESDIR}/${PN}-1.2.0_no-werror.patch"
-	"${FILESDIR}/${PN}-1.2.2_remove-no-rtti.patch"
+	"${FILESDIR}/${PN}-9466064_remove-no-rtti.patch"
 )
 
 pkg_setup() {
