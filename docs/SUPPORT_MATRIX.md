@@ -372,7 +372,7 @@ Pairing rules and support
 | gRPC 1.48.4                          | Not supported                           | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                                |
 | gRPC 1.51.3 [3]                      | Fully supported                         | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)                  |
 | gRPC 1.71.2 [3]                      | Fully supported                         |                                                                         |
-| gRPC >= 1.75.1 [3]                   | Fully supported                         |                                                                         |
+| gRPC >= 1.75.1 [3]                   | Fully supported                         | Nunstable (1.81.4)                                                      |
 | GTK 2 [4]                            | Not Supported                           |                                                                         |
 | GTK 3 live                           | Fully supported                         |                                                                         |
 | GTK 4 live                           | Fully supported                         |                                                                         |
@@ -383,9 +383,11 @@ Pairing rules and support
 | LocalAI (llama.cpp with ROCm 7.0)    | WIP                                     |                                                                         |
 | LocalAI (llama.cpp with CUDA 12.4)   | Not supported                           |                                                                         |
 | LocalAI (llama.cpp with Vulkan)      | Fully supported                         |                                                                         |
-| Node.js 22                           | Available                               |                                                                         |
-| Node.js 24                           | Fully supported                         |                                                                         |
-| Node.js 26                           | Available                               |                                                                         |
+| Node.js 18                           | Not supported                           | D12 (18.20.4), U24 (18.19.1)                                            |
+| Node.js 20                           | Not supported                           | D13 (20.19.2)                                                           |
+| Node.js 22                           | Available                               | F43 (22.22.1), F45 (22.23.1), Nunstable (22.23.5), U26 (22.22.1)        |
+| Node.js 24                           | Fully supported                         | F43 (24.14.1), F44 (24.18.0), F45 (24.18.0), Nunstable (24.22.2)        |
+| Node.js 26                           | Available                               | Nunstable (26.13.1)                                                     |
 | OpenGL <= 4.6                        | Fully supported                         |                                                                         |
 | OpenCL <= 2.0                        | Fully supported                         |                                                                         |
 | Ollama 0.30.7 (CPU)                  | Fully supported                         |                                                                         |
@@ -399,20 +401,18 @@ Pairing rules and support
 | ROCm OpenMP offload [2]              | WIP                                     |                                                                         |
 | DPC++ OpenMP offload                 | Not Supported                           |                                                                         |
 | OpenRC                               | Fully supported                         |                                                                         |
-| Protobuf-cpp 3 [3]                   | Fully supported                         | D12 (3.21.12), F43 (3.19.6), F44 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
+| Protobuf-cpp 3 [3]                   | Fully supported                         | D12 (3.21.12), D13 (3.21.12), F43 (3.19.6), F44 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
 | Protobuf-cpp 5 [3]                   | Fully supported                         |                                                                         |
 | Protobuf-cpp 6 [3]                   | Fully supported                         | F45 (6.33.5)                                                            |
+| Protobuf-cpp 7                       | Not supported                           | Nunstable (7.36.2)                                                      |
 | PyTorch <= 2.13                      | Not supported                           |                                                                         |
 | PyTorch 2.13 (CPU)                   | WIP                                     |                                                                         |
 | PyTorch 2.13 (CUDA 12.6, 12.8, 13.x) | WIP                                     |                                                                         |
 | PyTorch 2.13 (ROCm 6.4)              | WIP                                     |                                                                         |
 | Qt 5.x [4][5]                        | Not supported, removing support         |                                                                         |
 | Qt 6.x live                          | Fully supported                         |                                                                         |
-| ROCm 6.4                             | Not supported                           | D12, U22, U24                                                           |
-| ROCm 7.0                             | Not supported                           | D12, D13, U22, U24                                                      |
-| ROCm 7.1                             | Not supported                           | D12, D13, U22, U24                                                      |
-| ROCm 7.2                             | Not supported                           | D12, D13, U22, U24                                                      |
-| ROCm 10.1                            | In planning / WIP                       |                                                                         |
+| ROCm <= 7.14                         | Not supported                           | D12, D13, U22, U24, U26                                                 |
+| ROCm 10.1                            | In planning / WIP                       | D12, D13, U22, U24, U26                                                 |
 | SYCL                                 | Not supported                           |                                                                         |
 | systemd                              | Partially supported                     |                                                                         |
 | Tauri 1.x                            | Not supported                           |                                                                         |
