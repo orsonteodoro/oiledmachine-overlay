@@ -133,7 +133,7 @@ remediation standard for lower scoring critical severity or lower scoring
 RCEs.  While the Tokio package uses the
 [6 months](https://github.com/tokio-rs/tokio/tree/master#supported-rust-versions)
 policy, the recommendations do not fit the remediation practices during
-the [Black October](https://en.wikipedia.org/wiki/Black_October_(information_security))
+the [2026 Black October](https://en.wikipedia.org/wiki/Black_October_(information_security))
 scenario.
 
 For C/C++ the Rust slot rules for version pinning are as follows:
