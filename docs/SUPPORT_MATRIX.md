@@ -110,10 +110,10 @@ LTS.
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
 
-- Web browsers will use the live security-critical [LSC] Rust compiler.
-- Network facing packages will use the rolling security-critical [RSC] Rust compiler.
-- Non-network facing packages that are security-critical will use the rolling security-critical [RSC] Rust compiler.
-- Balanced or performance critical will use the [LTS] Rust compiler if able to do so.
+- Web browsers will use the Live Security-Critical [LSC] Rust compiler.
+- Network facing packages will use the Rolling Security-Critical [RSC] Rust compiler.
+- Non-network facing packages that are security-critical will use the Rolling Security-Critical [RSC] Rust compiler.
+- Balanced or performance-critical will use the [LTS] Rust compiler if able to do so.
 - If a package cannot use the [LTS] Rust compiler but requires > 1.93.1, it will use the [RSC] Rust compiler instead.
 
 Packages are pinned to a particular Rust slot for reproducible reasons and to
@@ -122,7 +122,7 @@ reduce Rust slot verification code creep.
 The May 2026 Rust rules on this overlay for the non C/C++ languages scenario
 addresses a security issue possibility (e.g. miscompilation slots from outdated
 bootstrap slots causing errors or vulnerabilities which could lead to the worst
-case RCE).
+case RCE [Remote Code Execution]).
 
 The Nov 2026 Rust rules on this overlay for pinning are to ensure that network
 facing and security-critical packages appropriately use the security-critical
