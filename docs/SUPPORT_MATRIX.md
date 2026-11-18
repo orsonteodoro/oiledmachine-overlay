@@ -390,10 +390,10 @@ Pairing rules and support
 | Node.js 26                           | Available                               | Nunstable (26.13.1)                                                     |
 | OpenGL <= 4.6                        | Fully supported                         |                                                                         |
 | OpenCL <= 2.0                        | Fully supported                         |                                                                         |
-| Ollama 0.30.7 (CPU)                  | Fully supported                         |                                                                         |
-| Ollama 0.30.7 (ROCm)                 | Not supported                           |                                                                         |
-| Ollama 0.30.7 (CUDA)                 | Not supported                           |                                                                         |
-| Ollama 0.30.7 (Vulkan)               | Fully supported                         |                                                                         |
+| Ollama live (CPU)                    | Fully supported                         |                                                                         |
+| Ollama live (ROCm)                   | Not supported                           |                                                                         |
+| Ollama live (CUDA)                   | Available                               |                                                                         |
+| Ollama live (Vulkan)                 | Fully supported                         |                                                                         |
 | GCC OpenMP (CPU)                     | Fully supported                         |                                                                         |
 | LLVM OpenMP (CPU)                    | Fully supported                         |                                                                         |
 | LLVM OpenMP offload (CUDA)           | Available                               |                                                                         |
