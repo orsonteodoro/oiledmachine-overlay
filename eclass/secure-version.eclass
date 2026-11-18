@@ -476,6 +476,9 @@ NFTABLES_PV=${NFTABLES_PV:-"9999"}
 NGTCP2_PV=${NGTCP2_PV:-"1.23.0"}
 NGHTTP2_PV=${NGHTTP2_PV:-"9999"}
 NGHTTP3_PV=${NGHTTP3_PV:-"1.16.0"}
+NGINX_PV=${NGINX_PV:-"1.31.9"}
+NGINX_1_31_PV=${NGINX_1_31_PV:-"1.31.9"}
+NGINX_1_30_PV=${NGINX_1_30_PV:-"1.30.7"}
 NLOHMANN_JSON_PV=${NLOHMANN_JSON_PV:-"9999"}
 NOCTALIA_5_PV=${NOCTALIA_5_PV:-"5.9999"}
 NOCTALIA_QS_PV=${NOCTALIA_QS_PV:-"9999"}
@@ -1276,6 +1279,59 @@ secure-version_gen_nvidia_drivers() {
 		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
 			t+="
 				>=x11-drivers/nvidia-drivers-${!u}:0/${x}${usedep}
+			"
+		fi
+	done
+	t+="
+		)
+	"
+
+	local output=""
+
+	output="${t}"
+#einfo "${output}"
+	echo "${output}"
+}
+
+gen_nginx_depends() {
+	local range="${1}"
+	local usedep="${2}" # [http], <empty string>
+
+	local t=""
+	t+="
+		www-servers/nginx:=
+		|| (
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then
+		l="1.30"
+		r="1.31"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ -z "${l}" ]] ; then
+			l="1.30"
+		fi
+		if [[ -z "${r}" ]] ; then
+			r="1.31"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"9999"
+		"1.31"
+		"1.30"
+	)
+
+	local x
+	for x in "${L[@]}" ; do
+		local u="NGINX_${x/./_}_PV"
+		if ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			t+="
+				>=www-servers/nginx-${!u}:0/${x}${usedep}
 			"
 		fi
 	done

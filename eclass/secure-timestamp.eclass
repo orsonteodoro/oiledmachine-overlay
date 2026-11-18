@@ -517,6 +517,7 @@ SECURE_TIMESTAMP["sys_process_numactl_9999"]="Jun 30, 2026 3:51 PM PST"
 SECURE_TIMESTAMP["sys_process_procps_9999"]="Mar 26, 2026 4:03:17 AM PDT"
 SECURE_TIMESTAMP["www_servers_apache_9999"]="Nov 11, 2026 2:13 AM PST"
 SECURE_TIMESTAMP["www_servers_civetweb_9999"]="Sep 2, 2025 7:51 AM PDT"
+SECURE_TIMESTAMP["www_servers_nginx_9999"]="Nov 11, 2026 9:48 AM PST"
 SECURE_TIMESTAMP["x11_base_xorg_server_9999"]="2026-11-10 T13:45:09 +01:00"
 SECURE_TIMESTAMP["x11_base_xwayland_9999"]="2026-11-10 T13:45:09 +01:00" # Keep timestamp the same as xorg-server for simplified remediation
 SECURE_TIMESTAMP["x11_libs_libdrm_9999"]="2026-09-17 T18:36:18 -04:00"
