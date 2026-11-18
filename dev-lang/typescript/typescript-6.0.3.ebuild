@@ -135,7 +135,7 @@ src_install() {
 	npm_src_install
 
 	# Move wrappers
-	dodir "${ED}/opt/${PN}/${PV}/.bin"
+	dodir "/opt/${PN}/${PV}/.bin"
 	mv \
 		"${ED}/usr/bin/tsc" \
 		"${ED}/opt/${PN}/${PV}/.bin" \
