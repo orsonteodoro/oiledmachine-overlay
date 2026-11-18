@@ -69,7 +69,7 @@ RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
 test
-ebuild_revision_17
+ebuild_revision_18
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
