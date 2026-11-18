@@ -31,7 +31,7 @@ LLVM_COMPAT=(
 inherit cflags-hardened cmake-multilib libcxx-slot libstdcxx-slot
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="5a11aa37d66396283848f71f535cb78acf1d0c9d"
+	FALLBACK_COMMIT="946606459314e55d029c85f9a8c46f8809467f0f"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/snappy.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -51,13 +51,13 @@ SOVER="1" # Since 1.1.3
 # SLOT=0 - 1.1.3
 # SLOT=0/${project_major_version} - 1.1.7 to 1.1.10
 # SLOT=0/${project_major_version}.1 - 1.2.0
-ABIDIFF_BUMP="1" # It is not well documented.  But for simplicity, it could be project_minor_version difference.
+ABIDIFF_BUMP="2" # It is not well documented.  But for simplicity, it could be project_minor_version difference.
 SLOT="0/${SOVER}.${ABIDIFF_BUMP}"
 IUSE="
 ${_CXX_STANDARD[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	test? (
