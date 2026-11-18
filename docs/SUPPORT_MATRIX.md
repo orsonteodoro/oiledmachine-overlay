@@ -134,7 +134,9 @@ severity or lower scoring RCEs.  In comparison, CISA uses 3 or 14 days
 remediation deadline for KEV.  The recommendations are to be as close as
 possible to the remediation practices during the
 [2026 Black October](https://en.wikipedia.org/wiki/Black_October_(information_security))
-to reduce the accumulation of miscompilation vulnerabilities.
+to reduce the accumulation of miscompilation vulnerabilities.  Rust-bin contains
+both the Rust side and vendored LLVM/LLD, so the 1 month policy will reduce
+vulnerabilities on both sides.
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
