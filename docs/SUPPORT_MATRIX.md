@@ -93,7 +93,7 @@ exist in build files.
 | Rust 1.93.1 [LTS]                 | Fully supported                       | U26 (1.93.1)                                                        |
 | Rust 1.94.1                       | Available                             |                                                                     |
 | Rust 1.95.0                       | Available                             |                                                                     |
-| Rust 1.96.1                       | Available                             |                                                                     |
+| Rust 1.96.1                       | Available                             | D13 (1.96.1)                                                        |
 | Rust 1.97.1                       | Available                             |                                                                     |
 | Rust 1.98.1                       | Available                             | G (1.98.1)                                                          |
 | Rust 1.99.0                       | Not supported                         |                                                                     |
