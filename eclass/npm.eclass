@@ -743,26 +743,34 @@ npm_src_test() {
 # Installs a npm application.
 npm_src_install() {
 	local install_path="${NPM_INSTALL_PATH:-/opt/${PN}}"
-	local rows
-	if cat "package.json" \
-		| jq '.bin' \
-		| grep -q ":" ; then
-		rows=$(cat "package.json" \
+	local rows=()
+	IFS=$'\n'
+	_exp1() {
+		cat "package.json" \
 			| jq '.bin' \
-			| grep ":")
-	elif cat "package.json" \
-		| jq '.packages."".bin' \
-		| grep -q ":" ; then
-		rows=$(cat "package.json" \
+			| grep -q ":"
+	}
+	_exp2() {
+		cat "package.json" \
 			| jq '.packages."".bin' \
-			| grep ":")
-	else
-		rows=""
+			| grep -q ":"
+	}
+	if $(_exp1) ; then
+		rows=(
+			$(cat "package.json" \
+				| jq '.bin' \
+				| grep ":")
+		)
+	elif $(_exp2) ; then
+		rows=(
+			$(cat "package.json" \
+				| jq '.packages."".bin' \
+				| grep ":")
+		)
 	fi
 	insinto "${install_path}"
 	doins -r *
 	ls .* > /dev/null && doins -r .*
-	IFS=$'\n'
 	local row
 	for row in "${rows[@]}" ; do
 		local name=$(echo "${row}" \

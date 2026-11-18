@@ -68,7 +68,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
-test ebuild_revision_14
+test ebuild_revision_15
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -119,10 +119,15 @@ src_install() {
 	npm_src_install
 
 	# Move wrappers
-	mv "${ED}/usr/bin/tsc" \
-		"${ED}/opt/${PN}/${PV}" || die
-	mv "${ED}/usr/bin/tsserver" \
-		"${ED}/opt/${PN}/${PV}" || die
+	dodir "${ED}/opt/${PN}/${PV}/.bin"
+	mv \
+		"${ED}/usr/bin/tsc" \
+		"${ED}/opt/${PN}/${PV}/.bin" \
+		|| die
+	mv \
+		"${ED}/usr/bin/tsserver" \
+		"${ED}/opt/${PN}/${PV}/.bin" \
+		|| die
 einfo "Removing npm-packages-offline-cache"
         rm -rf "${ED}/opt/${PN}/npm-packages-offline-cache"
 }
