@@ -69,7 +69,7 @@ RESTRICT="mirror"
 SLOT=$(ver_cut "1-2" "${PV}")"/${PV}"
 IUSE+="
 test
-ebuild_revision_19
+ebuild_revision_20
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_SLOT}:${NODE_SLOT}
@@ -145,6 +145,7 @@ src_install() {
 	rm -rf "${ED}/usr/bin/tsserver"
 einfo "Removing npm-packages-offline-cache"
         rm -rf "${ED}/opt/${PN}/npm-packages-offline-cache"
+	[[ -e "${ED}/opt/typescript/${PV}/lib" ]] || ewarn "Missing lib folder"
 }
 
 pkg_postinst() {
