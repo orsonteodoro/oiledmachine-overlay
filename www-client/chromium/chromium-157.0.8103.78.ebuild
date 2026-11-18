@@ -2156,10 +2156,13 @@ COMMON_DEPEND="
 
 # For M149+ pipewire is a mandatory build-time dependency, but it's optional at
 # runtime for most configurations.
+RDEPEND_DISABLED="
+	>=www-client/chromium-common-2:*
+"
 RDEPEND+="
+	!www-client/chromium-common
 	${COMMON_DEPEND}
 	!<www-client/chromium-${PV}
-	>=www-client/chromium-common-2:*
 	sys-kernel/secure-kernel:*[landlock,mseal]
 	virtual/ttf-fonts:*
 	virtual/patent-status:*[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]

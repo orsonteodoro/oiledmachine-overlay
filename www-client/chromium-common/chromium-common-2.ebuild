@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# FIXME:  Make ebuild with with unislot or delete ebuild.
+
 DESCRIPTION="Common configuration files for Chromium slots"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:Chromium/"
 S="${WORKDIR}"
