@@ -129,7 +129,8 @@ security-critical Rust compiler slot.  The 1 month policy is to mitigate
 miscompilation RCE or memory corruption miscompilation that leads to RCE
 or other critical vulnerability possibilities similar to eMudhra where
 15 days is the remediation standard for lower scoring critical
-severity or lower scoring RCEs.  While the Tokio package uses 6 months
+severity or lower scoring RCEs.  While the Tokio package uses the
+[6 months](https://github.com/tokio-rs/tokio/tree/master#supported-rust-versions)
 policy, the recommendations do not fit the
 [Black October](https://en.wikipedia.org/wiki/Black_October_(information_security))
 scenario well.
