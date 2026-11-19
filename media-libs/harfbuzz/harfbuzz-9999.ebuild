@@ -24,7 +24,7 @@ RUST_MIN_VER="${RUST_LLVM_19_PV}"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_NIGHTLY_PV="${RUST_LLVM_LIVE_PV}"
 
-KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/kbts.wrap
+KB_COMMIT="7d811ad80215eef6363d60057b0ea140215278a1" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/kbts.wrap
 RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/ragel.wrap
 
 CHKL_TIMESTAMPS=(
@@ -227,7 +227,7 @@ BDEPEND="
 	introspection? ( dev-util/glib-utils )
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-14.2.1-offline.patch"
+	"${FILESDIR}/${PN}-c8f3caa-offline.patch"
 	"${FILESDIR}/${PN}-14.2.1-stable-rust.patch"
 )
 
