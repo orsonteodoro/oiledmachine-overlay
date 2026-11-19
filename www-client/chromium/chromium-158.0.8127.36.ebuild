@@ -3505,7 +3505,7 @@ einfo "Applying the Arch patchset..."
 #"${base_path}/chromium-153-iamf-tools-unbundled-opus.patch"
 #"${base_path}/chromium-155-use-system-esbuild.patch"
 #"${base_path}/chromium-156-isolatedDeclarations.patch"
-"${base_path}/chromium-157-revert-gn-check-includes.patch"		# For pre-build step
+"A${base_path}/chromium-157-revert-gn-check-includes.patch"		# For pre-build step ; patching issues
 "${base_path}/chromium-157-typescript.patch"				# Unvendor
 #"${base_path}/chromium-157-crubit.patch"				# Fix early compile issue; Using chromium-158.0.8127.36-crubit.patch instead
 #"${base_path}/compiler-rt-adjust-paths.patch"
@@ -3679,7 +3679,7 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cr140-musl-prctl.patch"
 #"${WORKDIR}/copium/cr140-rust-pre1.89.patch"
 #"${WORKDIR}/copium/cr142-rust-pre1.90.patch"
-"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"				# Used in G23 build
+#"${WORKDIR}/copium/cr143-libsync-__BEGIN_DECLS.patch"				# Used in G23 build; removed in 158
 #"${WORKDIR}/copium/cr145-iwyu-dev_t.patch"
 #"${WORKDIR}/copium/cr145-musl-unfortify-SkDescriptor.patch"
 #"${WORKDIR}/copium/cr146-rust-pre1.95-bytemuck.patch"
@@ -3689,7 +3689,7 @@ einfo "Applying the copium patchset..."
 #"${WORKDIR}/copium/cr147-simdutf-8.0-base-char.patch"
 #"${WORKDIR}/copium/cr148-rust-1.95-bytemuck.patch"
 #"${WORKDIR}/copium/cr149-musl-alloc-shim-dispatch.patch"
-"${WORKDIR}/copium/cr149-rust-toolchain-var.patch"				# Equivalent to MJ patchset
+#"${WORKDIR}/copium/cr149-rust-toolchain-var.patch"				# Equivalent to MJ patchset; removed in 158
 #"${WORKDIR}/copium/cr151-dawn-cgo_enabled.patch"
 #"${WORKDIR}/copium/cr152-dawn-clang-22.patch"
 "${WORKDIR}/copium/cr152-unbundle-minizip-undo-unicode.patch"			# Used in G23 build
