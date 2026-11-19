@@ -97,8 +97,8 @@ exist in build files.
 | Rust 1.97.1                       | Available                             |                                                                     |
 | Rust 1.98.1                       | Available                             | G (1.98.1)                                                          |
 | Rust 1.99.0                       | Not supported                         |                                                                     |
-| Rust 1.99.1 [RSC]                 | Fully supported                       | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)         |
-| Rust 1.100.0                      | Not supported                         | F45 (1.100.1)
+| Rust 1.99.1                       | Fully supported                       | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)         |
+| Rust 1.100.0 [RSC]                | WIP / Planned                         | F45 (1.100.1)
 | Rust-9999 (1.102.0-nightly) [LSC] | Limited support                       | G**                                                                 |
 
 [1] Only Godot allowed.
