@@ -1299,7 +1299,7 @@ secure-version_gen_nginx_depends() {
 
 	local t=""
 	t+="
-		www-servers/nginx:=
+		www-servers/nginx:=${usedep}
 		|| (
 	"
 	local l=""
