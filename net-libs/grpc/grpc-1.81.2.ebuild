@@ -8,34 +8,29 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.30.2/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.81.2/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
-# https://github.com/grpc/grpc/blob/v1.30.2/setup.py#L100
+# https://github.com/grpc/grpc/blob/v1.81.2/setup.py#L100
 
 # For supported ruby versions, see
-# https://github.com/grpc/grpc/blob/v1.30.2/Rakefile#L147
+# https://github.com/grpc/grpc/blob/v1.81.2/Rakefile#L147
 
 MY_PV="${PV//_pre/-pre}"
 
-ABSEIL_CPP_SLOT="20200225"
+ABSEIL_CPP_SLOT="20250512"
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
-CXX_STANDARD=17 # Originally 11
-PROTOBUF_CPP_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Up to 3.8.  See https://github.com/grpc/grpc/blob/v1.30.2/setup.py
+CXX_STANDARD=17
+OPENCENSUS_PROTO_PV="0.3.0"
+PROTOBUF_CPP_SLOT="6"
+PYTHON_COMPAT=( "python3_"{11..14} ) # See https://github.com/grpc/grpc/blob/v1.81.2/src/python/grpcio/python_version.py
+RE2_SLOT="20250512"
 RUBY_OPTIONAL="yes"
-USE_RUBY="ruby32"
-RE2_SLOT="20220623"
-
-_CXX_STANDARD=(
-	"cxx_standard_cxx11"
-	"cxx_standard_cxx14"
-	"+cxx_standard_cxx17"
-)
+USE_RUBY="ruby33 ruby34 ruby40"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -47,13 +42,20 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit abseil-cpp cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal protobuf python-r1 ruby-ng re2
+CHKL_TIMESTAMPS=(
+	"net-dns/c-ares-9999"
+)
+
+inherit abseil-cpp cflags-hardened chkl cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal protobuf python-r1 re2 ruby-ng secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
+S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-${OPENCENSUS_PROTO_PV}"
 SRC_URI="
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/census-instrumentation/opencensus-proto/archive/v${OPENCENSUS_PROTO_PV}.tar.gz
+	-> opencensus-proto-${OPENCENSUS_PROTO_PV}.tar.gz
 "
 
 DESCRIPTION="Modern open source high performance RPC framework"
@@ -88,34 +90,26 @@ LSRT_IUSE=(
 	ruby
 )
 IUSE+="
-${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
 ebuild_revision_50
 "
 REQUIRED_USE+="
-	^^ (
-		${_CXX_STANDARD[@]/+}
-	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
 "
 RESTRICT="test"
 GRPC_SLOT="${PROTOBUF_CPP_SLOT}"
-SLOT="${GRPC_SLOT}/1.30"
-# third_party last update: 20200529
+SLOT="${GRPC_SLOT}/1.75"
+# third_party last update: 20250723
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20200225.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-cpp/abseil-cpp:=
-	>=dev-libs/openssl-1.1.0g:0[-bindist(-),${MULTILIB_USEDEP}]
-	dev-libs/openssl:=
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-libs/protobuf:=
-	>=net-dns/c-ares-1.15.0[${MULTILIB_USEDEP}]
-	net-dns/c-ares:=
-	>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
-	virtual/zlib:=
+	>=dev-cpp/abseil-cpp-20250512.1:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	$(secure-version_gen_openssl_depends '' '[-bindist(-),${MULTILIB_USEDEP}]')
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}=[${MULTILIB_USEDEP}]
+	>=net-dns/c-ares-${C_ARES_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
@@ -124,10 +118,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.5.1
+	>=dev-build/cmake-3.16
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.5.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+		>=dev-cpp/benchmark-1.9.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
 	)
 "
 PDEPEND_DISABLE="
@@ -138,8 +132,15 @@ PDEPEND_DISABLE="
 PDEPEND+="
 	java? (
 		=dev-java/grpc-java-${PV%%.*}*
-		dev-java/grpc-java:=
 		|| (
+			(
+				virtual/jdk:17
+				virtual/jre:17
+			)
+			(
+				virtual/jdk:11
+				virtual/jre:11
+			)
 			(
 				virtual/jdk:1.8
 				virtual/jre:1.8
@@ -148,17 +149,22 @@ PDEPEND+="
 	)
 	php? (
 		~dev-php/grpc-${PV}
-		dev-php/grpc:=
 	)
 	python? (
-		~dev-python/grpcio-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-		dev-python/grpcio:=
+		~dev-python/grpcio-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
 	)
 	ruby? (
-		ruby_targets_ruby32? (
-			dev-lang/ruby:3.2
-			~dev-ruby/grpc-${PV}[ruby_targets_ruby32?]
-			dev-ruby/grpc:=
+		ruby_targets_ruby33? (
+			dev-lang/ruby:3.3
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby33?]
+		)
+		ruby_targets_ruby34? (
+			dev-lang/ruby:3.4
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby34?]
+		)
+		ruby_targets_ruby40? (
+			dev-lang/ruby:4.0
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby40?]
 		)
 	)
 "
@@ -175,6 +181,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
+	mv "${S_OPENCENSUS_PROTO}" "${S}/third_party/opencensus-proto/src" || die
 }
 
 src_prepare() {
@@ -194,10 +201,9 @@ src_prepare() {
 }
 
 src_configure() {
-	append-flags -I"${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
-	filter-flags "-Wl,--as-needed"
-	export PATH="${ED}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	chkl_check_many_timestamps
 	cflags-hardened_append
+	filter-flags "-Wl,--as-needed"
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
 		append-ldflags "-Wl,-rpath,/usr/lib/grpc/${GRPC_SLOT}/$(get_libdir)"
@@ -212,9 +218,6 @@ src_configure() {
 			$(abseil-cpp_append_cmake)
 			$(protobuf_append_cmake)
 			$(re2_append_cmake)
-			$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '') # Package default
-			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
-			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # Required by bear
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${GRPC_SLOT}"
 			-DgRPC_INSTALL=ON
@@ -236,10 +239,6 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
-			-DProtobuf_INCLUDE_DIR="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/include"
-			-DProtobuf_LIBRARIES="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotobuf.a"
-			-DProtobuf_PROTOC_LIBRARY="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/$(get_libdir)/libprotoc.a"
-			-DPROTOBUF_PROTOC_EXECUTABLE="${ESYSROOT}/usr/lib/protobuf/${PROTOBUF_CPP_SLOT}/bin/protoc"
 		)
 		cmake_src_configure
 	}

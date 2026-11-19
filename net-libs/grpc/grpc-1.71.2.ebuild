@@ -8,13 +8,13 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.75.1/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.71.2/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
-# https://github.com/grpc/grpc/blob/v1.75.1/setup.py#L100
+# https://github.com/grpc/grpc/blob/v1.71.2/setup.py#L100
 
 # For supported ruby versions, see
-# https://github.com/grpc/grpc/blob/v1.75.1/Rakefile#L147
+# https://github.com/grpc/grpc/blob/v1.71.2/Rakefile#L147
 
 MY_PV="${PV//_pre/-pre}"
 
@@ -27,10 +27,10 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO OOBW PE"
 CXX_STANDARD=17
 OPENCENSUS_PROTO_PV="0.3.0"
 PROTOBUF_CPP_SLOT="5"
-PYTHON_COMPAT=( "python3_"{10..13} ) # See https://github.com/grpc/grpc/blob/v1.71.2/src/python/grpcio/python_version.py#L17
+PYTHON_COMPAT=( "python3_"{11..13} ) # See https://github.com/grpc/grpc/blob/v1.71.2/src/python/grpcio/python_version.py#L17
 RE2_SLOT="20250512"
 RUBY_OPTIONAL="yes"
-USE_RUBY="ruby32 ruby33 ruby34"
+USE_RUBY="ruby33 ruby34"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -42,7 +42,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit abseil-cpp cflags-hardened cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal protobuf python-r1 re2 ruby-ng
+CHKL_TIMESTAMPS=(
+	"net-dns/c-ares-9999"
+)
+
+inherit abseil-cpp cflags-hardened chkl cmake flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal protobuf python-r1 re2 ruby-ng secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -100,18 +104,12 @@ GRPC_SLOT="${PROTOBUF_CPP_SLOT}"
 SLOT="${GRPC_SLOT}/1.71"
 # third_party last update: 20250213
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
-	dev-cpp/abseil-cpp:=
-	>=dev-libs/openssl-1.1.1g:0[-bindist(-),${MULTILIB_USEDEP}]
-	dev-libs/openssl:=
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
-	dev-libs/protobuf:=
-	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}[${MULTILIB_USEDEP}]
-	dev-libs/re2:=
-	>=net-dns/c-ares-1.17.2[${MULTILIB_USEDEP}]
-	net-dns/c-ares:=
-	>=virtual/zlib-1.2.13[${MULTILIB_USEDEP}]
-	virtual/zlib:=
+	>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
+	$(secure-version_gen_openssl_depends '' '[-bindist(-),${MULTILIB_USEDEP}]')
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}=[${MULTILIB_USEDEP}]
+	>=net-dns/c-ares-${C_ARES_PV}:=[${MULTILIB_USEDEP}]
+	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
@@ -129,13 +127,11 @@ BDEPEND+="
 PDEPEND_DISABLE="
 	csharp? (
 		=dev-dotnet/grpc-dotnet-$(($(ver_cut 1 ${PV})+1)).$(ver_cut 2 ${PV})*
-		dev-dotnet/grpc-dotnet:=
 	)
 "
 PDEPEND+="
 	java? (
 		=dev-java/grpc-java-${PV%%.*}*
-		dev-java/grpc-java:=
 		|| (
 			(
 				virtual/jdk:17
@@ -153,27 +149,18 @@ PDEPEND+="
 	)
 	php? (
 		~dev-php/grpc-${PV}
-		dev-php/grpc:=
 	)
 	python? (
 		~dev-python/grpcio-${PV}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
-		dev-python/grpcio:=
 	)
 	ruby? (
-		ruby_targets_ruby32? (
-			dev-lang/ruby:3.2
-			~dev-ruby/grpc-${PV}[ruby_targets_ruby32?]
-			dev-ruby/grpc:=
-		)
 		ruby_targets_ruby33? (
 			dev-lang/ruby:3.3
 			~dev-ruby/grpc-${PV}[ruby_targets_ruby33?]
-			dev-ruby/grpc:=
 		)
 		ruby_targets_ruby34? (
 			dev-lang/ruby:3.4
 			~dev-ruby/grpc-${PV}[ruby_targets_ruby34?]
-			dev-ruby/grpc:=
 		)
 	)
 "
@@ -210,6 +197,7 @@ src_prepare() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	#append-cflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
