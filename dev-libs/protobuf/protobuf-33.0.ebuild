@@ -48,6 +48,9 @@ RESTRICT="
 SLOT_MAJOR="${INTERNAL_VERSION%%.*}"
 SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 # version : slot
+# 36 : 7.36 From CMakeLists.txt's protobuf_VERSION_STRING
+# 35 : 7.35 From CMakeLists.txt's protobuf_VERSION_STRING
+# 34 : 7.34 From CMakeLists.txt's protobuf_VERSION_STRING
 # 33 : 6.33 From CMakeLists.txt's protobuf_VERSION_STRING
 # 32 : 6.32 From CMakeLists.txt's protobuf_VERSION_STRING
 # 31 : 6.31 From CMakeLists.txt's protobuf_VERSION_STRING
