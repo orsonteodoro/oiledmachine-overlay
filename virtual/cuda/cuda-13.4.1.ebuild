@@ -12,9 +12,6 @@ GCC_COMPAT=(
 )
 
 LLVM_COMPAT=(
-	"llvm_slot_19"
-	"llvm_slot_20"
-	"llvm_slot_21"
 	"llvm_slot_22"
 )
 
@@ -58,22 +55,7 @@ RDEPEND+="
 	gcc_slot_16_3? (
 		=sys-devel/gcc-16.3*
 	)
-	llvm_slot_19? (
-		=llvm-core/clang-19*
-		=llvm-core/lld-19*
-		=llvm-core/llvm-19*
-	)
-	llvm_slot_19? (
-		=llvm-core/clang-20*
-		=llvm-core/lld-20*
-		=llvm-core/llvm-20*
-	)
-	llvm_slot_19? (
-		=llvm-core/clang-21*
-		=llvm-core/lld-21*
-		=llvm-core/llvm-21*
-	)
-	llvm_slot_19? (
+	llvm_slot_22? (
 		=llvm-core/clang-22*
 		=llvm-core/lld-22*
 		=llvm-core/llvm-22*
