@@ -176,6 +176,8 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
+inherit secure-version
+
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
 BUILD_OBJ_DIR="" # global var not const
 CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
@@ -392,7 +394,7 @@ inherit cflags-depends cflags-hardened check-compiler-switch check-linker
 inherit check-reqs chkl desktop dhms flag-o-matic flag-o-matic-om gnome2-utils lcnr libcxx-slot
 inherit libstdcxx-slot linux-info llvm multilib-minimal multiprocessing
 inherit node optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
-inherit rustflags-hardened secure-version toolchain-funcs virtualx vf web-kernel-config xdg
+inherit rustflags-hardened toolchain-funcs virtualx vf web-kernel-config xdg
 
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
