@@ -1388,6 +1388,8 @@ secure-version_rust_depends() {
 			l="23"
 		elif [[ "${l}" == "l" ]] ; then # Live
 			l="23"
+		else # LTS
+			l="19"
 		fi
 		if [[ -z "${r}" ]] ; then
 			r="22"
@@ -1397,6 +1399,8 @@ secure-version_rust_depends() {
 			r="23"
 		elif [[ "${r}" == "l" ]] ; then # Live
 			r="23"
+		else # LTS
+			r="22"
 		fi
 	else
 		l="${range}"
