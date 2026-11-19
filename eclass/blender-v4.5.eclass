@@ -163,9 +163,9 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
-	#${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_} # 19
+	#${LIBCXX_COMPAT_CXX17_CUDA_12_9[@]/llvm_slot_} #
 	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
 )
 
 # Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility

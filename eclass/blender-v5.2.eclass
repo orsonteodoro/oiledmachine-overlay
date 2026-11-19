@@ -164,10 +164,10 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 inherit libcxx-compat
 LLVM_COMPAT=(
 	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
-	#${LIBCXX_COMPAT_CXX20_CUDA_12_9[@]/llvm_slot_} # 19
-	#${LIBCXX_COMPAT_CXX20_CUDA_13_4[@]/llvm_slot_} # 19, 21, 22
+	#${LIBCXX_COMPAT_CXX20_CUDA_12_9[@]/llvm_slot_} #
+	#${LIBCXX_COMPAT_CXX20_CUDA_13_4[@]/llvm_slot_} # 22
 	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
-	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 19, 21, 22, 23
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 22, 23
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
