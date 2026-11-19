@@ -3,24 +3,23 @@
 
 EAPI=8
 
-# For deps, see https://github.com/numba/llvmlite/blob/v0.47.0/conda-recipes/llvmlite/meta.yaml
+# For deps, see https://github.com/numba/llvmlite/blob/v0.50.0/conda-recipes/llvmlite/meta.yaml
 
 CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..14} )
+PYTHON_COMPAT=( "python3_"{11..15} )
 
-# See FALLBACK_LLVMDEV_VERSION in https://github.com/numba/llvmlite/blob/v0.47.0/.github/workflows/llvmlite_linux-64_wheel_builder.yml
-LLVM_COMPAT=( 20 )
+# See FALLBACK_LLVMDEV_VERSION in https://github.com/numba/llvmlite/blob/v0.50.0/.github/workflows/llvmlite_linux-64_wheel_builder.yml
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
 )
 
 inherit check-compiler-switch cmake distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot pypi toolchain-funcs
