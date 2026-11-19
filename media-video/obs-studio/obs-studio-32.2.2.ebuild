@@ -67,16 +67,16 @@ OBS_WEBSOCKET_COMMIT="1ef34bf48110c2a18184e50e41cd0b1a855e2147"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 LIBSTDCXX_USEDEP="gcc_slot_11_5(-)?,gcc_slot_12_5(-)?,gcc_slot_13_4(-)?,gcc_slot_14_3(-)?,gcc_slot_15_3(-)?"
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
 )
-LIBCXX_USEDEP="llvm_slot_18(-)?,llvm_slot_19(-)?,llvm_slot_21(-)?,llvm_slot_22(-)?"
+LIBCXX_USEDEP="llvm_slot_22(-)?"
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
 inherit ffmpeg
