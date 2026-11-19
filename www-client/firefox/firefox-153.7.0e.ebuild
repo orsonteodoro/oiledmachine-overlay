@@ -7,7 +7,7 @@ EAPI=8
 # This ebuild contains AI generated code and AI synthetic data.
 
 # D11, D12, D13, D14, F36, F37, F38, F39, F40, F41, F42, F43, U22, U24, U25
-# See /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/taskcluster/kinds/bootstrap/kind.yml
+# See /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/taskcluster/kinds/bootstrap/kind.yml
 
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
@@ -63,28 +63,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/153.6.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/moz.configure
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/security/nss/lib/nss/nss.h
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/media/libwebp/moz.yaml L16, live
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/third_party/aom/CHANGELOG
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/153.7.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/moz.configure
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/security/nss/lib/nss/nss.h
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/media/libwebp/moz.yaml L16, live
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/third_party/aom/CHANGELOG
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, nasm, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0/taskcluster
+# /var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -106,7 +106,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="153.6.0"
+PV="153.7.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -123,7 +123,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-153.6.0e/work/firefox-153.6.0"
+SRC="/var/tmp/portage/www-client/firefox-153.7.0e/work/firefox-153.7.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -203,11 +203,9 @@ NASM_PV="2.14.02"
 NODE_SLOT=22
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="9999"
-RUST_MIN_VER="1.98.1"
+RUST_MAX_VER="${RUST_LLVM_LIVE_PV}"
+RUST_MIN_VER="${RUST_LLVM_LIVE_PV}"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
-RUST_NIGHTLY_PV="1.100.0"
-RUST_NIGHTLY_TIMESTAMP="Fri, 14 Aug 2026 09:23:13 -0700" # Same as Rust 1.100.0 timestamp
 RUST_PV="${RUST_MIN_VER}"
 VIRTUALX_REQUIRED="pgo"
 
@@ -1385,7 +1383,7 @@ eerror "Switch to live with \`eselect rust\`"
 	fi
 
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-		local compatible_time=$(date --date="${RUST_NIGHTLY_TIMESTAMP}" "+%s")
+		local compatible_time=$(date --date="${RUST_LLVM_LIVE_TIMESTAMP}" "+%s")
 
 		local merge_time
 		local pkg_name
@@ -1399,7 +1397,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_NIGHTLY_PV} or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_LLVM_LIVE_INTERNAL_VERSION} or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
