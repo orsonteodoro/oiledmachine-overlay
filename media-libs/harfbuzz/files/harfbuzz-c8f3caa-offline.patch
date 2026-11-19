@@ -1,13 +1,14 @@
 # source_hash is produced from `sha256sum /var/cache/distfiles/kb-7d811ad.tar.gz`
 --- a/subprojects/kbts.wrap.orig	2026-11-19 06:28:12.242480442 -0800
 +++ b/subprojects/kbts.wrap	2026-11-19 06:31:45.405305812 -0800
-@@ -1,5 +1,4 @@
+@@ -1,5 +1,5 @@
 -[wrap-git]
 -url = https://github.com/JimmyLefevre/kb.git
 -revision = 7d811ad80215eef6363d60057b0ea140215278a1
 -depth = 1
 -patch_directory = kbts
 \ No newline at end of file
++[wrap-file]
 +directory = kb-7d811ad
 +source_filename = kb-7d811ad.tar.gz
 +source_hash = bc649468437701814b7bf6b4dfda9ccf2346cea6105a55bbda5355ff9190fb5b
