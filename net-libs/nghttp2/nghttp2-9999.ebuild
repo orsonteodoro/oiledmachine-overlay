@@ -21,7 +21,7 @@ HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d" # dep of urlparse
 MRUBY_COMMIT="831da26b9021de0369d17b71b5667e2941a1a32d"
 MUNIT_COMMIT_1="cb04288a5225645be005a521c537b83c51934ef6"
 MUNIT_COMMIT_2="3cf9c79f3a76f313d560dedd5b47c0416a0fbb6e" # dep of urlparse
-NEVERBLEED_COMMIT="68f65c7b05f68e6fd93631668d4f469875946656"
+NEVERBLEED_COMMIT="c9515906909cbc33251d3fc2a140d43feae89680"
 URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 
 CHKL_TIMESTAMPS=(
@@ -42,9 +42,6 @@ CHKL_TIMESTAMPS=(
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	#"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
-	"gcc_slot_11_5" # Support -std=c++17.
-	"gcc_slot_12_5" # Support -std=c++17.
-	"gcc_slot_13_4" # Support -std=c++17.
 	"gcc_slot_14_3" # Support -std=c++17
 	"gcc_slot_15_3" # Support -std=c++17, -std=c++23.
 	"gcc_slot_16_1" # Support -std=c++23.
@@ -52,9 +49,9 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	#"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
-	18 19 # c++17
-	21 22 # c++17, c++23
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}" # 22, 23
+	# 22, 23 -std=c++17
+	# 23 -std=c++23
 )
 
 
@@ -62,7 +59,7 @@ LLVM_COMPAT=(
 inherit cflags-hardened check-compiler-switch chkl cmake dep-prepare flag-o-matic libcxx-slot libstdcxx-slot multilib-minimal python-r1 secure-version systemd toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
-	FALLBACK_COMMIT="e4a2c989b39a9285791a8c0bbb9eb90fcb328659"
+	FALLBACK_COMMIT="7262774042b8f2cebfa2c80784e87f9d2d66e02a"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/nghttp2/nghttp2.git"
 	inherit git-r3
@@ -134,7 +131,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE+="
 apparmor -bpf clang debug doc gcc -hpack-tools -http3 -mruby -neverbleed -jemalloc openrc quic
 -static-libs systemd test +threads -utils +xml
-ebuild_revision_27
+ebuild_revision_28
 "
 REQUIRED_USE="
 	|| (
@@ -145,18 +142,12 @@ REQUIRED_USE="
 		!hpack-tools? (
 			gcc? (
 				|| (
-					gcc_slot_11_5
-					gcc_slot_12_5
-					gcc_slot_13_4
 					gcc_slot_14_3
 					gcc_slot_15_3
 				)
 			)
 			clang? (
 				|| (
-					llvm_slot_18
-					llvm_slot_19
-					llvm_slot_21
 					llvm_slot_22
 				)
 			)
@@ -171,7 +162,6 @@ REQUIRED_USE="
 		)
 		clang? (
 			|| (
-				llvm_slot_21
 				llvm_slot_22
 			)
 		)
