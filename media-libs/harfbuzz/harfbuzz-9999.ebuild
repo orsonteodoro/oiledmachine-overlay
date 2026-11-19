@@ -301,7 +301,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 
-die
+#die
 		local actual_cargo_hash=$(sha512sum "${S}/src/rust/Cargo.toml" | cut -f 1 -d " ")
 		local expected_cargo_hash="${EXPECTED_CARGO_HASH}"
 		if [[ "${actual_cargo_hash}" != "${expected_cargo_hash}" ]] ; then
