@@ -18,7 +18,7 @@
 # Rolling G~ - grpc:4/1.62 - protobuf-cpp:4/4.25 - protobuf-python:4.25 - abseil-cpp:20240116 - re2:20220623 # Apache Arrow 26
 # Rolling G~ - grpc:5/1.71 - protobuf-cpp:5/5.29 - protobuf-python:5.29 - abseil-cpp:20240722 - re2:20250512 # LocalAI
 # Rolling G~ - grpc:6/1.81 - protobuf-cpp:6/6.33 - protobuf-python:6.33 - abseil-cpp:20250512 - re2:20250512 # TensorFlow 2.21
-# Rolling G~ - grpc:7/1.85 - protobuf-cpp:7/7.35 - protobuf-python:7.35 - abseil-cpp:20260526 - re2:20250512 # JAX 0.12, TensorFlow 2.21
+# Rolling G~ - grpc:7/1.85 - protobuf-cpp:7/7.36 - protobuf-python:7.36 - abseil-cpp:20260526 - re2:20250512 # JAX 0.12, TensorFlow 2.21
 
 case ${EAPI:-0} in
 	[8]) ;;

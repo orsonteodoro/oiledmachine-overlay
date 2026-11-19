@@ -7,14 +7,14 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_CPP_SLOT=6
-PROTOBUF_PYTHON_SLOT=6
-PYTHON_COMPAT=( "python3_"{10..13} )
+PROTOBUF_CPP_SLOT=7
+PROTOBUF_PYTHON_SLOT=7
+PYTHON_COMPAT=( "python3_"{10..14} ) # See https://github.com/protocolbuffers/protobuf/blob/v36.2/python/protobuf_distutils/setup.py
 
 inherit distutils-r1 flag-o-matic pypi
 
 PARENT_PN="${PN/-python/}"
-PARENT_PV="$(ver_cut 2-)"
+PARENT_PV=$(ver_cut "2-" "${PV}")
 PARENT_P="${PARENT_PN}-${PARENT_PV}"
 
 if [[ "${PV}" == *"9999" ]]; then
@@ -42,8 +42,10 @@ IUSE+=" ebuild_revision_3"
 RDEPEND="
 	${PYTHON_DEPS}
 	!dev-python/protobuf:0
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/6.33
 	dev-libs/protobuf:=
+	|| (
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/7.36
+	)
 "
 DEPEND="
 	${RDEPEND}

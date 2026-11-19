@@ -9,12 +9,12 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_CPP_SLOT=3
 PROTOBUF_PYTHON_SLOT=3
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.7
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.7.  See https://github.com/protocolbuffers/protobuf/blob/v3.12.4/python/setup.py#L270
 
 inherit distutils-r1 flag-o-matic
 
 PARENT_PN="${PN/-python/}"
-PARENT_PV="$(ver_cut 2-)"
+PARENT_PV=$(ver_cut "2-" "${PV}")
 PARENT_P="${PARENT_PN}-${PARENT_PV}"
 
 if [[ "${PV}" == *"9999" ]]; then
@@ -43,8 +43,10 @@ IUSE+=" ebuild_revision_3"
 RDEPEND="
 	${PYTHON_DEPS}
 	!dev-python/protobuf:0
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.12
 	dev-libs/protobuf:=
+	|| (
+		dev-libs/protobuf:${PROTOBUF_CPP_SLOT}/3.12
+	)
 "
 DEPEND="
 	${RDEPEND}

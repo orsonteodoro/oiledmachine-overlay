@@ -95,7 +95,7 @@ IUSE+="
 ${_CXX_STANDARD[@]}
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE+="
 	^^ (
@@ -107,7 +107,7 @@ REQUIRED_USE+="
 "
 RESTRICT="test"
 GRPC_SLOT="${PROTOBUF_CPP_SLOT}"
-SLOT="${GRPC_SLOT}/1.51"
+SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 # third_party last update: 20230214
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
