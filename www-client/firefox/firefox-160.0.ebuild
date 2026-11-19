@@ -268,7 +268,6 @@ CHKL_TIMESTAMPS=(
 # https://github.com/WebAssembly/wasi-sdk/
 # For LLVM slot correspondence, see https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-34/src
 declare -A WASI_SLOTS=(
-	["22"]="33.0"
 	["23"]="34.0"
 )
 
@@ -281,7 +280,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}" # 22, 23
+	#"${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}" # 22, 23
 	"${LIBCXX_COMPAT_RUST_LIVE[@]/llvm_slot_}" # 23
 	# Upstream tests with 14, 19, 20, 21, trunk
 	# We don't use 24 because it would misalign with the wasm sandbox (aka. wasi).
@@ -432,17 +431,11 @@ SRC_URI="
 	${PATCH_URIS[@]}
 	wasm-sandbox? (
 		amd64? (
-			llvm_slot_22? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[22]%.*}/wasi-sdk-${WASI_SLOTS[22]}-x86_64-linux.tar.gz
-			)
 			llvm_slot_23? (
 				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[23]%.*}/wasi-sdk-${WASI_SLOTS[23]}-x86_64-linux.tar.gz
 			)
 		)
 		arm64? (
-			llvm_slot_22? (
-				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[22]%.*}/wasi-sdk-${WASI_SLOTS[22]}-arm64-linux.tar.gz
-			)
 			llvm_slot_23? (
 				https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SLOTS[23]%.*}/wasi-sdk-${WASI_SLOTS[23]}-arm64-linux.tar.gz
 			)
@@ -608,16 +601,10 @@ PATENT_CDEPENDS="
 	)
 "
 RUST_CDEPEND="
-	llvm_slot_22? (
-		|| (
-			dev-lang/rust:1.98.1[${MULTILIB_USEDEP}]
-			dev-lang/rust-bin:1.98.1[${MULTILIB_USEDEP}]
-		)
-	)
 	llvm_slot_23? (
 		|| (
-			dev-lang/rust:9999[${MULTILIB_USEDEP}]
-			dev-lang/rust-bin:9999[${MULTILIB_USEDEP}]
+			dev-lang/rust:${RUST_LLVM_LIVE_PV}[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:${RUST_LLVM_LIVE_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 "
