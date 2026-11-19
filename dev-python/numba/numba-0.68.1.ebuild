@@ -6,15 +6,23 @@ EAPI=8
 
 # U22
 
+# For CUDA version, see
+# https://github.com/numba/numba/blob/0.68.1/buildscripts/gpuci/build.sh
+# https://numba.readthedocs.io/en/0.68.1/cuda/overview.html
+# For FALLBACK_LLVMDEV_VERSION, see https://github.com/numba/llvmlite/blob/v0.68.1/.github/workflows/llvmlite_linux-64_wheel_builder.yml
+# For LLVM compat, see https://github.com/numba/llvmlite/blob/v0.50.0/README.rst#compatibility
+# For Python compat, see https://github.com/numba/numba/blob/0.68.1/azure-pipelines.yml#L129
+
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
+LLVM_COMPAT=( 22 )
 PYTHON_COMPAT=( "python3_"{10..14} ) # Relaxed build requirements.  Allow NumPy 1.x for BDEPEND.
 
-# See FALLBACK_LLVMDEV_VERSION in https://github.com/numba/llvmlite/blob/v0.47.0/.github/workflows/llvmlite_linux-64_wheel_builder.yml
-# See https://github.com/numba/llvmlite/blob/v0.47.0/README.rst#compatibility
-LLVM_COMPAT=( 20 )
+CHKL_TIMESTAMPS=(
+	"dev-cpp/tbb-9999"
+)
 
-inherit check-compiler-switch distutils-r1 flag-o-matic toolchain-funcs
+inherit check-compiler-switch chkl distutils-r1 flag-o-matic secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -45,7 +53,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 doc clang cuda gcc openmp tbb
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	^^ (
@@ -65,14 +73,17 @@ REQUIRED_USE="
 RDEPEND+="
 	virtual/numpy:=[${PYTHON_USEDEP}]
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-11.2:=
 		dev-python/cuda-python:=[${PYTHON_USEDEP}]
+		virtual/cuda:=
+		|| (
+			=virtual/cuda-13*
+		)
 	)
-	llvm_slot_20? (
-		=dev-python/llvmlite-0.47*[${PYTHON_USEDEP}]
+	llvm_slot_22? (
+		=dev-python/llvmlite-0.50*[${PYTHON_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021.1:=
+		>=dev-cpp/tbb-${TBB_PV}:=
 	)
 "
 DEPEND+="
@@ -134,6 +145,7 @@ src_unpack() {
 }
 
 python_configure() {
+	chkl_check_many_timestamps
 	if use clang ; then
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
