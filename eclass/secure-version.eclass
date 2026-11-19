@@ -592,7 +592,6 @@ RUST_PV=${RUST_PV:-"1.100.0"} # 1w ago, LLVM 23, within 1 month or latest securi
 RUST_LLVM_ROLLING_PV=${RUST_LLVM_ROLLING_PV:-"1.100.0"} # 1w ago, LLVM 23, for build time stability, network facing allowed
 RUST_LLVM_LTS_PV=${RUST_LLVM_LTS_PV:-"1.96.1"} # 5m ago, LLVM 22, for build time stability, network facing disallowed
 RUST_LLVM_LIVE_PV=${RUST_LLVM_LIVE_PV:-"9999"} # now, LLVM 23, live security-critical, web browser security standard
-RUST_LLVM_LATEST_PV=${RUST_LLVM_LATEST_PV:-"1.100.0"} # 1w ago, LLVM 23, rolling security-critical, network facing allowed
 RUST_LLVM_23_PV=${RUST_LLVM_23_PV:-"1.100.0"} # 1m ago, for C++ and multislot LLVM scenario, network facing allowed
 RUST_LLVM_22_PV=${RUST_LLVM_22_PV:-"1.98.1"} # 3m ago, for C++ and multislot LLVM scenario, network facing disallowed
 RUST_LLVM_21_PV=${RUST_LLVM_21_PV:-"1.94.1"} # 8m ago, for C++ and multislot LLVM scenario, network facing disallowed
@@ -1348,8 +1347,9 @@ secure-version_gen_nginx_depends() {
 
 secure-version_rust_depends() {
 	(( ${#LLVM_COMPAT[@]} > 0 )) || die "QA:  LLVM_COMPAT must be defined"
-	local range="${1}" # '', 's', 'r', 'l', '19-', '-22', '19-s', '19-r', '19-l', <unset>
+	local range="${1}" # '', 's', 'r', 'l', '19-', '-22', '19-s', '19-r', '19-l', 'lts', 'rsc', 'lsc' <unset>
 	local usedep="${2}" # [http], <empty string>
+	local live_slot="23"
 
 	local t=""
 	t+="
@@ -1359,6 +1359,15 @@ secure-version_rust_depends() {
 	if [[ -z "${range}" ]] ; then # LTS (stable)
 		l="19"
 		r="22"
+	elif [[ "${range}" == "lts" ]] ; then # LTS
+		l="22"
+		r="22"
+	elif [[ "${range}" == "rsc" ]] ; then # Rolling Security-Critical
+		l="23"
+		r="23"
+	elif [[ "${range}" == "lsc" ]] ; then # Live Security-Critical
+		l="LIVE"
+		r="LIVE"
 	elif [[ "${range}" == "s" ]] ; then # LTS (stable)
 		l="19"
 		r="22"
@@ -1400,31 +1409,61 @@ secure-version_rust_depends() {
 		"21"
 		"19"
 	)
-	local live_slot="23"
 
-	local x
-	for x in "${L[@]}" ; do
-		local u="RUST_LLVM_${x/./_}_PV"
-		if [[ "${x}" == "LIVE" && ${range} =~ "l" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${live_slot}" "-le" "${r}" ; then
-			t+="
-				llvm_slot_${live_slot}? (
-					|| (
-						dev-lang/rust-bin:${!u}${usedep}
-						dev-lang/rust:${!u}${usedep}
+	if [[ "${range}" == "lts" ]] ; then
+	# Rust with Python, Node.js, or pure Rust use cases
+		local u="RUST_LLVM_LTS_PV"
+		t+="
+			|| (
+				dev-lang/rust-bin:${!u}${usedep}
+				dev-lang/rust:${!u}${usedep}
+			)
+		"
+	elif [[ "${range}" == "rsc" ]] ; then
+	# Rust with Python, Node.js, or pure Rust use cases
+		local u="RUST_LLVM_ROLLING_PV"
+		t+="
+			|| (
+				dev-lang/rust-bin:${!u}${usedep}
+				dev-lang/rust:${!u}${usedep}
+			)
+		"
+	elif [[ "${range}" == "lsc" ]] ; then
+	# Rust with Python, Node.js, or pure Rust use cases
+		local u="RUST_LLVM_LIVE_PV"
+		t+="
+			|| (
+				dev-lang/rust-bin:${!u}${usedep}
+				dev-lang/rust:${!u}${usedep}
+			)
+		"
+	else
+	# Rust with C++ bindings use case
+		local x
+		for x in "${L[@]}" ; do
+			local u="RUST_LLVM_${x/./_}_PV"
+			if [[ "${x}" == "LIVE" && ${range} =~ "l" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${live_slot}" "-le" "${r}" ; then
+				t+="
+					llvm_slot_${live_slot}? (
+						|| (
+							dev-lang/rust-bin:${!u}${usedep}
+							dev-lang/rust:${!u}${usedep}
+						)
 					)
-				)
-			"
-		elif [[ "${x}" != "LIVE" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
-			t+="
-				llvm_slot_${x}? (
-					|| (
-						dev-lang/rust-bin:${!u}${usedep}
-						dev-lang/rust:${!u}${usedep}
+				"
+			elif [[ "${x}" != "LIVE" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+				t+="
+					llvm_slot_${x}? (
+						|| (
+							dev-lang/rust-bin:${!u}${usedep}
+							dev-lang/rust:${!u}${usedep}
+						)
 					)
-				)
-			"
-		fi
-	done
+				"
+			fi
+		done
+	fi
+
 	t+="
 	"
 
