@@ -3,12 +3,14 @@
 
 EAPI="8"
 
+# D12, D13, D14, U22, U24, U25
+
 # For downloads, see 154 ESRs in https://ftp.mozilla.org/pub/firefox/releases/
 
 # See also
-# /var/tmp/portage/dev-lang/spidermonkey-153.4.0/work/firefox-153.4.0/taskcluster/kinds/fetch/toolchains.yml
-# /var/tmp/portage/dev-lang/spidermonkey-153.4.0/work/firefox-153.4.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/dev-lang/spidermonkey-153.4.0/work/firefox-153.4.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.7.0/work/firefox-153.7.0/taskcluster/kinds/fetch/toolchains.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.7.0/work/firefox-153.7.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/dev-lang/spidermonkey-153.7.0/work/firefox-153.7.0/taskcluster/kinds/toolchain/rust.yml
 
 CXX_STANDARD=20 # See check_compiler in build/moz.configure/toolchain.configure and https://firefox-source-docs.mozilla.org/code-quality/coding-style/using_cxx_in_firefox_code.html#c-language-features
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting security-critical sensitive-data untrusted-data"
@@ -25,13 +27,11 @@ VULNERABILITIES_FIXED=(
 FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-05.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-153-patches-01.tar.xz"
 
-RUST_LIVE_TIMESTAMP="Fri, 14 Aug 2026 09:23:13 -0700"
-RUST_MAX_VER="9999"
-RUST_MIN_VER="1.97.1"
+RUST_MAX_VER="${RUST_LLVM_LIVE_PV}"
+RUST_MIN_VER="${RUST_LLVM_LIVE_PV}"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
-RUST_NIGHTLY_PV="1.100.0"
 
-PYTHON_COMPAT=( python3_{10..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 WANT_AUTOCONF="2.1"
@@ -44,8 +44,7 @@ GCC_COMPAT=(
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
-LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_RUST_ROLLING[@]/llvm_slot_}" # 22
+LLVM_COMPAT=( # LTS + rolling
 	"${LIBCXX_COMPAT_RUST_LIVE[@]/llvm_slot_}" # 23
 	# Upstream tests with 14, 19, 20, 21, trunk
 	# We don't use 24 because it would misalign with the wasm sandbox (aka. wasi).
@@ -130,16 +129,10 @@ BDEPEND="${PYTHON_DEPS}
 	')
 	>=dev-util/cbindgen-0.27.0
 	virtual/pkgconfig
-	llvm_slot_22? (
-		|| (
-			dev-lang/rust:1.98.1
-			dev-lang/rust-bin:1.98.1
-		)
-	)
 	llvm_slot_23? (
 		|| (
-			dev-lang/rust:9999
-			dev-lang/rust-bin:9999
+			dev-lang/rust:${RUST_LLVM_LIVE_PV}
+			dev-lang/rust-bin:${RUST_LLVM_LIVE_PV}
 		)
 	)
 	test? (
@@ -244,7 +237,7 @@ eerror "Switch to live with \`eselect rust\`"
 	fi
 
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-		local compatible_time=$(date --date="${RUST_LIVE_TIMESTAMP}" "+%s")
+		local compatible_time=$(date --date="${RUST_LLVM_LIVE_TIMESTAMP}" "+%s")
 
 		local merge_time
 		local pkg_name
@@ -258,7 +251,7 @@ eerror "Switch to live with \`eselect rust\`"
 		if (( ${merge_time} < ${compatible_time} )) ; then
 eerror
 eerror "Detected old live timestamp."
-eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_NIGHTLY_PV} or later."
+eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_LLVM_LIVE_INTERNAL_VERSION} or later."
 eerror
 eerror "Current timestamp:  "$(date --date="@${merge_time}")
 eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
