@@ -1346,7 +1346,7 @@ secure-version_gen_nginx_depends() {
 	echo "${output}"
 }
 
-_has_llvm_compat() {
+_secure-version_has_llvm_compat() {
 	local x="${1}"
 	(( ${#LLVM_COMPAT[@]} > 0 )) || die "QA:  LLVM_COMPAT must be defined"
 	local y
@@ -1460,7 +1460,7 @@ secure-version_rust_depends() {
 		for x in "${L[@]}" ; do
 			local u="RUST_LLVM_${x/./_}_PV"
 			if [[ "${x}" == "LIVE" && ${range} =~ "l" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${live_slot}" "-le" "${r}" ; then
-				_has_llvm_compat "${live_slot}" || continue
+				_secure-version_has_llvm_compat "${live_slot}" || continue
 				t+="
 					llvm_slot_${live_slot}? (
 						|| (
@@ -1470,7 +1470,7 @@ secure-version_rust_depends() {
 					)
 				"
 			elif [[ "${x}" != "LIVE" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
-				_has_llvm_compat "${x}" || continue
+				_secure-version_has_llvm_compat "${x}" || continue
 				t+="
 					llvm_slot_${x}? (
 						|| (
