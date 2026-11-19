@@ -1,0 +1,1436 @@
+# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# @ECLASS: blender-v5.1.eclass
+# @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
+# @SUPPORTED_EAPIS: 8
+# @BLURB: blender implementation
+# @DESCRIPTION:
+# The blender-v5.1.eclass helps reduce code duplication across ebuilds
+# using the same major.minor version.
+
+# FIXME:  alembic requires imath
+
+# The ebuild uses the same matching LLVM version used with Mesa to prevent
+# the multiple LLVM bug.
+
+# For versioning see:
+# https://github.com/blender/blender/blob/v5.3.0/source/blender/blenkernel/BKE_blender_version.h
+
+# Keep dates and links updated to speed up releases and decrease maintenance time cost.
+# No need to look past those dates.
+
+# Last change was Apr 2, 2026 for:
+# https://github.com/blender/blender/blob/v5.3.0/build_files/build_environment/install_linux_packages.py
+
+# Last change was May 11, 2026 for:
+# https://github.com/blender/blender/blob/v5.3.0/build_files/cmake/config/blender_release.cmake
+# used for REQUIRED_USE section.
+
+# Last change was Jan 28, 2026 for:
+# https://github.com/blender/blender/blob/v5.3.0/build_files/build_environment/cmake/versions.cmake
+# used for *DEPENDs.
+
+# HIP:  https://github.com/blender/blender/blob/v5.3.0/intern/cycles/cmake/external_libs.cmake#L47
+
+# GPU lib versions:  https://github.com/blender/blender/blob/v5.3.0/build_files/config/pipeline_config.yaml
+# https://github.com/blender/blender/blob/v5.3.0/build_files/buildbot/config/blender_version.cmake
+
+# dependency version requirements see
+# build_files/build_environment/cmake/versions.cmake
+# doc/python_api/requirements.txt
+# extern/Eigen3/eigen-update.sh
+# Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
+#
+#
+# Mentioned in versions.cmake but missing in (R)DEPENDS:
+#
+# brotli - for freetype
+# bzip2 - for python
+# cuew - for cycles cuda
+# flexbison - for ispc, osl
+# ispc - for oidn
+# libffi - for python
+# lzma - for python
+# nasm - for ffmpeg, x264
+# sse2neon - for cycles neon cpu
+# sqlite - for python
+# webp - for oidn
+# xml2 - for llvm, wayland
+# yamlcpp - for opencolorio
+#
+#
+# The LLVM linked to Blender should match mesa's linked llvm version to avoid
+# multiple version problem if using system's mesa.
+
+# DPC++ is not packaged because [core] parts of the stack (e.g. oneMKL used for
+# GPU acceleration) are unconditional and have download restrictions or are
+# closed source.  It may be re-evaluated to see if apps/libs on the core closed
+# components can be pruned or made an optional conditional requirement.
+#
+# DPC++ slot (SYCL_MAJOR_VERSION):
+# https://github.com/intel/llvm/blob/05e047c0932d5043ddff5e4058a3afca8e0943aa/sycl/CMakeLists.txt#L93
+#
+# The nightly is missing the stable commit, which is why 2 separate or more slots are recommended.
+#
+# Recommended changes:
+#
+# nightly SLOT:  nightly/8
+# 6.2.0 SLOT:  release/6.2
+#
+# Nightly prefix:  /usr/lib/dpc++/nightly/8
+# Release prefix:  /usr/lib/dpc++/release/6.2
+# Alternative stable prefix:  /usr/lib/dpc++/6.2
+# Alternative nightly prefix:  /usr/lib/dpc++/nightly-8
+
+# The distro's llvm 14 for mesa is 22.05.
+# Missing IGC_SPIRV
+# Missing OCLOC
+# Missing nanobind
+# For compute-runtime version correspondance to level zero, see https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
+# https://github.com/oneapi-src/unified-runtime/blob/da04d13807044aaf17615b66577fb0e832011ab1/cmake/FetchLevelZero.cmake#L104
+
+case ${EAPI:-0} in
+	[8]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported." ;;
+esac
+
+CXX_STANDARD=20
+# For the max exclusive Python supported (and others), see \
+# https://github.com/blender/blender/blob/v5.3.0/build_files/build_environment/install_linux_packages.py#L693 \
+PYTHON_COMPAT=( "python3_"{13,14} ) # >= 3.13 for Numpy 2.x, upstream uses vendored 3.13
+CLANG_MIN="21" # C++20
+GCC_MIN="14" # C++20
+IS_LTS=1
+
+inherit secure-version
+
+ONETBB_SLOT="0"
+OPENVDB_ABIS_MAJOR_VERS=13
+OSL_PV="1.14.7.0"
+
+CHKL_TIMESTAMPS=(
+	"app-arch/zstd-9999"
+	"dev-cpp/tbb-9999"
+	"dev-libs/expat-9999"
+	"dev-libs/fribidi-9999"
+	"dev-libs/libfmt-9999"
+	"dev-libs/wayland-9999"
+	"dev-util/glslang-9999"
+	"dev-util/vulkan-headers-9999"
+	"media-libs/embree-9999"
+	"media-libs/flac-9999"
+	"media-libs/harfbuzz-9999"
+	"media-libs/libaom-9999"
+	"media-libs/libogg-9999"
+	"media-libs/libpng-9999"
+	"media-libs/libpulse-9999"
+	"media-libs/libsdl3-9999"
+	"media-libs/libtheora-9999"
+	"media-libs/libvorbis-9999"
+	"media-libs/libvpx-9999"
+	"media-libs/libwebp-9999"
+	"media-libs/opencolorio-9999"
+	"media-libs/openexr-9999"
+	"media-libs/openimageio-3.1.9999"
+	"media-libs/openjpeg-9999"
+	"media-libs/opensubdiv-9999"
+	"media-libs/openusd-26.9999"
+	"media-libs/opus-9999"
+	"media-libs/rubberband-9999"
+	"media-libs/tiff-9999"
+	"media-libs/vulkan-loader-9999"
+	"media-libs/x264-9999"
+	"sci-ml/therock-9999"
+)
+
+ARM_CPU_FLAGS_3_3=(
+	neon2x:neon2x
+)
+
+CPU_FLAGS_3_3=(
+	"${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}"
+)
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" #
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
+	#"${LIBSTDCXX_COMPAT_ROCM[@]}" # 14, 15
+	"${LIBSTDCXX_COMPAT_STDCXX20[@]}" # 14, 15, 16
+)
+LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	# There is a bug if it is duplicate LLVM_COMPAT entry, it will complain it is more than 1 when emerging.
+	#${LIBCXX_COMPAT_CXX20_CUDA_12_9[@]/llvm_slot_} #
+	#${LIBCXX_COMPAT_CXX20_CUDA_13_4[@]/llvm_slot_} # 22
+	"${LIBCXX_COMPAT_ROCM_APP[@]/llvm_slot_}" # 24
+	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}" # 22, 23
+)
+LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
+
+# Upstream limits LLVM to [15, 18) but relaxed for ROCm and overlay compatibility
+# It uses LLVM 17 as default.
+LLVM_MAX_SLOT="24"
+LLVM_MAX_UPSTREAM=20 # (inclusive)
+
+inherit ffmpeg
+FFMPEG_COMPAT_SLOTS=(
+	"${FFMPEG_COMPAT_SLOTS_7[@]}"
+)
+
+# For max and min package versions see link below. \
+# https://github.com/blender/blender/blob/v5.3.0/build_files/build_environment/install_linux_packages.py
+# Ebuild will disable patented codecs by default, but upstream enables by default.
+FFMPEG_IUSE=(
+	"+jpeg2k"
+	"libaom"
+	"+mp3"
+	"+opus"
+	"rav1e"
+	"svt-av1"
+	"+theora"
+	"+vorbis"
+	"+vpx"
+	"webm"
+	"+webp"
+	"x264"
+	"x265"
+	"+xvid"
+)
+
+PATENT_STATUS_IUSE=(
+	"patent_status_nonfree"
+)
+
+# https://github.com/blender/blender/blob/v5.3.0/CMakeLists.txt#L699
+
+IUSE+="
+${CPU_FLAGS_3_3[@]%:*}
+${FFMPEG_IUSE[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
+${PATENT_STATUS_IUSE[@]}
++abi12-compat +alembic aot -asan +bullet +cineon clang +color-management
+-cpudetection +cuda +cycles +cycles-path-guiding +dds -debug -dbus doc +draco
++elbeem +embree +ffmpeg +fftw flac gcc +gmp heif -hiprt icc +hydra +jack +jpeg2k
+-llvm -man +materialx +meshoptimizer +nanovdb +ndof +nls +nvcc +openal +opencl +openexr
++openimagedenoise +openimageio +opensubdiv +openvdb +openxr -optix +osl +pdf
++pipewire +potrace +pulseaudio release -rocm +rubberband -sdl +sndfile sycl +tbb
++tbb-malloc-proxy test +tiff +usd +uv-slim -valgrind +wayland +webp +X
+ebuild_revision_37
+"
+# hip is default ON upstream.
+inherit libcxx-slot libstdcxx-slot blender
+
+LICENSE+="
+	(
+		(
+			all-rights-reserved
+			Apache-2.0
+		)
+		(
+			all-rights-reserved
+			MIT
+		)
+		(
+			all-rights-reserved
+			|| (
+				BSD
+				GPL-2
+			)
+		)
+		(
+			Apache-2.0
+			custom
+		)
+		Apache-2.0-with-LLVM-exceptions
+		0BSD
+		Boost-1.0
+		BSD
+		BSD-2
+		CC0-1.0
+		custom
+		GPL-3
+		LGPL-2.1+
+		libpng
+		MPL-2.0
+		Old-MIT
+		PSF-2.2
+		public-domain
+		UoI-NCSA
+		ZLIB
+	)
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		Apache-2.0
+		BSD
+		BSD-2
+		GPL-2.0+
+		GPL-3.0+
+		LGPL-2.1+
+		MIT
+		MPL-2.0
+		ZLIB
+	)
+	(
+		Apache-2.0
+		BSD
+		MIT
+		ZLIB
+	)
+	(
+		BSD
+		custom
+	)
+	(
+		custom
+		MIT
+	)
+	Apache-2.0
+	BL
+	Boost-1.0
+	BSD
+	BSD-2.0
+	CC-BY-4.0
+	CC0-1.0
+	custom
+	GPL-2+
+	GPL-2.0
+	GPL-3.0
+	LGPL-2.1
+	MIT
+	ZLIB
+	|| (
+		CC0-1.0
+		public-domain
+	)
+
+"
+# ( all-rights-reserved Apache-2.0 ) - blender-5.3.0/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 )
+#   ( all-rights-reserved MIT )
+#   ( all-rights-reserved || ( BSD GPL-2 ) )
+#   ( Apache-2.0 custom )
+#   Apache-2.0-with-LLVM-exceptions
+#   0BSD
+#   Boost-1.0
+#   BSD
+#   BSD-2
+#   CC0-1.0
+#   custom
+#   GPL-3
+#   LGPL-2.1
+#   libpng
+#   MPL-2.0
+#   Old-MIT
+#   PSF-2.2
+#   public-domain
+#   UoI-NCSA
+#   ZLIB
+#   - blender-5.3.0/release/license/THIRD-PARTY-LICENSES.txt
+# all-rights-reserved MIT - blender-5.3.0/extern/vulkan_memory_allocator/LICENSE.txt
+# Apache-2.0 - blender-5.3.0/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-5.3.0/extern/cuew/LICENSE
+# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-5.3.0/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD MIT ZLIB - blender-5.3.0/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# BL - blender-5.3.0/doc/license/BL-license.txt
+# Boost-1.0 - blender-5.3.0/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-5.3.0/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2.0 - blender-5.3.0/extern/xxhash/LICENSE
+# BSD custom - blender-5.3.0/extern/quadriflow/LICENSE.txt
+# CC-BY-4.0 - The splash screen chosen license is found in https://www.blender.org/download/demo-files/ )
+# CC0-1.0 - blender-5.3.0/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-5.3.0/extern/fmtlib/LICENSE.rst
+# GPL-2+ - blender-5.3.0/tools/check_source/check_licenses.py
+# GPL-2.0 - blender-5.3.0/release/license/GPL-license.txt
+# GPL-3.0 - blender-5.3.0/doc/license/GPL3-license.txt
+# LGPL-2.1 - ./blender-5.3.0/doc/license/LGPL2.1-license.txt
+# MIT - blender-5.3.0/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-5.3.0/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-5.3.0/doc/license/Zlib-license.txt
+# || ( CC0-1.0 public-domain ) - blender-5.3.0/release/datafiles/studiolights/matcap/license.txt
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's GPL-2 license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
+
+# The below are hardcoded enabled in the dependency builder but no explicit option
+IMPLIED_RELEASE_BUILD_REQUIRED_USE="
+	libaom
+	mp3
+	opus
+	theora
+	vorbis
+	vpx
+	x264
+	x265
+	xvid
+"
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!x264
+		!x265
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
+REQUIRED_USE+="
+	${PATENT_STATUS_REQUIRED_USE}
+	!rocm? (
+		${LIBCXX_COMPAT_ROCM_APP[@]/#/\!}
+	)
+	!tbb? (
+		!cycles
+		!elbeem
+		!openimagedenoise
+		!openvdb
+	)
+	?? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	^^ (
+		clang
+		gcc
+	)
+	asan? (
+		!icc
+		|| (
+			clang
+			gcc
+		)
+	)
+	build_creator? (
+		X
+	)
+	cuda? (
+		^^ (
+			nvcc
+		)
+		^^ (
+			${LIBCXX_COMPAT_CXX20_CUDA_12[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_CUDA_12[@]}
+		)
+		cycles
+	)
+	cycles? (
+		tbb
+		x86? (
+			|| (
+				clang
+				icc
+			)
+		)
+	)
+	dbus? (
+		wayland
+	)
+	embree? (
+		cycles
+	)
+	hiprt? (
+		cycles
+		rocm
+	)
+	hydra? (
+		usd
+	)
+	libaom? (
+		ffmpeg
+	)
+	mp3? (
+		ffmpeg
+	)
+	nanovdb? (
+		cycles
+		openvdb
+		|| (
+			opencl
+			cuda
+		)
+	)
+	nvcc? (
+		|| (
+			cuda
+			optix
+		)
+	)
+	opencl? (
+		cycles
+	)
+	openimagedenoise? (
+		tbb
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
+	openvdb? (
+		tbb
+	)
+	optix? (
+		cuda
+		cycles
+		nvcc
+	)
+	opus? (
+		ffmpeg
+	)
+	osl? (
+		cycles
+		llvm
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
+	release? (
+		!debug
+		!test
+		!valgrind
+		alembic
+		build_creator
+		bullet
+		color-management
+		cycles
+		cycles-path-guiding
+		dds
+		draco
+		elbeem
+		embree
+		ffmpeg
+		fftw
+		gmp
+		jack
+		jpeg2k
+		man
+		meshoptimizer
+		nanovdb
+		ndof
+		nls
+		openal
+		openimageio
+		openimagedenoise
+		opensubdiv
+		openvdb
+		openxr
+		osl
+		pdf
+		potrace
+		rubberband
+		sndfile
+		tbb
+		tbb-malloc-proxy
+		tiff
+		usd
+		uv-slim
+		webp
+		cuda? (
+			nvcc
+		)
+	)
+	rocm? (
+		!nanovdb
+		cycles
+		^^ (
+			${LIBCXX_COMPAT_ROCM_APP[@]}
+		)
+		^^ (
+			${LIBSTDCXX_COMPAT_ROCM[@]}
+		)
+	)
+	sycl? (
+		cycles
+	)
+	tbb-malloc-proxy? (
+		tbb
+	)
+	theora? (
+		ffmpeg
+	)
+	usd? (
+		tbb
+	)
+	vorbis? (
+		ffmpeg
+	)
+	vpx? (
+		ffmpeg
+	)
+	webm? (
+		ffmpeg
+		opus
+		vpx
+	)
+	x264? (
+		ffmpeg
+	)
+	x265? (
+		ffmpeg
+	)
+	xvid? (
+		ffmpeg
+	)
+"
+
+gen_asan_bdepend() {
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		echo "
+			llvm_slot_${s}? (
+				=llvm-runtimes/clang-runtime-${s}*:=[compiler-rt,sanitize]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[${LIBSTDCXX_USEDEP_LTS},asan]
+				=llvm-core/clang-${s}*:=[${LIBSTDCXX_USEDEP_LTS}]
+			)
+		"
+	done
+}
+
+gen_llvm_depends()
+{
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		echo "
+			llvm_slot_${s}? (
+				=llvm-core/llvm-${s}*:=[${LIBSTDCXX_USEDEP_LTS}]
+			)
+		"
+	done
+}
+
+gen_oidn_depends() {
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		echo "
+		llvm_slot_${s}? (
+			>=media-libs/oidn-2.5.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},aot?,sycl?]
+			<media-libs/oidn-3.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},aot?,sycl?]
+		)
+		"
+	done
+}
+
+gen_oiio_depends() {
+	echo "
+		(
+			>=dev-cpp/robin-map-1.3.0:=
+			>=dev-libs/libfmt-${LIBFMT_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+
+			media-libs/openimageio:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
+			|| (
+				=media-libs/openimageio-${OPENIMAGEIO_3_1_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${PYTHON_SINGLE_USEDEP},color-management?,heif?,jpeg2k?,png,python,tools(+),webp?]
+			)
+
+			heif? (
+				>=media-libs/libheif-1.20.2:=
+				libaom? (
+					>=media-libs/libheif-1.20.2:=[aom]
+				)
+			)
+		)
+	"
+}
+
+gen_osl_depends()
+{
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		echo "
+			llvm_slot_${s}? (
+				>=media-libs/osl-${OSL_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},static-libs]
+			)
+		"
+	done
+}
+
+# The ffplay contradicts in
+# build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
+# build_files/build_environment/install_linux_packages.py : --disable-ffplay
+CODECS="
+	libaom? (
+		>=media-libs/libaom-${LIBAOM_PV}:=
+	)
+	mp3? (
+		>=media-sound/lame-3.100:=[sndfile]
+	)
+	opus? (
+		>=media-libs/opus-${OPUS_PV}:=
+	)
+	theora? (
+		>=media-libs/libogg-${LIBOGG_PV}:=
+		>=media-libs/libtheora-${LIBTHEORA_PV}:=
+		vorbis? (
+			>=media-libs/libtheora-${LIBTHEORA_PV}:=[encode]
+		)
+	)
+	vorbis? (
+		>=media-libs/libogg-${LIBOGG_PV}:=
+		>=media-libs/libvorbis-${LIBVORBIS_PV}:=
+	)
+	vpx? (
+		>=media-libs/libvpx-${LIBVPX_PV}:=
+	)
+	x264? (
+		>=media-libs/x264-${X264_PV}:=
+	)
+	xvid? (
+		>=media-libs/xvid-${XVID_PV}:=
+	)
+"
+
+PATENT_STATUS_RDEPEND="
+	virtual/patent-status:*[patent_status_nonfree=]
+	!patent_status_nonfree? (
+		ffmpeg? (
+			$(secure-version_gen_ffmpeg_depends '7.1' '[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]')
+		)
+	)
+	patent_status_nonfree? (
+		ffmpeg? (
+			$(secure-version_gen_ffmpeg_depends '7.1' '[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]')
+		)
+	)
+"
+
+# Upstream uses vendored numpy 2.3.4
+RDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/attrs-25.3.0[${PYTHON_USEDEP}]
+		>=dev-python/cattrs-25.1.1[${PYTHON_USEDEP}]
+		>=dev-python/certifi-2025.4.26[${PYTHON_USEDEP}]
+		>=dev-python/charset-normalizer-3.4.1[${PYTHON_USEDEP}]
+		>=dev-python/fastjsonschema-2.21.1[${PYTHON_USEDEP}]
+		>=dev-python/idna-3.10[${PYTHON_USEDEP}]
+		>=dev-python/pybind11-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.14.1[${PYTHON_USEDEP}]
+		>=dev-python/urllib3-2.4.0[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.25.0[${PYTHON_USEDEP}]
+		virtual/numpy:=[${PYTHON_USEDEP}]
+	')
+	${CODECS}
+	${PATENT_STATUS_RDEPEND}
+	${PYTHON_DEPS}
+	>=app-arch/zstd-${ZSTD_PV}:=
+	>=dev-cpp/pystring-${PYSTRING_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=dev-lang/python-3.11.13:=
+	>=dev-libs/fribidi-${FRIBIDI_PV}:=
+	>=dev-util/glslang-${GLSLANG_PV}:=
+	>=media-libs/freetype-${FREETYPE_PV}:=[brotli]
+	>=media-libs/libpng-${LIBPNG_PV}:=
+	>=media-libs/shaderc-2025.4:=[${LIBSTDCXX_USEDEP_LTS}]
+	>=media-libs/vulkan-loader-${VULKAN_PV}:=
+	>=media-libs/libglvnd-${LIBGLVND_PV}:=
+	>=media-libs/libsamplerate-${LIBSAMPLERATE_PV}:=
+	>=sci-libs/ceres-solver-9999:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=sci-mathematics/manifold-3.5.2:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	>=virtual/zlib-${ZLIB_PV}:=
+	virtual/glu:*
+	virtual/jpeg:*
+	virtual/libintl:*
+	virtual/vulkan:=
+	alembic? (
+		>=media-gfx/alembic-1.8.3:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},hdf(+)]
+	)
+	(
+		>=dev-libs/expat-${EXPAT_PV}:=
+		>=media-libs/opencolorio-${OPENCOLORIO_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cpu_flags_x86_sse2?,python]
+	)
+	cuda? (
+		virtual/cuda:=[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+		|| (
+			=virtual/cuda-12*[${LIBCXX_USEDEP_EQ},${LIBSTDCXX_USEDEP_EQ}]
+		)
+	)
+	cycles? (
+		cycles-path-guiding? (
+			(
+				>=media-libs/openpgl-0.6.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},tbb?]
+				<media-libs/openpgl-0.7.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},tbb?]
+			)
+		)
+		osl? (
+			>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		)
+	)
+	dbus? (
+		>=sys-apps/dbus-${DBUS_PV}:=
+	)
+	embree? (
+		>=media-libs/embree-${EMBREE_PV}:4=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
+	)
+	ffmpeg? (
+		media-video/ffmpeg:=
+	)
+	fftw? (
+		>=sci-libs/fftw-3.3.10:3.0=
+	)
+	flac? (
+		>=media-libs/flac-${FLAC_PV}:=
+	)
+	gmp? (
+		>=dev-libs/gmp-${GMP_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cxx]
+	)
+	hiprt? (
+		rocm? (
+			media-libs/HIPRT:=[${LIBSTDCXX_USEDEP_LTS},rocm]
+			|| (
+				=media-libs/HIPRT-2.5*[${LIBSTDCXX_USEDEP_LTS},rocm]
+			)
+		)
+	)
+	jack? (
+		virtual/jack:*
+	)
+	jpeg2k? (
+		>=media-libs/openjpeg-${OPENJPEG_PV}:=
+	)
+	llvm? (
+		$(gen_llvm_depends)
+	)
+	llvm_slot_22? (
+		media-libs/mesa:=
+		|| (
+			=media-libs/mesa-26.0*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.1*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-26.2*[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+			=media-libs/mesa-9999[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+		)
+	)
+	llvm_slot_24? (
+		media-libs/mesa:=
+		|| (
+			=media-libs/mesa-9999[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},X?]
+		)
+	)
+	materialx? (
+		>=media-libs/materialx-1.39.4:=[${LIBSTDCXX_USEDEP_LTS},${PYTHON_SINGLE_USEDEP},python]
+		<media-libs/materialx-1.40:=[${LIBSTDCXX_USEDEP_LTS},${PYTHON_SINGLE_USEDEP},python]
+	)
+	ndof? (
+		>=dev-libs/libspnav-1.1:=
+		app-misc/spacenavd:=
+	)
+	nls? (
+		virtual/libiconv:*
+	)
+	openal? (
+		!pulseaudio? (
+			>=media-libs/openal-${OPENAL_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},alsa]
+		)
+		>=media-libs/openal-${OPENAL_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},pulseaudio?]
+	)
+	opencl? (
+		virtual/opencl:=
+	)
+	openimagedenoise? (
+		$(gen_oidn_depends)
+	)
+	openimageio? (
+		$(gen_oiio_depends)
+		>=dev-libs/pugixml-${PUGIXML_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	)
+	(
+		>=media-libs/openexr-${OPENEXR_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		media-libs/openjph:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	)
+	opensubdiv? (
+		>=media-libs/opensubdiv-${OPENSUBDIV_PV}:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},cuda=,opencl=,opengl(+),tbb?]
+	)
+	openvdb? (
+		>=dev-libs/c-blosc-1.21.1:=[zlib]
+		=media-gfx/openvdb-13*:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},${PYTHON_SINGLE_USEDEP},blosc,nanovdb?]
+	)
+	openxr? (
+		>=media-libs/openxr-1.1.53:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		<media-libs/openxr-2.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	)
+	optix? (
+		>=dev-libs/optix-8:=
+	)
+	osl? (
+		$(gen_osl_depends)
+	)
+	pdf? (
+		>=media-libs/libharu-2.4.5:=
+	)
+	potrace? (
+		>=media-gfx/potrace-1.16:=
+	)
+	pulseaudio? (
+		>=media-libs/libpulse-${LIBPULSE_PV}:=
+	)
+	release? (
+		>=media-libs/freetype-${FREETYPE_PV}:=[brotli,bzip2,harfbuzz,png]
+		>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[truetype]
+	)
+	rocm? (
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
+	)
+	rubberband? (
+		>=media-libs/rubberband-${RUBBERBAND_PV}:=
+	)
+	sdl? (
+		>=media-libs/libsdl3-${LIBSDL3_PV}:=[opengl,pulseaudio?]
+		!pulseaudio? (
+			>=media-libs/libsdl3-${LIBSDL3_PV}:=[alsa,opengl]
+		)
+	)
+	sndfile? (
+		>=media-libs/libsndfile-${LIBSNDFILE_PV}:=
+		flac? (
+			>=media-libs/libsndfile-${LIBSNDFILE_PV}:=[-minimal]
+		)
+	)
+	sycl? (
+		(
+			>=dev-libs/level-zero-1.21.9:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+			<dev-libs/level-zero-2.0:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+		)
+		sys-devel/DPC++:=
+		|| (
+			(
+				>=sys-devel/DPC++-2025.01.08:stable/8[aot?]
+				!<sys-devel/DPC++-2025.01.08
+			)
+		)
+		aot? (
+			>=dev-libs/intel-compute-runtime-23.52.28202.45:=[l0]
+			>=dev-util/intel-graphics-compiler-2.1.14:=
+		)
+	)
+	tbb? (
+		>=dev-cpp/tbb-2022.3.0:${ONETBB_SLOT}=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},tbbmalloc(+)]
+	)
+	tiff? (
+		>=media-libs/tiff-${TIFF_PV}:=[jpeg,zlib]
+	)
+	usd? (
+		media-libs/openusd:=[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		|| (
+			=media-libs/openusd-${OPENUSD_26_PV}[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS},imaging,materialx?,monolithic,opengl,openvdb,openimageio,python]
+		)
+	)
+	valgrind? (
+		dev-debug/valgrind:=
+	)
+	wayland? (
+		>=dev-libs/wayland-${WAYLAND_PV}:=
+		>=dev-libs/wayland-protocols-1.44:=
+		>=gui-libs/libdecor-0.2.2:=
+	)
+	webp? (
+		>=media-libs/libwebp-${LIBWEBP_PV}:=
+	)
+	X? (
+		>=x11-libs/libX11-${LIBX11_PV}:=
+		>=x11-libs/libXi-${LIBXI_PV}:=
+		>=x11-libs/libXxf86vm-${LIBXXF86VM_PV}:=
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	>=dev-cpp/eigen-9999:=
+	>=dev-util/vulkan-headers-${VULKAN_PV}:=
+"
+BDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-build/meson-1.9.0[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-80.9.0[${PYTHON_USEDEP}]
+		=dev-python/cython-3*:=[${PYTHON_USEDEP}]
+		>=dev-python/autopep8-2.3.1[${PYTHON_USEDEP}]
+		>=dev-python/packaging-25.0[${PYTHON_USEDEP}]
+		>=dev-python/pycodestyle-2.13.0[${PYTHON_USEDEP}]
+	')
+	>=dev-build/cmake-3.10
+	>=dev-cpp/yaml-cpp-0.8.0[${LIBCXX_USEDEP_LTS},${LIBSTDCXX_USEDEP_LTS}]
+	virtual/pkgconfig
+	asan? (
+		clang? (
+			$(gen_asan_bdepend)
+		)
+		gcc? (
+			>=sys-devel/gcc-${GCC_MIN}:=[sanitizer]
+		)
+	)
+	clang? (
+		>=llvm-core/clang-${CLANG_MIN}:=[${LIBSTDCXX_USEDEP_LTS}]
+	)
+	cycles? (
+		x86? (
+			clang? (
+				>=llvm-core/clang-${CLANG_MIN}:=[${LIBSTDCXX_USEDEP_LTS}]
+			)
+			icc? (
+				dev-lang/icc:=
+			)
+		)
+	)
+	doc? (
+		$(python_gen_cond_dep '
+			>=dev-python/sphinx-3.3.1[${PYTHON_USEDEP},latex]
+			>=dev-python/sphinx-rtd-theme-0.5.0[${PYTHON_USEDEP}]
+		')
+		app-text/doxygen[dot]
+		dev-texlive/texlive-bibtexextra
+		dev-texlive/texlive-fontsextra
+		dev-texlive/texlive-fontutils
+		dev-texlive/texlive-latex
+		dev-texlive/texlive-latexextra
+	)
+	gcc? (
+		>=sys-devel/gcc-${GCC_MIN}:=
+	)
+	nls? (
+		sys-devel/gettext
+	)
+	rocm? (
+		~sci-ml/therock-${THEROCK_PV}:=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},opencl]
+	)
+	test? (
+		>=dev-libs/weston-14.0.2
+	)
+"
+
+PATCHES=(
+	"${FILESDIR}/${PN}-4.5.3-install-paths-change.patch"
+	"${FILESDIR}/${PN}-5.2.0-openusd-21.11-python.patch"
+#	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
+#	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
+#	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
+	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
+#	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
+	"${FILESDIR}/${PN}-5.2.0-hip-flags.patch"
+	"${FILESDIR}/${PN}-5.2.0-fix-brotli-check.patch"
+	"${FILESDIR}/${PN}-5.2.0-simd-checks.patch"
+	"${FILESDIR}/${PN}-5.2.0-optionalize-simd.patch"
+	"${FILESDIR}/${PN}-5.0.0-math_half-sse4.1-check.patch"
+	"${FILESDIR}/${PN}-5.0.0-fix-hip-bin-path.patch"
+	"${FILESDIR}/${PN}-5.2.1-custom-simd-flags.patch"
+	"${FILESDIR}/${PN}-5.2.1-cycles-sse42-guard.patch"
+	"${FILESDIR}/${PN}-5.2.1-fix-comparator-arguments.patch"
+)
+
+_blender_set_rocm_compiler() {
+	# See https://github.com/blender/blender/blob/v5.3.0/build_files/config/pipeline_config.yaml
+	if use rocm ; then
+		export LLVM_SLOT="${ROCM_LLVM_SLOT}"
+	fi
+	rocm-r1_pkg_setup
+	rocm-r1_set_default_hipcc
+}
+
+_blender_pkg_setup() {
+	# TODO: ldd oiio for webp and warn user if missing
+	# Needs OpenCL 1.2 (GCN 2)
+	print_release_description
+
+	local found=0
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		if (( ${s} > ${LLVM_MAX_UPSTREAM} )) ; then
+			use "llvm_slot_${s}" && found=${s}
+		fi
+	done
+
+	if (( ${found} != 0 )) ; then
+ewarn
+ewarn "Upstream supports <= LLVM-${LLVM_MAX_UPSTREAM}.x only."
+ewarn "llvm-core/llvm:${found} compatibility is still in testing in this"
+ewarn "overlay and made available to resolve the multiple LLVM libraries"
+ewarn "loaded bug which includes (proprietary) GPU driver parts linked with a"
+ewarn "different version of LLVM.  To avoid this bug, use the same LLVM"
+ewarn "version from the driver to this package in the dependency chain"
+ewarn "including all dependencies of this package."
+ewarn
+	fi
+
+	local x
+	for x in "${LLVM_COMPAT[@]}" ; do
+		if use "llvm_slot_${x}" ; then
+ewarn "Using LLVM ${x}"
+			break
+		fi
+	done
+
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
+
+apply_hiprt_2_3_patchset() {
+	use hiprt || return
+	local hiprt_patchset=(
+		"blender-4.3.0-pr-121050-001.patch"
+		"blender-4.3.0-pr-121050-002.patch"
+#		"blender-4.3.0-pr-121050-003.patch"
+		"blender-4.3.0-pr-121050-004.patch"
+		"blender-4.3.0-pr-121050-005.patch"
+#		"blender-4.3.0-pr-121050-006.patch"
+		"blender-4.3.0-pr-121050-007-for-4.2.patch"
+		"blender-4.3.0-pr-121050-008.patch"
+		"blender-4.3.0-pr-121050-009.patch"
+		"blender-4.3.0-pr-121050-010.patch"
+		"blender-4.3.0-pr-121050-011.patch"
+		"blender-4.3.0-pr-121050-012.patch"
+		"blender-4.3.0-pr-121050-013.patch"
+		"blender-4.3.0-pr-121050-014.patch"
+		"blender-4.3.0-pr-121050-015.patch"
+		"blender-4.3.0-pr-121050-016.patch"
+		"blender-4.3.0-pr-121050-017.patch"
+		"blender-4.3.0-pr-121050-018.patch"
+		"blender-4.3.0-pr-121050-019.patch"
+	)
+einfo "Applying hiprt_patchset"
+	local x
+	for x in "${hiprt_patchset[@]}" ; do
+		eapply "${FILESDIR}/pr121050/${x}"
+	done
+	eapply "${FILESDIR}/${PN}-3.6.13-hiprt-linker-changes.patch"
+	eapply "${FILESDIR}/${PN}-3.6.13-HIPRT-change-version-file-path.patch"
+}
+
+_src_prepare_patches() {
+	#apply_hiprt_2_3_patchset
+	eapply "${FILESDIR}/blender-5.2.0-parent-datafiles-dir-change.patch"
+	if use rocm ; then
+		local rocm_version="${ROCM_VERSION}"
+
+		sed \
+			-i \
+			-e "s|/opt/rocm/|${ROCM_PATH}/|g" \
+			"extern/hipew/src/hipew.c" \
+			|| die
+
+		sed \
+			-i \
+			-e "s|HIP 5.5.0|HIP ${rocm_version}|g" \
+			"intern/cycles/cmake/external_libs.cmake" \
+			|| die
+	fi
+}
+
+_src_configure_compiler() {
+	set_blender_compiler
+}
+
+blender_configure_custom_simd_flags() {
+	local flags=""
+	if use gcc || use clang ; then
+		if [[ "${ABI}" =~ "amd64" ]] && [[ "${CFLAGS}" =~ "-march=x86-64-v2" ]] ; then
+			flags="-march=x86-64-v2"
+		elif [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_sse4_2 ; then
+			flags="-msse4"
+		elif [[ "${ABI}" =~ "arm64" ]] && [[ "${CFLAGS}" =~ "-march=armv8.2-a" ]] && use cpu_flags_arm_dotprod && use cpu_flags_arm_fp64 && use cpu_flags_arm_lse ; then
+			flags="-march=armv8.2-a+dotprod+fp16+lse"
+		fi
+	elif in_iuse icc && use icc ; then
+		if [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_xsse4_2 ; then
+			flags="-xsse4.2"
+		elif [[ "${ABI}" =~ "amd64" ]] && use cpu_flags_x86_sse4_2 ; then
+			flags="-msse4"
+		fi
+	fi
+	sed -i -e "s|@CUSTOM_SIMD_FLAGS@|${flags}|g" "${S}/build_files/cmake/macros.cmake" || die
+}
+
+_src_configure() {
+	chkl_check_many_timestamps
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}_${impl}_build"
+	cd "${CMAKE_USE_DIR}" || die
+
+	if has_version "dev-libs/wayland" && ! use wayland ; then
+eerror "You must enable the wayland USE flag or uninstall wayland."
+		die
+	fi
+
+	filter-flags '-O*'
+	append-cflags '-O2' # For fortify source
+	append-cxxflags '-O2' # For fortify source
+
+	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
+	# shadows, see bug #276338 for reference
+	append-flags -funsigned-char
+	append-lfs-flags
+	cflags-hardened_append
+	fix_mb_len_max
+
+	local s="${OPENVDB_ABIS_MAJOR_VERS}"
+	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER="${s}"
+
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)"
+	)
+
+	unset CMAKE_INCLUDE_PATH
+	unset CMAKE_LIBRARY_PATH
+	unset CMAKE_PREFIX_PATH
+
+	blender_configure_eigen
+	blender_configure_custom_simd_flags
+
+	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
+
+	cython_set_cython_slot "3"
+	cython_python_configure
+
+	if use rocm ; then
+		if eselect profile show | grep "llvm" ; then
+	# Skip for libc++ based systems
+			:
+		else
+	# Apply for libstdc++ based systems
+			filter-flags "-Wl,--as-needed"
+			append-ldflags "-Wl,-latomic"
+		fi
+	fi
+
+	if in_iuse materialx && use materialx ; then
+		fix-rpath_append "/usr/lib/materialx/$(get_libdir)"
+	fi
+
+	ffmpeg_src_configure
+
+	# WITH_INPUT_IME is default ON upstream but only supports non-linux
+	mycmakeargs+=(
+# Fixes
+#CMake Error: The inter-target dependency graph contains the following strongly connected component (cycle):
+#  "cycles_bvh" of type SHARED_LIBRARY
+		-DBUILD_SHARED_LIBS=OFF
+
+		-DPYTHON_VERSION="${EPYTHON/python/}"
+		-DPYTHON_LIBRARY="$(python_get_library_path)"
+		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
+		-DSUPPORT_SSE_BUILD=$(usex cpu_flags_x86_sse)
+		-DSUPPORT_SSE2_BUILD=$(usex cpu_flags_x86_sse2)
+		-DWITH_ALEMBIC=$(usex alembic)
+		-DWITH_ASSERT_ABORT=$(usex debug)
+		-DWITH_BULLET=$(usex bullet)
+		-DWITH_COMPILER_ASAN=$(usex asan)
+		-DWITH_CPU_SSE=$(usex cpu_flags_x86_sse2)
+		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
+		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
+		-DWITH_CXX11_ABI=ON
+		-DWITH_CYCLES_DEVICE_HIPRT=$(usex hiprt)
+		-DWITH_CYCLES_HIP_BINARIES=$(usex rocm)
+		-DWITH_CYCLES_ONEAPI_BINARIES=$(usex aot)
+		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
+		-DWITH_DOC_MANPAGE=$(usex man)
+		-DWITH_DRACO=$(usex draco)
+		-DWITH_GHOST_WAYLAND_DBUS=$(usex dbus)
+		-DWITH_GHOST_WAYLAND_DYNLOAD=$(usex wayland)
+		-DWITH_GMP=$(usex gmp)
+		-DWITH_HYDRA=$(usex hydra)
+		-DWITH_IK_SOLVER=ON
+		-DWITH_INPUT_IME=OFF
+		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
+		-DWITH_IMAGE_CINEON=$(usex cineon)
+		-DWITH_IMAGE_WEBP=$(usex webp)
+		-DWITH_INTERNATIONAL=$(usex nls)
+		-DWITH_HARU=$(usex pdf)
+		-DWITH_LLVM=$(usex llvm)
+		-DWITH_MATERIALX=$(usex materialx)
+		-DWITH_MEM_VALGRIND=$(usex valgrind)
+		-DWITH_MESHOPTIMIZER=$(usex meshoptimizer)
+		-DWITH_MOD_FLUID=$(usex elbeem)
+		-DWITH_NANOVDB=$(usex nanovdb)
+		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
+		-DWITH_OPENIMAGEIO=$(usex openimageio)
+		-DWITH_OPENSUBDIV=$(usex opensubdiv)
+		-DWITH_OPENVDB=$(usex openvdb)
+		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
+		-DWITH_PIPEWIRE=$(usex pipewire)
+		-DWITH_POTRACE=$(usex potrace)
+		-DWITH_PUGIXML=$(usex openimageio ON $(usex osl ON OFF))
+		-DWITH_PULSEAUDIO=$(usex pulseaudio)
+		-DWITH_PYTHON_INSTALL=OFF
+		-DWITH_PYTHON_INSTALL_NUMPY=OFF
+		-DWITH_RUBBERBAND=$(usex rubberband)
+		-DWITH_UV_SLIM=$(usex uv-slim)
+		-DWITH_USD=$(usex usd)
+		-DWITH_TBB=$(usex tbb)
+		-DWITH_TBB_MALLOC_PROXY=$(usex tbb-malloc-proxy)
+		-DWITH_XR_OPENXR=$(usex openxr)
+
+		-DWITH_SSE=$(usex cpu_flags_x86_sse)
+		-DWITH_SSE2=$(usex cpu_flags_x86_sse2)
+		-DWITH_SSE3=$(usex cpu_flags_x86_sse3)
+		-DWITH_SSSE3=$(usex cpu_flags_x86_ssse3)
+		-DWITH_LZCNT=$(usex cpu_flags_x86_lzcnt)
+		-DWITH_BMI=$(usex cpu_flags_x86_bmi)
+		-DWITH_BMI2=$(usex cpu_flags_x86_bmi2)
+		-DWITH_FMA=$(usex cpu_flags_x86_fma)
+		-DWITH_F16C=$(usex cpu_flags_x86_f16c)
+		-DWITH_SSE41=$(usex cpu_flags_x86_sse4_1)
+		-DWITH_SSE42=$(usex cpu_flags_x86_sse4_2)
+		-DWITH_AVX=$(usex cpu_flags_x86_avx)
+		-DWITH_AVX2=$(usex cpu_flags_x86_avx2)
+	)
+
+	blender_configure_linker_flags
+
+	# Speed up build time
+	if use cuda ; then
+		local targets=""
+		local cuda_target
+		for cuda_target in $(get_cuda_targets) ; do
+			targets+=";${cuda_target}"
+		done
+		targets="${targets:1}"
+		mycmakeargs+=(
+			-DCYCLES_CUDA_BINARIES_ARCH="${targets}"
+		)
+einfo "CUDA_TARGETS:  ${targets}"
+	fi
+
+	# Speed up build time
+	if use rocm ; then
+		mycmakeargs+=(
+			-DCYCLES_HIP_BINARIES_ARCH="${ROCM_TARGETS}"
+			-DHIP_DIR="${ROCM_PATH}"
+			-DHIP_ROOT_DIR="${ROCM_PATH}"
+		)
+einfo "ROCM_TARGETS:  ${ROCM_TARGETS}"
+	fi
+
+	if use hiprt ; then
+		mycmakeargs+=(
+			-DHIPRT_ROOT_DIR="${ROCM_PATH}"
+		)
+	fi
+
+	local llvm_slot
+	local s
+	for s in "${LLVM_COMPAT[@]}" ; do
+		use "llvm_slot_${s}" && llvm_slot="${s}"
+	done
+
+	if use materialx ; then
+		mycmakeargs+=(
+			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/lib/materialx/$(get_libdir)/cmake/MaterialX"
+		)
+	fi
+
+	if use usd ; then
+		blender_configure_openusd
+	fi
+
+	if [[ "${impl}" == "build_creator" ]] ; then
+		if use jack || use openal || use pulseaudio ; then
+			mycmakeargs+=(
+				-DWITH_AUDASPACE=ON
+			)
+		fi
+
+		mycmakeargs+=(
+			-DWITH_CODEC_FFMPEG=$(usex ffmpeg)
+			-DWITH_CODEC_SNDFILE=$(usex sndfile)
+			-DWITH_FFTW3=$(usex fftw)
+			-DWITH_GTESTS=$(usex test)
+			-DWITH_INPUT_NDOF=$(usex ndof)
+			-DWITH_JACK=$(usex jack)
+			-DWITH_MOD_OCEANSIM=$(usex fftw)
+			-DWITH_OPENAL=$(usex openal)
+			-DWITH_SDL_AUDIO=$(usex sdl)
+		)
+	fi
+
+# For details see,
+# https://github.com/blender/blender/tree/v5.3.0/build_files/cmake/config
+	if [[ "${impl}" == "build_creator" \
+		|| "${impl}" == "build_headless" ]] ; then
+		mycmakeargs+=(
+			-DWITH_CYCLES=$(usex cycles)
+			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
+			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
+			-DWITH_CYCLES_DEVICE_ONEAPI=$(usex sycl)
+			-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
+			-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
+			-DWITH_CYCLES_EMBREE=$(usex embree)
+			-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
+			-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
+			-DWITH_CYCLES_OSL=$(usex osl)
+			-DWITH_STATIC_LIBS=OFF
+			-DWITH_SYSTEM_EIGEN3=ON
+			-DWITH_SYSTEM_GLEW=ON
+		)
+	fi
+
+	mycmakeargs+=(
+		-DWITH_INSTALL_PORTABLE=OFF
+	)
+
+	if [[ "${impl}" == "build_headless" ]] ; then
+		# For render farms
+		mycmakeargs+=(
+			-DWITH_AUDASPACE=OFF
+			-DWITH_CODEC_FFMPEG=OFF
+			-DWITH_CODEC_SNDFILE=OFF
+			-DWITH_FFTW3=OFF
+			-DWITH_HEADLESS=ON
+			-DWITH_INPUT_NDOF=OFF
+			-DWITH_JACK=OFF
+			-DWITH_MOD_OCEANSIM=OFF
+			-DWITH_OPENAL=OFF
+			-DWITH_SDL_AUDIO=OFF
+			-DWITH_SYSTEM_GLEW=ON
+			-DWITH_X11_XINPUT=OFF
+			-DWITH_X11=OFF
+		)
+	fi
+
+	if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
+		&& "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
+		:
+	else
+		if use cuda ; then
+			blender_configure_optix
+		fi
+	fi
+
+	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
+		# Set as per-package environmental variable
+		# For setting up optix/cuda
+		mycmakeargs+=(
+			"${BLENDER_CMAKE_ARGS[@]}"
+		)
+	fi
+
+	cmake_src_configure
+}
+
+_blender_src_install() {
+	if use rocm ; then
+	#
+	# We do not add /opt/rocm/lib to /etc/ld.so.conf by default to avoid
+	# mixing OpenMP, mixing LLVM libs, or security reasons.  One or the
+	# other may be behind in security updates.
+	#
+	# Tell the dynamic loader where to find the HIP RT library when dlopen
+	# is called.
+	#
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "${ROCM_PATH}/lib"
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "${ROCM_PATH}/lib/llvm/lib"
+	fi
+
+	if use ffmpeg ; then
+	# The rpath gets dropped when it should not.
+		local ffmpeg_slot=$(ffmpeg_get_slot)
+		fix-rpath_repair_append "${ED}/usr/$(get_libdir)/blender/${PV}/creator" "/usr/lib/ffmpeg/${ffmpeg_slot}/$(get_libdir)"
+	fi
+}
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
