@@ -68,7 +68,8 @@ fi
 # Definitive list of Rust slots and the associated LLVM slot, newest first.
 declare -A -g -r _RUST_LLVM_MAP=(
 	["9999"]="23" # G**, oiledmachine-overlay (Live)
-	["1.99.1"]="23" # F45, F44, F43, G~, Nunstable, oiledmachine-overlay (Rolling)
+	["1.100.1"]="23" # F45, oiledmachine-overlay (Rolling)
+	["1.99.1"]="23" # F44, F43, G~, Nunstable
 	["1.99.0"]="23"
 	["1.98.1"]="22" # G
 	["1.97.1"]="22"
@@ -114,6 +115,7 @@ declare -A -g -r _RUST_LLVM_MAP=(
 # this array is used to store the Rust slots in a more convenient order for iteration.
 declare -a -g -r _RUST_SLOTS_ORDERED=(
 	"9999"
+	"1.100.0"
 	"1.99.1"
 	"1.99.0"
 	"1.98.1"
