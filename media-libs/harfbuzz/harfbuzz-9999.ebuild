@@ -7,6 +7,8 @@ EAPI=8
 # This ebuild fork uses a patches that uses AI generated code.
 # This ebuild fork contains AI generated code.
 
+inherit secure-version
+
 CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
@@ -17,10 +19,10 @@ RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 RUST_LIVE_TIMESTAMP="Fri, 22 May 2026 00:33:25 -0700" # Same as 1.98.0 version bump
 # For harfbuzz_rust@0.0.0 which needs LLVM >= 20
-RUST_MAX_VER="1.98.1" # LLVM 22.1
-RUST_MIN_VER="1.86.0" # LLVM 19.1 # Placeholder
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_19_PV}"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
-RUST_NIGHTLY_PV="1.100.0"
+RUST_NIGHTLY_PV="${RUST_LLVM_LIVE_PV}"
 
 KB_COMMIT="ca6c9624dd7c6b774e6cec9901f3d8d998d6f62a" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/kbts.wrap
 RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects/ragel.wrap
@@ -75,13 +77,13 @@ LLVM_COMPAT=(
 	# 21 22 # For Rust
 )
 
-inherit cargo cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot meson-multilib python-any-r1 secure-version rustflags-hardened xdg-utils
+inherit cargo cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot meson-multilib python-any-r1 rustflags-hardened xdg-utils
 
 DESCRIPTION="An OpenType text shaping engine"
 HOMEPAGE="https://harfbuzz.github.io/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="1b352dfc0fc8372fa99ed2b180f51cf6b6c7a706"
+	FALLBACK_COMMIT="c8f3caa93552614c7f2dac71d506671fbe07dacf"
 	EGIT_REPO_URI="https://github.com/harfbuzz/harfbuzz.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
@@ -121,7 +123,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_15
+ebuild_revision_16
 "
 # fatlto and thinlto need llvm_slot_20
 RESTRICT="
@@ -208,28 +210,7 @@ DEPEND="
 	${RDEPEND}
 "
 RUST_BDEPEND="
-	llvm_slot_19? (
-		|| (
-			dev-lang/rust-bin:1.86.0
-			dev-lang/rust:1.86.0
-		)
-	)
-	llvm_slot_21? (
-		|| (
-			dev-lang/rust-bin:1.94.1
-			dev-lang/rust:1.94.1
-		)
-	)
-	llvm_slot_22? (
-		|| (
-			dev-lang/rust-bin:1.98.1
-			dev-lang/rust:1.98.1
-		)
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
-	)
+	$(secure-version_rust_depends)
 "
 BDEPEND="
 	${PYTHON_DEPS}

@@ -593,7 +593,7 @@ RUST_LLVM_ROLLING_PV=${RUST_LLVM_ROLLING_PV:-"1.100.0"} # 1w ago, LLVM 23, for b
 RUST_LLVM_LTS_PV=${RUST_LLVM_LTS_PV:-"1.96.1"} # 5m ago, LLVM 22, for build time stability, network facing disallowed
 RUST_LLVM_LIVE_PV=${RUST_LLVM_LIVE_PV:-"9999"} # now, LLVM 23, live security-critical, web browser security standard
 RUST_LLVM_LATEST_PV=${RUST_LLVM_LATEST_PV:-"1.100.0"} # 1w ago, LLVM 23, rolling security-critical, network facing allowed
-RUST_LLVM_23_PV=${RUST_LLVM_23_PV:-"1.99.1"} # 1m ago, for C++ and multislot LLVM scenario, network facing allowed
+RUST_LLVM_23_PV=${RUST_LLVM_23_PV:-"1.100.0"} # 1m ago, for C++ and multislot LLVM scenario, network facing allowed
 RUST_LLVM_22_PV=${RUST_LLVM_22_PV:-"1.98.1"} # 3m ago, for C++ and multislot LLVM scenario, network facing disallowed
 RUST_LLVM_21_PV=${RUST_LLVM_21_PV:-"1.94.1"} # 8m ago, for C++ and multislot LLVM scenario, network facing disallowed
 RUST_LLVM_20_PV=${RUST_LLVM_20_PV:-"1.90.0"} # 1y ago, for C++ and multislot LLVM scenario, network facing disallowed
@@ -1337,6 +1337,95 @@ secure-version_gen_nginx_depends() {
 	done
 	t+="
 		)
+	"
+
+	local output=""
+
+	output="${t}"
+#einfo "${output}"
+	echo "${output}"
+}
+
+secure-version_rust_depends() {
+	(( ${#LLVM_COMPAT[@]} > 0 )) || die "QA:  LLVM_COMPAT must be defined"
+	local range="${1}" # '', 's', 'r', 'l', '19-', '-22', '19-s', '19-r', '19-l', <unset>
+	local usedep="${2}" # [http], <empty string>
+
+	local t=""
+	t+="
+	"
+	local l=""
+	local r=""
+	if [[ -z "${range}" ]] ; then # LTS (stable)
+		l="19"
+		r="22"
+	elif [[ "${range}" == "s" ]] ; then # LTS (stable)
+		l="19"
+		r="22"
+	elif [[ "${range}" == "r" ]] ; then # Rolling
+		l="23"
+		r="23"
+	elif [[ "${range}" == "l" ]] ; then # Live
+		l="LIVE"
+		r="LIVE"
+	elif [[ "${range}" =~ "-" ]] ; then
+		l="${range%-*}"
+		r="${range#*-}"
+		if [[ -z "${l}" ]] ; then
+			l="19"
+		elif [[ "${l}" == "s" ]] ; then # LTS (stable)
+			l="19"
+		elif [[ "${l}" == "r" ]] ; then # Rolling
+			l="23"
+		elif [[ "${l}" == "l" ]] ; then # Live
+			l="23"
+		fi
+		if [[ -z "${r}" ]] ; then
+			r="22"
+		elif [[ "${r}" == "s" ]] ; then # LTS (stable)
+			r="22"
+		elif [[ "${r}" == "r" ]] ; then # Rolling
+			r="23"
+		elif [[ "${r}" == "l" ]] ; then # Live
+			r="23"
+		fi
+	else
+		l="${range}"
+		r="${range}"
+	fi
+	local L=(
+		"LIVE"
+		"23"
+		"22"
+		"21"
+		"19"
+	)
+	local live_slot="23"
+
+	local x
+	for x in "${L[@]}" ; do
+		local u="RUST_LLVM_${x/./_}_PV"
+		if [[ "${x}" == "LIVE" && ${range} =~ "l" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${live_slot}" "-le" "${r}" ; then
+			t+="
+				llvm_slot_${live_slot}? (
+					|| (
+						dev-lang/rust-bin:${!u}${usedep}
+						dev-lang/rust:${!u}${usedep}
+					)
+				)
+			"
+		elif [[ "${x}" != "LIVE" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+			t+="
+				llvm_slot_${x}? (
+					|| (
+						dev-lang/rust-bin:${!u}${usedep}
+						dev-lang/rust:${!u}${usedep}
+					)
+				)
+			"
+		fi
+	done
+	t+="
 	"
 
 	local output=""
