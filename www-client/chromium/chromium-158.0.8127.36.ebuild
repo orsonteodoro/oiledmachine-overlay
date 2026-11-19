@@ -12,7 +12,7 @@ EAPI=8
 
 # TODO:  test/verify and require system-clang for cromite and ungoogled-chromium builds.
 
-# D11, D13, U22, U24, U26
+# D12, D13, U22, U24, U26
 
 #
 # For security updates, check
@@ -285,9 +285,9 @@ inherit multilib-build secure-version
 ALPINE_PATCHSET_BRANCH="master"
 ALPINE_PATCHSET_COMMIT="03312532621d4cbbca9061f4776a69f2299d9aa6"
 ALPINE_PATCHSET_PV="157.0.8103.50"
-ARCH_PATCHSET_PV="157.0.8103.78"
+ARCH_PATCHSET_PV="157.0.8103.79"
 ARCH_PATCHSET_REV="1"
-COPIUM_PV="157.1"
+COPIUM_PV="158.1"
 CROMITE_PV="153.0.8010.37"
 CROMITE_ID="11507ac1061b5ea227806f5e84db5a57df6ccf6a" # Not the same as the tagged commit but the ID from the commit message
 DEBIAN_PATCHSET_PV="156.0.8078.79"
