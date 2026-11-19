@@ -13,7 +13,7 @@ CXX_STANDARD=17
 CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-EXPECTED_CARGO_HASH="fe59f1b94c8c549a27ae977606d9b886e31f13a1b1c774f558c167c2973c8683324f89c7e8940721f318f91e9a8d8599b422569622aa4f5e73197572e208e82e"
+EXPECTED_CARGO_HASH="0af6ac60c4e7252dc955f38575058869b3f20b54ecdedef0d6e9cc39ba8447093f9d708706539bbb5906dacf90632d800629274388b847caf5f5455556d4a6cf"
 PYTHON_COMPAT=( "python3_"{11..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
@@ -48,19 +48,20 @@ CRATES="
 bitflags-2.13.2
 bytemuck-1.25.2
 bytemuck_derive-1.12.1
-font-types-0.12.6
-harfrust-0.14.0
+foldhash-0.2.0
+font-types-0.12.7
+harfrust-0.15.0
 once_cell-1.21.4
 proc-macro2-1.0.107
 quote-1.0.47
-read-fonts-0.45.0
-skrifa-0.48.0
-smallvec-1.16.3
+read-fonts-0.46.0
+skrifa-0.49.0
+smallvec-1.16.6
 stable_deref_trait-1.2.1
-syn-3.0.9
+syn-3.0.10
 synstructure-0.14.0
 unicode-ident-1.0.27
-yoke-0.8.3
+yoke-0.8.4
 yoke-derive-0.8.4
 zerofrom-0.1.8
 zerofrom-derive-0.1.8
@@ -300,7 +301,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 
-#die
+die
 		local actual_cargo_hash=$(sha512sum "${S}/src/rust/Cargo.toml" | cut -f 1 -d " ")
 		local expected_cargo_hash="${EXPECTED_CARGO_HASH}"
 		if [[ "${actual_cargo_hash}" != "${expected_cargo_hash}" ]] ; then
