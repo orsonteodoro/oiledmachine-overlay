@@ -21,7 +21,7 @@
 | Alpha                | No                                    |
 | Preview              | No                                    |
 | Live (latest commit) | Yes                                   |
-| Live snapshot        | Yes                                   |
+| Live (snapshot)      | Yes                                   |
 
 * Using beta, alpha, preview versions, or enabling the debug USE flag may lead
   to information disclosure when the debug dump or crash report contains
