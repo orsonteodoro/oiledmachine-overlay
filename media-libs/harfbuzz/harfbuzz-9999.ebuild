@@ -17,10 +17,9 @@ EXPECTED_CARGO_HASH="0af6ac60c4e7252dc955f38575058869b3f20b54ecdedef0d6e9cc39ba8
 PYTHON_COMPAT=( "python3_"{11..14} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
-RUST_LIVE_TIMESTAMP="Fri, 22 May 2026 00:33:25 -0700" # Same as 1.98.0 version bump
 # For harfbuzz_rust@0.0.0 which needs LLVM >= 20
 RUST_MAX_VER="${RUST_LLVM_22_PV}"
-RUST_MIN_VER="${RUST_LLVM_19_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 RUST_NIGHTLY_PV="${RUST_LLVM_LIVE_PV}"
 
@@ -74,8 +73,8 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
-	# 21 22 # For Rust
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
+	# 22 # For Rust
 )
 
 inherit cargo cflags-hardened chkl flag-o-matic libcxx-slot libstdcxx-slot meson-multilib python-any-r1 rustflags-hardened xdg-utils
@@ -145,7 +144,6 @@ REQUIRED_USE="
 	)
 	fontations? (
 		^^ (
-			llvm_slot_21
 			llvm_slot_22
 		)
 		|| (
@@ -155,7 +153,6 @@ REQUIRED_USE="
 	)
 	harfrust? (
 		^^ (
-			llvm_slot_21
 			llvm_slot_22
 		)
 		|| (
@@ -252,7 +249,7 @@ eerror "Switch to live with \`eselect rust\`"
 	fi
 
 	if "${RUSTC}" --version | grep -q -e "nightly" ; then
-		local compatible_time=$(date --date="${RUST_LIVE_TIMESTAMP}" "+%s")
+		local compatible_time=$(date --date="${RUST_LLVM_LIVE_TIMESTAMP}" "+%s")
 
 		local merge_time
 		local pkg_name

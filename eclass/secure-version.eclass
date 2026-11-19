@@ -592,6 +592,7 @@ RUST_PV=${RUST_PV:-"1.100.0"} # 1w ago, LLVM 23, within 1 month or latest securi
 RUST_LLVM_ROLLING_PV=${RUST_LLVM_ROLLING_PV:-"1.100.0"} # 1w ago, LLVM 23, for build time stability, network facing allowed
 RUST_LLVM_LTS_PV=${RUST_LLVM_LTS_PV:-"1.96.1"} # 5m ago, LLVM 22, for build time stability, network facing disallowed
 RUST_LLVM_LIVE_PV=${RUST_LLVM_LIVE_PV:-"9999"} # now, LLVM 23, live security-critical, web browser security standard
+RUST_LLVM_LIVE_TIMESTAMP=${RUST_LLVM_LIVE_TIMESTAMP:-"Fri, 6 Nov 2026 10:09:36 -0800"} # From https://github.com/rust-lang/rust/commits/main/src/version or https://github.com/rust-lang/rust/commit/<COMMIT_ID>.patch
 RUST_LLVM_23_PV=${RUST_LLVM_23_PV:-"1.100.0"} # 1m ago, for C++ and multislot LLVM scenario, network facing allowed
 RUST_LLVM_22_PV=${RUST_LLVM_22_PV:-"1.98.1"} # 3m ago, for C++ and multislot LLVM scenario, network facing disallowed
 RUST_LLVM_21_PV=${RUST_LLVM_21_PV:-"1.94.1"} # 8m ago, for C++ and multislot LLVM scenario, network facing disallowed
@@ -1345,6 +1346,18 @@ secure-version_gen_nginx_depends() {
 	echo "${output}"
 }
 
+_has_llvm_compat() {
+	local x="${1}"
+	(( ${#LLVM_COMPAT[@]} > 0 )) || die "QA:  LLVM_COMPAT must be defined"
+	local y
+	for y in "${LLVM_COMPAT[@]}" ; do
+		if [[ "${x}" == "${y}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 secure-version_rust_depends() {
 	(( ${#LLVM_COMPAT[@]} > 0 )) || die "QA:  LLVM_COMPAT must be defined"
 	local range="${1}" # '', 's', 'r', 'l', '19-', '-22', '19-s', '19-r', '19-l', 'lts', 'rsc', 'lsc' <unset>
@@ -1447,6 +1460,7 @@ secure-version_rust_depends() {
 		for x in "${L[@]}" ; do
 			local u="RUST_LLVM_${x/./_}_PV"
 			if [[ "${x}" == "LIVE" && ${range} =~ "l" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${live_slot}" "-le" "${r}" ; then
+				_has_llvm_compat "${live_slot}" || continue
 				t+="
 					llvm_slot_${live_slot}? (
 						|| (
@@ -1456,6 +1470,7 @@ secure-version_rust_depends() {
 					)
 				"
 			elif [[ "${x}" != "LIVE" ]] && ver_test "${l}" "-le" "${x}" && ver_test "${x}" "-le" "${r}" ; then
+				_has_llvm_compat "${x}" || continue
 				t+="
 					llvm_slot_${x}? (
 						|| (
