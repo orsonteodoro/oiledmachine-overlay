@@ -30,7 +30,7 @@ LLVM_COMPAT=(
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
-inherit libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+inherit libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
@@ -96,10 +96,9 @@ REQUIRED_USE="
 # cxx17 is forced for gRPC
 RDEPEND="
 	!dev-libs/protobuf:0
-	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-cpp/abseil-cpp:=
+	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}=[cxx_standard_cxx14?,cxx_standard_cxx17?]
 	zlib? (
-		>=virtual/zlib-1.2.13[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="

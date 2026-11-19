@@ -26,7 +26,7 @@ LLVM_COMPAT=(
 )
 
 inherit autotools cflags-hardened check-compiler-switch elisp-common flag-o-matic
-inherit libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+inherit libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
@@ -91,7 +91,7 @@ REQUIRED_USE="
 RDEPEND="
 	!dev-libs/protobuf:0
 	zlib? (
-		>=virtual/zlib-1.2.11[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="

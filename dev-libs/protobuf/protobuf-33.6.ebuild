@@ -4,20 +4,11 @@
 
 EAPI=8
 
-# This abseil-cpp reference was originally 20230802.1 from protobuf, but gRPC
-# requires the same abseil-cpp version used in gRPC to avoid inconsistent header
-# signatures during the linking of grpc_cpp_plugin.
-ABSEIL_CPP_PV="20240116"
-
+ABSEIL_CPP_PV="20250512"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
-CXX_STANDARD=17 # Originally 14 but 17 is required by gRPC
-INTERNAL_VERSION="4.${PV}" # From configure.ac L20
-
-_CXX_STANDARD=(
-	"cxx_standard_cxx14"
-	"+cxx_standard_cxx17"
-)
+CXX_STANDARD=17
+INTERNAL_VERSION="6.${PV}" # From configure.ac L20
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -30,7 +21,7 @@ LLVM_COMPAT=(
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
-inherit libcxx-slot libstdcxx-slot multilib-minimal toolchain-funcs
+inherit libcxx-slot libstdcxx-slot multilib-minimal secure-version toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
@@ -82,30 +73,24 @@ SLOT="${SLOT_MAJOR}/"$(ver_cut "1-2" "${INTERNAL_VERSION}")
 # 3.19 : 3.19 From configure.ac's AC_INIT
 # 3.12 : 3.12 From configure.ac's AC_INIT
 
-# Upstream defaults to C++14
 IUSE="
-${_CXX_STANDARD[@]}
 emacs examples static-libs test zlib
 ebuild_revision_43
 "
 REQUIRED_USE="
-	^^ (
-		${_CXX_STANDARD[@]/+}
-	)
+	!test
 "
-# cxx17 is forced for gRPC
 RDEPEND="
 	!dev-libs/protobuf:0
-	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}[cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-cpp/abseil-cpp:=
+	dev-cpp/abseil-cpp:${ABSEIL_CPP_PV}=
 	zlib? (
-		>=virtual/zlib-1.2.13[${MULTILIB_USEDEP}]
+		>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/gtest-1.12.1[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.9.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP}]
 	)
 "
 RDEPEND+="
@@ -155,9 +140,9 @@ einfo "Patching for 32-bit (${ABI})"
 
 src_prepare() {
 	# Temp disable.  It breaks on 32-bit and 64-bit.
-	sed -e "/^TEST_F(Utf8ValidationTest, OldVerifyUTF8String) {$/,/^}$/d" \
-		-i "src/google/protobuf/wire_format_unittest.inc" \
-		|| die
+	#sed -e "/^TEST_F(Utf8ValidationTest, OldVerifyUTF8String) {$/,/^}$/d" \
+	#	-i "src/google/protobuf/wire_format_unittest.inc" \
+	#	|| die
 
 	cmake_src_prepare
 
@@ -205,24 +190,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# With shared and static libs
 	use static-libs && with_static_libs="OFF"
 
-	local std_standard=14
-	use cxx_standard_cxx14 && std_standard=14
-	use cxx_standard_cxx17 && std_standard=17
-
-	append-cxxflags -std=c++${std_standard}
-
-	sed \
-		-i \
-		-e "s|-std=c++14|-std=c++${std_standard}|g" \
-		$(grep -l -F -r -e "-std=c++14" "${WORKDIR}") \
-		|| die
-
 	src_configure_abi() {
-		[[ -e "${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV%%.*}/$(get_libdir)/cmake/absl" ]] || die "Missing"
-
 		local mycmakeargs=(
-			$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '') # Default
-			$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '') # For gRPC
 			-Dabsl_DIR="${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_PV}/$(get_libdir)/cmake/absl"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}/${SLOT_MAJOR}"
@@ -297,6 +266,9 @@ _install_all() {
 
 	local L=(
 		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-${PV}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb-${PV}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upbdefs-${PV}.0"
+		"/usr/lib/protobuf/${SLOT_MAJOR}/bin/protoc-gen-upb_minitable-${PV}.0"
 	)
 	local x
 	for x in "${L[@]}" ; do
@@ -330,3 +302,4 @@ pkg_postrm() {
 # amd64 ABI:
 # 100% tests passed, 0 tests failed out of 2
 # Total Test time (real) =  61.64 sec
+
