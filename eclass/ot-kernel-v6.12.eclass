@@ -221,11 +221,11 @@ GCC_COMPAT=(
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
 )
 
 LLVM_MAX_SLOT="22"
-LLVM_MIN_SLOT="19"
+LLVM_MIN_SLOT="22"
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
 LLVM_MIN_KCP_GENPATCHES_AMD64=19
@@ -339,18 +339,14 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
-	["str_1_98_1"]="22"
-	["str_1_94_1"]="21"
-	["str_1_86_0"]="19"
+	["str_${RUST_LLVM_22_PV//./_}"]="22"
 )
 RUST_SLOTS=(
 	# It may need the -Z flag for sanitizers.
-	"1.98.1" # LLVM 22
-	"1.94.1" # LLVM 21
-	"1.86.0" # LLVM 19
+	"${RUST_LLVM_22_PV}"
 )
-RUST_MAX_VER="1.94.1" # Inclusive
-RUST_MIN_VER="1.81.0" # Inclusive
+RUST_MAX_VER="${RUST_LLVM_22_PV}" # Inclusive
+RUST_MIN_VER="${RUST_LLVM_22_PV}" # Inclusive
 RUST_NEEDS_LLVM=1 # Prune rustc for unused LLVM slots
 X86_FLAGS=(
 # See also
@@ -461,7 +457,7 @@ REQUIRED_USE+="
 	)
 	scx? (
 		debug
-		llvm_slot_19
+		llvm_slot_22
 		|| (
 			dwarf4
 			dwarf5
@@ -1056,7 +1052,7 @@ fi
 
 PDEPEND+="
 	scx? (
-		sys-kernel/scx[llvm_slot_19?]
+		sys-kernel/scx[llvm_slot_22?]
 	)
 "
 
