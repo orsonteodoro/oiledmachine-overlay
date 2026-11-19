@@ -85,7 +85,7 @@ exist in build files.
 | Rust-9999 (1.102.0-nightly) [LSC] | Limited support                       | G**                                                                      | 2w ago - Now                |
 
 [1] Only Godot allowed for video game porting into extended LTS distros
-(e.g. D12, U24).
+(e.g. D12, U22, U24).
 
 [2] Skipped since most projects use either F45, Nunstable, U22, U24, U26 for
 CI/CD testing.
