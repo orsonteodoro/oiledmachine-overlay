@@ -199,6 +199,9 @@ einfo "CEA = CPU Exhaustion Attack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CBHJ"($|" "|";"|",") ]] ; then
 einfo "CBHJ = Clipboard Hijacking"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CD"($|" "|";"|",") ]] ; then
+einfo "CD = Confused Deputy"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"CI"($|" "|";"|",") ]] ; then
 einfo "CI = Code Injection"
 		fi

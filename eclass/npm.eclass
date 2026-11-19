@@ -779,7 +779,7 @@ npm_src_install() {
 			| cut -f 4 -d '"' \
 			| sed -e "s|^\./||g")
 		if [[ ${NPM_APP_INVOCATION:-"wrapper-script"} == "wrapper-script" ]] ; then
-			dodir /usr/bin
+			dodir "/usr/bin"
 cat <<EOF > "${ED}/usr/bin/${name}"
 #!/bin/bash
 export PATH="/usr/lib/node/${NODE_SLOT}/bin:\${PATH}"
