@@ -11,6 +11,8 @@ EAPI=8
 
 MY_P="${P/_/-}"
 
+inherit secure-version
+
 CARGO_OPTIONAL=1
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
@@ -18,8 +20,8 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO BOR DLH DOS IO NPD OOBA SYM"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{10..15} )
-RUST_MAX_VER="1.97.1" # Inclusive
-RUST_MIN_VER="1.81.0"
+RUST_MAX_VER="${RUST_LLVM_22_PV}" # Inclusive
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_MULTILIB=1
 RUST_NEEDS_LLVM=1 # Prune rustc if LLVM slot not selected
 RUST_OPTIONAL=1
@@ -38,7 +40,7 @@ GCC_COMPAT=(
 inherit libcxx-compat
 LLVM_COMPAT=(
 # Lift max allowed to avoid possible multiple LLVM bug
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
 )
 
 PATENT_STATUS=(
@@ -133,7 +135,7 @@ VIDEO_CARDS=(
 inherit cargo
 inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om
 inherit libcxx-slot libstdcxx-slot llvm-r1 linux-info python-any-r1 linux-info meson-multilib
-inherit multilib-build secure-version toolchain-funcs uopts
+inherit multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -156,7 +158,7 @@ if [[ "${PV}" == "26.9999" ]] ; then
 elif [[ "${PV}" == "9999" ]] ; then
 	#EGIT_STORE_DIR="/usr/local/oiledmachine-overlay/media-libs/mesa/source/mesa" # For future git bisects
 	CARGO_EXPECTED_FINGERPRINT="b534cf1204007a41bd8db96b85da22dfb143570c9c0983d4e4aee7f8fad0ca9846a5d1804b544c6ebef0a70dd60b044047d36eb5432a04d19450ccb52ba5ff3e"
-	FALLBACK_COMMIT="4f24077834328a9693b6e49dc58e92aa799f1379"
+	FALLBACK_COMMIT="23732583a81cf342daa311e46afcf6d05012fae1"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -354,7 +356,7 @@ DEPEND="
 		>=dev-util/directx-headers-1.619.1:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.41:=
+		>=dev-libs/wayland-protocols-1.50:=
 	)
 	X? (
 		x11-base/xorg-proto:=
@@ -378,22 +380,10 @@ BDEPEND="
 	virtual/pkgconfig
 	opencl? (
 		>=dev-util/bindgen-0.71.1
-		llvm_slot_19? (
-			|| (
-				dev-lang/rust:1.86.0
-				dev-lang/rust-bin:1.86.0
-			)
-		)
-		llvm_slot_21? (
-			|| (
-				dev-lang/rust:1.94.1
-				dev-lang/rust-bin:1.94.1
-			)
-		)
 		llvm_slot_22? (
 			|| (
-				dev-lang/rust:1.98.1
-				dev-lang/rust-bin:1.98.1
+				dev-lang/rust:${RUST_LLVM_22_PV}
+				dev-lang/rust-bin:${RUST_LLVM_22_PV}
 			)
 		)
 	)
@@ -416,22 +406,10 @@ BDEPEND="
 			${RUST_DEPEND}
 			>=dev-util/bindgen-0.71.1
 			>=dev-util/cbindgen-0.26.0
-			llvm_slot_19? (
-				|| (
-					dev-lang/rust:1.86.0
-					dev-lang/rust-bin:1.86.0
-				)
-			)
-			llvm_slot_21? (
-				|| (
-					dev-lang/rust:1.94.1
-					dev-lang/rust-bin:1.94.1
-				)
-			)
 			llvm_slot_22? (
 				|| (
-					dev-lang/rust:1.98.1
-					dev-lang/rust-bin:1.98.1
+					dev-lang/rust:${RUST_LLVM_22_PV}
+					dev-lang/rust-bin:${RUST_LLVM_22_PV}
 				)
 			)
 		)
