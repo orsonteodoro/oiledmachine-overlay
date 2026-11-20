@@ -43,8 +43,8 @@ inherit multiprocessing toolchain-funcs
 _PYTHON_ALL_IMPLS=(
 # oiledmachine-overlay changed
 # Only CI listed versions or setup.py classifier section appear
-	python3_{11..15}
-	pypy3_11
+	python3_{11..15}	# Only non EOL are allowed for security
+	pypy3_{11..12}		# Only 6 months to now are allowed for security
 )
 readonly _PYTHON_ALL_IMPLS
 
@@ -53,13 +53,13 @@ readonly _PYTHON_ALL_IMPLS
 # @DESCRIPTION:
 # Python implementations that are not supported.
 _PYTHON_HISTORICAL_IMPLS=(
-# oiledmachine-overlay changed
+# oiledmachine-overlay changed section and notes
 # See also https://projects.gentoo.org/python/guide/basic.html#python-compat
+# free-threading is banned on oiledmachine-overlay to mitigate race condition attacks.
 #
 # Estimated performance impact
 # pypy:  3.5x - 5x benefit
 # free-threading:  3.5-4x multicore benefit or 1-15% single thread penalty, 15-20% increased memory
-#
 	jython2_7
 	python2_{5..7}
 	python3_{1..10}
