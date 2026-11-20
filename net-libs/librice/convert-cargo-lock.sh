@@ -78,12 +78,12 @@ main() {
 	echo
 	echo "Non-live:"
 	echo
-	echo -e "${s_nlive}" | sort
+	echo -e "${s_nlive}" | sort | uniq
 
 	echo
 	echo "Live:"
 	echo
-	echo -e "${s_live}" | sort
+	echo -e "${s_live}" | sort | uniq
 
 	echo ""
 
