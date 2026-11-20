@@ -65,8 +65,8 @@ exist in build files.
 | Cython 0.29.37.1                  | Deprecated, limited [4]               | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                           | 3y ago                      |
 | Cython 3.0.12                     | Deprecated, limited [4]               | D13 (3.0.11), U24 (3.0.8)                                                | 1y ago                      |
 | Cython 3.1.0                      | Deprecated, limited [4]               | F43 (3.1.3), U26 (3.1.6)                                                 | 11m ago                     |
-| Cython 3.2.0 [LTS]                | Not supported                         | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                   | 4m ago                      |
-| Cython 3.3.0 [RSC]                | Not supported                         | Nunstable (3.3.0)                                                        | 3w ago                      |
+| Cython 3.2.0 [LTS]                | Available                             | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                   | 4m ago                      |
+| Cython 3.3.0 [RSC]                | Available                             | Nunstable (3.3.0)                                                        | 3w ago                      |
 | GCC <= 10                         | Not supported                         |                                                                          | 3y ago                      |
 | GCC 11                            | Limited [1]                           | U22 (11.2), G (11.5.0)                                                   | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                   | 1y ago                      |
