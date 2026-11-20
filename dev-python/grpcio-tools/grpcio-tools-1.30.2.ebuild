@@ -54,7 +54,7 @@ LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${_CXX_STANDARD[@]}
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	^^ (
@@ -64,16 +64,14 @@ REQUIRED_USE="
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20200225.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-cpp/abseil-cpp:=
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-libs/protobuf:=
-	>=dev-python/cython-0.29.8:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
-	dev-python/protobuf:=
-	~dev-python/grpcio-${PV}:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-python/grpcio:=
+	>=dev-cpp/abseil-cpp-20200225.0:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
+	>=dev-python/cython-0.29.8:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
+	dev-python/protobuf:=[${PYTHON_USEDEP}]
+	|| (
+		dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/3.12[${PYTHON_USEDEP}]
+	)
+	~dev-python/grpcio-${PV}:${GRPC_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 "
 DEPEND="
 	${RDEPEND}

@@ -13,7 +13,7 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="4"
-PROTOBUF_PV="25.1"
+PROTOBUF_PV="25.9"
 PROTOBUF_CPP_SLOT="4"
 PROTOBUF_PYTHON_SLOT="4.25"
 PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
@@ -52,21 +52,16 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
-ebuild_revision_13
+ebuild_revision_14
 "
 # See https://github.com/grpc/grpc/blob/v1.62.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.62.3/third_party
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20240116.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-cpp/abseil-cpp:=
-	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
-	dev-libs/protobuf:=
-	>=dev-python/cython-3.0:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/protobuf:=
-	~dev-python/grpcio-${PV}:${GRPC_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
-	dev-python/grpcio:=
+	>=dev-cpp/abseil-cpp-20240116.0:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	>=dev-python/cython-3.0:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
+	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}=[${PYTHON_USEDEP}]
+	~dev-python/grpcio-${PV}:${GRPC_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
