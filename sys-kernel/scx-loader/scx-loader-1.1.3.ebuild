@@ -307,7 +307,7 @@ zvariant_derive-5.15.1
 zvariant_utils-4.2.0
 "
 
-inherit cargo systemd
+inherit cargo cflags-hardened rustflags-hardened systemd
 
 DESCRIPTION="DBUS on-demand loader of sched-ext schedulers"
 HOMEPAGE="https://github.com/sched-ext/scx-loader"
@@ -329,6 +329,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
