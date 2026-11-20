@@ -67,11 +67,6 @@ exist in build files.
 | Cython 3.1.0                      | Deprecated, limited [4]               | F43 (3.1.3), U26 (3.1.6)                                                               | 11m ago                     |
 | Cython 3.2.0 [LTS]                | Available                             | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                                 | 4m ago                      |
 | Cython 3.3.0 [RSC]                | Available                             | Nunstable (3.3.0)                                                                      | 3w ago                      |
-| PyPy:2.7                          | Not supported                         | F43 (7.3.23), F44 (7.3.23), F45 (7.3.23), G (8.0.1), Nunstable (7.3.19)                | 1m ago                      |
-| PyPy:3.9                          | Not supported                         | D12 (7.3.11)                                                                           | 2y ago                      |
-| PyPy:3.10                         | Not supported                         | Nunstable (7.3.19)                                                                     | 1y ago                      |
-| PyPy:3.11                         | Available                             | D13 (7.3.19), F43 (8.0.0), F44 (8.0.0), F45 (8.0.0), G (8.0.1), Nunstable (7.3.20)     | 1m ago                      |
-| PyPy:3.12                         | Available                             | F45 (8.0.0), G (8.0.1)                                                                 | 1m ago                      |
 | GCC <= 10                         | Not supported                         |                                                                                        | 3y ago                      |
 | GCC 11                            | Limited [1]                           | U22 (11.2), G (11.5.0)                                                                 | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                                 | 1y ago                      |
@@ -80,6 +75,15 @@ exist in build files.
 | GCC 15 [C]                        | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)                                                 | 5m ago                      |
 | GCC 16			    | Available                             | F45 (16.2.1), G (16.2.1_p20260926), Nunstable (16.2.0)                                 | 3m ago                      |
 | GCC 17                            | Available but not supported           | G**                                                                                    | Now                         |
+| Node.js <= 20                     | Not supported                         | D13 (20.19.2)                                                                          | 8m ago                      |
+| Node.js 22                        | Available                             | F43 (22.22.1), F45 (22.23.1), Nunstable (22.23.5), U26 (22.22.1)                       | 1w ago                      |
+| Node.js 24                        | Fully supported                       | F43 (24.14.1), F44 (24.18.0), F45 (24.18.0), Nunstable (24.22.2)                       | 1w ago                      |
+| Node.js 26                        | Available                             | Nunstable (26.13.1)                                                                    | 1w ago                      |
+| PyPy:2.7                          | Not supported                         | F43 (7.3.23), F44 (7.3.23), F45 (7.3.23), G (8.0.1), Nunstable (7.3.19)                | 1m ago                      |
+| PyPy:3.9                          | Not supported                         | D12 (7.3.11)                                                                           | 2y ago                      |
+| PyPy:3.10                         | Not supported                         | Nunstable (7.3.19)                                                                     | 1y ago                      |
+| PyPy:3.11                         | Available                             | D13 (7.3.19), F43 (8.0.0), F44 (8.0.0), F45 (8.0.0), G (8.0.1), Nunstable (7.3.20)     | 1m ago                      |
+| PyPy:3.12                         | Available                             | F45 (8.0.0), G (8.0.1)                                                                 | 1m ago                      |
 | Rust <= 1.95.0                    | Not supported                         |                                                                                        | 7m ago                      |
 | Rust 1.96.1 [LTS]                 | Available                             | D13 (1.96.1)                                                                           | 5m ago                      |
 | Rust 1.97.1                       | Available                             |                                                                                        | 4m ago                      |
@@ -376,10 +380,6 @@ Pairing rules and support
 | LocalAI (llama.cpp with ROCm 7.0)    | WIP                                     |                                                                         |
 | LocalAI (llama.cpp with CUDA 12.4)   | Not supported                           |                                                                         |
 | LocalAI (llama.cpp with Vulkan)      | Fully supported                         |                                                                         |
-| Node.js <= 20                        | Not supported                           | D13 (20.19.2)                                                           |
-| Node.js 22                           | Available                               | F43 (22.22.1), F45 (22.23.1), Nunstable (22.23.5), U26 (22.22.1)        |
-| Node.js 24                           | Fully supported                         | F43 (24.14.1), F44 (24.18.0), F45 (24.18.0), Nunstable (24.22.2)        |
-| Node.js 26                           | Available                               | Nunstable (26.13.1)                                                     |
 | OpenGL <= 4.6                        | Fully supported                         |                                                                         |
 | OpenCL <= 2.0                        | Fully supported                         |                                                                         |
 | Ollama live (CPU)                    | Fully supported                         |                                                                         |
