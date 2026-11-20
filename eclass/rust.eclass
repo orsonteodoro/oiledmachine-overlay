@@ -68,7 +68,7 @@ fi
 # Definitive list of Rust slots and the associated LLVM slot, newest first.
 declare -A -g -r _RUST_LLVM_MAP=(
 	["9999"]="23" # G**, oiledmachine-overlay (Live)
-	["1.100.1"]="23" # F45, oiledmachine-overlay (Rolling)
+	["1.100.0"]="23" # F45, oiledmachine-overlay (Rolling)
 	["1.99.1"]="23" # F44, F43, G~, Nunstable
 	["1.99.0"]="23"
 	["1.98.1"]="22" # G
