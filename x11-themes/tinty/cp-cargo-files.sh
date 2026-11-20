@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=${@}
+VER="${1}"
 
 main() {
 	if [[ -z "${VER}" ]] ; then
