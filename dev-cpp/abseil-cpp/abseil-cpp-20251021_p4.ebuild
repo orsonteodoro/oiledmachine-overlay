@@ -11,7 +11,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{11..14} ) # D12, D13, U22, U24, U26
 
 EGIT_COMMIT="215d8a0e75848cec2734f1b70f55862096072f52"
 
@@ -331,3 +331,5 @@ src_configure() {
 	)
 	cmake-multilib_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-REVDEP:  www-client/chromium

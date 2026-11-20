@@ -8,7 +8,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=17 # Originally 14 but changed to 17 for gRPC
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{11..13} ) # See https://github.com/grpc/grpc/blob/v1.71.2/src/python/grpcio/python_version.py#L17
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_crypto"
@@ -314,3 +314,5 @@ src_configure() {
 	)
 	cmake-multilib_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-REVDEP:  dev-libs/apache-arrow, dev-libs/protobuf-29.6, media-libs/webrtc-audio-processing 2.1, net-libs/grpc-1.71.2,

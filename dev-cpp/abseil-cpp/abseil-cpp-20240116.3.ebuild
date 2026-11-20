@@ -8,7 +8,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=17 # Originally 14 but changed to 17 for gRPC
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_crypto"
@@ -333,3 +333,5 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	done
 	IFS=$' \t\n'
 }
+
+# OILEDMACHINE-OVERLAY-REVDEP:  dev-libs/protobuf-25.9, net-libs/grpc-1.62.3, re2 (c++17 build)

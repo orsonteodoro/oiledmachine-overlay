@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=17 # Originally 11, 17 required by bear
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_11" ) # See https://github.com/protocolbuffers/protobuf/blob/v3.21.12/python/setup.py
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_crypto"
@@ -308,3 +308,5 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	done
 	IFS=$' \t\n'
 }
+
+# OILEDMACHINE-OVERLAY-REVDEP:  grpc-1.30.2

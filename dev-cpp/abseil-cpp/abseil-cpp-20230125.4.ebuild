@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=17 # Originally 11, 17 required by bear
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{11..13} ) # F41, U24
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_crypto"
@@ -331,3 +331,5 @@ einfo "Adding \$ORIGIN to RPATH for ${x}"
 	done
 	IFS=$' \t\n'
 }
+
+# OILEDMACHINE-OVERLAY-REVDEP:  media-libs/webrtc-audio-processing 1.3, net-libs/google-cloud-cpp

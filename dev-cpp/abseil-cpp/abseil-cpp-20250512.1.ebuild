@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 CXX_STANDARD=17
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{11..14} ) # See https://github.com/grpc/grpc/blob/v1.81.2/src/python/grpcio/python_version.py
 
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_crypto"
@@ -310,3 +310,5 @@ src_configure() {
 	)
 	cmake-multilib_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-REVDEP:  dev-games/enigma, dev-games/radialgm, dev-libs/protobuf-33.6, re2.eclass
