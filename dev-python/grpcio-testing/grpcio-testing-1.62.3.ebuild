@@ -33,10 +33,12 @@ IUSE="
 ebuild_revision_3
 "
 RDEPEND="
-	~dev-python/grpcio-${PV}:${GRPC_SLOT}[${PYTHON_USEDEP}]
-	dev-python/grpcio:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.25[${PYTHON_USEDEP}]
-	dev-python/protobuf:=
+	~dev-python/grpcio-${PV}:${GRPC_SLOT}=[${PYTHON_USEDEP}]
+	dev-python/protobuf:=[${PYTHON_USEDEP}]y
+
+	|| (
+		dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}/4.25[${PYTHON_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}

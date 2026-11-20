@@ -8,10 +8,10 @@ MY_PV=$(ver_cut 1-3 "${PV}")
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-GRPC_SLOT="6"
-PROTOBUF_CPP_SLOT="6"
-PROTOBUF_PYTHON_SLOT="6"
-PYTHON_COMPAT=( "python3_"{10..14} ) # See https://github.com/grpc/grpc/blob/v1.75.1/src/python/grpcio/python_version.py
+GRPC_SLOT="7"
+PROTOBUF_CPP_SLOT="7"
+PROTOBUF_PYTHON_SLOT="7"
+PYTHON_COMPAT=( "python3_"{10..15} ) # See https://github.com/grpc/grpc/blob/v1.85.3/src/python/grpcio/python_version.py
 
 inherit distutils-r1
 
@@ -33,10 +33,8 @@ IUSE="
 ebuild_revision_3
 "
 RDEPEND="
-	~dev-python/grpcio-${PV}:${GRPC_SLOT}[${PYTHON_USEDEP}]
-	dev-python/grpcio:=
-	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/protobuf:=
+	~dev-python/grpcio-${PV}:${GRPC_SLOT}=[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_PYTHON_SLOT}=[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
