@@ -102,7 +102,7 @@ exist in build files.
 made within 6 months and not EOL for security reasons.  6 months was chosen
 primarily to barely meet AI stack support.
 
-Trade offs for compiler slot retention:
+Trade-offs for compiler slot retention:
 
 | Slot retention window | Costs                                                                               | Benefits                                                                                        |
 | ---                   | ---                                                                                 | ---                                                                                             |
