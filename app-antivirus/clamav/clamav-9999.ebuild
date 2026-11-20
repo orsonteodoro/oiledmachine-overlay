@@ -36,6 +36,8 @@ EAPI=8
 
 MY_P="${P//_/-}"
 
+inherit secure-version
+
 CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
 CFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE="asan msan ubsan"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan ubsan"
@@ -53,8 +55,8 @@ GENERATE_LOCKFILE=0
 MITIGATION_DATE="Jun 18, 2025"
 MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patch.html"
 PYTHON_COMPAT=( "python3_"{12,13} ) # CI versions
-RUST_MAX_VER="1.93.1" # LLVM 21.1
-RUST_MIN_VER="1.93.1" # LLVM 21.1
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
@@ -100,7 +102,7 @@ avif-serialize-0.8.9
 av-scenechange-0.14.1
 base64-0.21.7
 bindgen-0.65.1
-bit_field-0.10.3
+bit_field-0.10.4
 bitflags-1.3.2
 bitflags-2.13.2
 bit-set-0.5.3
@@ -108,29 +110,29 @@ bitstream-io-4.10.0
 bit-vec-0.6.3
 block-buffer-0.10.4
 built-0.8.1
-bumpalo-3.20.3
+bumpalo-3.20.4
 bytemuck-1.25.2
 byteorder-1.5.0
 byteorder-lite-0.1.0
-bytes-1.12.1
+bytes-1.12.2
 bzip2-rs-0.1.2
 cbindgen-0.25.0
-cc-1.8.0
+cc-1.11.2
 cexpr-0.6.0
 cfg-if-1.0.5
 change-case-0.2.0
 chrono-0.4.45
 clang-sys-1.9.1
-clap-4.6.7
+clap-4.6.9
 clap_builder-4.6.7
-clap_derive-4.6.7
-clap_lex-1.1.1
+clap_derive-4.6.9
+clap_lex-1.1.2
 colorchoice-1.0.5
 color_quant-1.1.0
 core_detect-1.0.0
 core-foundation-sys-0.8.7
 cpufeatures-0.2.17
-crc32fast-1.5.2
+crc32fast-1.5.5
 crossbeam-deque-0.8.8
 crossbeam-epoch-0.9.21
 crossbeam-utils-0.8.23
@@ -142,7 +144,7 @@ displaydoc-0.2.7
 downcast-rs-2.0.2
 either-1.19.0
 either_n-0.2.0
-encoding_rs-0.8.42
+encoding_rs-0.8.44
 enumflags2-0.7.12
 enumflags2_derive-0.7.12
 enum-primitive-derive-0.3.0
@@ -150,16 +152,16 @@ enum-variants-strings-0.3.0
 enum-variants-strings-derive-0.3.0
 equator-0.4.2
 equator-macro-0.4.2
-equivalent-1.0.2
-errno-0.3.14
-exr-1.74.2
+equivalent-1.0.3
+errno-0.3.15
+exr-1.74.3
 fancy-regex-0.3.5
 fastrand-2.5.0
 fax-0.2.7
 fdeflate-0.3.7
-filetime-0.2.29
-find-msvc-tools-0.1.14
-flate2-1.1.10
+filetime-0.2.30
+find-msvc-tools-0.1.15
+flate2-1.1.11
 flexi_logger-0.30.2
 foreign-types-0.3.2
 foreign-types-shared-0.1.1
@@ -184,13 +186,13 @@ home-0.5.12
 humantime-2.4.0
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-icu_collections-2.3.0
-icu_locale_core-2.3.0
-icu_normalizer-2.3.0
-icu_normalizer_data-2.3.0
-icu_properties-2.3.0
-icu_properties_data-2.3.0
-icu_provider-2.3.1
+icu_collections-2.4.0
+icu_locale_core-2.4.0
+icu_normalizer-2.4.0
+icu_normalizer_data-2.4.0
+icu_properties-2.4.0
+icu_properties_data-2.4.0
+icu_provider-2.4.0
 idna-1.1.0
 idna_adapter-1.2.2
 image-0.25.10
@@ -201,20 +203,19 @@ indexmap-2.14.2
 interpolate_name-0.2.4
 is_terminal_polyfill-1.70.2
 itertools-0.14.0
-itoa-1.0.18
+itoa-1.0.19
 jobserver-0.1.35
-js-sys-0.3.106
+js-sys-0.3.107
 lazycell-1.3.0
 lazy_static-1.5.1
 lebe-0.5.3
-libc-0.2.190
+libc-0.2.191
 libfuzzer-sys-0.4.13
 libloading-0.8.9
-libm-0.2.16
 linux-raw-sys-0.12.1
 linux-raw-sys-0.4.15
 litemap-0.8.3
-log-0.4.34
+log-0.4.35
 loop9-0.1.5
 maybe-rayon-0.1.1
 md5-0.7.0
@@ -223,6 +224,8 @@ minimal-lexical-0.2.1
 miniz_oxide-0.8.9
 miniz_oxide-0.9.1
 moxcms-0.8.1
+multiversion-0.8.1
+multiversion-macros-0.8.1
 multiversion_no_op-1.0.0
 new_debug_unreachable-1.0.6
 nom-7.1.3
@@ -239,14 +242,14 @@ num-traits-0.2.19
 once_cell-1.21.4
 once_cell_polyfill-1.70.2
 onenote_parser-1.1.1
-openssl-0.10.81
+openssl-0.10.82
 openssl-macros-0.1.1
-openssl-sys-0.9.117
+openssl-sys-0.9.118
 paste-1.0.15
 pastey-0.1.1
 peeking_take_while-0.1.2
 percent-encoding-2.3.2
-pin-project-lite-0.2.17
+pin-project-lite-0.2.18
 pkg-config-0.3.34
 png-0.18.1
 potential_utf-0.1.6
@@ -256,8 +259,6 @@ primal-check-0.3.4
 proc-macro2-1.0.107
 profiling-1.0.18
 profiling-procmacros-1.0.18
-pulp-0.22.3
-pulp-wasm-simd-flag-0.1.1
 pxfm-0.1.30
 qoi-0.4.1
 quick-error-2.0.1
@@ -267,21 +268,19 @@ rand_chacha-0.9.0
 rand_core-0.9.5
 rav1e-0.8.1
 ravif-0.13.0
-raw-cpuid-11.6.0
 rayon-1.12.0
 rayon-core-1.13.0
-reborrow-0.5.5
 r-efi-5.3.0
 r-efi-6.0.0
-regex-1.13.1
-regex-automata-0.4.18
-regex-syntax-0.8.11
+regex-1.13.2
+regex-automata-0.4.19
+regex-syntax-0.8.12
 rgb-0.8.53
 rustc-hash-1.1.0
 rustdct-0.7.1
 rustfft-6.4.1
 rustix-0.38.44
-rustix-1.1.5
+rustix-1.1.6
 rustversion-1.0.23
 ruzstd-0.8.3
 sanitise-file-name-1.0.0
@@ -298,7 +297,7 @@ simd-adler32-0.3.10
 simd_helpers-0.1.0
 simdutf8-0.1.5
 slab-0.4.12
-smallvec-1.16.3
+smallvec-1.16.6
 stable_deref_trait-1.2.1
 strength_reduce-0.2.4
 string-cases-0.2.0
@@ -307,35 +306,37 @@ strum-0.27.2
 strum_macros-0.27.2
 syn-1.0.109
 syn-2.0.119
-syn-3.0.8
+syn-3.0.10
 synstructure-0.14.0
 tar-0.4.46
+target-features-0.1.6
 tempfile-3.27.0
 thiserror-1.0.69
 thiserror-2.0.21
 thiserror-impl-1.0.69
 thiserror-impl-2.0.21
 tiff-0.11.3
-tinystr-0.8.4
+tinystr-0.8.5
 tinyvec-1.13.3
 toml-0.5.11
 transpose-0.2.3
 twox-hash-2.1.5
 typenum-1.20.1
-unicode-ident-1.0.26
+unicode-ident-1.0.27
 unicode-segmentation-1.13.3
 url-2.5.8
-utf8_iter-1.0.4
+utf8_iter-1.1.0
 utf8parse-0.2.2
-uuid-1.28.0
+utf_types-1.0.0
+uuid-1.29.3
 vcpkg-0.2.15
 version_check-0.9.5
 v_frame-0.3.9
 wasip2-1.0.4+wasi-0.2.12
-wasm-bindgen-0.2.129
-wasm-bindgen-macro-0.2.129
-wasm-bindgen-macro-support-0.2.129
-wasm-bindgen-shared-0.2.129
+wasm-bindgen-0.2.130
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
 weezl-0.1.12
 which-4.4.2
 widestring-1.2.1
@@ -358,17 +359,17 @@ windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.52.6
 wit-bindgen-0.57.1
 writeable-0.6.4
-xattr-1.6.1
+xattr-1.7.0
 y4m-0.8.0
-yoke-0.8.3
+yoke-0.8.4
 yoke-derive-0.8.4
-zerocopy-0.8.62
-zerocopy-derive-0.8.62
+zerocopy-0.8.63
+zerocopy-derive-0.8.63
 zerofrom-0.1.8
 zerofrom-derive-0.1.8
 zerotrie-0.2.5
-zerovec-0.11.8
-zerovec-derive-0.11.6
+zerovec-0.11.9
+zerovec-derive-0.11.7
 zlib-rs-0.6.8
 zmij-1.0.23
 zune-core-0.5.3
@@ -386,10 +387,10 @@ CHKL_TIMESTAMPS=(
 )
 
 inherit cargo cflags-hardened chkl cmake eapi9-ver flag-o-matic lcnr llvm optfeature
-inherit python-any-r1 rustflags-hardened sandbox-changes secure-version systemd tmpfiles toolchain-funcs vf
+inherit python-any-r1 rustflags-hardened sandbox-changes systemd tmpfiles toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="72cd48c9faed4fa4afc22bc4ed0b9b19f8d3f8f7"
+	FALLBACK_COMMIT="fc11d725ccc7c9900ab1add88d790b4e7ae7debf"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/clamav-${MY_P}"
 	EGIT_REPO_URI="https://github.com/Cisco-Talos/clamav.git"
@@ -482,7 +483,7 @@ SLOT="0/live" # sts or lts or live
 IUSE+="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_57
+ebuild_revision_59
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -556,8 +557,8 @@ BDEPEND="
 		)
 	)
 	|| (
-		dev-lang/rust-bin:1.93.1
-		dev-lang/rust:1.93.1
+		dev-lang/rust-bin:${RUST_LLVM_22_PV}
+		dev-lang/rust:${RUST_LLVM_22_PV}
 	)
 "
 DEPEND="
@@ -635,6 +636,7 @@ einfo "Unpacking live sources"
 einfo "Unpacking tarball sources"
 		unpack "${MY_P}.tar.gz"
 	fi
+	#die
 	local expected_cargo_lock_fingerprint="0e8aae8a481ba6d0819fa3cf442e2de58358066dc6a87375466954a12fcdbc3502dfeb2e28f910c6c3d21cbbdf88e9f1d2dd5ea4a8ad5c15bb1dfb7b5d130780"
 	local actual_cargo_lock_fingerprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
 	if [[ "${actual_cargo_lock_fingerprint}" != "${expected_cargo_lock_fingerprint}" ]] ; then
@@ -666,7 +668,6 @@ src_unpack() {
 	# Uncomment before running convert-cargo-lock.sh
 	# Follow the comments below the convert-cargo-lock.sh output when done generating the cargo list.
 	#_unpack_sources
-	#die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack

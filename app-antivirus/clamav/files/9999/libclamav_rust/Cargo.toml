@@ -5,7 +5,7 @@ name = "clamav_rust"
 version = "0.0.1"
 
 [dependencies]
-flate2 = "1"
+flate2 = "1.1.2"
 hex = "0.4"
 libc = "0.2"
 log = { version = "0.4", features = ["std"] }
