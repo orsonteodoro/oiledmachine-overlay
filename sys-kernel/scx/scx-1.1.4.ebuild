@@ -7,7 +7,7 @@ EAPI=8
 
 # This ebuild uses a patch that was based on an AI generated code fix.
 
-# For requirements, see https://github.com/sched-ext/scx/tree/v1.0.20?tab=readme-ov-file#build--install
+# For requirements, see https://github.com/sched-ext/scx/tree/v1.1.4?tab=readme-ov-file#build--install
 
 # AL2026-01-01:  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1-3
 # C2026-02 (Native):  Rust 1.93.0, LLVM 21.1.8, Protobuf 6.33.1
@@ -15,26 +15,29 @@ EAPI=8
 # C2026-02 (F44):  Rust 1.93.1, LLVM 21.1.8, Protobuf 3.19.6
 # C2026-02 (F43):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
 # C2026-02 (F42):  Rust 1.93.0, LLVM 21.1.8, Protobuf 3.19.6
-# G23:  Rust 1.92.0, LLVM 21.1.8, Protobuf 6.31.1
+# G:  Rust 1.98.1, LLVM 22.1.8, Protobuf 6.31.1
+# G~:  Rust 1.99.0, LLVM 23.1.6, Protobuf 7.34.1
 # U24:  Rust 1.74.1, 1.75.0 (default), 1.76.0, 1.77.2, 1.78.0, 1.79.0, 1.80.1, 1.81.0, 1.82.0, 1.83.0, 1.84.1, 1.85.1, 1.89.0; LLVM 14-19 (18 default), Protobuf 3.21.12
-# U24 (CI):  Rust 1.91.1, LLVM 19, Protobuf 3.21.12
-# N25.11:  Rust 1.91.1, LLVM 21.1.7, Protobuf 6.32.1
+# U24 (CI):  Rust 1.100.0, LLVM 22, Protobuf 3.21.12
+# N25.11:  Rust 1.99.1, LLVM 21.1.8, Protobuf 7.36.2
 
-# Both LLVM 19 and LLVM 21 are required.
+# Upstream uses LLVM 22, Rust 1.100.0, protobuf-c 3.21.12.
+# Both LLVM 22 for protobuf-cpp, and LLVM 22 for project are required.
 # Ideally both should be aligned but not possible, but the package will still build.
-# LLVM 19 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
+# LLVM 22 - Required for protobuf-cpp 3.21.12 (LTS on D12/U24).
 #           Required for Linux kernel built with Clang 19 (LTS on D13)
-# LLVM 22 - Required for Rust 1.96.1 (Same as CI testing for lavd)
+# LLVM 23 - Required for Rust 1.100.1 (Previously the same as CI testing for lavd)
+
+inherit secure-version
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data" # For aws-lc-sys, AI said that it uses IPC, untrusted-data=no, sensitive-data=yes.
 GENERATE_LOCKFILE=0
-# Both llvm_slot_19 and llvm_slot_22 must be specified.
-LLVM_SLOT_PROTOBUF=19
-LLVM_SLOT_SCX=22
+LLVM_SLOT_PROTOBUF=22 # Same slot as dev-libs/protobuf3/3.21
+LLVM_SLOT_SCX=23 # Same slot used in Rust 1.100.0
 LLVM_COMPAT=( ${LLVM_SLOT_PROTOBUF} ${LLVM_SLOT_SCX} )
 # RUST_*_VER will be pinned to meet cargo lockfile requirements.
-RUST_MAX_VER="1.96.1" # LLVM 22.1
-RUST_MIN_VER="1.96.1" # LLVM 22.1
+RUST_MAX_VER="${RUST_LLVM_23_PV}" # LLVM 23.1
+RUST_MIN_VER="${RUST_LLVM_23_PV}" # LLVM 23.1
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 DISABLED_CRATES="
@@ -906,7 +909,6 @@ REQUIRED_USE+="
 "
 DEPEND="
 	>=dev-libs/libbpf-1.2.2:=
-	dev-libs/libbpf:=
 	sys-libs/libseccomp:=
 	virtual/libelf:=
 	virtual/zlib:=
@@ -923,8 +925,8 @@ BDEPEND="
 			dev-libs/protobuf:3/3.21[llvm_slot_${LLVM_SLOT_PROTOBUF}?,protoc(+)]
 		)
 		(
-			dev-cpp/abseil-cpp:20250512[llvm_slot_${LLVM_SLOT_PROTOBUF}?]
-			dev-libs/protobuf:6/6.33[llvm_slot_${LLVM_SLOT_PROTOBUF}?,protoc(+)]
+			dev-cpp/abseil-cpp:20260526[llvm_slot_${LLVM_SLOT_PROTOBUF}?]
+			dev-libs/protobuf:7/7.36[llvm_slot_${LLVM_SLOT_PROTOBUF}?,protoc(+)]
 		)
 	)
 	virtual/pkgconfig:*
@@ -936,8 +938,8 @@ BDEPEND="
 		llvm-core/clang:${LLVM_SLOT_SCX}=[llvm_targets_BPF(-)]
 		llvm-core/llvm:${LLVM_SLOT_SCX}=[llvm_targets_BPF(-)]
 		|| (
-			dev-lang/rust:1.96.1
-			dev-lang/rust-bin:1.96.1
+			dev-lang/rust:${RUST_LLVM_22_PV}
+			dev-lang/rust-bin:${RUST_LLVM_22_PV}
 		)
 	)
 "
@@ -1202,7 +1204,7 @@ einfo "Replacing with updated Cargo.lock"
 
 src_unpack() {
 	unpack ${A}
-	#die
+	die
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
 	else
