@@ -921,7 +921,7 @@ BDEPEND="
 	)
 "
 PDEPEND="
-	~sys-kernel/scx-loader-${PV}
+	>=sys-kernel/scx-loader-1.1.3
 "
 
 setup_kernel_config_production() {
