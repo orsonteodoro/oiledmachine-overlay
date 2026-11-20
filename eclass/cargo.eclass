@@ -37,7 +37,7 @@ fi
 #
 # Based on avaliable dev-lang/rust-bin or dev-lang/rust
 # oiledmachine-overlay:  It must be lowest available by distro to allow for the C/C++ scenario.
-_CARGO_ECLASS_RUST_MIN_VER="1.74.1" # LLVM 17.0
+_CARGO_ECLASS_RUST_MIN_VER="1.98.1" # LLVM 22.0
 
 case ${EAPI} in
 	8)
