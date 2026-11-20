@@ -5,14 +5,17 @@
 
 EAPI=8
 
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1"
+inherit secure-version
+
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 CRATES="
-addr2line-0.25.1
+addr2line-0.27.1
 adler2-2.0.1
-aho-corasick-1.1.4
+aho-corasick-1.1.5
 aligned-0.4.3
 aligned-vec-0.6.4
 anes-0.1.6
@@ -21,107 +24,114 @@ anstyle-1.0.14
 anstyle-parse-1.0.0
 anstyle-query-1.1.5
 anstyle-wincon-3.0.11
-anyhow-1.0.102
+anyhow-1.0.104
 aom-sys-0.3.3
-arbitrary-1.4.2
+arbitrary-1.5.0
 arg_enum_proc_macro-0.3.4
-arrayvec-0.7.7
+arrayvec-0.7.8
 assert_cmd-2.2.2
 as-slice-0.2.1
 autocfg-1.5.1
 av1-grain-0.2.5
 av-metrics-0.9.1
 av-scenechange-0.14.1
-backtrace-0.3.76
+backtrace-0.3.77
 bindgen-0.69.5
-bitflags-2.13.0
+bitflags-2.13.2
 bitstream-io-4.10.0
-bstr-1.12.2
+block-buffer-0.12.1
+bstr-1.14.0
 built-0.8.1
-bumpalo-3.20.3
-bytemuck-1.25.0
+bumpalo-3.20.4
+bytemuck-1.25.2
 byteorder-1.5.0
 byteorder-lite-0.1.0
 cast-0.3.0
-cc-1.2.65
+cc-1.11.2
 cexpr-0.6.0
 cfg-expr-0.15.8
-cfg-if-1.0.4
+cfg-if-1.0.5
+chacha20-0.10.2
 ciborium-0.2.2
 ciborium-io-0.2.2
 ciborium-ll-0.2.2
-clang-sys-1.8.1
-clap-4.6.1
-clap_builder-4.6.0
-clap_complete-4.6.5
-clap_derive-4.6.1
-clap_lex-1.1.0
+cipher-0.5.2
+clang-sys-1.9.1
+clap-4.6.9
+clap_builder-4.6.7
+clap_complete-4.6.12
+clap_derive-4.6.9
+clap_lex-1.1.2
 colorchoice-1.0.5
 console-0.15.11
-crc32fast-1.5.0
+cpufeatures-0.3.1
+crc32fast-1.5.5
 criterion-0.6.0
 criterion-plot-0.5.0
-crossbeam-0.8.4
-crossbeam-channel-0.5.15
-crossbeam-deque-0.8.6
-crossbeam-epoch-0.9.18
-crossbeam-queue-0.3.12
-crossbeam-utils-0.8.21
+crossbeam-0.8.5
+crossbeam-channel-0.5.17
+crossbeam-deque-0.8.8
+crossbeam-epoch-0.9.21
+crossbeam-queue-0.3.14
+crossbeam-utils-0.8.23
 crunchy-0.2.4
+crypto-common-0.2.2
 diff-0.1.13
 difflib-0.4.0
-either-1.16.0
+either-1.19.0
 encode_unicode-1.0.0
-env_filter-1.0.1
-env_logger-0.11.10
+env_filter-2.0.0
+env_logger-0.11.11
 equator-0.4.2
 equator-macro-0.4.2
-equivalent-1.0.2
-errno-0.3.14
+equivalent-1.0.3
+errno-0.3.15
 fdeflate-0.3.7
 fern-0.7.1
-find-msvc-tools-0.1.9
-flate2-1.1.9
-futures-core-0.3.32
-futures-task-0.3.32
-futures-util-0.3.32
-getrandom-0.3.4
+find-msvc-tools-0.1.15
+flate2-1.1.11
+futures-core-0.3.34
+futures-task-0.3.34
+futures-util-0.3.34
 getrandom-0.4.3
-gimli-0.32.3
+gimli-0.34.0
 git2-0.21.0
-glob-0.3.3
+glob-0.3.4
 half-2.7.1
 hashbrown-0.17.1
 heck-0.5.0
 home-0.5.12
+hybrid-array-0.4.15
 image-0.25.10
-indexmap-2.14.0
+indexmap-2.14.2
+inout-0.2.6
 interpolate_name-0.2.4
 is_terminal_polyfill-1.70.2
 itertools-0.10.5
 itertools-0.12.1
 itertools-0.13.0
 itertools-0.14.0
-itoa-1.0.18
+itoa-1.0.19
 ivf-0.1.4
-jobserver-0.1.34
-js-sys-0.3.103
+jobserver-0.1.35
+js-sys-0.3.107
 lab-0.11.0
 lazycell-1.3.0
-lazy_static-1.5.0
-libc-0.2.186
+lazy_static-1.5.1
+libc-0.2.191
 libdav1d-sys-0.7.1+libdav1d.1.4.3
 libfuzzer-sys-0.4.13
-libgit2-sys-0.18.5+1.9.4
+libgit2-sys-0.18.8+1.9.7
 libloading-0.8.9
-libz-sys-1.1.29
+libz-sys-1.1.33
 linux-raw-sys-0.12.1
 linux-raw-sys-0.4.15
-log-0.4.33
+log-0.4.35
 maybe-rayon-0.1.1
-memchr-2.8.2
+memchr-2.8.3
 minimal-lexical-0.2.1
 miniz_oxide-0.8.9
+miniz_oxide-0.9.1
 moxcms-0.8.1
 nasm-rs-0.3.2
 new_debug_unreachable-1.0.6
@@ -130,81 +140,77 @@ nom-8.0.0
 noop_proc_macro-0.3.0
 no_std_io2-0.9.4
 nu-ansi-term-0.50.3
-num-bigint-0.4.6
+num-bigint-0.4.8
 num-derive-0.4.2
-num-integer-0.1.46
+num-integer-0.1.47
 num-rational-0.4.2
 num-traits-0.2.19
-object-0.37.3
+object-0.40.0
 once_cell-1.21.4
 once_cell_polyfill-1.70.2
 oorandom-11.1.5
 pastey-0.1.1
-pin-project-lite-0.2.17
-pkg-config-0.3.33
+pin-project-lite-0.2.18
+pkg-config-0.3.34
 plotters-0.3.7
 plotters-backend-0.3.7
 plotters-svg-0.3.7
 png-0.18.1
-ppv-lite86-0.2.21
 predicates-3.1.4
 predicates-core-1.0.10
 predicates-tree-1.0.13
 pretty_assertions-1.4.1
 prettyplease-0.2.37
-proc-macro2-1.0.106
+proc-macro2-1.0.107
 profiling-1.0.18
 profiling-procmacros-1.0.18
-pxfm-0.1.29
+pxfm-0.1.30
 quickcheck-1.1.0
-quote-1.0.46
-rand-0.10.1
-rand-0.9.4
-rand_chacha-0.9.0
+quote-1.0.47
+rand-0.10.4
 rand_core-0.10.1
-rand_core-0.9.5
 rav1e-0.8.0
 rayon-1.12.0
 rayon-core-1.13.0
-r-efi-5.3.0
 r-efi-6.0.0
-regex-1.12.4
-regex-automata-0.4.14
-regex-syntax-0.8.11
-rustc-demangle-0.1.27
+regex-1.13.2
+regex-automata-0.4.19
+regex-syntax-0.8.12
+rustc-demangle-0.1.28
 rustc-hash-1.1.0
 rustix-0.38.44
-rustix-1.1.4
-rustversion-1.0.22
+rustix-1.1.6
+rustversion-1.0.23
 same-file-1.0.6
 scan_fmt-0.2.6
 semver-1.0.28
-serde-1.0.228
+serde-1.0.229
 serde-big-array-0.5.1
-serde_core-1.0.228
-serde_derive-1.0.228
-serde_json-1.0.150
+serde_core-1.0.229
+serde_derive-1.0.229
+serde_json-1.0.154
 serde_spanned-0.6.9
 sharded-slab-0.1.7
 shlex-1.3.0
 shlex-2.0.1
 signal-hook-0.3.18
 signal-hook-registry-1.4.8
-simd-adler32-0.3.9
+simd-adler32-0.3.10
 simd_helpers-0.1.0
 slab-0.4.12
-smallvec-1.15.2
+smallvec-1.16.6
 stable_deref_trait-1.2.1
-syn-2.0.118
+syn-2.0.119
+syn-3.0.10
 system-deps-6.2.2
 target-lexicon-0.12.16
 terminal_size-0.4.4
 termtree-0.5.1
 thiserror-1.0.69
-thiserror-2.0.18
+thiserror-2.0.21
 thiserror-impl-1.0.69
-thiserror-impl-2.0.18
-thread_local-1.1.9
+thiserror-impl-2.0.21
+thread_local-1.1.10
 tinytemplate-1.2.1
 toml-0.8.23
 toml_datetime-0.6.11
@@ -216,8 +222,9 @@ tracing-chrome-0.7.2
 tracing-core-0.1.36
 tracing-log-0.2.0
 tracing-subscriber-0.3.23
-unicode-ident-1.0.24
-unicode-width-0.2.2
+typenum-1.20.1
+unicode-ident-1.0.27
+unicode-width-0.2.3
 utf8parse-0.2.2
 valuable-0.1.1
 vcpkg-0.2.15
@@ -225,12 +232,11 @@ version-compare-0.2.1
 v_frame-0.3.9
 wait-timeout-0.2.1
 walkdir-2.5.0
-wasip2-1.0.4+wasi-0.2.12
-wasm-bindgen-0.2.126
-wasm-bindgen-macro-0.2.126
-wasm-bindgen-macro-support-0.2.126
-wasm-bindgen-shared-0.2.126
-web-sys-0.3.103
+wasm-bindgen-0.2.130
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
+web-sys-0.3.107
 which-4.4.2
 winapi-util-0.1.11
 windows_aarch64_gnullvm-0.52.6
@@ -246,20 +252,20 @@ windows_x86_64_gnu-0.52.6
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.52.6
 winnow-0.7.15
-wit-bindgen-0.57.1
 y4m-0.8.0
 yansi-1.0.1
-zerocopy-0.8.52
-zerocopy-derive-0.8.52
-zmij-1.0.21
+zerocopy-0.8.63
+zerocopy-derive-0.8.63
+zlib-rs-0.6.8
+zmij-1.0.23
 "
 
-inherit rustflags-hardened cargo
+inherit cflags-hardened rustflags-hardened cargo
 
 DESCRIPTION="The fastest and safest AV1 encoder"
 HOMEPAGE="https://github.com/xiph/rav1e/"
 if [[ ${PV} == *9999 ]] ; then
-	FALLBACK_COMMIT="564ae3b0007ae2b06893fd7166bf88c5a84c5b63"
+	FALLBACK_COMMIT="31435de9d76fddd38f6dcc31d4014574cebb2092"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/xiph/rav1e.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -280,12 +286,21 @@ SRC_URI+="
 LICENSE="BSD-2"
 # Dependent crate licenses
 LICENSE+="
-	Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD-2 BSD ISC MIT
-	UoI-NCSA Unicode-3.0
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+	BSD-2
+	ISC
+	MIT
+	Unicode-3.0
+	UoI-NCSA
 "
 RESTRICT="mirror" # Speed up downloads
 SLOT="0/"$(ver_cut "1-2" "${PV}")
-IUSE+=" +capi"
+IUSE+="
++capi
+ebuild_revision_3
+"
 
 ASM_DEP=">=dev-lang/nasm-2.15"
 BDEPEND="
@@ -326,6 +341,7 @@ eerror "QA:  Expected Cargo.lock fingerprint:  ${expected_cargo_lock_fingerprint
 }
 
 src_configure() {
+	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
 }
 
