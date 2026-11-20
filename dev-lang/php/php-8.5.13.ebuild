@@ -47,7 +47,7 @@ CHKL_TIMESTAMPS=(
 	"sys-libs/readline-9999"
 )
 
-inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib postgres secure-version systemd toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl flag-o-matic flag-o-matic-om libcxx-slot libstdcxx-slot multilib multiprocessing postgres secure-version systemd toolchain-funcs
 
 DESCRIPTION="The PHP language runtime engine"
 HOMEPAGE="https://www.php.net/"
@@ -61,7 +61,7 @@ LICENSE="PHP-3.01
 	unicode? ( BSD-2 LGPL-2.1 )"
 
 SLOT="$(ver_cut 1-2)"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~x64-macos"
 
 # We can build the following SAPIs in the given order.
 ALL_SAPIS=( embed cli cgi fpm apache2 phpdbg )
@@ -80,7 +80,7 @@ IUSE="${IUSE} acl apparmor argon2 avif bcmath berkdb bzip2 calendar
 	+flatfile ftp gd gdbm gmp +iconv inifile
 	intl iodbc ipv6 +jit jpeg ldap ldap-sasl libedit lmdb
 	mhash mssql mysql mysqli nls
-	odbc +opcache +opcache-jit pcntl pdo +phar +posix postgres png
+	odbc +opcache-jit pcntl pdo +phar +posix postgres png
 	qdbm readline selinux +session session-mm sharedmem
 	+simplexml snmp soap sockets sodium spell sqlite ssl sysvipc
 	systemd test test-full tidy tinycdb +tokenizer tokyocabinet truetype
@@ -119,6 +119,7 @@ RESTRICT="!test? ( test )"
 COMMON_DEPEND="
 	app-eselect/eselect-php:*[apache2?,fpm?]
 	>=dev-libs/libpcre2-${LIBPCRE2_PV}:=[jit?,unicode]
+	dev-libs/uriparser:=
 	>=virtual/libcrypt-2-r1:=
 	fpm? (
 		acl? ( >=sys-apps/acl-${ACL_PV}:= )
@@ -175,7 +176,7 @@ COMMON_DEPEND="
 	zlib? ( >=virtual/zlib-${ZLIB_PV}:= )
 "
 
-IDEPEND="app-eselect/eselect-php[apache2?,fpm?]"
+IDEPEND="app-eselect/eselect-php:*[apache2?,fpm?]"
 
 RDEPEND="${COMMON_DEPEND}
 	virtual/mta:*
@@ -242,14 +243,6 @@ php_install_ini() {
 	dodir "${PHP_EXT_INI_DIR#"${EPREFIX}"}"
 	dodir "${PHP_EXT_INI_DIR_ACTIVE#"${EPREFIX}"}"
 
-	if use opcache; then
-		elog "Adding opcache to $PHP_EXT_INI_DIR"
-		echo "zend_extension = opcache.so" >> \
-			 "${D}/${PHP_EXT_INI_DIR}"/opcache.ini
-		dosym "../ext/opcache.ini" \
-			  "${PHP_EXT_INI_DIR_ACTIVE#"${EPREFIX}"}/opcache.ini"
-	fi
-
 	# SAPI-specific handling
 	if [[ "${sapi}" == "fpm" ]] ; then
 		einfo "Installing FPM config files php-fpm.conf and www.conf"
@@ -277,6 +270,11 @@ pkg_setup() {
 
 src_prepare() {
 	default
+
+	# In src_configure() we make several copies of the source tree, so
+	# it is extra worthwhile to delete the unused bundled copies of
+	# these libraries.
+	rm -r ext/gd/libgd ext/uri/uriparser ext/pcre/pcre2lib || die
 
 	# In php-8.x, the FPM pool configuration files have been split off
 	# of the main config. By default the pool config files go in
@@ -342,13 +340,6 @@ src_prepare() {
 		rm ext/dba/tests/gh19706.phpt
 	fi
 
-	# Test fails, investigating. Currently skipping since
-	# the update should be prioritized due to security concerns.
-	rm sapi/fpm/tests/gh23288-opcache-interned-strings-buffer-pool.phpt || die
-
-	# One-off, somebody forgot to update a version constant
-	rm ext/reflection/tests/ReflectionZendExtension.phpt || die
-
 	local virt=$(systemd-detect-virt 2>/dev/null)
 	if [[ ${virt} == systemd-nspawn ]]; then
 		# If we are in a container where certain system calls can fail
@@ -359,10 +350,6 @@ src_prepare() {
 			ext/standard/tests/general_functions/proc_nice_basic.phpt \
 			|| die
 	fi
-
-	# Behavior was changed in 8.5 where this test now passes on musl
-	# (see upstream PR 22717), so not bothering to patch it in 8.4
-	rm ext/posix/tests/posix_fpathconf.phpt || die
 }
 
 src_configure() {
@@ -374,6 +361,12 @@ src_configure() {
 		use "${sapi}" && ENABLED_SAPIS+=( "${sapi}" )
 	done
 
+	addpredict /usr/share/snmp/mibs/.index #nowarn
+	addpredict /var/lib/net-snmp/mib_indexes #nowarn
+
+	# https://bugs.gentoo.org/866683, https://bugs.gentoo.org/913527
+	filter-lto
+
 	fix_mb_len_max
 
 	check-compiler-switch_end
@@ -384,12 +377,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	chkl_check_many_timestamps
 	cflags-hardened_append
-
-	addpredict /usr/share/snmp/mibs/.index #nowarn
-	addpredict /var/lib/net-snmp/mib_indexes #nowarn
-
-	# https://bugs.gentoo.org/866683, https://bugs.gentoo.org/913527
-	filter-lto
 
 	PHP_DESTDIR="${EPREFIX}/usr/$(get_libdir)/php${SLOT}"
 
@@ -452,7 +439,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_enable pcntl)
 		$(use_enable phar)
 		$(use_enable pdo)
-		$(use_enable opcache)
 		$(use_enable opcache-jit)
 		$(use_with postgres pgsql "$("${PG_CONFIG:-true}" --bindir)/..")
 		$(use_enable posix)
@@ -622,6 +608,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(use_with jit pcre-jit)
 	)
 
+	# The URI extension is new in PHP 8.5, and always available. We
+	# insist that it use the system copy of dev-libs/uriparser.
+	our_conf+=(
+		--with-external-uriparser
+	)
+
 	# Catch CFLAGS problems
 	# Fixes bug #14067.
 	# Changed order to run it in reverse for bug #32022 and #12021.
@@ -727,7 +719,6 @@ src_install() {
 		# (SAPI-independent) targets from there.
 		cd "${WORKDIR}/sapis-build/${sapi}" || die
 		emake INSTALL_ROOT="${D}" install-build install-programs
-		use opcache && emake INSTALL_ROOT="${D}" install-modules
 		break
 	done
 
@@ -856,6 +847,7 @@ src_test() {
 	SKIP_SLOW_TESTS=$(usex test-full 0 1) SKIP_IO_CAPTURE_TESTS=1 SKIP_PERF_SENSITIVE=1 REPORT_EXIT_STATUS=1 \
 		"${TEST_PHP_EXECUTABLE}" -n \
 		"${WORKDIR}/sapis-build/cli/run-tests.php" --offline -n -q --show-diff \
+		-j$(get_makeopts_jobs) \
 		$(usex test-full "--set-timeout 300" "") \
 		-d "session.save_path=${T}" \
 		|| die "tests failed"
