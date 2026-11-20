@@ -106,8 +106,8 @@ Trade offs for compiler slot retention:
 
 | Slot retention window | Costs                                                                               | Benefits                                                                                        |
 | ---                   | ---                                                                                 | ---                                                                                             |
-| 6 months (current)    | 1 month remediation deadline not met, rebuilds as slots drop                        | Full machine learning support, performance-critical,                                            |
-| 3 months              | Only Vulkan supported, rebuilds as slots drop, 1 month remediation deadline not met | Quicker and partial mitigation against miscompilation vulnerabilities                           |
+| 6 months (current)    | 1 month remediation deadline not met, rebuilds as slots drop                        | Full machine learning support, performance-critical                                             |
+| 3 months              | Only Vulkan supported, rebuilds as slots drop, 1 month remediation deadline not met | Quicker and partial mitigation against accumulated/backlogged miscompilation vulnerabilities    |
 | 1 months              | Only Vulkan supported, rebuilds as slots drop, frequent rebuilds                    | 1 month remediation deadline met, security-critical                                             |
 
 The slot retention rule for compilers may change.
