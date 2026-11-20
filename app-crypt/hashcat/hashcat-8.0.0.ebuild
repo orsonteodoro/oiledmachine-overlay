@@ -23,12 +23,14 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
+inherit secure-version
+
 CFLAGS_HARDENED_USE_CASE="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASE="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17 # Compiler default
 PYTHON_COMPAT=( "python3_"{11..15} )
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1" # LLVM 21.1
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 
 BACKENDS=(
 	iocl
@@ -156,7 +158,7 @@ CHKL_TIMESTAMPS=(
 )
 
 inherit cargo cflags-hardened chkl libcxx-slot libstdcxx-slot optfeature pax-utils python-r1 rocm-r1
-inherit rust rustflags-hardened secure-version toolchain-funcs
+inherit rust rustflags-hardened toolchain-funcs
 
 if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
@@ -177,7 +179,7 @@ SLOT="0"
 IUSE="
 ${BACKENDS[@]}
 doc brain cuda rocm video_cards_nvidia
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
@@ -291,8 +293,8 @@ src_prepare() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
-	rustflags-hardened_append	# For -sys crates
+	cflags-hardened_append		# For -sys crates
+	rustflags-hardened_append
 	default
 }
 
