@@ -71,7 +71,7 @@ exist in build files.
 | GCC 11                            | Limited [1]                           | U22 (11.2), G (11.5.0)                                                   | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                   | 1y ago                      |
 | GCC 13                            | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                                         | 2m ago                      |
-| GCC 14                            | Partially Supported                   | D13 (14.2), G (14.3.1_p20260604)                                         | 5m ago                      |
+| GCC 14                            | Partially supported                   | D13 (14.2), G (14.3.1_p20260604)                                         | 5m ago                      |
 | GCC 15 [c]                        | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)                                   | 5m ago                      |
 | GCC 16			    | Available                             | F45 (16.2.1), G (16.2.1_p20260926), Nunstable (16.2.0)                   | 3m ago                      |
 | GCC 17                            | Available but not supported           | G**                                                                      | Now                         |
