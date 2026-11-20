@@ -84,10 +84,8 @@ exist in build files.
 | PyPy:3.10                         | Not supported                         | Nunstable (7.3.19)                                                                     | 1y ago                      |
 | PyPy:3.11                         | Available                             | D13 (7.3.19), F43 (8.0.0), F44 (8.0.0), F45 (8.0.0), G (8.0.1), Nunstable (7.3.20)     | 1m ago                      |
 | PyPy:3.12                         | Available                             | F45 (8.0.0), G (8.0.1)                                                                 | 1m ago                      |
-| Rust <= 1.95.0                    | Not supported                         |                                                                                        | 7m ago                      |
-| Rust 1.96.1 [LTS]                 | Available                             | D13 (1.96.1)                                                                           | 5m ago                      |
-| Rust 1.97.1                       | Available                             |                                                                                        | 4m ago                      |
-| Rust 1.98.1                       | Available                             | G (1.98.1)                                                                             | 3m ago                      |
+| Rust <= 1.97.1                    | Not supported                         |                                                                                        | 4m ago                      |
+| Rust 1.98.1 [LTS]                 | Available                             | G (1.98.1)                                                                             | 3m ago                      |
 | Rust 1.99.0                       | Not supported                         |                                                                                        | 2m ago                      |
 | Rust 1.99.1                       | Fully supported                       | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)                            | 1m ago                      |
 | Rust 1.100.0 [RSC]                | WIP / Planned                         | F45 (1.100.1)                                                                          | 1w ago                      |
