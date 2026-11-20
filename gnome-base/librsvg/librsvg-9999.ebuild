@@ -15,16 +15,16 @@ RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS NPD OOBR PT"
 
 DISABLED_CRATES="
-librsvg-c-2.63.0
+librsvg-c-2.63.4
 pixbufloader-svg-0.0.1
-rsvg-bench-2.63.0
-rsvg_convert-2.63.0
+rsvg-bench-2.63.4
+rsvg_convert-2.63.4
 rsvg-fuzz-0.0.0
 "
 
 CRATES="
 adler2-2.0.1
-aes-0.9.3
+aes-0.9.4
 ahash-0.8.12
 aho-corasick-1.1.5
 alloca-0.4.0
@@ -36,32 +36,34 @@ anstyle-parse-1.0.0
 anstyle-query-1.1.5
 anstyle-wincon-3.0.11
 approx-0.5.1
-arbitrary-1.4.2
+arbitrary-1.5.0
 assert_cmd-2.2.2
 autocfg-1.5.1
 av-data-0.4.4
-bitflags-1.3.2
 bitflags-2.13.2
 bitreader-0.3.11
-bit-set-0.8.0
-bit-vec-0.8.0
+bit-set-0.11.1
+bit-vec-0.10.2
 block-0.1.6
 block-buffer-0.12.1
 block-padding-0.4.2
-bstr-1.13.1
-bumpalo-3.20.3
+borsh-1.8.1
+borsh-derive-1.8.1
+bstr-1.14.0
+bumpalo-3.20.4
 bytemuck-1.25.2
 byteorder-1.5.0
 byteorder-lite-0.1.0
-bytes-1.12.1
+bytes-1.12.2
 byte-slice-cast-1.2.3
-cairo-rs-0.22.9
+cairo-rs-0.22.11
 cairo-sys-rs-0.22.9
 cast-0.3.0
 cbc-0.2.1
-cc-1.4.5
-cfg-expr-0.20.9
-cfg-if-1.0.4
+cc-1.11.2
+cfg_aliases-0.2.2
+cfg-expr-0.20.11
+cfg-if-1.0.5
 chacha20-0.10.2
 chrono-0.4.45
 ci-0.0.0
@@ -69,19 +71,19 @@ ciborium-0.2.2
 ciborium-io-0.2.2
 ciborium-ll-0.2.2
 cipher-0.5.2
-clap-4.6.6
-clap_builder-4.6.6
-clap_complete-4.6.9
-clap_derive-4.6.4
-clap_lex-1.1.0
+clap-4.6.9
+clap_builder-4.6.7
+clap_complete-4.6.12
+clap_derive-4.6.9
+clap_lex-1.1.2
 colorchoice-1.0.5
 color_quant-1.1.0
-const-oid-0.10.2
+const-oid-0.10.3
 core_detect-1.0.0
 core-foundation-sys-0.8.7
 cpubits-0.1.1
 cpufeatures-0.3.1
-crc32fast-1.5.1
+crc32fast-1.5.5
 criterion-0.8.2
 criterion-plot-0.8.2
 crossbeam-deque-0.8.8
@@ -95,10 +97,7 @@ cssparser-macros-0.7.1
 data-url-0.3.2
 dav1d-0.11.1
 dav1d-sys-0.8.3
-defmt-1.1.1
-defmt-macros-1.1.1
-defmt-parser-1.0.0
-deranged-0.5.8
+deranged-0.5.9
 derive_more-2.1.1
 derive_more-impl-2.1.1
 diff-0.1.13
@@ -109,15 +108,15 @@ dlib-0.5.3
 dtoa-1.0.11
 dtoa-short-0.3.5
 ecb-0.2.1
-either-1.18.0
-encoding_rs-0.8.41
-equivalent-1.0.2
-errno-0.3.14
+either-1.19.0
+encoding_rs-0.8.44
+equivalent-1.0.3
+errno-0.3.15
 fallible_collections-0.4.9
 fastrand-2.5.0
 fdeflate-0.3.7
-find-msvc-tools-0.1.12
-flate2-1.1.10
+find-msvc-tools-0.1.15
+flate2-1.1.11
 float-cmp-0.10.0
 fnv-1.0.7
 form_urlencoded-1.2.2
@@ -128,24 +127,23 @@ futures-io-0.3.34
 futures-macro-0.3.34
 futures-task-0.3.34
 futures-util-0.3.34
-gdk-pixbuf-0.22.0
+gdk-pixbuf-0.22.11
 gdk-pixbuf-sys-0.22.9
-getrandom-0.3.4
 getrandom-0.4.3
 gif-0.14.2
-gio-0.22.9
-gio-sys-0.22.9
-gio-unix-0.22.8
-gio-unix-sys-0.22.9
+gio-0.22.11
+gio-sys-0.22.11
+gio-unix-0.22.11
+gio-unix-sys-0.22.11
 gio-win32-0.22.8
 gio-win32-sys-0.22.9
 glam-0.30.10
 glam-0.31.1
 glam-0.32.1
-glam-0.33.7
-glib-0.22.9
-glib-macros-0.22.9
-glib-sys-0.22.9
+glam-0.33.12
+glib-0.22.11
+glib-macros-0.22.11
+glib-sys-0.22.11
 gobject-sys-0.22.9
 half-2.7.1
 hashbrown-0.13.2
@@ -154,43 +152,43 @@ heck-0.5.0
 hybrid-array-0.4.15
 iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
-icu_collections-2.3.0
-icu_locale_core-2.3.0
-icu_normalizer-2.3.0
-icu_normalizer_data-2.3.0
-icu_properties-2.3.0
-icu_properties_data-2.3.0
-icu_provider-2.3.1
+icu_collections-2.4.0
+icu_locale_core-2.4.0
+icu_normalizer-2.4.0
+icu_normalizer_data-2.4.0
+icu_properties-2.4.0
+icu_properties_data-2.4.0
+icu_provider-2.4.0
 idna-1.1.0
 idna_adapter-1.2.2
 image-0.25.10
 image-webp-0.2.4
 indexmap-2.14.2
-inout-0.2.2
+inout-0.2.6
 is_terminal_polyfill-1.70.2
 itertools-0.13.0
 itertools-0.15.0
-itoa-1.0.18
-jiff-0.2.35
-jiff-core-0.1.0
-jiff-static-0.2.35
-jiff-tzdb-0.1.8
+itoa-1.0.19
+jiff-0.2.46
+jiff-core-0.1.8
+jiff-static-0.2.46
+jiff-tzdb-0.1.10
 jiff-tzdb-platform-0.1.3
 jobserver-0.1.35
-js-sys-0.3.105
+js-sys-0.3.107
 language-tags-0.3.2
-lazy_static-1.5.0
-libc-0.2.189
+lazy_static-1.5.1
+libc-0.2.191
 libfuzzer-sys-0.4.13
 libloading-0.8.9
-librsvg-2.63.0
+librsvg-2.63.4
 librsvg-rebind-0.3.0
 librsvg-rebind-sys-0.3.0
 linux-raw-sys-0.12.1
 litemap-0.8.3
 locale_config-0.3.0
 lock_api-0.4.14
-log-0.4.34
+log-0.4.35
 lopdf-0.44.0
 malloc_buf-0.0.6
 markup5ever-0.39.0
@@ -202,8 +200,6 @@ miniz_oxide-0.8.9
 miniz_oxide-0.9.1
 moxcms-0.8.1
 mp4parse-0.17.0
-multiversion-0.9.0
-multiversion-macros-0.9.0
 multiversion_no_op-1.0.0
 mutants-0.0.4
 nalgebra-0.35.0
@@ -228,7 +224,7 @@ page_size-0.6.0
 pango-0.22.9
 pangocairo-0.22.9
 pangocairo-sys-0.22.9
-pango-sys-0.22.9
+pango-sys-0.22.11
 parking_lot-0.12.5
 parking_lot_core-0.9.12
 percent-encoding-2.3.2
@@ -238,7 +234,7 @@ phf_generator-0.13.1
 phf_macros-0.13.1
 phf_shared-0.13.1
 phf_shared-0.14.0
-pin-project-lite-0.2.17
+pin-project-lite-0.2.18
 pkg-config-0.3.34
 plotters-0.3.7
 plotters-backend-0.3.7
@@ -247,40 +243,36 @@ png-0.18.1
 portable-atomic-1.15.0
 portable-atomic-util-0.2.8
 potential_utf-0.1.6
-powerfmt-0.2.0
-ppv-lite86-0.2.21
+powerfmt-0.2.1
 precomputed-hash-0.1.1
 predicates-3.1.4
 predicates-core-1.0.10
 predicates-tree-1.0.13
 pretty_assertions-1.4.1
 proc-macro2-1.0.107
-proptest-1.11.0
+proc-macro-crate-3.5.0
+proptest-1.12.0
 pxfm-0.1.30
 quick-error-1.2.3
 quick-error-2.0.1
 quote-1.0.47
-rand-0.10.2
-rand-0.9.5
-rand_chacha-0.9.0
+rand-0.10.4
 rand_core-0.10.1
-rand_core-0.9.5
-rand_xorshift-0.4.0
+rand_xorshift-0.5.0
 rangemap-1.8.0
 rawpointer-0.2.1
 rayon-1.12.0
 rayon-core-1.13.0
 rctree-0.6.0
 redox_syscall-0.5.18
-r-efi-5.3.0
 r-efi-6.0.0
-regex-1.13.1
-regex-automata-0.4.18
-regex-syntax-0.8.11
+regex-1.13.2
+regex-automata-0.4.19
+regex-syntax-0.8.12
 rgb-0.8.53
 rustc-hash-2.1.3
 rustc_version-0.4.1
-rustix-1.1.4
+rustix-1.1.6
 rustversion-1.0.23
 rusty-fork-0.3.1
 safe_arch-1.2.0
@@ -291,18 +283,18 @@ semver-1.0.28
 serde-1.0.229
 serde_core-1.0.229
 serde_derive-1.0.229
-serde_json-1.0.151
-serde_spanned-1.1.1
+serde_json-1.0.154
+serde_spanned-1.1.3
 servo_arc-0.4.3
-sha2-0.11.0
+sha2-0.11.1
 shell-words-1.1.1
 shlex-2.0.1
 simba-0.10.2
 simd-adler32-0.3.10
 simdutf8-0.1.5
-siphasher-1.0.3
+siphasher-1.0.4
 slab-0.4.12
-smallvec-1.16.0
+smallvec-1.16.6
 stable_deref_trait-1.2.1
 static_assertions-1.1.0
 string_cache-0.10.0
@@ -311,50 +303,50 @@ string_cache_codegen-0.6.1
 stringprep-0.1.5
 strsim-0.11.1
 syn-2.0.119
-syn-3.0.5
-synstructure-0.13.2
+syn-3.0.10
+synstructure-0.14.0
 system-deps-7.0.8
-system-deps-9.0.0
+system-deps-9.0.1
 target-lexicon-0.13.5
 tempfile-3.27.0
 tendril-0.5.1
 termtree-0.5.1
-thiserror-2.0.20
-thiserror-impl-2.0.20
+thiserror-2.0.21
+thiserror-impl-2.0.21
 time-0.3.55
 time-core-0.1.9
 time-macros-0.2.32
-tinystr-0.8.4
+tinystr-0.8.5
 tinytemplate-1.2.1
-tinyvec-1.13.2
-tinyvec_macros-0.1.1
-toml-1.1.5+spec-1.1.0
-toml_datetime-1.1.1+spec-1.1.0
-toml_parser-1.1.3+spec-1.1.0
-toml_writer-1.1.2+spec-1.1.0
+tinyvec-1.13.3
+toml-1.2.1+spec-1.1.0
+toml_datetime-1.1.3+spec-1.1.0
+toml_edit-0.25.19+spec-1.1.0
+toml_parser-1.1.5+spec-1.1.0
+toml_writer-1.2.0+spec-1.1.0
 typenum-1.20.1
 unarray-0.1.4
 unicode-bidi-0.3.18
-unicode-ident-1.0.24
-unicode-normalization-0.1.25
-unicode-properties-0.1.4
+unicode-ident-1.0.27
+unicode-normalization-0.1.26
+unicode-properties-0.1.5
 url-2.5.8
-utf8_iter-1.0.4
+utf8_iter-1.1.0
 utf8parse-0.2.2
+utf_types-1.0.0
 version_check-0.9.5
 version-compare-0.2.1
 wait-timeout-0.2.1
 walkdir-2.5.0
-wasip2-1.0.4+wasi-0.2.12
-wasm-bindgen-0.2.128
-wasm-bindgen-macro-0.2.128
-wasm-bindgen-macro-support-0.2.128
-wasm-bindgen-shared-0.2.128
+wasm-bindgen-0.2.130
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
 web_atoms-0.2.6
-web-sys-0.3.105
+web-sys-0.3.107
 weezl-0.1.12
 weezl-0.2.1
-wide-1.7.0
+wide-1.7.1
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.11
@@ -366,31 +358,32 @@ windows-link-0.2.1
 windows-result-0.4.1
 windows-strings-0.5.1
 windows-sys-0.61.2
-winnow-1.0.4
-wit-bindgen-0.57.1
+winnow-1.0.5
 writeable-0.6.4
 xml5ever-0.39.0
 yansi-1.0.1
 yeslogic-fontconfig-sys-6.0.1
-yoke-0.8.3
-yoke-derive-0.8.2
-zerocopy-0.8.57
-zerocopy-derive-0.8.57
+yoke-0.8.4
+yoke-derive-0.8.4
+zerocopy-0.8.63
+zerocopy-derive-0.8.63
 zerofrom-0.1.8
-zerofrom-derive-0.1.7
+zerofrom-derive-0.1.8
 zerotrie-0.2.5
-zerovec-0.11.8
-zerovec-derive-0.11.6
-zlib-rs-0.6.7
+zerovec-0.11.9
+zerovec-derive-0.11.7
+zlib-rs-0.6.8
 zmij-1.0.23
 zune-core-0.5.3
 zune-jpeg-0.5.15
 "
 
-PYTHON_COMPAT=( python3_{10..14} )
+PYTHON_COMPAT=( "python3_"{10..14} )
 
-RUST_MAX_VER="1.97.1"
-RUST_MIN_VER="1.97.1" # LLVM 22.1
+inherit secure-version
+
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_MULTILIB=1
 
 CHKL_TIMESTAMPS=(
@@ -407,7 +400,7 @@ CHKL_TIMESTAMPS=(
 inherit cargo cflags-hardened chkl gnome2 meson-multilib python-any-r1 rustflags-hardened rust-toolchain secure-version vala
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="c59f043241fef9c5dee5b11a6db2ee08ab390c58"
+	FALLBACK_COMMIT="a6ab2529560de5e17551a9ca3ed9e8a9b9bc9a2e"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/librsvg-librsvg-${MY_PV}"
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/librsvg.git"
@@ -440,7 +433,7 @@ SLOT="${API_VERSION%.*}/${API_VERSION}"
 
 IUSE+="
 avif gtk-doc +introspection +pixbuf-loader test +vala
-ebuild_revision_26
+ebuild_revision_28
 "
 RESTRICT="
 	!test? (
@@ -566,7 +559,7 @@ src_unpack() {
 	#die
 
 	local actual_cargo_lock_fingerprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
-	local expected_cargo_lock_fingerprint="93c2080ab148bf7cf39917e09d758bf0095555e25bda175cb5a5327567756f28da66eb43ebb7c0f54bac094d1f4531e705adff5867cc85f0d272b0470c92d362"
+	local expected_cargo_lock_fingerprint="712ee36b7dfe6baacec8c52f93d61200ced8a32171f6cc0f5c5d9d13243f51024de7c9c49a22ad66d3d06ab5c32ed3307f80b0a96de90bcb33a805352086c72b"
 	if [[ "${actual_cargo_lock_fingerprint}" != "${expected_cargo_lock_fingerprint}" ]] ; then
 eerror "QA:  Update the cargo lockfile fingerprint and the lockfile/cargo sections."
 eerror "The cargo fingerprint doesn't match.  Use the fallback-commit to continue."
@@ -605,8 +598,8 @@ einfo "rustc version:"
 
 multilib_src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
-	rustflags-hardened_append
+	cflags-hardened_append		# For *-sys crates
+	rustflags-hardened_append	# For integer overflow mitigation
 	local emesonargs=(
 		$(meson_feature avif)
 		$(meson_native_use_feature introspection)
