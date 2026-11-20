@@ -116,8 +116,8 @@ This is the fallback.  The slot retention window is adjusted to more
 security-critical if possible for high risk packages.  Sometimes, it is not
 possible to get the ideal pairing and a practical solution is required.  For
 example if a package uses C++17 (LTS), the package that uses LLVM_SLOT and C++
-may be forced to use [LTS] for Rust expecially if the package is a library
-package and not an App only package.
+may be forced to use [LTS] for Rust expecially if the package is a
+library/hybrid package and not an app only package.
 
 [4] Support is limited for problematic packages without AI assistant that cannot
 be updated to use the RSC compiler.
