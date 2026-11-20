@@ -104,13 +104,20 @@ primarily to barely meet AI stack support.
 
 Trade offs for compiler slot retention:
 
-| Slot retention window | Costs                                                                           | Benefits                                                                                        |
-| ---                   | ---                                                                             | ---                                                                                             |
-| 6 months (current)    | 1 month remediation deadline not met                                            | Full machine learning support, less stress for updates, performance-critical, more leisure time |
-| 3 months              | Only Vulkan supported, some update stress, 1 month remediation deadline not met | Quicker and partial mitigation against miscompilation vulnerabilities                           |
-| 1 months              | Only Vulkan supported, most update stress, frequent rebuilds, less leisure time | 1 month remediation deadline met, security-critical                                             |
+| Slot retention window | Costs                                                                               | Benefits                                                                                        |
+| ---                   | ---                                                                                 | ---                                                                                             |
+| 6 months (current)    | 1 month remediation deadline not met, rebuilds as slots drop                        | Full machine learning support, performance-critical,                                            |
+| 3 months              | Only Vulkan supported, rebuilds as slots drop, 1 month remediation deadline not met | Quicker and partial mitigation against miscompilation vulnerabilities                           |
+| 1 months              | Only Vulkan supported, rebuilds as slots drop, frequent rebuilds                    | 1 month remediation deadline met, security-critical                                             |
 
 The slot retention rule for compilers may change.
+
+This is the fallback.  The slot retention window is adjusted to more
+security-critical if possible and high risk packages.  Sometimes, it is not
+possible to get the ideal pairing and a practical solution is required.  For
+example if a package uses C++17 (LTS), the package that uses LLVM_SLOT and C++
+may be forced to use [LTS] for Rust expecially if the package is a library
+package and not an App only package.
 
 [4] Support is limited for problematic packages without AI assistant that cannot
 be updated to use the RSC compiler.
