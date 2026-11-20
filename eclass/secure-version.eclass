@@ -591,7 +591,7 @@ RUSTLS_FFI_PV=${RUSTLS_FFI_PV:-"0.15.1"}
 # We use 1 month because 14 or 3 days remediation CISA deadline is assumed for the worst case RCE from miscompilation vulnerability.
 RUST_PV=${RUST_PV:-"1.100.0"} # 1w ago, LLVM 23, within 1 month or latest security update, cpe:2.3:a:rust-lang:rust:*:*:*:*:*:*:*:*
 RUST_LLVM_ROLLING_PV=${RUST_LLVM_ROLLING_PV:-"1.100.0"} # 1w ago, LLVM 23, for build time stability, network facing allowed
-RUST_LLVM_LTS_PV=${RUST_LLVM_LTS_PV:-"1.96.1"} # 5m ago, LLVM 22, for build time stability, network facing disallowed
+RUST_LLVM_LTS_PV=${RUST_LLVM_LTS_PV:-"1.98.1"} # 3m ago, LLVM 22, for build time stability, network facing disallowed
 RUST_LLVM_LIVE_PV=${RUST_LLVM_LIVE_PV:-"9999"} # now, LLVM 23, live security-critical, web browser security standard
 RUST_LLVM_LIVE_TIMESTAMP=${RUST_LLVM_LIVE_TIMESTAMP:-"Fri, 6 Nov 2026 10:09:36 -0800"} # From https://github.com/rust-lang/rust/commits/main/src/version or https://github.com/rust-lang/rust/commit/<COMMIT_ID>.patch
 RUST_LLVM_LIVE_INTERNAL_VERSION=${RUST_LLVM_LIVE_INTERNAL_VERSION:-"1.102.0"} # From https://github.com/rust-lang/rust/commits/main/src/version

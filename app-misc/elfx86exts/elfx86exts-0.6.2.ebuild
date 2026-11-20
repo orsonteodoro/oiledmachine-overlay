@@ -3,89 +3,89 @@
 
 EAPI=8
 
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+inherit secure-version
+
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+RUST_MAX_VER="${RUST_LLVM_LTS_PV}"
+RUST_MIN_VER="${RUST_LLVM_LTS_PV}"
+RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 # Use `./convert-cargo-lock.sh 0.6.2 0.6.2` to generate
 
 CRATES="
-adler2-2.0.0
-anstream-0.6.18
-anstyle-1.0.10
-anstyle-parse-0.2.6
-anstyle-query-1.1.2
-anstyle-wincon-3.0.7
-assert_cmd-2.0.16
-bstr-1.11.3
+adler2-2.0.1
+anstream-1.0.0
+anstyle-1.0.14
+anstyle-parse-1.0.0
+anstyle-query-1.1.5
+anstyle-wincon-3.0.11
+assert_cmd-2.2.2
+bstr-1.14.0
 byteorder-1.5.0
 capstone-0.11.0
 capstone-sys-0.15.0
-cc-1.2.16
-cfg-if-1.0.0
-clap-4.5.31
-clap_builder-4.5.31
-clap_derive-4.5.28
-clap_lex-0.7.4
-colorchoice-1.0.3
-crc32fast-1.4.2
-derive_more-0.99.19
+cc-1.11.3
+cfg-if-1.0.5
+clap-4.6.9
+clap_builder-4.6.7
+clap_derive-4.6.9
+clap_lex-1.1.2
+colorchoice-1.0.5
+crc32fast-1.5.5
+derive_more-0.99.20
 difflib-0.4.0
-doc-comment-0.3.3
 elfx86exts-0.6.2
-escargot-0.5.13
-flate2-1.1.0
+escargot-0.5.15
+find-msvc-tools-0.1.15
+flate2-1.1.11
 heck-0.5.0
-is_terminal_polyfill-1.70.1
-itoa-1.0.14
-libc-0.2.170
-log-0.4.26
-memchr-2.7.4
+is_terminal_polyfill-1.70.2
+itoa-1.0.19
+libc-0.2.191
+log-0.4.35
+memchr-2.8.3
 memmap-0.7.0
-miniz_oxide-0.8.5
+miniz_oxide-0.9.1
 object-0.32.2
-once_cell-1.20.3
-predicates-3.1.3
-predicates-core-1.0.9
-predicates-tree-1.0.12
-proc-macro2-1.0.93
-quote-1.0.38
-regex-automata-0.4.9
+once_cell_polyfill-1.70.2
+predicates-3.1.4
+predicates-core-1.0.10
+predicates-tree-1.0.13
+proc-macro2-1.0.107
+quote-1.0.47
+regex-automata-0.4.19
 ruzstd-0.5.0
-ryu-1.0.19
-serde-1.0.218
-serde_derive-1.0.218
-serde_json-1.0.139
-shlex-1.3.0
+serde-1.0.229
+serde_core-1.0.229
+serde_derive-1.0.229
+serde_json-1.0.154
+shlex-2.0.1
+simd-adler32-0.3.10
 static_assertions-1.1.0
 strsim-0.11.1
-syn-2.0.98
+syn-2.0.119
+syn-3.0.10
 termtree-0.5.1
 twox-hash-1.6.3
-unicode-ident-1.0.17
+unicode-ident-1.0.27
 utf8parse-0.2.2
 wait-timeout-0.2.1
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-x86_64-pc-windows-gnu-0.4.0
-windows-sys-0.59.0
-windows-targets-0.52.6
-windows_aarch64_gnullvm-0.52.6
-windows_aarch64_msvc-0.52.6
-windows_i686_gnu-0.52.6
-windows_i686_gnullvm-0.52.6
-windows_i686_msvc-0.52.6
-windows_x86_64_gnu-0.52.6
-windows_x86_64_gnullvm-0.52.6
-windows_x86_64_msvc-0.52.6
+windows-link-0.2.1
+windows-sys-0.61.2
+zlib-rs-0.6.8
+zmij-1.0.23
 "
 
-inherit cargo lcnr
+inherit cargo cflags-hardened lcnr rustflags-hardened
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PN}-${PV}"
 SRC_URI="
-	https://github.com/pkgw/${PN}/archive/${PN}@${PV}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris)
+	https://github.com/pkgw/${PN}/archive/${PN}@${PV}.tar.gz -> ${P}.tar.gz
 "
 
 DESCRIPTION="Disassemble a x86 binary and print out used instruction sets"
@@ -101,7 +101,9 @@ LICENSE="
 	ZLIB
 "
 SLOT="0"
-IUSE+=" ebuild_revision_1"
+IUSE+="
+ebuild_revision_2
+"
 
 # @FUNCTION: cargo_src_unpack
 # @DESCRIPTION:
@@ -154,6 +156,12 @@ src_unpack() {
 #die
 	S="${WORKDIR}/${PN}-${PN}-${PV}" \
 	_cargo_src_unpack
+}
+
+src_configure() {
+	cflags-hardened_append		# For *-sys crates
+	rustflags-hardened_append	# For int overflow mitigation
+	cargo_src_configure
 }
 
 src_install() {
