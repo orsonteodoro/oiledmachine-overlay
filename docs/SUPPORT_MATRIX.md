@@ -105,11 +105,11 @@ made within 6 months and not EOL for security reasons.
 
 Trade offs for compiler slot retention:
 
-| Slot retention window | Costs                                                                           | Benefits                                                                                     |
-| ---                   | ---                                                                             | ---                                                                                          |
-| 6 months (current)    | 1 month remediation deadline not met                                            | Full machine learning support, less stress for updates, performance-critical, more fun time  |
-| 3 months              | Only Vulkan supported, some update stress, 1 month remediation deadline not met | Quicker and partial mitigation against miscompilation vulnerabilities                        |
-| 1 months              | Only Vulkan supported, most update stress, frequent rebuilds, less fun time     | 1 month remediation deadline met, security-critical                                          |
+| Slot retention window | Costs                                                                           | Benefits                                                                                        |
+| ---                   | ---                                                                             | ---                                                                                             |
+| 6 months (current)    | 1 month remediation deadline not met                                            | Full machine learning support, less stress for updates, performance-critical, more leisure time |
+| 3 months              | Only Vulkan supported, some update stress, 1 month remediation deadline not met | Quicker and partial mitigation against miscompilation vulnerabilities                           |
+| 1 months              | Only Vulkan supported, most update stress, frequent rebuilds, less leisure time | 1 month remediation deadline met, security-critical                                             |
 
 The slot retention rule for compilers may change.
 
