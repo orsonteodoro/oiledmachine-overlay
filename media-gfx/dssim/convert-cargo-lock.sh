@@ -82,12 +82,12 @@ main() {
 	echo
 	echo "Live:"
 	echo
-	echo -e "${s_live}" | sort
+	echo -e "${s_live}" | sort | uniq
 
 	echo
 	echo "Non-live:"
 	echo
-	echo -e "${s_nlive}" | sort | sed -e "/^coolercontrold-/d"
+	echo -e "${s_nlive}" | sort | uniq
 
 	echo ""
 
