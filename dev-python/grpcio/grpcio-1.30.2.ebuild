@@ -14,7 +14,7 @@ GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="3"
 PROTOBUF_CPP_SLOT="3"
 PROTOBUF_PYTHON_SLOT="3"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Up to 3.8.  See https://github.com/grpc/grpc/blob/v1.30.2/setup.py
+PYTHON_COMPAT=( "python3_11" ) # Up to 3.8.  See https://github.com/grpc/grpc/blob/v1.30.2/setup.py
 RE2_SLOT="20220623"
 
 _CXX_STANDARD=(
@@ -33,7 +33,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
+CHKL_TIMESTAMPS=(
+	"net-dns/c-ares-9999"
+)
+
+inherit chkl cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix secure-version
 
 KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
 S="${WORKDIR}/${GRPC_P}"
@@ -64,15 +68,11 @@ REQUIRED_USE="
 # See https://github.com/grpc/grpc/blob/v1.30.2/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.30.2/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20200225.0:${ABSEIL_CPP_SLOT}[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
-	dev-cpp/abseil-cpp:=
-	>=dev-libs/openssl-1.1.0g:0[-bindist(-)]
-	dev-libs/openssl:=
+	$(secure-version_gen_openssl_depends '' '[-bindist(-)]')
+	>=dev-cpp/abseil-cpp-20200225.0:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx11?,cxx_standard_cxx14?,cxx_standard_cxx17?]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
-	>=net-dns/c-ares-1.15.0
-	net-dns/c-ares:=
-	>=virtual/zlib-1.2.11
-	virtual/zlib:=
+	>=net-dns/c-ares-${C_ARES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -80,8 +80,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.8:0.29[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-0.29.8:0.29=[${PYTHON_USEDEP}]
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
@@ -117,6 +116,7 @@ python_prepare_all() {
 }
 
 python_configure() {
+	chkl_check_many_timestamps
 	cython_set_cython_slot "0.29"
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"

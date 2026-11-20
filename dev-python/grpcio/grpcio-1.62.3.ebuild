@@ -14,7 +14,7 @@ GRPC_P="${GRPC_PN}-${PV}"
 GRPC_SLOT="4"
 PROTOBUF_CPP_SLOT="4"
 PROTOBUF_PYTHON_SLOT="4.25"
-PYTHON_COMPAT=( "python3_"{10..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
+PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/grpc/grpc/blob/v1.62.3/setup.py
 RE2_SLOT="20220623"
 
 _CXX_STANDARD=(
@@ -32,7 +32,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
+CHKL_TIMESTAMPS=(
+	"net-dns/c-ares-9999"
+)
+
+inherit chkl cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix secure-version
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${GRPC_P}"
@@ -63,16 +67,11 @@ REQUIRED_USE="
 # See https://github.com/grpc/grpc/blob/v1.62.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.62.3/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20240116.0:${ABSEIL_CPP_SLOT}
-	dev-cpp/abseil-cpp:=
-	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
-	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}
-	dev-libs/re2:=
-	>=net-dns/c-ares-1.19.1
-	net-dns/c-ares:=
-	>=virtual/zlib-1.3
-	virtual/zlib:=
+	$(secure-version_gen_openssl_depends '' '[-bindist(-)]')
+	>=dev-cpp/abseil-cpp-20240116.0:${ABSEIL_CPP_SLOT}=
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}=
+	>=net-dns/c-ares-${C_ARES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -80,8 +79,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29:0.29[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-0.29:0.29=[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
@@ -111,6 +109,7 @@ python_prepare_all() {
 }
 
 python_configure() {
+	chkl_check_many_timestamps
 	cython_set_cython_slot "0.29"
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"

@@ -5,16 +5,16 @@ EAPI=8
 
 MY_PV=$(ver_cut "1-3" "${PV}")
 
-ABSEIL_CPP_SLOT="20250512"
+ABSEIL_CPP_SLOT="20260526"
 CXX_STANDARD=17
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-GRPC_SLOT="6"
-PROTOBUF_CPP_SLOT="6"
-PROTOBUF_PYTHON_SLOT="6"
-PYTHON_COMPAT=( "python3_"{10..14} ) # See https://github.com/grpc/grpc/blob/v1.75.1/src/python/grpcio/python_version.py
+GRPC_SLOT="7"
+PROTOBUF_CPP_SLOT="7"
+PROTOBUF_PYTHON_SLOT="7"
+PYTHON_COMPAT=( "python3_"{11..15} ) # See https://github.com/grpc/grpc/blob/v1.85.3/src/python/grpcio/python_version.py#L17
 RE2_SLOT="20250512"
 
 inherit libstdcxx-compat
@@ -27,7 +27,11 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix
+CHKL_TIMESTAMPS=(
+	"net-dns/c-ares-9999"
+)
+
+inherit chkl cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix secure-version
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${GRPC_P}"
@@ -49,20 +53,14 @@ ebuild_revision_12
 "
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.75.1/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.75.1/third_party
+# See https://github.com/grpc/grpc/blob/v1.85.3/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.85.3/third_party
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20250512.1:${ABSEIL_CPP_SLOT}
-	dev-cpp/abseil-cpp:=
-	>=dev-libs/openssl-1.1.1g:0[-bindist(-)]
-	dev-libs/openssl:=
-	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}
-	dev-libs/re2:=
-	>=dev-python/typing-extensions-4.12[${PYTHON_USEDEP}]
-	>=net-dns/c-ares-1.17.2
-	net-dns/c-ares:=
-	>=virtual/zlib-1.2.13
-	virtual/zlib:=
+	$(secure-version_gen_openssl_depends '' '[-bindist(-)]')
+	>=dev-cpp/abseil-cpp-20240722.0:${ABSEIL_CPP_SLOT}=
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}=
+	>=net-dns/c-ares-${C_ARES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -71,8 +69,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
 	>=dev-python/cython-3.1.1[${PYTHON_USEDEP}]
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	=dev-python/cython-3*:=[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
@@ -102,6 +99,7 @@ python_prepare_all() {
 }
 
 python_configure() {
+	chkl_check_many_timestamps
 	cython_set_cython_slot "3"
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"

@@ -1,0 +1,147 @@
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+MY_PV=$(ver_cut "1-3" "${PV}")
+
+ABSEIL_CPP_SLOT="20250512"
+CXX_STANDARD=17
+DISTUTILS_EXT=1
+DISTUTILS_USE_PEP517="setuptools"
+GRPC_PN="grpc"
+GRPC_P="${GRPC_PN}-${PV}"
+GRPC_SLOT="6"
+PROTOBUF_CPP_SLOT="6"
+PROTOBUF_PYTHON_SLOT="6"
+PYTHON_COMPAT=( "python3_"{11..14} ) # See https://github.com/grpc/grpc/blob/v1.81.2/src/python/grpcio/python_version.py
+RE2_SLOT="20250512"
+
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit libcxx-compat
+LLVM_COMPAT=(
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
+)
+
+CHKL_TIMESTAMPS=(
+	"net-dns/c-ares-9999"
+)
+
+inherit chkl cython distutils-r1 flag-o-matic libcxx-slot libstdcxx-slot multiprocessing prefix secure-version
+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+S="${WORKDIR}/${GRPC_P}"
+SRC_URI+="
+https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
+	-> ${GRPC_P}.tar.gz
+"
+
+DESCRIPTION="Python libraries for the high performance gRPC framework"
+HOMEPAGE="
+	https://grpc.io
+	https://github.com/grpc/grpc/tree/master/src/python/grpcio
+"
+LICENSE="Apache-2.0"
+SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
+IUSE+="
+doc protobuf
+ebuild_revision_12
+"
+# See src/include/openssl/crypto.h#L99 for versioning
+# See src/include/openssl/base.h#L187 for versioning
+# See https://github.com/grpc/grpc/blob/v1.81.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.81.2/third_party
+RDEPEND+="
+	$(secure-version_gen_openssl_depends '' '[-bindist(-)]')
+	>=dev-cpp/abseil-cpp-20250512.1:${ABSEIL_CPP_SLOT}=
+	>=dev-libs/re2-0.2022.04.01:${RE2_SLOT}=
+	>=dev-python/typing-extensions-4.12[${PYTHON_USEDEP}]
+	>=net-dns/c-ares-${C_ARES_PV}:=
+	>=virtual/zlib-${ZLIB_PV}:=
+"
+DEPEND+="
+	${RDEPEND}
+"
+# TODO: doc: requirements.bazel.txt
+BDEPEND+="
+	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.1.1[${PYTHON_USEDEP}]
+	=dev-python/cython-3*:=[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
+	doc? (
+		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
+		dev-python/alabaster[${PYTHON_USEDEP}]
+	)
+"
+PDEPEND+="
+	protobuf? (
+		~dev-python/grpcio-tools-${PV}[${PYTHON_USEDEP}]
+	)
+"
+PATCHES=(
+	"${FILESDIR}/grpcio-1.71.2-multislot-paths.patch"
+)
+
+distutils_enable_sphinx "doc/python/sphinx"
+
+pkg_setup() {
+	python_setup
+	libcxx-slot_verify
+	libstdcxx-slot_verify
+}
+
+python_prepare_all() {
+	distutils-r1_python_prepare_all
+	hprefixify setup.py
+}
+
+python_configure() {
+	chkl_check_many_timestamps
+	cython_set_cython_slot "3"
+	cython_python_configure
+	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
+	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
+	export PATH="${ESYSROOT}/usr/bin/grpc/${GRPC_SLOT}/bin:${PATH}"
+	export PYTHONPATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_PYTHON_SLOT}/lib/${EPYTHON}:${PYTHONPATH}"
+	# os.environ.get('GRPC_BUILD_WITH_BORING_SSL_ASM', True)
+	export GRPC_BUILD_WITH_BORING_SSL_ASM=
+	export GRPC_PYTHON_DISABLE_LIBC_COMPATIBILITY=1
+	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
+	export GRPC_PYTHON_BUILD_SYSTEM_ABSL=1
+	export GRPC_PYTHON_BUILD_SYSTEM_CARES=1
+	export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+	export GRPC_PYTHON_BUILD_SYSTEM_RE2=1
+	export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
+	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
+	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+	local libdir=$(get_libdir)
+	append-ldflags \
+		"-Wl,-L/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,-L/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/${libdir}" \
+		"-Wl,--rpath=/usr/lib/re2/${RE2_SLOT}/${libdir}" \
+		"-Wl,--rpath=/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/${libdir}"
+	sed -i \
+		-e "s|@RE2_SLOT@|${RE2_SLOT}|g" \
+		-e "s|@ABSEIL_CPP_SLOT@|${ABSEIL_CPP_SLOT}|g" \
+		"${S}/setup.py" \
+		|| die
+}
+
+src_install() {
+	distutils-r1_src_install
+
+	change_prefix() {
+	# Change of base /usr -> /usr/lib/grpc/${GRPC_SLOT}
+		local old_prefix="/usr/lib/${EPYTHON}"
+		local new_prefix="/usr/lib/grpc/${GRPC_SLOT}/lib/${EPYTHON}"
+		dodir $(dirname "${new_prefix}")
+		mv "${ED}${old_prefix}" "${ED}${new_prefix}" || die
+	}
+
+	python_foreach_impl change_prefix
+}
