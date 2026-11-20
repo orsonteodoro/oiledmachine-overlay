@@ -56,19 +56,19 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Compiler                          | Ebuild level of support               | Distro or CI image correspondence                                                      | Last updated since Nov 2026 |
+| Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI image correspondence                                                      | Last updated since Nov 2026 |
 | ---                               | ---                                   | ---                                                                                    | ---                         |
 | Clang <= 21                       | Not supported                         | D13 (21.1.8), F43 (21.1.8), G (21.1.8), Nunstable (21.1.8), U26 (21.1.8)               | 11m ago                     |
 | Clang 22 [C]                      | Partially supported                   | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
 | Clang 23                          | Available                             | F45 (23.1.5), G~ (23.1.5)                                                              | 3d ago                      |
 | Clang 24                          | Limited support                       | G**                                                                                    | Now                         |
-| Cython 0.29.37.1                  | Deprecated, limited [4]               | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                                         | 3y ago                      |
-| Cython 3.0.12                     | Deprecated, limited [4]               | D13 (3.0.11), U24 (3.0.8)                                                              | 1y ago                      |
-| Cython 3.1.0                      | Deprecated, limited [4]               | F43 (3.1.3), U26 (3.1.6)                                                               | 11m ago                     |
+| Cython 0.29.37.1 [4]              | Deprecated, limited [4]               | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                                         | 3y ago                      |
+| Cython 3.0.12 [4]                 | Deprecated, limited [4]               | D13 (3.0.11), U24 (3.0.8)                                                              | 1y ago                      |
+| Cython 3.1.0 [4]                  | Deprecated, limited [4]               | F43 (3.1.3), U26 (3.1.6)                                                               | 11m ago                     |
 | Cython 3.2.0 [LTS]                | Available                             | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                                 | 4m ago                      |
 | Cython 3.3.0 [RSC]                | Available                             | Nunstable (3.3.0)                                                                      | 3w ago                      |
 | GCC <= 10                         | Not supported                         |                                                                                        | 3y ago                      |
-| GCC 11                            | Limited [1]                           | U22 (11.2), G (11.5.0)                                                                 | 2y ago                      |
+| GCC 11 [1]                        | Limited [1]                           | U22 (11.2), G (11.5.0)                                                                 | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                                 | 1y ago                      |
 | GCC 13                            | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                                                       | 2m ago                      |
 | GCC 14                            | Partially supported                   | D13 (14.2), G (14.3.1_p20260604)                                                       | 5m ago                      |
@@ -98,12 +98,10 @@ exist in build files.
 [1] Only Godot allowed for video game porting into extended LTS distros
 (e.g. D12, U22, U24).
 
-[2] Skipped since most projects use either F45, Nunstable, U22, U24, U26 for
-CI/CD testing.
+[3a] The oldest slot is typically LTS and the newest slot is typically rolling.
 
-[3] For compilers in general, slots are only supported if a tagged released was
-made within 6 months and not EOL for security reasons.  The oldest slot is
-typically LTS and the newest slot is typically rolling.
+[3b] For compilers in general, slots are only supported if a tagged released was
+made within 6 months and not EOL for security reasons.
 
 Trade offs for compiler slot retention:
 
