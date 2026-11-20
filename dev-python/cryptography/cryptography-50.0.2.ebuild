@@ -3,62 +3,66 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
 
 CARGO_OPTIONAL="yes"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYPI_VERIFY_REPO="https://github.com/pyca/cryptography"
-PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
+PYTHON_COMPAT=( "python3_"{10..15} "pypy3_11" )
 PYTHON_REQ_USE="threads(+)"
 
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1" # LLVM 21.1
+inherit secure-version
+
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 
 # Misnomer
 DISABLED_CRATES="
-cryptography-cffi-0.50.0
-cryptography-crypto-0.50.0
-cryptography-keepalive-0.50.0
-cryptography-key-parsing-0.50.0
-cryptography-openssl-0.50.0
-cryptography-rust-0.50.0
-cryptography-x509-0.50.0
-cryptography-x509-verification-0.50.0
+cryptography-cffi-0.50.2
+cryptography-crypto-0.50.2
+cryptography-keepalive-0.50.2
+cryptography-key-parsing-0.50.2
+cryptography-openssl-0.50.2
+cryptography-rust-0.50.2
+cryptography-x509-0.50.2
+cryptography-x509-verification-0.50.2
 "
 
 CRATES="
-asn1-0.24.1
-asn1_derive-0.24.1
+asn1-0.24.2
+asn1_derive-0.24.2
 base64-0.23.1
-bitflags-2.13.1
-cc-1.4.3
-cfg-if-1.0.4
-find-msvc-tools-0.1.11
+bitflags-2.13.2
+cc-1.11.2
+cfg-if-1.0.5
+find-msvc-tools-0.1.15
 foreign-types-0.3.2
 foreign-types-shared-0.1.1
 heck-0.5.0
-itoa-1.0.18
-libc-0.2.189
+itoa-1.0.19
+libc-0.2.191
 once_cell-1.21.4
-openssl-0.10.81
+openssl-0.10.82
 openssl-macros-0.1.1
-openssl-sys-0.9.117
+openssl-sys-0.9.118
 pem-4.0.0
 pkg-config-0.3.34
 portable-atomic-1.15.0
 proc-macro2-1.0.107
-pyo3-0.29.2
-pyo3-build-config-0.29.2
-pyo3-ffi-0.29.2
-pyo3-macros-0.29.2
-pyo3-macros-backend-0.29.2
+pyo3-0.29.3
+pyo3-build-config-0.29.3
+pyo3-ffi-0.29.3
+pyo3-macros-0.29.3
+pyo3-macros-backend-0.29.3
 quote-1.0.47
 self_cell-1.3.0
 shlex-2.0.1
 syn-2.0.119
-target-lexicon-0.13.5
-unicode-ident-1.0.24
+syn-3.0.10
+target-lexicon-0.13.6
+unicode-ident-1.0.27
 vcpkg-0.2.15
 "
 
@@ -68,7 +72,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 )
 
-inherit cargo chkl distutils-r1 flag-o-matic pypi rustflags-hardened secure-version
+inherit cargo cflags-hardened chkl distutils-r1 flag-o-matic pypi rustflags-hardened
 
 VEC_P=cryptography_vectors-$(ver_cut 1-3)
 DESCRIPTION="Library providing cryptographic recipes and primitives"
@@ -103,7 +107,7 @@ LICENSE+="
 RESTRICT="mirror" # Speed up and prevent snooping
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
-IUSE+=" ebuild_revision_3"
+IUSE+=" ebuild_revision_4"
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/cffi-2.0.0:=[${PYTHON_USEDEP}]
@@ -150,7 +154,7 @@ src_unpack() {
 	fi
 
 	cargo_src_unpack
-	#die
+	die
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
@@ -175,14 +179,15 @@ src_prepare() {
 
 python_configure_all() {
 	chkl_check_many_timestamps
-	filter-lto # bug #903908
+	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
+	filter-lto # bug #903908
 }
 
 python_test() {
 	local -x PYTHONPATH="${PYTHONPATH}:${WORKDIR}/${VEC_P}"
 	local EPYTEST_IGNORE=(
-		tests/bench
+		"tests/bench"
 	)
 	epytest
 }
