@@ -101,7 +101,8 @@ exist in build files.
 [3a] The oldest slot is typically LTS and the newest slot is typically rolling.
 
 [3b] For compilers in general, slots are only supported if a tagged released was
-made within 6 months and not EOL for security reasons.
+made within 6 months and not EOL for security reasons.  6 months was chosen
+primarily to barely meet AI stack support.
 
 Trade offs for compiler slot retention:
 
