@@ -6,11 +6,14 @@ EAPI=8
 
 # U22
 
+inherit secure-version
+
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} ) # U22 supports up to 3.11, gnome-misc/secrets supports 12-14
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+RUST_MAX_VER="${RUST_LLVM_23_PV}"
+RUST_MIN_VER="${RUST_LLVM_23_PV}"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 declare -A GIT_CRATES=(
@@ -22,81 +25,86 @@ zxcvbn-rs-py-0.3.0
 # pyo3@0.27.1 must be a pinned version.
 # From "./convert-cargo-lock.sh 0.3.0 0.3.0"
 CRATES="
-aho-corasick-1.1.4
-android_system_properties-0.1.5
-autocfg-1.5.0
-bit-set-0.5.3
-bit-vec-0.6.3
-bumpalo-3.19.0
-cc-1.2.48
-cfg-if-1.0.4
-chrono-0.4.42
+aho-corasick-1.1.5
+android_system_properties-0.1.6
+autocfg-1.5.1
+bit-set-0.8.0
+bit-vec-0.8.0
+bumpalo-3.20.4
+cc-1.11.3
+cfg-if-1.0.5
+chrono-0.4.45
 core-foundation-sys-0.8.7
 darling-0.20.11
 darling_core-0.20.11
 darling_macro-0.20.11
-deranged-0.5.5
+deranged-0.5.9
 derive_builder-0.20.2
 derive_builder_core-0.20.2
 derive_builder_macro-0.20.2
-either-1.15.0
-fancy-regex-0.13.0
-find-msvc-tools-0.1.5
+either-1.19.0
+fancy-regex-0.18.0
+find-msvc-tools-0.1.15
 fnv-1.0.7
+futures-core-0.3.34
+futures-task-0.3.34
+futures-util-0.3.34
 heck-0.5.0
-iana-time-zone-0.1.64
+iana-time-zone-0.1.65
 iana-time-zone-haiku-0.1.2
 ident_case-1.0.1
-indoc-2.0.7
-itertools-0.13.0
-js-sys-0.3.83
-lazy_static-1.5.0
-libc-0.2.177
-log-0.4.28
-memchr-2.7.6
+indoc-2.0.8
+itertools-0.14.0
+js-sys-0.3.107
+lazy_static-1.5.1
+libc-0.2.191
+log-0.4.35
+memchr-2.8.3
 memoffset-0.9.1
-num-conv-0.1.0
+num-conv-0.2.2
 num-traits-0.2.19
-once_cell-1.21.3
-portable-atomic-1.11.1
-powerfmt-0.2.0
-proc-macro2-1.0.103
-pyo3-0.27.1
-pyo3-build-config-0.27.1
-pyo3-ffi-0.27.1
-pyo3-macros-0.27.1
-pyo3-macros-backend-0.27.1
-quote-1.0.42
-regex-1.12.2
-regex-automata-0.4.13
-regex-syntax-0.8.8
-rustversion-1.0.22
-serde-1.0.228
-serde_core-1.0.228
-serde_derive-1.0.228
-shlex-1.3.0
+once_cell-1.21.4
+pin-project-lite-0.2.18
+portable-atomic-1.15.0
+powerfmt-0.2.1
+proc-macro2-1.0.107
+pyo3-0.27.2
+pyo3-build-config-0.27.2
+pyo3-ffi-0.27.2
+pyo3-macros-0.27.2
+pyo3-macros-backend-0.27.2
+quote-1.0.47
+regex-1.13.2
+regex-automata-0.4.19
+regex-syntax-0.8.12
+rustversion-1.0.23
+serde_core-1.0.229
+serde_derive-1.0.229
+shlex-2.0.1
+slab-0.4.12
 strsim-0.11.1
-syn-2.0.111
-target-lexicon-0.13.3
-time-0.3.44
-time-core-0.1.6
-unicode-ident-1.0.22
+syn-2.0.119
+syn-3.0.10
+target-lexicon-0.13.6
+time-0.3.55
+time-core-0.1.9
+unicode-ident-1.0.27
 unindent-0.2.4
-wasm-bindgen-0.2.106
-wasm-bindgen-macro-0.2.106
-wasm-bindgen-macro-support-0.2.106
-wasm-bindgen-shared-0.2.106
-web-sys-0.3.83
+wasm-bindgen-0.2.130
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
+web-sys-0.3.107
 windows-core-0.62.2
 windows-implement-0.60.2
 windows-interface-0.59.3
 windows-link-0.2.1
 windows-result-0.4.1
 windows-strings-0.5.1
-zxcvbn-3.1.0
+zxcvbn-3.1.1
 "
 
-inherit cargo distutils-r1 pypi rust rustflags-hardened
+inherit cargo cflags-hardened distutils-r1 pypi rust rustflags-hardened
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
 S="${WORKDIR}/${PN}-${PV}"
@@ -116,7 +124,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_11"
+IUSE+="
+ebuild_revision_12
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -142,12 +152,13 @@ pkg_setup() {
 
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
+	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
 }
 
 src_unpack() {
 	unpack ${A}
-#	die
+	die
 	cargo_src_unpack
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
