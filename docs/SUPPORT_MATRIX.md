@@ -62,11 +62,11 @@ exist in build files.
 | Clang 22 [c]                      | Partially supported                   | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)       | 5m ago                      |
 | Clang 23                          | Available                             | F45 (23.1.5), G~ (23.1.5)                                                | 3d ago                      |
 | Clang 24                          | Limited support                       | G**                                                                      | Now                         |
-| Cython 0.29.37.1                  | Fully supported                       | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                           | 3y ago                      |
-| Cython 3.0.12                     | Fully Supported                       | D13 (3.0.11), U24 (3.0.8)                                                | 1y ago                      |
-| Cython 3.1.0                      | Fully supported                       | F43 (3.1.3), U26 (3.1.6)                                                 | 11m ago                     |
-| Cython 3.2.0                      | Not supported                         | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                   | 4m ago                      |
-| Cython 3.3.0                      | Not supported                         | Nunstable (3.3.0)                                                        | 3w ago                      |
+| Cython 0.29.37.1                  | Deprecated, limited [4]               | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                           | 3y ago                      |
+| Cython 3.0.12                     | Deprecated, limited [4]               | D13 (3.0.11), U24 (3.0.8)                                                | 1y ago                      |
+| Cython 3.1.0                      | Deprecated, limited [4]               | F43 (3.1.3), U26 (3.1.6)                                                 | 11m ago                     |
+| Cython 3.2.0 [LTS]                | Not supported                         | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                   | 4m ago                      |
+| Cython 3.3.0 [RSC]                | Not supported                         | Nunstable (3.3.0)                                                        | 3w ago                      |
 | GCC <= 10                         | Not supported                         |                                                                          | 3y ago                      |
 | GCC 11                            | Limited [1]                           | U22 (11.2), G (11.5.0)                                                   | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                   | 1y ago                      |
@@ -90,8 +90,12 @@ exist in build files.
 [2] Skipped since most projects use either F45, Nunstable, U22, U24, U26 for
 CI/CD testing.
 
-[3] GCC and Clang slots are only supported if a tagged released was made within
-6 months and not EOL for security reasons.
+[3] For compilers in general, slots are only supported if a tagged released was
+made within 6 months and not EOL for security reasons.  The oldest slot is
+typically LTS and the newest slot is typically rolling.
+
+[4] Support is limited for problematic packages without AI assistant that cannot
+be updated to use the RSC compiler.
 
 Rows marked with [c] are the current development slots for C/C++ development for
 LTS.
