@@ -54,32 +54,30 @@ DEPEND="
 "
 # <dev-python/setuptools-60[${PYTHON_USEDEP}] relaxed for python3_11
 BDEPEND="
-	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_USEDEP}]
-		dev-python/pip[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
-	' python3_{10..11})
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/pip[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
+		dev-python/jupyter[${PYTHON_USEDEP}]
 		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
 	)
 	test? (
-		$(python_gen_any_dep '
+		(
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
 			virtual/numpy[${PYTHON_USEDEP}]
-		')
-		$(python_gen_cond_dep '
-			dev-python/line-profiler[${PYTHON_USEDEP}]
-		' python3_{10..11})
-		doc? (
-			$(python_gen_cond_dep '
-				dev-python/jupyter[${PYTHON_USEDEP}]
-			' python3_{10..11})
+		)
+		(
+			dev-python/jupyter[${PYTHON_USEDEP}]
+			<dev-python/line-profiler-4[${PYTHON_USEDEP}]
 		)
 	)
 "
+# For the above test section, the groups are
+# test-requirements
+# test-requirements-cython
 PATCHES=(
 	"${FILESDIR}/${PN}-0.29.22-spawn-multiprocessing.patch"
 	"${FILESDIR}/${PN}-0.29.23-test_exceptions-py310.patch"

@@ -60,22 +60,14 @@ DEPEND="
 "
 # <dev-python/setuptools-60[${PYTHON_USEDEP}] relaxed for python3_11
 BDEPEND="
-	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_USEDEP}]
-		dev-python/pip[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
-	' python3_{10..11})
-	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_USEDEP}]
-		dev-python/pip[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
-	' python3_12)
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/pip[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
-		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-7.2.6[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-issues-5.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-tabs-3.4.4[${PYTHON_USEDEP}]
-		>=dev-python/jinja2-3.1.3[${PYTHON_USEDEP}]
+		>=dev-python/Jinja2-3.1.3[${PYTHON_USEDEP}]
 		>=dev-python/jupyter-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/alabaster-0.7.16[${PYTHON_USEDEP}]
 		>=dev-python/anyio-4.2.0[${PYTHON_USEDEP}]
@@ -85,7 +77,7 @@ BDEPEND="
 		>=dev-python/asttokens-2.4.1[${PYTHON_USEDEP}]
 		>=dev-python/async-lru-2.0.4[${PYTHON_USEDEP}]
 		>=dev-python/attrs-23.2.0[${PYTHON_USEDEP}]
-		>=dev-python/babel-2.14.0[${PYTHON_USEDEP}]
+		>=dev-python/Babel-2.14.0[${PYTHON_USEDEP}]
 		>=dev-python/beautifulsoup4-4.12.2[${PYTHON_USEDEP}]
 		>=dev-python/bleach-6.1.0[${PYTHON_USEDEP}]
 		>=dev-python/certifi-2023.11.17[${PYTHON_USEDEP}]
@@ -115,15 +107,15 @@ BDEPEND="
 		>=dev-python/jupyter-console-6.6.3[${PYTHON_USEDEP}]
 		>=dev-python/jupyter-events-0.9.0[${PYTHON_USEDEP}]
 		>=dev-python/jupyter-lsp-2.2.1[${PYTHON_USEDEP}]
-		>=dev-python/jupyter_client-8.6.0[${PYTHON_USEDEP}]
-		>=dev-python/jupyter_core-5.7.1[${PYTHON_USEDEP}]
-		>=dev-python/jupyter_server-2.12.4[${PYTHON_USEDEP}]
-		>=dev-python/jupyter_server_terminals-0.5.1[${PYTHON_USEDEP}]
+		>=dev-python/jupyter-client-8.6.0[${PYTHON_USEDEP}]
+		>=dev-python/jupyter-core-5.7.1[${PYTHON_USEDEP}]
+		>=dev-python/jupyter-server-2.12.4[${PYTHON_USEDEP}]
+		>=dev-python/jupyter-server_terminals-0.5.1[${PYTHON_USEDEP}]
 		>=dev-python/jupyterlab-4.0.10[${PYTHON_USEDEP}]
 		>=dev-python/jupyterlab-widgets-3.0.9[${PYTHON_USEDEP}]
-		>=dev-python/jupyterlab_pygments-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/jupyterlab_server-2.25.2[${PYTHON_USEDEP}]
-		>=dev-python/MarkupSafe-2.1.3[${PYTHON_USEDEP}]
+		>=dev-python/jupyterlab-pygments-0.3.0[${PYTHON_USEDEP}]
+		>=dev-python/jupyterlab-server-2.25.2[${PYTHON_USEDEP}]
+		>=dev-python/markupsafe-2.1.3[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-inline-0.1.6[${PYTHON_USEDEP}]
 		>=dev-python/mistune-3.0.2[${PYTHON_USEDEP}]
 		>=dev-python/nbclient-0.9.0[${PYTHON_USEDEP}]
@@ -150,7 +142,7 @@ BDEPEND="
 		>=dev-python/pyyaml-6.0.1[${PYTHON_USEDEP}]
 		>=dev-python/pyzmq-25.1.2[${PYTHON_USEDEP}]
 		>=dev-python/qtconsole-5.5.1[${PYTHON_USEDEP}]
-		>=dev-python/QtPy-2.4.1[${PYTHON_USEDEP}]
+		>=dev-python/qtpy-2.4.1[${PYTHON_USEDEP}]
 		>=dev-python/referencing-0.32.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 		>=dev-python/rfc3339-validator-0.1.4[${PYTHON_USEDEP}]
@@ -174,7 +166,7 @@ BDEPEND="
 		>=dev-python/tornado-6.4[${PYTHON_USEDEP}]
 		>=dev-python/traitlets-5.14.1[${PYTHON_USEDEP}]
 		>=dev-python/types-python-dateutil-2.8.19.20240106[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-4.9.0[${PYTHON_USEDEP}]
+		>=dev-python/typing_extensions-4.9.0[${PYTHON_USEDEP}]
 		>=dev-python/uri-template-1.3.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/wcwidth-0.2.13[${PYTHON_USEDEP}]
@@ -185,36 +177,27 @@ BDEPEND="
 		>=dev-python/zipp-3.17.0[${PYTHON_USEDEP}]
 	)
 	test? (
-		$(python_gen_any_dep '
+		(
+			virtual/numpy[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
+			dev-python/pycodestyle[${PYTHON_USEDEP}]
+			dev-python/setuptools[${PYTHON_USEDEP}]
 			>=dev-python/abi3audit-0.0.22[${PYTHON_USEDEP}]
-			dev-python/setuptools[${PYTHON_USEDEP}]
-			dev-python/coverage[${PYTHON_USEDEP}]
-			dev-python/pycodestyle[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
-		')
-		$(python_gen_cond_dep '
-			dev-python/coverage[${PYTHON_USEDEP}]
-			dev-python/pycodestyle[${PYTHON_USEDEP}]
-			dev-python/setuptools[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
-		' python3_12)
+		)
+		(
+			!=dev-python/line_profiler-4*
+			dev-python/ipython[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
 		$(python_gen_cond_dep '
 			dev-python/interpreters-pep734[${PYTHON_USEDEP}]
-		' python3_12)
-		$(python_gen_cond_dep '
-			dev-python/coverage[${PYTHON_USEDEP}]
-			dev-python/line-profiler[${PYTHON_USEDEP}]
-			dev-python/pycodestyle[${PYTHON_USEDEP}]
-			dev-python/pytest[${PYTHON_USEDEP}]
-			virtual/numpy[${PYTHON_USEDEP}]
-		' python3_{10..11})
-		doc? (
-			$(python_gen_cond_dep '
-				dev-python/ipython[${PYTHON_USEDEP}]
-			' python3_{10..11})
-		)
+		' python3_13)
 	)
 "
+# For the above test section, the groups are
+# test-requirements
+# test-requirements-cython
+# test-requirements-python3.13
 PATCHES=(
 #	"${FILESDIR}/${PN}-0.29.23-test_exceptions-py310.patch"
 	"${FILESDIR}/${PN}-0.29.23-pythran-parallel-install.patch"
