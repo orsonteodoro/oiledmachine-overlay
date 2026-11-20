@@ -106,7 +106,7 @@ SLOT="0"
 IUSE+="
 cext dev developer-docs doc fastimport git github launchpad paramiko pgp subunit
 test user-docs workspace
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -270,7 +270,7 @@ _production_unpack() {
 
 src_unpack() {
 	default
-	die
+#	die
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
 	else
