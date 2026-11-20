@@ -336,7 +336,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~sys-kernel/scx-${PV}:=
+	>=sys-kernel/scx-1.1.4:=
 "
 BDEPEND="
 	llvm_slot_23? (
