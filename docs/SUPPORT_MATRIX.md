@@ -249,7 +249,7 @@ Language defaults comparison
 
 * [1] This is the current oiledmachine-overlay's default combo for LTS.
 * [2a] The latest stable KEYWORDS for full GPU support (CUDA/ROCm).
-* [2b] The latest stable KEYWORDS for any slots, biased towards CUDA.
+* [2b] The latest stable KEYWORDS for any slots, biased in favor of CUDA.
 * [3] CUDA GPU acceleration is only available with GCC built packages on this
       overlay for this GCC & Clang compiler combo.  llvm_slot_14 is hypothetical
       and not supported on this overlay.
