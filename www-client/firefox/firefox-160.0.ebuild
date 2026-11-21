@@ -225,7 +225,7 @@ CHKL_TIMESTAMPS=(
 	"app-accessibility/speech-dispatcher-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.91.9999"
-	"dev-libs/icu-79.1.9999"
+	"dev-libs/icu-80.0.9999"
 	"dev-libs/libevent-9999"
 	"dev-libs/libffi-9999"
 	"dev-libs/nspr-9999"
@@ -493,7 +493,7 @@ selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi
 +wayland +webrtc wifi webspeech
-ebuild_revision_41
+ebuild_revision_42
 "
 
 # Firefox-only IUSE
