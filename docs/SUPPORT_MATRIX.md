@@ -86,14 +86,14 @@ Compilers and interpreters used in this overlay
 | PyPy:3.10                         | Not supported                         | Nunstable (7.3.19)                                                                     | 1y ago                      |
 | PyPy:3.11                         | Available                             | D13 (7.3.19), F43 (8.0.0), F44 (8.0.0), F45 (8.0.0), G (8.0.1), Nunstable (7.3.20)     | 1m ago                      |
 | PyPy:3.12                         | Available                             | F45 (8.0.0), G (8.0.1)                                                                 | 1m ago                      |
-| Python 3.9 and earlier            | Not supported (EOL) [5][8]            |                                                                                        | 1y ago                      |
-| Python 3.10                       | Not supported (EOL) [5][8]            | U22 (3.10.6), G (3.10.22)                                                              | 2m ago                      |
+| Python 3.9 and earlier            | Not supported [5][8]                  |                                                                                        | 1y ago                      |
+| Python 3.10                       | Not supported [5][8]                  | U22 (3.10.6), G (3.10.22)                                                              | 2m ago                      |
 | Python 3.11 [9]                   | Available [4][5][9]                   | D12 (3.11.2), G (3.11.18)                                                              | 1m ago                      |
 | Python 3.12 [D]                   | Fully supported [10]                  | G (3.12.16), U24 (3.12.3)                                                              | 1m ago                      |
 | Python 3.13                       | Partially supported                   | D13 (3.13.5), G (3.13.18_p1), Nunstable (3.14.10)                                      | 1m ago                      |
-| Python >= 3.13t [7]               | Not supported                         |                                                                                        | 1m ago                      |
+| Python >= 3.13t [7][11]           | Not supported                         |                                                                                        | 1m ago                      |
 | Python 3.14                       | Available                             | F43 (3.14.10), F44 (3.14.10), G (3.14.10_p1), U26 (3.14.3)                             | 1m ago                      |
-| Python 3.15 [7]                   | Available                             | F45 (3.15.2_p1), G~ (3.15.2)                                                           | 1m ago                      |
+| Python 3.15                       | Available                             | F45 (3.15.2_p1), G~ (3.15.2)                                                           | 1m ago                      |
 | Python 3.16 [7]                   | Not supported                         | G**                                                                                    | 2w ago                      |
 | Rust <= 1.98.0                    | Not supported                         |                                                                                        | 3m ago                      |
 | Rust 1.98.1 [LTS]                 | Available                             | G (1.98.1)                                                                             | 3m ago                      |
@@ -168,6 +168,10 @@ overlay:
 - Python 3.14 - For performance-critical, ML (ROCm/CUDA)
 - Python 3.15 - For security-critical
 - Python 3.16 - For developers to fix Python
+
+[11] Freethreading is not supported in this overlay as security mitigation
+against race conditions, Time of Check to Time of Use (ToCToU), data
+race, deadlock vulnerabilities.
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
