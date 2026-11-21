@@ -242,8 +242,8 @@ Language defaults comparison
 | LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 14          | 19            | gcc_slot_14_2, llvm_slot_19          | D13                     | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
 | Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | F43                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | LTS                      | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_2, llvm_slot_21          | U26                     | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
-| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_4, llvm_slot_22 [1][12]  | G~ [2]                  | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
-| Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22          | F44                     | SIMD, CUDA 13.4, Vulkan                                                 |
+| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22 [1]      | G [2]                   | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
+| Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22          | F44, G                  | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 23            | gcc_slot_16_2, llvm_slot_23          | F45                     | SIMD, Vulkan                                                            |
 
 
@@ -265,7 +265,6 @@ Language defaults comparison
   - CUDA:  Machine learning (ML), LLM inference, raytracing in 3D editors or CGI movies, computer vision (CV), academic research
   - ROCm:  Machine learning (ML), LLM interence, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, particle systems, post-processing, procedural rendering), AI upscaling, video remastering, LLM inference
-* [12] This is the current overlay default.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
 * The default C++ standard can be found at:
