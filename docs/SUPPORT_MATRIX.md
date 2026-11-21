@@ -160,7 +160,7 @@ be updated to use the RSC compiler.
 
 [9] This slot is EOL on the distro overlay but not on the oiledmachine-overlay.
 
-[10] Typically the older Python slots are feature complete and less update
+[10] Typically the older Python slots are feature complete and have less update
 friction.  Recommendations for Python support for Machine Learning (ML) on this
 overlay:
 - Python 3.12 - For performance-critical, ML (ROCm/CUDA), Blender 4.5, Open WebUI [LLMs], LocalAI [LLMs, AI generated imagery/videos]
