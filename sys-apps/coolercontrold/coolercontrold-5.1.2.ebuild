@@ -582,7 +582,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/libdrm-9999"
 )
 
-inherit abseil-cpp cargo cflags-hardened fcaps lcnr npm protobuf python-single-r1 rust rustflags-hardened
+inherit abseil-cpp cargo cflags-hardened chkl fcaps lcnr npm protobuf python-single-r1 rust rustflags-hardened
 
 KEYWORDS="~amd64"
 S_ROOT="${WORKDIR}/coolercontrol-${PV}"
@@ -859,6 +859,7 @@ src_unpack() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
 	abseil-cpp_src_configure
