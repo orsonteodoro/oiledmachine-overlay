@@ -4,27 +4,29 @@
 
 EAPI=8
 
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 DISTUTILS_USE_PEP517="maturin"
-PYTHON_COMPAT=( "python3_"{10..14} )
-RUST_MIN_VER="1.93.1"
-RUST_MAX_VER="1.93.1" # LLVM 21.1
+PYTHON_COMPAT=( "python3_"{11..15} )
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 declare -A GIT_CRATES=(
 )
 
 DISABLED_CRATES="
-pycrdt-0.14.2
+pycrdt-0.14.13
 "
 
-# From "./convert-cargo-lock.sh 0.14.2 0.14.2"
+# From "./convert-cargo-lock.sh 0.14.13 0.14.13"
 CRATES="
-arc-swap-1.9.2
-async-lock-3.4.2
+arc-swap-1.9.5
+async-lock-3.5.0
 async-trait-0.1.92
-bitflags-2.13.1
-bumpalo-3.20.3
-cfg-if-1.0.4
-crossbeam-utils-0.8.22
+bitflags-2.13.2
+bumpalo-3.20.4
+cfg-if-1.0.5
+crossbeam-utils-0.8.23
 dashmap-6.2.1
 event-listener-5.4.2
 event-listener-strategy-0.5.4
@@ -33,22 +35,22 @@ futures-task-0.3.34
 getrandom-0.4.3
 hashbrown-0.14.5
 heck-0.5.0
-itoa-1.0.18
-js-sys-0.3.104
-libc-0.2.189
+itoa-1.0.19
+js-sys-0.3.107
+libc-0.2.191
 lock_api-0.4.14
 memchr-2.8.3
 once_cell-1.21.4
 parking-2.2.1
 parking_lot_core-0.9.12
-pin-project-lite-0.2.17
+pin-project-lite-0.2.18
 portable-atomic-1.15.0
 proc-macro2-1.0.107
-pyo3-0.29.2
-pyo3-build-config-0.29.2
-pyo3-ffi-0.29.2
-pyo3-macros-0.29.2
-pyo3-macros-backend-0.29.2
+pyo3-0.30.1
+pyo3-build-config-0.30.1
+pyo3-ffi-0.30.1
+pyo3-macros-0.30.1
+pyo3-macros-backend-0.30.1
 quote-1.0.47
 redox_syscall-0.5.18
 r-efi-6.0.0
@@ -57,25 +59,24 @@ scopeguard-1.2.0
 serde-1.0.229
 serde_core-1.0.229
 serde_derive-1.0.229
-serde_json-1.0.151
+serde_json-1.0.154
 smallstr-0.3.1
-smallvec-1.15.2
-syn-2.0.119
-syn-3.0.3
-target-lexicon-0.13.5
-thiserror-2.0.20
-thiserror-impl-2.0.20
-unicode-ident-1.0.24
-wasm-bindgen-0.2.127
-wasm-bindgen-macro-0.2.127
-wasm-bindgen-macro-support-0.2.127
-wasm-bindgen-shared-0.2.127
+smallvec-1.16.6
+syn-3.0.10
+target-lexicon-0.13.6
+thiserror-2.0.21
+thiserror-impl-2.0.21
+unicode-ident-1.0.27
+wasm-bindgen-0.2.130
+wasm-bindgen-macro-0.2.130
+wasm-bindgen-macro-support-0.2.130
+wasm-bindgen-shared-0.2.130
 windows-link-0.2.1
-yrs-0.27.3
+yrs-0.28.2
 zmij-1.0.23
 "
 
-inherit cargo distutils-r1 pypi
+inherit cargo cflags-hardened distutils-r1 pypi rustflags-hardened
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -97,17 +98,10 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev doc test types
-ebuild_revision_6
+ebuild_revision_8
 "
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/typing_extensions-4.15.0[${PYTHON_USEDEP}]
-		<dev-python/typing_extensions-5.0.0[${PYTHON_USEDEP}]
-
-		dev-python/exceptiongroup[${PYTHON_USEDEP}]
-	' python3_10)
-
-	>=dev-python/anyio-4.4.0[${PYTHON_USEDEP}]
+	>=dev-python/anyio-4.14.0[${PYTHON_USEDEP}]
 	<dev-python/anyio-5.0.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
@@ -134,7 +128,7 @@ BDEPEND+="
 		<dev-python/pytest-10[${PYTHON_USEDEP}]
 
 		>=dev-python/trio-0.25.1[${PYTHON_USEDEP}]
-		<dev-python/trio-0.34[${PYTHON_USEDEP}]
+		<dev-python/trio-0.35[${PYTHON_USEDEP}]
 
 		>=dev-python/coverage-7[${PYTHON_USEDEP},toml(+)]
 		dev-python/anyio[${PYTHON_USEDEP}]
@@ -148,7 +142,7 @@ DOCS=( "README.md" )
 
 src_unpack() {
 	unpack ${A}
-	#die
+#	die
 	cargo_src_unpack
 	if [[ "${GENERATE_LOCKFILE}" != "1" ]] ; then
 		cp -aT \
@@ -156,6 +150,12 @@ src_unpack() {
 			"${S}" \
 			|| die
 	fi
+}
+
+src_configure() {
+	cflags-hardened_append
+	rustflags-hardened_append
+	distutils-r1_src_configure
 }
 
 python_compile() {
