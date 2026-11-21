@@ -158,7 +158,7 @@ src_configure() {
 
 src_unpack() {
 	unpack ${A}
-	die
+#	die
 	cargo_src_unpack
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
