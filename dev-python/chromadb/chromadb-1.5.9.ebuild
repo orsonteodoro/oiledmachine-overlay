@@ -55,14 +55,14 @@ EAPI=8
 
 MY_PN="chroma"
 
-inherit protobuf
+inherit protobuf secure-version
 
 #CHROMA_CORE_HNSWLIB_PV="0.8.1"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1 # It also takes a long time to build+link.
 DISTUTILS_USE_PEP517="maturin"
 GEN_CARGO_LOCKFILE=0 # 1, 0, unset (same as 0)
-LLVM_SLOT=23
+LLVM_SLOT=${RUST_LLVM_ROLLING_SLOT}
 PROTOBUF_GRPC="5"
 PROTOBUF_CPP_SLOT="5"
 PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_5[@]}"
@@ -72,8 +72,8 @@ OPENTELEMETRY_PV_REL="1.27.0"
 OPENTELEMETRY_SLOT_DEV="0/${OPENTELEMETRY_PV_DEV}"
 OPENTELEMETRY_SLOT_REL="0/${OPENTELEMETRY_PV_REL}"
 RE2_SLOT="20250512"
-RUST_MAX_VER="1.99.1"
-RUST_MIN_VER="1.99.1"
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 SECURE_VERSION_RUST_EBUILD_UPDATE=1793545930
@@ -1188,7 +1188,7 @@ KUBERNETES_TARGETS=(
 
 # Cargo must go after distutils-r1
 # For aws-lc-sys crate uses x509_vfy.c
-inherit abseil-cpp cargo cflags-hardened check-reqs flag-o-matic-om grpc pypi re2 rustflags-hardened secure-version secure-version-rust distutils-r1
+inherit abseil-cpp cargo cflags-hardened check-reqs flag-o-matic-om grpc pypi re2 rustflags-hardened secure-version-rust distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -1220,7 +1220,7 @@ ${CPU_FLAGS_X86[@]}
 ${KUBERNETES_TARGETS[@]}
 ${PROTOBUF_PYTHON[@]/+}
 dev helm kubectl kubernetes -lto +mold
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE+="
 	^^ (
