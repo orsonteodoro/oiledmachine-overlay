@@ -292,7 +292,7 @@ Language defaults comparison
 * A package without explicit C or C++ standard will fallback to the compiler
   default mentioned in the C++ standard or C standard columns above.
 * The following stable compilers USE flags may be used in c++17 or earlier packages:
-  - gcc_slot_14_3 (D13)
+  - gcc_slot_14_4 (D13)
   - gcc_slot_15_3 (U26)
   - llvm_slot_22 (D13, U26)
 * The following rolling compilers USE flags may be used c++20 or newer packages:
