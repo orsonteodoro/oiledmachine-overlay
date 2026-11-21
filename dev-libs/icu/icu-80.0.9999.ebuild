@@ -41,7 +41,7 @@ x86 ~x64-macos ~x64-solaris
 fi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="e86daaca4032de0d8d8358b11efd1980d5ad6d86"
+	FALLBACK_COMMIT="9407c634af9e7f12841dd13fe09a37781baf08e9"
 	EGIT_BRANCH="main"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
