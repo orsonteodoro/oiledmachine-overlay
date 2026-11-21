@@ -8,10 +8,12 @@ EAPI=8
 
 # The patches were based on AI generated code samples.
 
+inherit secure-version
+
 POSTGRES_COMPAT=( {15..19} )
 POSTGRES_USEDEP="server"
-RUST_MAX_VER="1.98.1"
-RUST_MIN_VER="1.98.1" # LLVM 22.1
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_PV="${RUST_MIN_VER}"
 
 DATAFUSION_COMMIT="41b058cc278eb497a2ffc6b41a323f056d3ef568"
@@ -967,7 +969,7 @@ SLOT="0"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 debug
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="mirror" # Speed up downloads, bypass server banner
 REQUIRED_USE="
