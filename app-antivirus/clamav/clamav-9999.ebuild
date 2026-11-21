@@ -57,6 +57,7 @@ MITIGATION_URI="https://blog.clamav.net/2025/06/clamav-143-and-109-security-patc
 PYTHON_COMPAT=( "python3_"{12,13} ) # CI versions
 RUST_MAX_VER="${RUST_LLVM_22_PV}"
 RUST_MIN_VER="${RUST_LLVM_22_PV}"
+RUST_PV="${RUST_MAX_VER}"
 RUSTFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
@@ -557,8 +558,8 @@ BDEPEND="
 		)
 	)
 	|| (
-		dev-lang/rust-bin:${RUST_LLVM_22_PV}
-		dev-lang/rust:${RUST_LLVM_22_PV}
+		dev-lang/rust-bin:${RUST_PV}
+		dev-lang/rust:${RUST_PV}
 	)
 "
 DEPEND="
