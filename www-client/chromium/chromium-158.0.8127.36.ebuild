@@ -223,6 +223,8 @@ EXTERNAL_V8=${EXTERNAL_V8:-0} # For faster updates but not really compatible
 FEDORA_PATCHSET=${FEDORA_PATCHSET:-0}
 PPC64_PATCHSET_PROVIDER=${PPC64_PATCHSET_PROVIDER:-"debian"} # Valid values debian, openpower
 
+inherit secure-version
+
 ABSEIL_CPP_SLOT="20251021"
 ALLOW_MKSNAPSHOT=1 # Ebuild maintainer value.  Setting to a value other than 1 is untested.
 CFI_CAST=0 # Global variable
@@ -259,8 +261,8 @@ USE_LTO=0 # Global variable
 RE2_SLOT="20250512"
 # https://github.com/chromium/chromium/blob/158.0.8127.36/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_MAX_VER="9999" # Corresponds to llvm 23 to match LLVM_COMPAT
-RUST_MIN_VER="9999" # Corresponds to llvm 23 to match LLVM_COMPAT
+RUST_MAX_VER="${RUST_LLVM_LIVE_PV}"
+RUST_MIN_VER="${RUST_LLVM_LIVE_PV}"
 RUST_NEEDS_LLVM="yes please"
 RUST_REQ_USE="rustfmt" # Upstream run rustfmt on bindgen output, so we need it to be available.
 RUST_SLOT_VENDORED="1.100.0" # Check every major version bump
@@ -280,7 +282,7 @@ if [[ -n "${CHROMIUM_LTO_CFI_WINDOW}" ]]; then
     CHROMIUM_LTO_CFI_END=${CHROMIUM_LTO_CFI_WINDOW#*-}
 fi
 
-inherit multilib-build secure-version
+inherit multilib-build
 
 ALPINE_PATCHSET_BRANCH="master"
 ALPINE_PATCHSET_COMMIT="03312532621d4cbbca9061f4776a69f2299d9aa6"
