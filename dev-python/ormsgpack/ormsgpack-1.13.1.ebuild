@@ -6,50 +6,52 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
-PYTHON_COMPAT=( "python3_"{10..14} "pypy3_11" )
-RUST_MAX_VER="1.91.1"
-RUST_MIN_VER="1.91.1" # LLVM 21.1
+PYTHON_COMPAT=( "python3_"{11..15} "pypy3_"{11..12} )
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 declare -A GIT_CRATES=(
 )
 
 DISABLED_CRATES="
-ormsgpack-1.12.2
+ormsgpack-1.13.1
 "
 
-# From "./convert-cargo-lock.sh 1.12.2 1.12.2"
+# From "./convert-cargo-lock.sh 1.13.1 1.13.1"
 CRATES="
 ahash-0.8.12
-autocfg-1.5.1
-bytecount-0.6.9
+autocfg-1.5.0
 cfg-if-1.0.4
 chrono-0.4.45
 crunchy-0.2.4
 half-2.7.1
+heck-0.5.0
 itoa-1.0.18
-libc-0.2.186
-memoffset-0.9.1
+libc-0.2.180
 num-traits-0.2.19
-once_cell-1.21.4
-portable-atomic-1.13.1
-proc-macro2-1.0.106
-pyo3-0.27.2
-pyo3-build-config-0.27.2
-pyo3-ffi-0.27.2
-quote-1.0.45
-serde-1.0.228
+once_cell-1.21.3
+portable-atomic-1.13.0
+proc-macro2-1.0.105
+pyo3-0.30.1
+pyo3-build-config-0.30.1
+pyo3-ffi-0.30.1
+pyo3-macros-0.30.1
+pyo3-macros-backend-0.30.1
+quote-1.0.43
+serde-1.0.229
 serde_bytes-0.11.19
-serde_core-1.0.228
-serde_derive-1.0.228
+serde_core-1.0.229
+serde_derive-1.0.229
 simdutf8-0.1.5
-smallvec-1.15.1
-syn-2.0.117
-target-lexicon-0.13.5
-unicode-ident-1.0.24
+smallvec-1.16.4
+syn-2.0.114
+syn-3.0.2
+target-lexicon-0.13.4
+unicode-ident-1.0.22
 version_check-0.9.5
-zerocopy-0.8.52
-zerocopy-derive-0.8.52
+zerocopy-0.8.33
+zerocopy-derive-0.8.33
 "
 
 inherit cargo distutils-r1 lcnr pypi rustflags-hardened
