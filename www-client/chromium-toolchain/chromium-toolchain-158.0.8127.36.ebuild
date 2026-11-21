@@ -11,7 +11,7 @@ EAPI=8
 # To obtain expected file count numbers, use
 # `USE="-system-clang -system-rust" ebuild chromium-toolchain-158.0.8127.36.ebuild digest clean unpack prepare compile install merge`
 
-inherit dhms
+inherit dhms secure-version
 
 # chromium = c11, c++23
 # clang = c++17
@@ -44,10 +44,10 @@ LLVM_VENDORED_COMMIT="e063be79" # Without the g prefix; See also https://github.
 LLVM_VENDORED_N_COMMITS="14453" # The number to the right of -init- in llvmorg-24-init-7747-g62397f8b.  The exact number of commits after llvmorg-24-init.
 LLVM_VENDORED_SLOT="24" # Cr official slot
 LLVM_VENDORED_SUB_REV="1" # Same as CLANG_SUB_REVISION
-RUST_SYSTEM_LIVE_TIMESTAMP="Fri, 25 Sep 2026 08:14:22 -0400" # Same as Rust 1.101.0 timestamp
-RUST_SYSTEM_LIVE_VER="1.101.0"
-RUST_SYSTEM_LIVE_LLVM_SLOT="23"
-RUST_SYSTEM_LIVE_LLVM_COMMIT="7bec0dd6f361d3ec5f63294253dc1fc7eae98c29"
+RUST_SYSTEM_LIVE_TIMESTAMP="${RUST_LLVM_LIVE_TIMESTAMP}"
+RUST_SYSTEM_LIVE_VER="${RUST_LLVM_LIVE_PV}"
+RUST_SYSTEM_LIVE_LLVM_SLOT="${RUST_LLVM_LIVE_SLOT}"
+RUST_SYSTEM_LIVE_LLVM_COMMIT="7bec0dd6f361d3ec5f63294253dc1fc7eae98c29" # Placeholder
 # Vendored Rust commit reference:  https://github.com/chromium/chromium/blob/158.0.8127.36/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_VENDORED_COMMIT="8a9dd7abdf013ec10cfeaaa3685feba18ef1c90c" # Vendored commit
