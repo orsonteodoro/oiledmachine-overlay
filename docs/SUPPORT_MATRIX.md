@@ -163,7 +163,7 @@ be updated to use the RSC compiler.
 [10] Typically the older Python slots are feature complete and less update
 friction.  Recommendations for support which is typically used for
 Machine Learning (ML):
-- Python 3.12 - For performance-critical, ML (ROCm/CUDA), Blender 4.5, Open WebUI AI/LLM, LocalAI
+- Python 3.12 - For performance-critical, ML (ROCm/CUDA), Blender 4.5, Open WebUI [LLM], LocalAI [LLM, AI generated imagery, AI generated videos]
 - Python 3.13 - For performance-critical, ML (ROCm/CUDA), Blender 5.2/5.3
 - Python 3.14 - For performance-critical, ML (ROCm/CUDA)
 - Python 3.15 - For security-critical
