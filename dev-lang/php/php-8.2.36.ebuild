@@ -27,7 +27,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/bzip2-9999"
 	"app-arch/xz-utils-9999"
 	"dev-db/sqlite-9999"
-	"dev-libs/icu-79.1.9999"
+	"dev-libs/icu-80.0.9999"
 	"dev-libs/libffi-9999"
 	"dev-libs/libpcre2-9999"
 	"dev-libs/libsodium-9999"
@@ -85,7 +85,7 @@ IUSE="${IUSE} acl apparmor argon2 avif bcmath berkdb bzip2 calendar
 	+simplexml snmp soap sockets sodium spell sqlite ssl
 	sysvipc systemd test tidy tinycdb +tokenizer tokyocabinet truetype unicode
 	valgrind webp +xml xmlreader xmlwriter xpm xslt zip zlib
-	ebuild_revision_3
+	ebuild_revision_4
 "
 
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
