@@ -114,6 +114,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20211102.0-gcc-13-2.patch"
 	"${FILESDIR}/${PN}-20200225.3-crypto-symbol.patch"
 	"${FILESDIR}/${PN}-20220623.2-54fac21-backport.patch"
+	"${FILESDIR}/${PN}-20220623.2-gcc15-includes.patch"
 )
 
 pkg_setup() {
