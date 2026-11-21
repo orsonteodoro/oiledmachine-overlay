@@ -155,8 +155,11 @@ be updated to use the RSC compiler.
     or defunct projects.
 
 [7] Not widely tested with CI/CD.
+
 [8] The oiledmachine-overlay is actively dropping support for 3.10 and older.
+
 [9] This slot is EOL on the distro overlay but not on the oiledmachine-overlay.
+
 [10] Typically the older Python slots are feature complete and less update
 friction.  Recommendations for support which is typically used for
 Machine Learning (ML):
