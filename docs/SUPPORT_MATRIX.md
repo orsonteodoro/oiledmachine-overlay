@@ -235,25 +235,19 @@ The version ranges are matching to avoid multiple LLVM versions loaded issues.
 | c++23                           | Rolling                          | Incomplete                       | Incomplete                                   |
 | c++26                           | Rolling                          | Incomplete                       | Incomplete                                   |
 
-Language defaults
+Language defaults comparison
 
 | LTS or rolling compiler? | GCC C++ [6][7] | Clang C++ [6][7] | GCC C [6][7] | Clang C [6][7] | GCC         | Clang         | Overlay USE flags [5]                | Distro correspondance   | Hardware acceleration support [8][9]                                    |
 | ---                      | ---            | ---              | ---          | ---            | ---         | ---           | ---                                  | ---                     | ----                                                                    |
-| LTS                      | gnu++17        | gnu++14          | gnu17        | gnu17          | 11          | 14            | gcc_slot_11_5, llvm_slot_14 [3]      | U22                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                |
-| LTS [10]                 | gnu++17        | gnu++17          | gnu17        | gnu17          | 12          | 22 [4]        | gcc_slot_11_5, llvm_slot_22 [10]     | U22                     | SIMD, CUDA 13.4, ROCm 7.2, Vulkan                                       |
-| LTS                      | gnu++17        | gnu++14          | gnu17        | gnu17          | 12          | 14            | gcc_slot_12_5, llvm_slot_14 [3]      | D12                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                |
-| LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 18            | gcc_slot_13_4, llvm_slot_18          | U24                     | SIMD, CUDA 12.6, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                |
-| LTS [11]                 | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 19 [4]        | gcc_slot_13_4, llvm_slot_19 [11][1]  | U24                     | SIMD, CUDA 12.8, CUDA 12.9, Vulkan                                      |
-| LTS [10]                 | gnu++17        | gnu++17          | gnu17        | gnu17          | 13          | 22 [4]        | gcc_slot_13_4, llvm_slot_22 [10]     | U24                     | SIMD, CUDA 13.4, ROCm 7.2, Vulkan                                       |
-| LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 14          | 19            | gcc_slot_14_3, llvm_slot_19          | D13                     | SIMD, CUDA 12.8, CUDA 12.9, CUDA 13.4, Vulkan                           |
-| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | F43                     | SIMD, CUDA 13.2, Vulkan                                                 |
-| LTS                      | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | U26                     | SIMD, CUDA 13.4, Vulkan                                                 |
-| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22 [12]     | G [2]                   | SIMD, CUDA 13.4, Vulkan                                                 |
+| LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 14          | 19            | gcc_slot_14_2, llvm_slot_19          | D13                     | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
+| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | F43                     | SIMD, CUDA 13.4, Vulkan                                                 |
+| LTS                      | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_2, llvm_slot_21          | U26                     | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
+| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_4, llvm_slot_22 [1][12]  | G~ [2]                  | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22          | F44                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 23            | gcc_slot_16_2, llvm_slot_23          | F45                     | SIMD, Vulkan                                                            |
 
-* [1] This is the old oiledmachine-overlay's defaults for testing.
-      Compatible with U24.
+
+* [1] This is the current oiledmachine-overlay's default combo for LTS.
 * [2] The latest stable KEYWORDS for the G distro.
 * [3] CUDA GPU acceleration is only available with GCC built packages on this
       overlay for this GCC & Clang compiler combo.  llvm_slot_14 is hypothetical
@@ -271,8 +265,6 @@ Language defaults
   - CUDA:  Machine learning (ML), LLM inference, raytracing in 3D editors or CGI movies, computer vision (CV), academic research
   - ROCm:  Machine learning (ML), LLM interence, cryptocurrency mining
   - Vulkan:  Gaming graphics (e.g. raytracing, particle systems, post-processing, procedural rendering), AI upscaling, video remastering, LLM inference
-* [10] Based on ROCm prebuilt packages and HIP-Clang 7.2.4 for U22, U24. (Recommended by overlay for ROCm support/testing)
-* [11] Based on ROCm prebuilt packages and HIP-Clang 6.4.4 for U22, U24. (Deprecated by overlay for ROCm support/testing)
 * [12] This is the current overlay default.
 
 * This overlay prefers users use one of the LTS combos to avoid issues.
@@ -296,14 +288,9 @@ Language defaults
 * A package without explicit C or C++ standard will fallback to the compiler
   default mentioned in the C++ standard or C standard columns above.
 * The following stable compilers USE flags may be used in c++17 or earlier packages:
-  - gcc_slot_11_5 (U22)
-  - gcc_slot_12_5 (D12)
-  - gcc_slot_13_4 (U24)
   - gcc_slot_14_3 (D13)
   - gcc_slot_15_3 (U26)
-  - llvm_slot_18 (U24)
-  - llvm_slot_19 (D13)
-  - llvm_slot_21 (U26)
+  - llvm_slot_22 (D13, U26)
 * The following rolling compilers USE flags may be used c++20 or newer packages:
   - gcc_slot_16_2 (F44, F45)
   - llvm_slot_22 (F44)
