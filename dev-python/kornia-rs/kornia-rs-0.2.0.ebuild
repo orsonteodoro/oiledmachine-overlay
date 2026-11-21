@@ -10,6 +10,8 @@ EAPI=8
 
 GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
+inherit secure-version
+
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 #DISTUTILS_ARGS=(
 #	"kornia-py/Cargo.toml"
@@ -18,8 +20,8 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{11..14} "pypy3" )
-RUST_MAX_VER="1.98.1" # Inclusive
-RUST_MIN_VER="1.98.1" # llvm-22.1
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 RUST_PV="${RUST_MIN_VER}"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
@@ -1854,7 +1856,7 @@ src_prepare() {
 
 src_configure() {
 	fix_mb_len_max			# For Clang built aws-lc-sys
-	cflags-hardened_append		# For aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys, *-sys crates
 	rustflags-hardened_append
 
 	distutils-r1_src_configure
