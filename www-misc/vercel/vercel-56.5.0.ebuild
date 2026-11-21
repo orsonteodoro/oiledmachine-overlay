@@ -20,19 +20,17 @@ EAPI=8
 MY_PN="vercel"
 MY_P="${MY_PN}-${PV}"
 
+inherit secure-version
+
 NODE_SLOT="24" # Based on https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml
 PNPM_SLOT="9"
 PNPM_TARBALL="${MY_P}.tar.gz"
-RUST_MAX_VER="1.96.1" # Inclusive
-RUST_MIN_VER="1.96.1" # llvm-22.1 # See https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml#L48
-RUST_PV="${RUST_MIN_VER}"
+RUST_MAX_VER="${RUST_LLVM_LIVE_PV}"
+RUST_MIN_VER="${RUST_LLVM_LIVE_PV}" # See https://github.com/vercel/vercel/blob/vercel%4056.5.0/.github/workflows/release.yml#L48
+RUST_PV="${RUST_LLVM_LIVE_INTERNAL_VERSION}"
+RUST_EXPECTED_TIMESTAMP=${RUST_LLVM_LIVE_UNIX_TIMESTAMP}
 
-# https://github.com/rust-lang/rust/commit/<COMMIT_ID>.patch
-# Copy-paste timestamp from "Date:" row
-# Use date --date="Tue, 23 Jun 2026 19:08:22 -0400" "+%s"
-RUST_EXPECTED_TIMESTAMP=1782256102 # Same as 1.96.1 release date
-
-LLVM_SLOT=22
+LLVM_SLOT=${RUST_LLVM_LIVE_SLOT}
 LLVM_COMPAT=( ${LLVM_SLOT} )
 
 PNPM_AUDIT_FIX_ARGS=(
@@ -41,7 +39,7 @@ PNPM_AUDIT_FIX_ARGS=(
 PNPM_INSTALL_ARGS=(
 )
 
-inherit edo flag-o-matic pnpm rust sandbox-changes secure-version
+inherit edo flag-o-matic pnpm rust sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="fabae940acf33ca050f0767d3d5dadc61fcffe32"
@@ -162,8 +160,8 @@ src_configure() {
 	export PATH="/usr/lib/llvm/${LLVM_SLOT}/bin:${PATH}"
 # Prevent
 # note: gcc: error: unrecognized command-line option '--target=wasm32-wasip2'
-	export CC="${CHOST}-clang-22" # Same as Rust's 1.95.0 LLVM slot
-	export CXX="${CHOST}-clang++-22"
+	export CC="${CHOST}-clang-${LLVM_SLOT}"
+	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	export CPP="${CC} -E"
 	unset LD
 	filter-flags "-fuse-ld=*"
