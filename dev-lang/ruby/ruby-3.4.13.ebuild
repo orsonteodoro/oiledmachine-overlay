@@ -4,7 +4,10 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="cflags-hardened jit sensitive-data untrusted-data"
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_OPTIONAL="yes"
+RUSTFLAGS_HARDENED_USE_CASES="cflags-hardened jit sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/jemalloc-9999"
@@ -28,7 +31,7 @@ RUBYVERSION=${SLOT}.0
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE="
 berkdb debug doc examples gdbm gmp jemalloc jit socks5 +ssl static-libs systemtap tk valgrind xemacs
-ebuild_revision_1
+ebuild_revision_5
 "
 
 RDEPEND="

@@ -4,16 +4,17 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="cflags-hardened jit sensitive-data untrusted-data"
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1"
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_OPTIONAL="yes"
+RUSTFLAGS_HARDENED_USE_CASES="cflags-hardened jit sensitive-data untrusted-data"
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/jemalloc-9999"
 	"dev-libs/libffi-9999"
 )
 
-inherit autotools cflags-hardened chkl flag-o-matic multiprocessing secure-version rust
+inherit autotools cflags-hardened chkl flag-o-matic multiprocessing secure-version rust rustflags-hardened
 
 MY_P="${PN}-$(ver_cut 1-3)"
 MY_PV="${PV%.*}"
@@ -43,7 +44,7 @@ RUBYVERSION=${SLOT}.0
 
 IUSE="
 berkdb debug doc examples gdbm gmp jemalloc jit socks5 +ssl static-libs systemtap tk valgrind xemacs
-ebuild_revision_1
+ebuild_revision_5
 "
 
 RDEPEND="
@@ -215,6 +216,7 @@ src_prepare() {
 src_configure() {
 	chkl_check_many_timestamps
 	cflags-hardened_append
+	rustflags-hardened_append
 	local modules="win32,win32ole"
 
 	# Ruby's build system does interesting things with MAKEOPTS and doesn't
