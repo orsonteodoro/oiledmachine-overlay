@@ -4,11 +4,12 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data" # You can add ip-assets to CFLAGS_HARDENED_USE_CASES_USER_APPEND
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..14} )
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1" # LLVM 21.1
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}" # LLVM 21.1
 RUSTFLAGS_HARDENED_USE_CASES="security-critical untrusted-data" # You can add ip-assets to RUSTFLAGS_HARDENED_USE_CASES_USER_APPEND
 
 declare -A GIT_CRATES=(
@@ -68,7 +69,7 @@ windows-sys-0.61.2
 zmij-1.0.23
 "
 
-inherit cargo distutils-r1 lcnr pypi rustflags-hardened
+inherit cargo cflags-hardened distutils-r1 lcnr pypi rustflags-hardened
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -91,6 +92,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all dev jax mlx numpy paddlepaddle pinned-tf quality tensorflow test testingfree
 torch
+ebuild_revision_1
 "
 REQUIRED_USE="
 	all? (
@@ -192,6 +194,7 @@ src_unpack() {
 
 src_configure() {
 	export CARGO_TERM_VERBOSE="true"
+	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
 	cargo_src_configure
 }
