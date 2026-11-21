@@ -22,7 +22,7 @@ DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{11..14} "pypy3" )
 RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
 RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
-RUST_PV="${RUST_MIN_VER}"
+RUST_PV="${RUST_MAX_VER}"
 RUSTFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -1785,10 +1785,6 @@ BDEPEND+="
 	|| (
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
-	)
-	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
 	)
 	dev? (
 		>=dev-python/kornia-0.7.2[${PYTHON_SINGLE_USEDEP}]
