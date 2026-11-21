@@ -127,6 +127,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
 	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
 	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
+	"${FILESDIR}/${PN}-21.12-gcc15-musttail.patch"
 )
 DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
 

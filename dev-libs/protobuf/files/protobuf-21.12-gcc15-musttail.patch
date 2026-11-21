@@ -1,0 +1,12 @@
+# This is an AI suggested fix.
+--- a/src/google/protobuf/port_def.inc.orig	2022-12-12 16:03:12.000000000 -0800
++++ b/src/google/protobuf/port_def.inc	2026-11-21 14:25:51.611410327 -0800
+@@ -254,7 +254,7 @@
+ #ifdef PROTOBUF_TAILCALL
+ #error PROTOBUF_TAILCALL was previously defined
+ #endif
+-#if __has_cpp_attribute(clang::musttail) && !defined(__arm__) && \
++#if defined(__clang__) && __has_cpp_attribute(clang::musttail) && !defined(__arm__) && \
+     !defined(_ARCH_PPC) && !defined(__wasm__) &&                 \
+     !(defined(_MSC_VER) && defined(_M_IX86)) &&                  \
+     !(defined(__NDK_MAJOR__) && __NDK_MAJOR <= 24)
