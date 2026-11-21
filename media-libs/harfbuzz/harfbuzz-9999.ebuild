@@ -28,7 +28,7 @@ RAGEL_PV="6.10" # See https://github.com/harfbuzz/harfbuzz/blob/main/subprojects
 
 CHKL_TIMESTAMPS=(
 	"dev-libs/glib-2.91.9999"
-	"dev-libs/icu-79.1.9999"
+	"dev-libs/icu-80.0.9999"
 	"media-libs/freetype-9999"
 	"media-libs/libpng-9999"
 	"x11-libs/cairo-9999"
@@ -123,7 +123,7 @@ IUSE+="
 -benchmark +cairo +chafa debug doc -experimental -fatlto -fontations +glib +gpu
 +graphite -harfrust +icu +kbts +png +raster +ragel +subset -system-icu -system-ragel
 +introspection test -thinlto +truetype +utilities +vector +zlib
-ebuild_revision_16
+ebuild_revision_17
 "
 # fatlto and thinlto need llvm_slot_20
 RESTRICT="
