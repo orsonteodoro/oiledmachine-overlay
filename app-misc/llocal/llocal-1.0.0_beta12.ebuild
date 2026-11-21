@@ -23,9 +23,6 @@ NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_LOCKFILE_SOURCE="ebuild"
 NPM_INSTALL_PATH="/opt/${PN}"
-RUST_MAX_VER="1.93.1" # Inclusive
-RUST_MIN_VER="1.93.1" # llvm-21.1, required by @swc/core
-RUST_PV="${RUST_MIN_VER}"
 ELECTRON_BUILDER_PV="26.18.1" # 24.13.3 used upstream.  Old pinned version required
 SECURE_VERSION_NODE_EBUILD_UPDATE=1793204443
 
@@ -84,7 +81,7 @@ NPM_EXE_LIST=(
 	"/opt/llocal/chrome_crashpad_handler"
 )
 
-inherit edo electron-app npm lcnr node-sharp rust xdg
+inherit edo electron-app npm lcnr node-sharp xdg
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -121,10 +118,6 @@ RDEPEND="
 	>=sci-ml/ollama-${OLLAMA_PV}:=
 "
 BDEPEND="
-	|| (
-		dev-lang/rust:${RUST_PV}
-		dev-lang/rust-bin:${RUST_PV}
-	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_beta12-cacheDir.patch"
@@ -155,12 +148,6 @@ einfo "PUPPETEER_CACHE_FOLDER:  ${PUPPETEER_CACHE_FOLDER}"
 pkg_setup() {
 	secure-version-node_check_update
 	npm_pkg_setup
-	rust_pkg_setup
-	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "binary"
-	elif has_version "dev-lang/rust:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "source"
-	fi
 	node-sharp_pkg_setup
 }
 
