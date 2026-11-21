@@ -9,7 +9,11 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 
-inherit check-compiler-switch cmake flag-o-matic xdg
+CHKL_TIMESTAMPS=(
+	"dev-qt/qtbase-9999"
+)
+
+inherit check-compiler-switch chkl cmake flag-o-matic secure-version xdg
 
 S="${WORKDIR}/coolercontrol-${PV}/coolercontrol"
 SRC_URI="
@@ -25,7 +29,7 @@ LICENSE="
 	GPL-3+
 "
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+=" wayland X ebuild_revision_1"
 REQUIRED_USE="
 	|| (
@@ -34,10 +38,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=dev-qt/qtbase-6:6[dbus,network,wayland?,widgets,X?]
-	>=dev-qt/qtwebchannel-6:6
-	>=dev-qt/qtwebengine-6:6[widgets]
-	~sys-apps/coolercontrold-${PV}
+	>=dev-qt/qtbase-${QTBASE6_PV}:6=[dbus,network,wayland?,widgets,X?]
+	>=dev-qt/qtwebchannel-6:6=
+	>=dev-qt/qtwebengine-6:6=[widgets]
+	~sys-apps/coolercontrold-${PV}:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -46,7 +50,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.19
 	dev-build/automake
 	dev-build/make
-	sys-devel/gcc[cxx]
+	sys-devel/gcc:=[cxx]
 "
 
 verify_qt_consistency() {
@@ -84,6 +88,7 @@ ewarn "Do not emerge ${CATEGORY}/${PN} directly.  Emerge the sys-apps/coolercont
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
