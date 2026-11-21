@@ -512,7 +512,7 @@ LICENSE+=" Apache-2.0 BSD ISC MIT MPL-2.0 Unicode-DFS-2016 ZLIB"
 # ring crate
 LICENSE+=" openssl"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT+=" test" # needs custom setup
 RESTRICT+=" mirror" # Speed up downloads, bypass long server banner
