@@ -3,6 +3,8 @@
 
 EAPI=8
 
+inherit secure-version
+
 CFLAGS_HARDENED_USE_CASES="cflags-hardened jit sensitive-data untrusted-data"
 RUST_MAX_VER="${RUST_LLVM_22_PV}"
 RUST_MIN_VER="${RUST_LLVM_22_PV}"
@@ -14,7 +16,7 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/libffi-9999"
 )
 
-inherit autotools cflags-hardened chkl flag-o-matic multiprocessing secure-version rust rustflags-hardened
+inherit autotools cflags-hardened chkl flag-o-matic multiprocessing rust rustflags-hardened
 
 MY_P="${PN}-$(ver_cut 1-3)"
 MY_PV="${PV%.*}"
@@ -44,7 +46,7 @@ RUBYVERSION=${SLOT}.0
 
 IUSE="
 berkdb debug doc examples gdbm gmp jemalloc jit socks5 +ssl static-libs systemtap tk valgrind xemacs
-ebuild_revision_5
+ebuild_revision_6
 "
 
 RDEPEND="
