@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# A3.24.4, D12
+# The versioning is based on the tag with the gstreamer- prefix.
+
 # The lockfile should be updated once a week for security reasons.
 
 # 1.26.6 -> 1.26.7
@@ -31,10 +34,6 @@ EAPI=8
 # librespot-core 0.8.0 -> hyper-proxy2 -> hyper-rustls 0.26.0 -> rustls 0.22.4 -> rustls-webpki 0.102.8 (vulnerable, DoS:High, DT:High)
 #
 
-
-# D12-slim
-# The versioning is based on the tag with the gstreamer- prefix.
-
 # For plugin renames see RENAMES variable in
 # https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/blob/main/dependencies.py?ref_type=heads
 
@@ -50,15 +49,17 @@ unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
 
+inherit secure-version
+
 CFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GEN_CARGO_LOCKFILE=0 # 1, 0, or unset (0)
 GST_PV="${MY_PV}"
-LLVM_COMPAT=( 23 ) # For clang-sys ; slot must be updated when the Rust slot is changed
-LLVM_MAX_SLOT="23"
-PYTHON_COMPAT=( "python3_"{8..11} )
-RUST_MAX_VER="1.99.1"
-RUST_MIN_VER="1.99.1" # LLVM 23.1
+LLVM_COMPAT=( 22 ) # For clang-sys ; slot must be updated when the Rust slot is changed
+LLVM_MAX_SLOT="22"
+PYTHON_COMPAT=( "python3_"{11..14} )
+RUST_MAX_VER="${RUST_LLVM_22_PV}"
+RUST_MIN_VER="${RUST_LLVM_22_PV}"
 RUST_PV="${RUST_MAX_VER}"
 RUSTFLAGS_HARDENED_USE_CASES="multithreaded-confidential network p2p plugin secure-critical sensitive-data server untrusted-data"
 SECURE_VERSION_RUST_EBUILD_UPDATE=1793670667
@@ -158,7 +159,7 @@ CHKL_TIMESTAMPS=(
 
 inherit cflags-hardened chkl rustflags-hardened flag-o-matic flag-o-matic-om
 inherit lcnr llvm meson multilib-build python-any-r1 rust sandbox-changes
-inherit toolchain-funcs secure-version secure-version-rust multilib-minimal
+inherit toolchain-funcs secure-version-rust multilib-minimal
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -1532,7 +1533,7 @@ ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom clang doc gcc nvcodec qsv openh264 rav1e system-libsodium vaapi vpx vulkan x264 x265
 webrtc-aws webrtc-livekit
-ebuild_revision_73
+ebuild_revision_74
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1923,7 +1924,7 @@ gen_llvm_bdepend() {
 	done
 }
 RUST1_BDEPEND="
-	llvm_slot_23? (
+	llvm_slot_22? (
 		|| (
 			dev-lang/rust:${RUST_PV}[${MULTILIB_USEDEP}]
 			dev-lang/rust-bin:${RUST_PV}[${MULTILIB_USEDEP}]
@@ -1931,7 +1932,7 @@ RUST1_BDEPEND="
 	)
 "
 RUST_BDEPEND="
-	llvm_slot_23? (
+	llvm_slot_22? (
 		|| (
 			dev-lang/rust-bin:${RUST_PV}[${MULTILIB_USEDEP}]
 			dev-lang/rust:${RUST_PV}[${MULTILIB_USEDEP}]
