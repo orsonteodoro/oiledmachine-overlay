@@ -24,15 +24,19 @@ EAPI=8
 
 #GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-1}
 
+inherit secure-version
+
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 EGIT_COMMIT="ca2415c77d20ec41dd4fcf917dbb0e97961ddf08" # Jul 23, 2025
 NODE_ENV="development"
 NODE_SHARP_USE="exif jpeg"
 NODE_SLOT="24" # Upstream uses 18 and 20
 NPM_AUDIT_FATAL=0
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1" # LLVM 21.1
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 RUST_PV="${RUST_MIN_VER}"
+RUSTFLAGS_HARDENED_USE_CASES="network untrusted-data"
 SECURE_VERSION_NODE_EBUILD_UPDATE=1792852047
 
 AT_TYPES_NODE_PV="22.7.4"
@@ -519,7 +523,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/gtk+-3.24.9999"
 )
 
-inherit cargo chkl desktop edo lcnr npm python-single-r1 rust node-sharp secure-version secure-version-node xdg
+inherit cargo cflags-hardened chkl desktop edo lcnr npm rustflags-hardened python-single-r1 rust node-sharp secure-version-node xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -663,7 +667,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_50
+ebuild_revision_51
 "
 REQUIRED_USE="
 	voice-recognition
@@ -676,7 +680,7 @@ REQUIRED_USE="
 	)
 "
 RUST_BINDINGS_DEPEND_DISABLED="
-	>=net-libs/libsoup-${LIBSOUP2_PV}:2.4[introspection]
+	>=net-libs/libsoup-${LIBSOUP2_PV}:2.4=[introspection]
 "
 RUST_BINDINGS_DEPEND="
 	>=app-accessibility/at-spi2-core-${AT_SPI2_CORE_PV}:=[introspection]
@@ -1052,17 +1056,23 @@ EOF
 
 src_configure() {
 	chkl_check_many_timestamps
+
+	cflags-hardened_append		# For *-sys crates
+	rustflags-hardened_append	# For retpoline, integer overflow mitigation
+
 	export WEBKIT2GTK_USE_API="4.1"
 	if ! has_version "dev-util/sccache" ; then
 einfo "Disabling sccache support"
 		unset RUSTC_WRAPPER
 		unset SCCACHE_DIR
 	fi
+
 	sed \
 		-i \
 		-e "s|\"targets\": \"all\"|\"targets\": \"deb\"|g" \
 		"${S}/src-tauri/tauri.conf.json" \
 		|| die
+
 	cargo_src_configure
 }
 
