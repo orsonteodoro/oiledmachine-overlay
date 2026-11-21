@@ -33,6 +33,8 @@ EAPI=8
 
 MY_PN="WindowPet"
 
+inherit secure-version
+
 CFLAGS_HARDENED_USE_CASES="untrusted-data"	# For unsafe -sys packages
 GEN_CARGO_LOCKFILE=0 # 0, 1, unset (0)
 NODE_SLOT="24" # CI uses 23 based on CI logs, bump for security
@@ -40,9 +42,8 @@ NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="685d3424a946346721d839add3bfb6521690eb6e" # Obtained from GIT_CRATES
-# Upstream wanted Rust 1.88.0 (llvm 20.1), but it has been relaxed in this ebuild.
-RUST_MAX_VER="1.93.1"
-RUST_MIN_VER="1.93.1" # llvm-21.1
+RUST_MAX_VER="${RUST_LLVM_LTS_PV}"
+RUST_MIN_VER="${RUST_LLVM_LTS_PV}"
 RUST_PV="${RUST_MIN_VER}"
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"	# For user generated content
 SECURE_VERSION_NODE_EBUILD_UPDATE=1793848992
@@ -622,7 +623,7 @@ CHKL_TIMESTAMPS=(
 	"x11-libs/pango-9999"
 )
 
-inherit cargo cflags-hardened chkl desktop lcnr npm rustflags-hardened secure-version secure-version-node secure-version-rust xdg
+inherit cargo cflags-hardened chkl desktop lcnr npm rustflags-hardened secure-version-node secure-version-rust xdg
 
 RUST_LOG_PV="0.4.21"
 
@@ -673,7 +674,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	tray? (
@@ -719,9 +720,9 @@ RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
 	>=gnome-base/librsvg-${LIBRSVG_PV}:=
 	>=net-libs/nodejs-${NODEJS_22_PV}:22=[npm]
-	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4=[javascript,introspection,wayland?,X?]
+	>=sys-process/procps-${PROCPS_PV}:=
 	>=x11-libs/gtk+-${GTK3_PV}:3=[wayland?,X?]
-	>=sys-process/procps-${PROCPS_PV}
+	~net-libs/webkit-gtk-${WEBKIT_GTK_STABLE_PV}:4=[javascript,introspection,wayland?,X?]
 	X? (
 		x11-misc/xcompmgr:=
 	)
@@ -1040,7 +1041,7 @@ einfo "Copying cargo build files"
 src_configure() {
 	chkl_check_many_timestamps
 
-	cflags-hardened_append		# For -sys packages with unsafe code
+	cflags-hardened_append		# For *-sys packages with unsafe code
 	rustflags-hardened_append	# For untrusted user generated content
 
 	pushd "${WORKDIR}/${MY_PN}-${PV}/src-tauri" || die
