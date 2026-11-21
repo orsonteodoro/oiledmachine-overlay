@@ -88,7 +88,7 @@ Compilers and interpreters used in this overlay
 | PyPy:3.12                         | Available                             | F45 (8.0.0), G (8.0.1)                                                                 | 1m ago                      |
 | Python 3.9 and earlier            | Not supported (EOL) [5][8]            |                                                                                        | 1y ago                      |
 | Python 3.10                       | Not supported (EOL) [5][8]            | U22 (3.10.6), G (3.10.22)                                                              | 2m ago                      |
-| Python 3.11 [9]                   | Available [4][9]                      | D12 (3.11.2), G (3.11.18)                                                              | 1m ago                      |
+| Python 3.11 [9]                   | Available [4][5][9]                   | D12 (3.11.2), G (3.11.18)                                                              | 1m ago                      |
 | Python 3.12 [D]                   | Fully supported [10]                  | G (3.12.16), U24 (3.12.3)                                                              | 1m ago                      |
 | Python 3.13                       | Partially supported                   | D13 (3.13.5), G (3.13.18_p1), Nunstable (3.14.10)                                      | 1m ago                      |
 | Python >= 3.13t [7]               | Not supported                         |                                                                                        | 1m ago                      |
