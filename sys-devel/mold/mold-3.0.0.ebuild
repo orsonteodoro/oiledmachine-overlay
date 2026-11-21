@@ -194,7 +194,7 @@ src_unpack() {
 		|| die
 	local rust_pv=$(rustc --version \
 		| cut -f 2 -d " ")
-	sed -i -e "s|1.98.1|${rust_pv}|g" "${S}/Cargo.toml" || die
+	sed -i -e "s|@RUST_PV@|${rust_pv}|g" "${S}/Cargo.toml" || die
 }
 
 src_prepare() {
