@@ -4,8 +4,6 @@
 
 EAPI=8
 
-export RUST_BACKTRACE=1
-
 # This ebuild is partly created with AI text generation and AI generated fixes.
 # A wrapper script and some patches are based on AI generated code.
 
@@ -78,12 +76,6 @@ PNPM_SLOT="9"
 POSTGRESQL_PORT="5432"
 POSTGRESQL_SLOT="17"
 NPM_SLOT="3"
-RUST_MAX_VER="1.93.1" # Inclusive
-RUST_MIN_VER="1.93.1" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
-# Obtained from https://github.com/swc-project/swc/blob/v1.15.8/rust-toolchain \
-# Obtained from commit from committer-date:2025-05-06 GH search \
-# Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
-RUST_PV="${RUST_MIN_VER}"
 SECURE_VERSION_NODE_EBUILD_UPDATE=1793303487
 
 # Upstream uses:
@@ -125,7 +117,7 @@ VULNERABILITIES_FIXED=(
 )
 
 # Use pnpm for pnpm_updater_update_locks.sh
-inherit chkl dhms desktop edo electron-app lcnr node-sharp npm pnpm rust secure-version vf xdg
+inherit chkl dhms desktop edo electron-app lcnr node-sharp npm pnpm secure-version vf xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -353,10 +345,6 @@ BDEPEND+="
 		~sys-apps/npm-${NODE_NPM_11_PV}:${NPM_SLOT}
 	)
 	>=net-libs/nodejs-${NODEJS_24_PV}:${NODE_SLOT}=[corepack,npm]
-	|| (
-		dev-lang/rust:${RUST_PV}
-		dev-lang/rust-bin:${RUST_PV}
-	)
 "
 PDEPEND+="
 	ceph? (
@@ -402,8 +390,6 @@ setup_cn_mirror_env() {
 
 setup_build_env() {
 	export DOCKER="true"
-
-	export RUST_BACKTRACE="full"
 
 	# Fix:
 #<--- Last few GCs --->
@@ -525,15 +511,6 @@ ewarn
 
 	node-sharp_pkg_setup
 
-	rust_pkg_setup
-	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "binary"
-	elif has_version "dev-lang/rust:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "source"
-	else
-eerror "Rust ${RUST_PV} required for @swc/core"
-		die
-	fi
 	if use electron ; then
 		electron-app_pkg_setup
 	fi
