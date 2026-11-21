@@ -4,6 +4,8 @@
 
 EAPI=8
 
+inherit secure-version
+
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data" # You can add ip-assets to CFLAGS_HARDENED_USE_CASES_USER_APPEND
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
@@ -92,7 +94,7 @@ SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 all dev jax mlx numpy paddlepaddle pinned-tf quality tensorflow test testingfree
 torch
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	all? (
