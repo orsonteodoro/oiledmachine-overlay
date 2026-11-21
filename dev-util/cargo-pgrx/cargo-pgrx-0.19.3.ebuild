@@ -4,7 +4,7 @@
 EAPI=8
 
 # To generate lockfile:
-# cd ${WORKDIR}/pgrx-0.18.0
+# cd ${WORKDIR}/pgrx-0.19.3
 # eselect rust list
 # eselect rust set <#> # Pick minimum required version for deps
 # cargo generate-lockfile --ignore-rust-version
@@ -21,8 +21,10 @@ EAPI=8
 MY_PV="${PV/alpha/alpha.}"
 MY_PV="${MY_PV/_/-}"
 
-RUST_MAX_VER="1.98.1"
-RUST_MIN_VER="1.98.1" # LLVM 22.1
+inherit secure-version
+
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 
 DISABLED_CRATES="
 pgrx-version-updater-0.1.1
