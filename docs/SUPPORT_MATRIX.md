@@ -56,23 +56,25 @@ microarchitecture references exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
+Compilers and interpreters used in this overlay
+
 | Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI/CD image correspondence                                                   | Last updated since Nov 2026 |
 | ---                               | ---                                   | ---                                                                                    | ---                         |
 | Clang <= 21                       | Not supported                         | D13 (21.1.8), F43 (21.1.8), G (21.1.8), Nunstable (21.1.8), U26 (21.1.8)               | 11m ago                     |
-| Clang 22 [C]                      | Partially supported                   | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
+| Clang 22 [D]                      | Partially supported                   | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
 | Clang 23                          | Available                             | F45 (23.1.5), G~ (23.1.5)                                                              | 3d ago                      |
 | Clang 24                          | Limited support                       | G**                                                                                    | Now                         |
 | Cython 0.29.37.1 [4]              | Deprecated, limited [4]               | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                                         | 3y ago                      |
 | Cython 3.0.12 [4]                 | Deprecated, limited [4]               | D13 (3.0.11), U24 (3.0.8)                                                              | 1y ago                      |
 | Cython 3.1.0 [4]                  | Deprecated, limited [4]               | F43 (3.1.3), U26 (3.1.6)                                                               | 11m ago                     |
 | Cython 3.2.0 [LTS]                | Available                             | F44 (3.2.4), F45 (3.2.8), G (3.2.8), Nunstable (3.2.5)                                 | 4m ago                      |
-| Cython 3.3.0 [RSC]                | Available                             | Nunstable (3.3.0)                                                                      | 3w ago                      |
+| Cython 3.3.0 [RSC][D]             | Available                             | G~ (3.3.1), Nunstable (3.3.0)                                                          | 3w ago                      |
 | GCC <= 10                         | Not supported                         |                                                                                        | 3y ago                      |
 | GCC 11 [1]                        | Limited [1]                           | U22 (11.2), G (11.5.0)                                                                 | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                                 | 1y ago                      |
 | GCC 13                            | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                                                       | 2m ago                      |
 | GCC 14                            | Partially supported                   | D13 (14.2), G (14.3.1_p20260604)                                                       | 5m ago                      |
-| GCC 15 [C]                        | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)                                                 | 5m ago                      |
+| GCC 15 [D]                        | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)                                                 | 5m ago                      |
 | GCC 16			    | Available                             | F45 (16.2.1), G (16.2.1_p20260926), Nunstable (16.2.0)                                 | 3m ago                      |
 | GCC 17                            | Available but not supported           | G**                                                                                    | Now                         |
 | Node.js <= 20                     | Not supported                         | D13 (20.19.2)                                                                          | 8m ago                      |
@@ -84,14 +86,23 @@ microarchitecture references exist in build files.
 | PyPy:3.10                         | Not supported                         | Nunstable (7.3.19)                                                                     | 1y ago                      |
 | PyPy:3.11                         | Available                             | D13 (7.3.19), F43 (8.0.0), F44 (8.0.0), F45 (8.0.0), G (8.0.1), Nunstable (7.3.20)     | 1m ago                      |
 | PyPy:3.12                         | Available                             | F45 (8.0.0), G (8.0.1)                                                                 | 1m ago                      |
+| Python 3.9 and earlier            | Not supported (EOL) [5][8]            |                                                                                        | 1y ago                      |
+| Python 3.10                       | Not supported (EOL) [5][8]            | U22 (3.10.6), G (3.10.22)                                                              | 2m ago                      |
+| Python 3.11 [9]                   | Available [4][9]                      | D12 (3.11.2), G (3.11.18)                                                              | 1m ago                      |
+| Python 3.12 [D]                   | Fully supported [10]                  | G (3.12.16), U24 (3.12.3)                                                              | 1m ago                      |
+| Python 3.13                       | Partially supported                   | D13 (3.13.5), G (3.13.18_p1), Nunstable (3.14.10)                                      | 1m ago                      |
+| Python >= 3.13t [7]               | Not supported                         |                                                                                        | 1m ago                      |
+| Python 3.14                       | Available                             | F43 (3.14.10), F44 (3.14.10), G (3.14.10_p1), U26 (3.14.3)                             | 1m ago                      |
+| Python 3.15 [7]                   | Available                             | F45 (3.15.2_p1), G~ (3.15.2)                                                           | 1m ago                      |
+| Python 3.16 [7]                   | Not supported                         | G**                                                                                    | 2w ago                      |
 | Rust <= 1.98.0                    | Not supported                         |                                                                                        | 3m ago                      |
 | Rust 1.98.1 [LTS]                 | Available                             | G (1.98.1)                                                                             | 3m ago                      |
 | Rust 1.99.0                       | Not supported                         |                                                                                        | 2m ago                      |
 | Rust 1.99.1                       | Fully supported                       | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)                            | 1m ago                      |
 | Rust 1.100.0 [RSC]                | WIP / Planned                         | F45 (1.100.1)                                                                          | 1w ago                      |
-| Rust-9999 (1.102.0-nightly) [LSC] | Limited support                       | G**                                                                                    | 2w ago - Now                |
+| Rust-9999 (1.102.0-nightly) [LSC] | Limited support                       | G**                                                                                    | Now or 2w ago               |
 
-[C] rows are the current development slots for C/C++ development for LTS.
+[D] Current default slots on this overlay.
 
 [1] Only Godot allowed for video game porting into extended LTS distros
 (e.g. D12, U22, U24).
@@ -112,15 +123,48 @@ Trade-offs for compiler slot retention:
 
 The slot retention rule for compilers may change.
 
-This is the fallback.  The slot retention window is adjusted to more
-security-critical if possible for high risk packages.  Sometimes, it is not
-possible to get the ideal pairing and a practical solution is required.  For
-example if a package uses C++17 (LTS), the package that uses LLVM_SLOT and C++
-may be forced to use [LTS] for Rust expecially if the package is a
-library/hybrid package and not an app only package.
+The default slot retention window is the fallback choice.  The slot retention
+window is adjusted per ebuild to more security-critical if possible for high
+risk packages.  Sometimes, it is not possible to get the ideal pairing and a
+practical solution is required to complete objectives -- no future build time
+issues, systemwide update completion.  For example if a package uses C++17
+(LTS), the package that uses LLVM_SLOT and C++ may be forced to use [LTS] for
+Rust expecially if the package is a library only or a hybrid package that is
+both app and library.
 
 [4] Support is limited for problematic packages without AI assistant that cannot
 be updated to use the RSC compiler.
+
+[5] Available but not fully supported because the PYTHON_COMPAT removal of
+    affected versions by eager FAFO removal from distro and community overlays.
+    This overlay may fork affected packages for AI stack stability.  Forced
+    PYTHON_COMPAT bumps (to Python 3.12 or any future minimum version bumps)
+    may introduce DoS vulnerabilities (e.g. crash, broken boot/login),
+    degraded security (3FA -> 2FA), or incompatibilities.
+
+    DISCLAIMER:  This overlay may delete Python based security-critical
+    components without warning associated with eager distro EOL restriction
+    and upstream not updating their releases to use the latest CI test images.
+    If the package (e.g. Howdy or Python based PAM package) is using a
+    D12/U18/U20/U22 CI/CD image or testing with older CI/CD images, this overlay may
+    immediately delete the package or dependencies associated with it which
+    can cause an init or boot issues.  The developer or contributors may
+    choose not to apply patches because it is unpaid free labor to fix any
+    issue, stress relief, or an alternative to replace it exists.  It is a
+    common practice by the distro overlay to delete ebuilds for EOL packages
+    or defunct projects.
+
+[7] Not widely tested with CI/CD.
+[8] The oiledmachine-overlay is actively dropping support for 3.10 and older.
+[9] This slot is EOL on the distro overlay but not on the oiledmachine-overlay.
+[10] Typically the older Python slots are feature complete and less update
+friction.  Recommendations for support which is typically used for
+Machine Learning (ML):
+- Python 3.12 - For performance-critical, ML (ROCm/CUDA), Blender 4.5, Open WebUI AI/LLM, LocalAI
+- Python 3.13 - For performance-critical, ML (ROCm/CUDA), Blender 5.2/5.3
+- Python 3.14 - For performance-critical, ML (ROCm/CUDA)
+- Python 3.15 - For security-critical
+- Python 3.16 - For developers to fix Python
 
 For non C/C++ langages (e.g. Python or JS) the Rust slot rules for version
 pinning are as follows:
@@ -323,43 +367,6 @@ Pairing rules and support
 
 * Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
 
-| Python               | Ebuild level of support               | Distro or CI/CD image correspondence                                                                                                            |
-| ---                  | ---                                   | ---                                                                                                                                             |
-| 3.9 and earlier      | Not supported (EOL)                   |                                                                                                                                                 |
-| 3.10                 | Not supported (EOL)                   | U22 (3.10.6)                                                                                                                                    |
-| 3.11                 | Available [4]                         | D12 (3.11.2), G (3.11.8)                                                                                                                        |
-| 3.12                 | Partially supported                   | G (3.12.6), U24 (3.12.3)                                                                                                                        |
-| 3.13                 | Partially supported                   | D13 (3.13.5), G (3.13.18_p1), Nunstable (3.14.10)                                                                                               |
-| >= 3.13t [3]         | Not supported                         |                                                                                                                                                 |
-| 3.14                 | Available                             | F43 (3.14.10), F44 (3.14.10), G (3.14.10_p1), U26 (3.14.3)                                                                                      |
-| 3.15 [3]             | Available                             | F45 (3.15.2), G~ (3.15.2)                                                                                                                       |
-| 3.16                 | Not supported                         | G**                                                                                                                                             |
-| pypy3 [2][3]         | Not supported (EOL)                   |                                                                                                                                                 |
-| pypy3_11 [3]         | Available [1]                         | D12 (7.3.11), D13 (7.3.10), F43 (7.3.23), F44 (7.3.23), F45 (7.3.23), G (7.3.23), Nunstable (7.3.20), U22 (7.3.9), U24 (7.3.15), U26 (7.3.20)   |
-| pypy3_12             | Not supported                         | G (8.0.1)
-
-* [1] Available but not fully supported because the PYTHON_COMPAT removal of
-      affected versions by eager FAFO removal from distro and community overlays.
-      This overlay may fork affected packages for AI stack stability.  Forced
-      PYTHON_COMPAT bumps (to Python 3.12 or any future minimum version bumps)
-      may introduce DoS vulnerabilities (e.g. crash, broken boot/login),
-      degraded security (3FA -> 2FA), or incompatibilities.
-
-      DISCLAIMER:  This overlay may delete Python based security-critical
-      components without warning associated with eager distro EOL restriction
-      and upstream not updating their releases to use the latest CI test images.
-      If the package (e.g. Howdy or Python based PAM package) is using a
-      D12/U18/U20/U22 CI/CD image or testing with older CI/CD images, this overlay may
-      immediately delete the package or dependencies associated with it which
-      can cause an init or boot issues.  The developer or contributors may
-      choose not to apply patches because it is unpaid free labor to fix any
-      issue, stress relief, or an alternative to replace it exists.  It is a
-      common practice by the distro overlay to delete ebuilds for EOL packages
-      or defunct projects.
-
-* [2] [Python 3.10](https://projects.gentoo.org/python/guide/basic.html#python-compat)
-* [3] Not widely tested with CI.
-* [4] Distro - deprecated, this overlay - EOL.  The portage ebuild dropped support for 3.11.
 
 | Platform                             | Ebuild level of support                 | Distro or CI/CD image correspondence                                    |
 | ---                                  | ---                                     | ---                                                                     |
