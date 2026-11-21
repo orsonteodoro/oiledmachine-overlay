@@ -188,7 +188,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-bench dev linting
+bench dev linting pyodide-build
 ebuild_revision_5
 "
 RDEPEND+="
@@ -197,7 +197,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-util/maturin[${PYTHON_USEDEP}]
+	>=dev-util/maturin-1.16[${PYTHON_USEDEP}]
 	dev? (
 		dev-util/maturin[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -210,8 +210,14 @@ BDEPEND+="
 	)
 	linting? (
 		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/mdformat[${PYTHON_USEDEP}]
+		dev-util/mdformat-tables[${PYTHON_USEDEP}]
+	)
+	pyodide-build? (
+		dev-util/pyodide-build[${PYTHON_USEDEP}]
 	)
 "
+
 DOCS=( "README.md" )
 
 pkg_setup() {
