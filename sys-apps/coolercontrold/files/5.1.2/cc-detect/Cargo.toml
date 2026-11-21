@@ -1,0 +1,33 @@
+[package]
+name = "cc-detect"
+version = "1.0.1"
+edition = "2024"
+rust-version = "1.95"
+description = "Super-I/O hardware detection"
+categories = ["hardware-support"]
+keywords = ["sensors", "hardware", "drivers"]
+homepage = "https://coolercontrol.org"
+repository = "https://gitlab.com/coolercontrol/coolercontrol"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+
+[lib]
+doctest = false
+
+[features]
+# Gates tests that depend on their build environment. Off by default, so distro builds skip them.
+# See RUST_STYLE.md "Gated Tests".
+gated-tests = []
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "1.2"
+log = "0.4"
+
+[dev-dependencies]
+tempfile = "3.27"
+
+# Nested `if` is deliberate per RUST_STYLE.md: compound conditions are split so each
+# case stays individually visible. Matches the daemon crate.
+[lints.clippy]
+collapsible_if = "allow"

@@ -1,0 +1,39 @@
+[package]
+name = "cc-stress"
+version = "0.2.1"
+edition = "2024"
+rust-version = "1.95"
+description = "CPU, GPU, and RAM stress testing for thermal validation"
+categories = ["hardware-support"]
+keywords = ["stress", "hardware", "thermal", "benchmark"]
+homepage = "https://coolercontrol.org"
+repository = "https://gitlab.com/coolercontrol/coolercontrol"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+
+[lib]
+doctest = false
+
+[features]
+# Gates tests that depend on their build environment. Off by default, so distro builds skip them.
+# See RUST_STYLE.md "Gated Tests".
+gated-tests = []
+
+[dependencies]
+anyhow = "1.0"
+libc = "0.2"
+nix = { version = "0.31.3", default-features = false, features = [
+  "user",
+  "sched",
+  "ioctl",
+] }
+# Held at 24: 25 through 30 carry breaking API changes across the stress backends,
+# and moving needs re-validation on real GPUs. Not an MSRV hold.
+wgpu = { version = "24", default-features = false, features = [
+  "vulkan-portability",
+  "angle",
+  "wgsl",
+] }
+# Only for block_on: wgpu's device request is the one async step, and it
+# resolves without a reactor. The stress loops themselves are plain threads.
+tokio = { version = "1.54", default-features = false, features = ["rt"] }

@@ -1,0 +1,210 @@
+[package]
+name = "coolercontrold"
+version = "5.1.2"
+authors = ["Guy Boldon <gb@guyboldon.com>"]
+edition = "2024"
+rust-version = "1.95"
+description = "Monitor and control your cooling and other devices"
+documentation = "https://coolercontrol.org"
+readme = "README.md"
+categories = ["hardware-support"]
+keywords = ["temperature", "hardware", "cooling", "fan", "monitor"]
+homepage = "https://coolercontrol.org"
+repository = "https://gitlab.com/coolercontrol/coolercontrol"
+license = "GPL-3.0-or-later"
+
+[features]
+# Gates tests that depend on their build environment (host, sandbox, toolchain). Off by default, so
+# distro builds skip them; CI enables them with `--features gated-tests`. See RUST_STYLE.md
+# "Gated Tests".
+gated-tests = []
+
+[dependencies]
+cc-detect = { path = "../cc-detect" }
+cc-image = { path = "../cc-image" }
+cc-stress = { path = "../cc-stress" }
+log = "0.4"
+env_logger = "0.11"
+# The colour check env_logger makes for its own stderr target, which the log writer thread's pipe
+# target skips. Already in the tree through env_logger 0.11, with the same features.
+anstream = "1.0"
+systemd-journal-logger = "2.2"
+clap = { version = "4.6", features = [
+  "derive",
+] } # Command line argument parser - pkg
+anyhow = "1.0"
+thiserror = "2.0"
+tokio = { version = "1.54", default-features = false, features = [
+  "rt",
+  "fs",
+  "macros",
+  "parking_lot",
+  "time",
+  "sync",
+  "signal",
+  "net",
+  "io-std",
+  "io-util",
+  "process",
+] }
+tokio-util = "0.7.20"
+tokio-stream = { version = "0.1.19", default-features = false, features = [
+  "sync",
+  "io-util",
+] }
+moro-local = "0.4.0"
+async-trait = "0.1"
+bitflags = { version = "2.13", features = ["serde"] }
+axum = { version = "0.8.9", features = ["multipart", "macros", "query"] }
+# This should follow the dependencies of axum version as well
+tower = { version = "0.5.3" }
+tower-http = { version = "0.7.1", features = [
+  "timeout",
+  "trace",
+  "limit",
+  "cors",
+  "normalize-path",
+  # gzip + deflate only. zstd-sys builds bundled C source. The brotli encoder regrows
+  # its output buffer every 64 KiB, about 1 GB zeroed for a full status history.
+  # Clients that offer br or zstd negotiate down to gzip.
+  "compression-gzip",
+  "compression-deflate",
+  "fs",
+] }
+tower-sessions = { version = "0.15.0", features = ["private"] }
+tower-sessions-core = { version = "0.15.0", features = ["deletion-task"] }
+# Held at 0.22 to share one base64 with tonic, cookie and tower-sessions-core. pem 4 (rcgen) uses
+# 0.23; move when those three do.
+base64 = "=0.22"
+time = "0.3"
+# No `metadata`: include_dir drops it on musl; api/last_modified.rs sends Last-Modified.
+tower-serve-static = "0.1.2"
+include_dir = "0.7.4"
+aide = { version = "0.15.1", features = [
+  "axum",
+  "axum-json",
+  "axum-query",
+  "axum-multipart",
+] }
+# this needs to follow the aide version above (currently 0.9.0)
+schemars = { version = "=0.9.0", features = ["chrono04"] }
+mime = "0.3"
+# TLS support: use ring as the rustls crypto provider (already pulled in by rcgen)
+# to avoid the aws-lc-rs/aws-lc-sys C dependency tree.
+axum-server = { version = "0.9.0", default-features = false, features = [
+  "tls-rustls-no-provider",
+] }
+rustls = { version = "0.23", default-features = false, features = [
+  "ring",
+  "logging",
+  "std",
+  "tls12",
+] }
+rcgen = "0.14"
+pin-project-lite = "0.2"
+tokio-rustls = { version = "0.26", default-features = false, features = [
+  "ring",
+  "logging",
+  "tls12",
+] }
+tempfile = "3.27"
+# Backup archives: tar + gzip. flate2 is already compiled in the tree (tower-http
+# compression); declaring it directly lets the backup module reuse it with no new
+# codegen. tar is pure Rust with no C dependency; xattrs are unused for config backups.
+flate2 = "1.1"
+tar = { version = "0.4", default-features = false }
+hyper = { version = "1.12", default-features = false, features = [
+  "http1",
+  "client",
+] }
+hyper-util = { version = "0.1", default-features = false, features = [
+  "client",
+  "http1",
+  # The API server's builder, configured directly for its connection timeouts.
+  "server-auto",
+  "tokio",
+] }
+http-body-util = "0.1"
+# Parses liqctld's reply heads on its blocking workers. Already in the tree through hyper. Any
+# 1.x: only the basic response parser is used, so hyper's own requirement sets the floor.
+httparse = "1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+# Client only: `proxy` brings the connection and proxies, without the service side.
+zbus = { version = "6.2.1", default-features = false, features = [
+  "tokio",
+  "proxy",
+] } # our preferred DBus lib
+futures-util = { version = "0.3", default-features = false, features = [
+  "std",
+] } # future utilities we use like join3
+sysinfo = { version = "0.40.1", default-features = false, features = [
+  "system",
+] } # gets detailed system info
+chrono = { version = "0.4.45", features = [
+  "serde",
+] } # We use timestamps in our status history
+strum = { version = "0.28.0", features = ["derive"] } # Enum -> String
+regex = "1.13"
+heck = "0.5.0" # hanldes case conversion like CamelCase and Title Case.
+# Sysfs and /proc path discovery. Zero dependencies, maintained by rust-lang.
+glob = "0.3.4"
+nvml-wrapper = "0.13.0"
+# Held at 0.8 to share one libloading with ash, khronos-egl, libdrm_amdgpu_sys,
+# nvml-wrapper and wgpu-hal. 0.9 buys us nothing and would duplicate the stack.
+libloading = "=0.8"
+# Held at 0.10 to share one sha2 with cookie (via tower-sessions), which still requires 0.10.
+sha2 = "=0.10"
+argon2 = "0.6"
+subtle = "2.6"
+toml_edit = { version = "0.25.19", features = ["serde"] }
+nix = { version = "0.31.3", default-features = false, features = [
+  "fs",
+  "user",
+  "signal",
+  "process",
+  "resource",
+  "sched",
+  "net",
+  "fs",
+] }
+libdrm_amdgpu_sys = { version = "0.9.0", default-features = false, features = [
+  "dynamic_loading",
+] }
+indexmap = "2.14"
+uuid = { version = "1.24", features = ["v4"] }
+# service plugin dependencies
+tonic = { version = "0.14.6", default-features = false, features = [
+  "channel",
+  "codegen",
+  "server",
+  "transport",
+  "router",
+] }
+prost = "0.14.4"
+tonic-prost = "0.14.9"
+tonic-health = "0.14.9"
+# Pure Rust (libc only, no libsystemd C dependency). 0.5 for
+# `watchdog_enabled() -> Option<Duration>`; 0.4 used an out-parameter.
+sd-notify = "0.5.0"
+
+[dev-dependencies]
+serial_test = "4.0.1"
+tokio = { version = "1.54", default-features = false, features = ["test-util"] }
+
+[build-dependencies]
+# Gzips the embedded UI at build time. Already in the tree through tower-http.
+flate2 = "1.1"
+tonic-prost-build = "0.14.9"
+tonic-build = "0.14.9"
+# Pure-Rust protobuf compiler: drops the protoc binary as a system build dependency. Pinned to 0.9.1
+# to match prost 0.14 (tonic-prost-build).
+# build.rs persists its descriptor set (via the re-exported protox::prost) for the gRPC reflection service.
+protox = "=0.9.1"
+
+[lints.clippy]
+upper_case_acronyms = "allow"
+type_complexity = "allow"
+too_many_arguments = "allow"
+doc_lazy_continuation = "allow"
+collapsible_if = "allow"
