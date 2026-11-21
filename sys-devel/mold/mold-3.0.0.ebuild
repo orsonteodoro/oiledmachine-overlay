@@ -9,6 +9,8 @@ EAPI=8
 # For lockfile updates, change the rust-version in Cargo.toml:
 # rust-version = "@RUST_PV@"
 
+inherit secure-version
+
 RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
 RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 
@@ -105,7 +107,7 @@ zstd-safe-7.3.0
 zstd-sys-2.1.2+zstd.1.5.7
 "
 
-inherit cargo cflags-hardened dep-prepare lcnr rust rustflags-hardened secure-version toolchain-funcs
+inherit cargo cflags-hardened dep-prepare lcnr rust rustflags-hardened toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/rui314/mold.git"
@@ -142,7 +144,7 @@ SLOT="0"
 IUSE="
 ${MODES[@]}
 debug +mimalloc -system-mimalloc -system-tbb test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	^^ (
