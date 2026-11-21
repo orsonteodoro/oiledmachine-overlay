@@ -8,8 +8,8 @@ MY_PV=$(ver_cut 1-3 "${PV}")
 FLAVOR="" # Either -vulkan-sdk or empty
 
 # The Glslang version to Vulkan version correspondence is based on the date.
-INTERNAL_GLSLANG_SLOT="16.5" # From https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
-PYTHON_COMPAT=( python3_{10..14} )
+INTERNAL_GLSLANG_SLOT="16.6" # From https://github.com/KhronosGroup/glslang/blob/main/CHANGES.md
+PYTHON_COMPAT=( "python3_"{10..14} )
 
 CHKL_TIMESTAMPS=(
 	"dev-util/glslang-9999"
@@ -23,8 +23,8 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib python-any-r1 secure-version
 
 if [[ ${PV} == *9999* ]]; then
-	INTERNAL_VERSION="1.4.368" # https://github.com/KhronosGroup/Vulkan-Tools/blob/main/icd/VkICD_mock_icd.json.in#L5
-	FALLBACK_COMMIT="1d3fbab1ff5abce9f3eb9f3e7fcf66f455ae4475"
+	INTERNAL_VERSION="1.4.369" # https://github.com/KhronosGroup/Vulkan-Tools/blob/main/icd/VkICD_mock_icd.json.in#L5
+	FALLBACK_COMMIT="8162e26e3eee803f586851ddfdd86647a8d1c7d5"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	EGIT_SUBMODULES=()
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -45,7 +45,7 @@ LICENSE="Apache-2.0"
 SLOT="0/${INTERNAL_VERSION}"
 IUSE+="
 cube wayland test X
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 

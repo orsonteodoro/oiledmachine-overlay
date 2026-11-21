@@ -23,7 +23,7 @@ HOMEPAGE="https://github.com/KhronosGroup/SPIRV-LLVM-Translator"
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/SPIRV-LLVM-Translator.git"
-	FALLBACK_COMMIT="3a4d67b2c538ea6048cf517d5b85401f86642cb0"
+	FALLBACK_COMMIT="708f93118262f4df5ccc8ef2a840380b3459bcf3"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
@@ -38,7 +38,7 @@ SLOT="$(ver_cut 1)"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
 IUSE="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )
 	arm? ( test )

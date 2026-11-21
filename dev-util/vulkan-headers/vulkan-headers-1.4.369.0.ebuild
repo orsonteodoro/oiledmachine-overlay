@@ -4,7 +4,7 @@
 EAPI=8
 
 MY_PN=Vulkan-Headers
-COMMIT_ID="88487f687f3100ebe1d3559a8a34d971ee85b977"
+COMMIT_ID="d277a0a3cda9c682708c93279f0c72cd6b0ae3f3"
 #FLAVOR="vulkan-tmp" # vulkan-tmp or vulkan-sdk
 
 inherit cmake
