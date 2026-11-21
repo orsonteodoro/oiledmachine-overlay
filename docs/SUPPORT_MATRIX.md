@@ -79,7 +79,7 @@ Compilers and interpreters used in this overlay
 | GCC 17                            | Available but not supported           | G**                                                                                    | Now                         |
 | Node.js <= 20                     | Not supported                         | D13 (20.19.2)                                                                          | 8m ago                      |
 | Node.js 22                        | Available                             | F43 (22.22.1), F45 (22.23.1), Nunstable (22.23.5), U26 (22.22.1)                       | 1w ago                      |
-| Node.js 24                        | Fully supported                       | F43 (24.14.1), F44 (24.18.0), F45 (24.18.0), Nunstable (24.22.2)                       | 1w ago                      |
+| Node.js 24 [D]                    | Fully supported                       | F43 (24.14.1), F44 (24.18.0), F45 (24.18.0), Nunstable (24.22.2)                       | 1w ago                      |
 | Node.js 26                        | Available                             | Nunstable (26.13.1)                                                                    | 1w ago                      |
 | PyPy:2.7                          | Not supported                         | F43 (7.3.23), F44 (7.3.23), F45 (7.3.23), G (8.0.1), Nunstable (7.3.19)                | 1m ago                      |
 | PyPy:3.9                          | Not supported                         | D12 (7.3.11)                                                                           | 2y ago                      |
