@@ -7,12 +7,12 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
-PYTHON_COMPAT=( "python3_"{11..14} "pypy3_11" )
+PYTHON_COMPAT=( "python3_"{11..14} "pypy3_"{11..12} )
 RUSTFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
 TARBALL_PROVIDER="gh" # pypi or gh
 
-RUST_MAX_VER="1.98.1"
-RUST_MIN_VER="1.98.1" # LLVM 22.1
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 
 DISABLED_CRATES="
 primp-python-2.0.1
@@ -470,7 +470,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND+="
 "
@@ -527,7 +527,7 @@ src_configure() {
 	export CARGO_TERM_VERBOSE="true"
 
 	fix_mb_len_max			# For Clang built aws-lc-sys
-	cflags-hardened_append		# For aws-lc-sys
+	cflags-hardened_append		# For aws-lc-sys, *-sys crates
 	rustflags-hardened_append
 
 	cargo_src_configure
