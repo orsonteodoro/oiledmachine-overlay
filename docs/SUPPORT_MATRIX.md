@@ -242,13 +242,14 @@ Language defaults comparison
 | LTS                      | gnu++17        | gnu++17          | gnu17        | gnu17          | 14          | 19            | gcc_slot_14_2, llvm_slot_19          | D13                     | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
 | Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_3, llvm_slot_21          | F43                     | SIMD, CUDA 13.4, Vulkan                                                 |
 | LTS                      | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 21            | gcc_slot_15_2, llvm_slot_21          | U26                     | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
-| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22 [1]      | G [2]                   | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
-| Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22          | F44, G                  | SIMD, CUDA 13.4, Vulkan                                                 |
+| Rolling                  | gnu++17        | gnu++17          | gnu23        | gnu17          | 15          | 22            | gcc_slot_15_3, llvm_slot_22 [1]      | G [2a]                  | SIMD, CUDA 13.4, ROCm 10.2, Vulkan                                      |
+| Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 22            | gcc_slot_16_2, llvm_slot_22          | F44, G [2b]             | SIMD, CUDA 13.4, Vulkan                                                 |
 | Rolling                  | gnu++20        | gnu++17          | gnu23        | gnu17          | 16          | 23            | gcc_slot_16_2, llvm_slot_23          | F45                     | SIMD, Vulkan                                                            |
 
 
 * [1] This is the current oiledmachine-overlay's default combo for LTS.
-* [2] The latest stable KEYWORDS for the G distro.
+* [2a] The latest stable KEYWORDS for particular slots.
+* [2b] The latest stable KEYWORDS for any slots.
 * [3] CUDA GPU acceleration is only available with GCC built packages on this
       overlay for this GCC & Clang compiler combo.  llvm_slot_14 is hypothetical
       and not supported on this overlay.
