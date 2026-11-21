@@ -8,7 +8,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 
-FALLBACK_COMMIT="fd668695db22024c8a8ef8c14a95d2d9c566559a"
+FALLBACK_COMMIT="4942b92ad3af3f4cf8d6a5963503847fd3095250"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
@@ -48,7 +48,7 @@ fi
 IUSE+="
 	+X alsa +dbus eglfs +ffmpeg gstreamer opengl pipewire pulseaudio
 	qml +v4l vaapi vulkan wayland
-	ebuild_revision_20
+	ebuild_revision_24
 "
 REQUIRED_USE="
 	|| ( ffmpeg gstreamer )
