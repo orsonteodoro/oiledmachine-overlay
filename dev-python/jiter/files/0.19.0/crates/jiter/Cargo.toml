@@ -1,5 +1,6 @@
 [package]
 name = "jiter"
+autobenches = false
 description = "Fast Iterable JSON parser"
 readme = "../../README.md"
 version = { workspace = true }
@@ -15,27 +16,30 @@ rust-version = { workspace = true }
 [dependencies]
 num-bigint = { version = "0.4.4", optional = true }
 num-traits = "0.2.16"
-ahash = "0.8.0"
-smallvec = "1.11.0"
+ahash = { version = "0.8.0", optional = true }
+smallvec = { version = "1.11.0", features = ["const_new"] }
 pyo3 = { workspace = true, optional = true }
 lexical-parse-float = { version = "1.0.5", features = ["format"] }
 bitvec = "1.0.1"
+serde = { version = "1.0.147", optional = true }
 
 [features]
 default = ["num-bigint"]
-python = ["dep:pyo3", "dep:pyo3-build-config"]
+python = ["dep:pyo3", "dep:pyo3-build-config", "dep:ahash"]
 num-bigint = ["dep:num-bigint", "pyo3?/num-bigint"]
+serde = ["dep:serde"]
 
 [dev-dependencies]
 paste = "1.0.7"
-serde_json = { version = "1.0.87", features = [
+serde_json = { version = "1.0.154", features = [
     "preserve_order",
     "arbitrary_precision",
     "float_roundtrip",
 ] }
-serde = "1.0.147"
+serde = { version = "1.0.147", features = ["derive"] }
 pyo3 = { workspace = true, features = ["auto-initialize"] }
-codspeed-criterion-compat = "2.7.2"
+codspeed-criterion-compat = "5.0.1"
+proptest = "1.4.0"
 
 [build-dependencies]
 pyo3-build-config = { workspace = true, optional = true }
@@ -44,8 +48,16 @@ pyo3-build-config = { workspace = true, optional = true }
 name = "python"
 required-features = ["python"]
 
+[[test]]
+name = "serde"
+required-features = ["serde"]
+
 [[bench]]
 name = "main"
+harness = false
+
+[[bench]]
+name = "json_cases"
 harness = false
 
 [[bench]]
