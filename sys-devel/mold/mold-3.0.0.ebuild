@@ -142,7 +142,7 @@ SLOT="0"
 IUSE="
 ${MODES[@]}
 debug +mimalloc -system-mimalloc -system-tbb test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
