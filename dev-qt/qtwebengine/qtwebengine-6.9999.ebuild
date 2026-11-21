@@ -57,7 +57,7 @@ CHKL_TIMESTAMPS=(
 	"app-arch/snappy-9999"
 	"dev-libs/expat-9999"
 	"dev-libs/glib-2.91.9999"
-	"dev-libs/icu-79.1.9999"
+	"dev-libs/icu-80.0.9999"
 	"dev-libs/libxml2-9999"
 	"dev-libs/libxslt-9999"
 	"dev-qt/qtbase-6.9999"
@@ -101,7 +101,7 @@ IUSE+="
 	accessibility +alsa clang bindist custom-cflags designer gcc geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_21
+	ebuild_revision_22
 "
 REQUIRED_USE="
 	^^ (
