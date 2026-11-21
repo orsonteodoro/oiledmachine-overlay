@@ -42,8 +42,8 @@ NPM_AUDIT_FATAL=0
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="685d3424a946346721d839add3bfb6521690eb6e" # Obtained from GIT_CRATES
-RUST_MAX_VER="${RUST_LLVM_LTS_PV}"
-RUST_MIN_VER="${RUST_LLVM_LTS_PV}"
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 RUST_PV="${RUST_MIN_VER}"
 RUSTFLAGS_HARDENED_USE_CASES="untrusted-data"	# For user generated content
 SECURE_VERSION_NODE_EBUILD_UPDATE=1793848992
@@ -674,7 +674,7 @@ RESTRICT="
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 libappindicator libayatana-appindicator tray wayland +X
-ebuild_revision_22
+ebuild_revision_23
 "
 REQUIRED_USE="
 	tray? (
