@@ -47,7 +47,7 @@ bytemuck-1.25.2
 byteorder-1.5.0
 byteorder-lite-0.1.0
 cast-0.3.0
-cc-1.11.2
+cc-1.11.3
 cexpr-0.6.0
 cfg-expr-0.15.8
 cfg-if-1.0.5
@@ -80,8 +80,8 @@ diff-0.1.13
 difflib-0.4.0
 either-1.19.0
 encode_unicode-1.0.0
-env_filter-2.0.0
-env_logger-0.11.11
+env_filter-2.1.0
+env_logger-0.11.12
 equator-0.4.2
 equator-macro-0.4.2
 equivalent-1.0.3
@@ -231,7 +231,7 @@ vcpkg-0.2.15
 version-compare-0.2.1
 v_frame-0.3.9
 wait-timeout-0.2.1
-walkdir-2.5.0
+walkdir-2.5.1
 wasm-bindgen-0.2.130
 wasm-bindgen-macro-0.2.130
 wasm-bindgen-macro-support-0.2.130
@@ -254,8 +254,8 @@ windows_x86_64_msvc-0.52.6
 winnow-0.7.15
 y4m-0.8.0
 yansi-1.0.1
-zerocopy-0.8.63
-zerocopy-derive-0.8.63
+zerocopy-0.8.64
+zerocopy-derive-0.8.64
 zlib-rs-0.6.8
 zmij-1.0.23
 "
@@ -326,7 +326,7 @@ src_unpack() {
 		default
 		cargo_src_unpack
 	fi
-	local expected_cargo_lock_fingerprint="f3f4deb31a23c52a379f1c510b51ad200f91d90df8700913bda7bab600ea4aafebf252a1af7ba6506c9854fc166eb5b71bea2e446696cbf058c88240cfc69ec2"
+	local expected_cargo_lock_fingerprint="ab5985e985e734c353992a2daf6171d63a9edd2c01c4467a700760737f172388bf5d36ec349e6a0853aafbda834ec1f098007814f407649ae64369e01e0749f2"
 	local actual_cargo_lock_fingprint=$(sha512sum "${S}/Cargo.lock" | cut -f 1 -d " ")
 	if [[ "${expected_cargo_lock_fingerprint}" != "${actual_cargo_lock_fingprint}" ]] ; then
 eerror "QA:  Update lockfile"
@@ -343,6 +343,7 @@ eerror "QA:  Expected Cargo.lock fingerprint:  ${expected_cargo_lock_fingerprint
 src_configure() {
 	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
+	cargo_src_configure
 }
 
 src_compile() {
