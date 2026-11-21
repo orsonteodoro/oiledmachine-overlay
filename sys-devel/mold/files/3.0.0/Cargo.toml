@@ -19,7 +19,7 @@ default-members = [".", "cli", "arch/*", "tests"]
 [workspace.package]
 version = "3.0.0"
 edition = "2024"
-rust-version = "1.98.1"
+rust-version = "@RUST_PV@"
 license = "MIT"
 
 [workspace.dependencies]

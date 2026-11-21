@@ -7,10 +7,10 @@ EAPI=8
 
 # Maintenance notes:
 # For lockfile updates, change the rust-version in Cargo.toml:
-# rust-version = "1.98.1"
+# rust-version = "@RUST_PV@"
 
-RUST_MAX_VER="1.98.1"
-RUST_MIN_VER="1.98.1" # LLVM 22.1
+RUST_MAX_VER="${RUST_LLVM_ROLLING_PV}"
+RUST_MIN_VER="${RUST_LLVM_ROLLING_PV}"
 
 # Upstream has mimalloc-secure off and runs it as performance-critical by default.
 # The system-toolchain is system-critical according to AI, so secure mode is enabled by default.
@@ -190,6 +190,9 @@ src_unpack() {
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
 		|| die
+	local rust_pv=$(rustc --version \
+		| cut -f 2 -d " ")
+	sed -i -e "s|1.98.1|${rust_pv}|g" "${S}/Cargo.toml" || die
 }
 
 src_prepare() {
