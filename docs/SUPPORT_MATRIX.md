@@ -27,11 +27,11 @@
   to information disclosure when the debug dump or crash report contains
   sensitive information.
 
-The LIBC support below reflects the upstream projects CI (Continuous
-Integration) images trend, but it may change if microarchitecture references
-exist in build files.
+The LIBC support below reflects the upstream projects CI/CD (Continuous
+Integration and Continuous Deployment) images trend, but it may change if
+microarchitecture references exist in build files.
 
-| LIBC                 | Arch     | Ebuild level of support     | Distro or CI image correspondence                                                                                                    |
+| LIBC                 | Arch     | Ebuild level of support     | Distro or CI/CD image correspondence                                                                                                 |
 | ---                  | ----     | ---                         | ---                                                                                                                                  |
 | glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G (2.43), Nunstable (2.44), U22 (2.35), U24 (2.39), U26 (2.43)           |
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), G (2.43), U22 (2.35), U24 (2.39), U26 (2.43)                                                                 |
@@ -56,7 +56,7 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI image correspondence                                                      | Last updated since Nov 2026 |
+| Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI/CD image correspondence                                                   | Last updated since Nov 2026 |
 | ---                               | ---                                   | ---                                                                                    | ---                         |
 | Clang <= 21                       | Not supported                         | D13 (21.1.8), F43 (21.1.8), G (21.1.8), Nunstable (21.1.8), U26 (21.1.8)               | 11m ago                     |
 | Clang 22 [C]                      | Partially supported                   | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
@@ -323,7 +323,7 @@ Pairing rules and support
 
 * Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
 
-| Python               | Ebuild level of support               | Distro or CI image correspondence                                                                                                               |
+| Python               | Ebuild level of support               | Distro or CI/CD image correspondence                                                                                                            |
 | ---                  | ---                                   | ---                                                                                                                                             |
 | 3.9 and earlier      | Not supported (EOL)                   |                                                                                                                                                 |
 | 3.10                 | Not supported (EOL)                   | U22 (3.10.6)                                                                                                                                    |
@@ -349,7 +349,7 @@ Pairing rules and support
       components without warning associated with eager distro EOL restriction
       and upstream not updating their releases to use the latest CI test images.
       If the package (e.g. Howdy or Python based PAM package) is using a
-      D12/U18/U20/U22 CI image or testing with older CI images, this overlay may
+      D12/U18/U20/U22 CI/CD image or testing with older CI/CD images, this overlay may
       immediately delete the package or dependencies associated with it which
       can cause an init or boot issues.  The developer or contributors may
       choose not to apply patches because it is unpaid free labor to fix any
@@ -361,7 +361,7 @@ Pairing rules and support
 * [3] Not widely tested with CI.
 * [4] Distro - deprecated, this overlay - EOL.  The portage ebuild dropped support for 3.11.
 
-| Platform                             | Ebuild level of support                 | Distro or CI image correspondence                                       |
+| Platform                             | Ebuild level of support                 | Distro or CI/CD image correspondence                                    |
 | ---                                  | ---                                     | ---                                                                     |
 | CUDA <=13.3                          | Not supported                           | D12, D13, F44, U22, U24, U26                                            |
 | CUDA 13.4                            | Available                               | D12, D13, F44, G~, U22, U24, U26                                        |
