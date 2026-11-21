@@ -582,7 +582,7 @@ PATENT_CDEPENDS="
 	)
 "
 RUST_CDEPEND="
-	llvm_slot_23? (
+	llvm_slot_${RUST_LLVM_LIVE_SLOT}? (
 		|| (
 			dev-lang/rust:${RUST_LLVM_LIVE_PV}[${MULTILIB_USEDEP}]
 			dev-lang/rust-bin:${RUST_LLVM_LIVE_PV}[${MULTILIB_USEDEP}]
