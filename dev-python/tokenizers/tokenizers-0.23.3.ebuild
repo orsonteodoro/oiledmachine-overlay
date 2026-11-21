@@ -6,6 +6,7 @@ EAPI=8
 
 inherit secure-version
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{11..14} )
@@ -172,7 +173,7 @@ zerocopy-derive-0.8.63
 zmij-1.0.23
 "
 
-inherit cargo distutils-r1 lcnr pypi rustflags-hardened
+inherit cargo cflags-hardened distutils-r1 lcnr pypi rustflags-hardened
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -193,7 +194,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 # Upstream uses lto
-IUSE+=" dev doc lto test"
+IUSE+="
+dev doc lto test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	dev? (
 		test
@@ -244,6 +248,7 @@ src_configure() {
 		-e "s|lto = true|lto = ${lto}|g" \
 		"bindings/node/Cargo.toml" \
 		|| die
+	cflags-hardened_append		# For *-sys crates
 	rustflags-hardened_append
 }
 
