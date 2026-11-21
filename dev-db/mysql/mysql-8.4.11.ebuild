@@ -23,7 +23,7 @@ LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 CHKL_TIMESTAMPS=(
 	"app-arch/lz4-9999"
 	"app-arch/zstd-9999"
-	"dev-libs/icu-79.1.9999"
+	"dev-libs/icu-80.0.9999"
 	"dev-libs/jemalloc-9999"
 	"sys-process/numactl-9999"
 	"sys-process/procps-9999"
@@ -72,7 +72,7 @@ SLOT="$(ver_cut 1-2)"
 KEYWORDS="~amd64 -arm ~arm64 -hppa -mips -ppc ~ppc64 ~riscv ~s390 ~sparc -x86 ~x64-macos ~x64-solaris"
 IUSE+="
 cjk cracklib debug jemalloc numa +perl profiling router selinux +server tcmalloc test test-install
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
