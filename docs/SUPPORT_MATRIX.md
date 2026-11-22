@@ -70,8 +70,8 @@ the use of the current upstream release.
 | musl 1.2.6 (upstream)                 | 8m ago                     |
 | musl 1.2.6 (w/distro patches, G)      | 3w ago                     |
 
-[D] The default on this overlay.
-[1] During the commit audit, it was discovered that the patchset was missing serious security backports.
+* [D] The default on this overlay.
+* [1] During the commit audit, it was discovered that the patchset was missing serious security backports.
 
 Compilers and interpreters used in this overlay
 
