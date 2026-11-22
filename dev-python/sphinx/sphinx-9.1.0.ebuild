@@ -3,11 +3,11 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=flit
-PYTHON_COMPAT=( python3_{12..15} )
+DISTUTILS_USE_PEP517="flit"
+PYTHON_COMPAT=( "python3_"{12..15} )
 PYTHON_REQ_USE="threads(+)"
 
-inherit cython distutils-r1
+inherit cython secure-version distutils-r1
 
 MY_P=${P/_}
 DESCRIPTION="Python documentation generator"
@@ -27,7 +27,10 @@ SLOT="0"
 if [[ ${PV} != *_rc* ]]; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
-IUSE="doc latex"
+IUSE="
+doc latex
+ebuild_revision_1
+"
 
 RDEPEND="
 	>=dev-python/alabaster-0.7.14[${PYTHON_USEDEP}]
@@ -61,7 +64,7 @@ BDEPEND="
 	)
 	test? (
 		app-text/dvipng
-		>=dev-python/cython-3.0.0:3.0[${PYTHON_USEDEP}]
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 		>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
 		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-67.0[${PYTHON_USEDEP}]
@@ -90,7 +93,7 @@ python_prepare_all() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3.0"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
