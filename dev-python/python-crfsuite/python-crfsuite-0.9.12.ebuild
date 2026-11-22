@@ -7,10 +7,11 @@ EAPI=8
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..14} )
+
 CRFSUITE_COMMIT="dc5b6c7b726de90ca63cbf269e6476e18f1dd0d9"
 LIBLBFGS_COMMIT="57678b188ae34c2fb2ed36baf54f9a58b4260d1c"
 
-inherit check-compiler-switch cython distutils-r1 dep-prepare flag-o-matic
+inherit check-compiler-switch cython dep-prepare flag-o-matic secure-version distutils-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -35,7 +36,7 @@ RESTRICT="mirror test" # untested
 SLOT="0"
 IUSE+="
 dev doc test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 "
@@ -43,8 +44,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
@@ -77,7 +77,6 @@ src_unpack() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
 	cython_python_configure
 
 	export CC="${CHOST}-gcc"
