@@ -6,11 +6,10 @@ EAPI=8
 
 # U16
 
-CYTHON_SLOT="0.29"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_11" ) # Upstream only tests up to 3.8
 
-inherit cython distutils-r1
+inherit cython secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -34,7 +33,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 examples
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 "
@@ -47,7 +46,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-	>=dev-python/cython-0.18:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
