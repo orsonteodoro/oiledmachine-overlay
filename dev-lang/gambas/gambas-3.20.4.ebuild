@@ -5,7 +5,7 @@ EAPI=8
 
 # D11 D12 D13 DUnstable U14.04 U16.04 U18.04 U20.04 U22.04 U24.04 U24.10
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 
 LIBSDL_PV="1.2.8"
 LIBSDL2_PV="2.0.2"
@@ -51,7 +51,7 @@ IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
 debug doc +glsl +glu +ide +jit +glsl +sge remove_deprecated +remove_not_finished
 +remove_unstable smtp +webview
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	glsl? (
