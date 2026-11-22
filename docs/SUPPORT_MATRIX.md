@@ -383,11 +383,13 @@ Pairing rules and support
 | Electron (arm64)                     | Available (WIP)                         |                                                                         |
 | Electron (armv7)                     | Not supported                           |                                                                         |
 | Electron (x86)                       | Not supported                           |                                                                         |
-| gRPC 1.30.2 [3]                      | Fully supported                         | U22 (1.30.2)                                                            |
-| gRPC 1.48.4                          | Not supported                           | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                                |
+| gRPC 1.30.2 [3]                      | Not supported                           | U22 (1.30.2)                                                            |
+| gRPC 1.48.4 [3]                      | Not supported                           | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                                |
 | gRPC 1.51.3 [3]                      | Fully supported                         | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)                  |
-| gRPC 1.71.2 [3]                      | Fully supported                         |                                                                         |
-| gRPC >= 1.75.1 [3]                   | Fully supported                         | Nunstable (1.81.4)                                                      |
+| gRPC 1.62.3 [3]                      | Available                               |                                                                         |
+| gRPC 1.71.2 [3]                      | Available                               |                                                                         |
+| gRPC 1.81.2 [3]                      | Available                               |                                                                         |
+| gRPC 1.85.3 [3]                      | Available                               | Nunstable (1.81.4)                                                      |
 | GTK 2 [4]                            | Not Supported                           |                                                                         |
 | GTK 3 live                           | Fully supported                         |                                                                         |
 | GTK 4 live                           | Fully supported                         |                                                                         |
@@ -411,10 +413,11 @@ Pairing rules and support
 | ROCm OpenMP offload [2]              | WIP                                     |                                                                         |
 | DPC++ OpenMP offload                 | Not Supported                           |                                                                         |
 | OpenRC                               | Fully supported                         |                                                                         |
-| Protobuf-cpp 3 [3]                   | Fully supported                         | D12 (3.21.12), D13 (3.21.12), F43 (3.19.6), F44 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
-| Protobuf-cpp 5 [3]                   | Fully supported                         |                                                                         |
-| Protobuf-cpp 6 [3]                   | Fully supported                         | F45 (6.33.5)                                                            |
-| Protobuf-cpp 7                       | Not supported                           | Nunstable (7.36.2)                                                      |
+| Protobuf-cpp 3/21.12 [3]             | Fully supported                         | D12 (3.21.12), D13 (3.21.12), F43 (3.19.6), F44 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
+| Protobuf-cpp 4/25.9 [3]              | Available                               |                                                                         |
+| Protobuf-cpp 5/29.6 [3]              | Available                               |                                                                         |
+| Protobuf-cpp 6/33.6 [3]              | Available                               | F45 (6.33.5)                                                            |
+| Protobuf-cpp 7/36.2 [3]              | Available                               | Nunstable (7.36.2)                                                      |
 | PyTorch <= 2.13                      | Not supported                           |                                                                         |
 | PyTorch 2.13 (CPU)                   | WIP                                     |                                                                         |
 | PyTorch 2.13 (CUDA 12.6, 12.8, 13.x) | WIP                                     |                                                                         |
