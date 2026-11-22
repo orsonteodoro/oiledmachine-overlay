@@ -37,7 +37,10 @@ LICENSE="
 # The distro's Apache-2.0 license template doesn't contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" doc"
+IUSE+="
+doc
+ebuild_revision_1
+"
 RDEPEND+="
 	>=dev-python/cuda-bindings-13.5.0[${PYTHON_USEDEP}]
 	>=dev-python/cuda-core-1.2.0[${PYTHON_USEDEP}]
@@ -58,7 +61,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	virtual/numpy[${PYTHON_USEDEP}]
 	doc? (
-		>=dev-python/cython-${CYTHON_3_2_PV}:3.2=[${PYTHON_USEDEP}]
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 		dev-python/myst-parser[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/numpydoc[${PYTHON_USEDEP}]
