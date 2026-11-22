@@ -115,6 +115,7 @@ IUSE+="
 ${LLVM_TARGETS_CPU_COMPAT[@]}
 ${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	arm64? (

@@ -14,7 +14,7 @@ CXX_STANDARD=17
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
 )
 
 LLVM_MAX_SLOT=${PV%%.*}
@@ -44,8 +44,9 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-offload test
 ${LLVM_EBUILDS_LLVM23_REVISION}
+offload test
+ebuild_revision_1
 "
 REQUIRED_USE="
 "
