@@ -8,9 +8,9 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="scikit-build-core"
-PYTHON_COMPAT=( "python3_"{8..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
-inherit cython distutils-r1
+inherit cython secure-version distutils-r1
 
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 doc
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	(
@@ -42,8 +42,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.22.1
 	>=dev-build/ninja-1.10.1
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
@@ -62,7 +61,7 @@ src_prepare() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
