@@ -36,7 +36,7 @@ microarchitecture references exist in build files.
 | glibc                | 64-bit   | Generally supported         | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G (2.43), Nunstable (2.44), U22 (2.35), U24 (2.39), U26 (2.43)           |
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), D13 (2.41), G (2.43), U22 (2.35), U24 (2.39), U26 (2.43)                                                                 |
 | glibc                | alpha    | Not supported               |                                                                                                                                      |
-| glibc >= 3.43        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G (2.43), Nunstable (2.44), U22 (2.35), U24 (2.39), U26 (2.43)           |
+| glibc >= 3.44        | amd64    | Fully supported             | D12 (2.36), D13 (2.41), F43 (2.42), F44 (2.43), F45 (2.44), G (2.43), Nunstable (2.44), U22 (2.35), U24 (2.39), U26 (2.43)           |
 | glibc                | arm      | Not supported               | D12 (2.36), D13 (2.41), G (2.43),   U24 (2.39)  U24 (2.39), U26 (2.43)                                                               |
 | glibc                | arm64    | Available                   | D12 (2.36), D13 (2.41), G (2.43),   U22 (2.35), U24 (2.39), U26 (2.43)                                                               |
 | glibc                | hppa     | Not supported               | D12 (2.36), D13 (2.41), U22 (2.35), U24 (2.39)                                                                                       |
@@ -60,15 +60,17 @@ This overlay primarily supports the distro's latest stable release (G) for libc.
 However, if the distro does not backport security fixes, this overlay may force
 the use of the current upstream release.
 
-| Libc flavor                       | Last update since Nov 2026 |
-| ---                               | ---                        |
-| glibc 2.44 (upstream)             | 3m ago                     |
-| glibc 2.44 (w/distro patches, G~) | 3w ago                     |
-| glibc 2.43 (upstream)             | 9m ago                     |
-| glibc 2.43 (w/distro patches, G)  | 3w ago                     |
-| glibc 2.43 (w/distro patches, G~) | 3w ago                     |
-| musl 1.2.6 (upstream)             | 8m ago                     |
-| musl 1.2.6 (w/distro patches, G)  | 3w ago                     |
+| Libc flavor                           | Last update since Nov 2026 |
+| ---                                   | ---                        |
+| glibc 2.44 (upstream)                 | 3m ago                     |
+| glibc 2.44 (w/distro patches, G~) [D] | 3w ago                     |
+| glibc 2.43 (upstream)                 | 9m ago                     |
+| glibc 2.43 (w/distro patches, G)      | 3w ago                     |
+| glibc 2.43 (w/distro patches, G~)     | 3w ago                     |
+| musl 1.2.6 (upstream)                 | 8m ago                     |
+| musl 1.2.6 (w/distro patches, G)      | 3w ago                     |
+
+[D] The default on this overlay.
 
 Compilers and interpreters used in this overlay
 
