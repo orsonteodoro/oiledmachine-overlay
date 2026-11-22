@@ -1182,7 +1182,6 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 
 	if use rocm ; then

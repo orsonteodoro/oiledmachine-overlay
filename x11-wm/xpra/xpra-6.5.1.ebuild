@@ -861,7 +861,6 @@ python_prepare_all() {
 
 python_configure() {
 	if use cython ; then
-		cython_set_cython_slot "${CYTHON_SLOT}"
 		cython_python_configure
 	fi
 }

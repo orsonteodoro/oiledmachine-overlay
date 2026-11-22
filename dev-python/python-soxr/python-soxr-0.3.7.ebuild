@@ -114,7 +114,6 @@ src_unpack() {
 }
 
 python_configure() {
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 	export USE_SYSTEM_LIBSOXR=$(usex system-soxr "1" "0")
 }

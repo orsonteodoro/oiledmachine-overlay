@@ -209,7 +209,6 @@ get_runtime_simd_level() {
 }
 
 python_configure() {
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 
 	local mycmakeargs=()

@@ -112,7 +112,6 @@ einfo "To get the research models use the live (9999) version."
 }
 
 python_configure() {
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 

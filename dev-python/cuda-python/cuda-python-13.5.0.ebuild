@@ -84,7 +84,6 @@ src_unpack() {
 }
 
 python_configure() {
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 

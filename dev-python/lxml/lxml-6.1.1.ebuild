@@ -98,7 +98,6 @@ python_prepare_all() {
 
 python_configure() {
 	chkl_check_many_timestamps
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 

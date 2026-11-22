@@ -1165,7 +1165,6 @@ ewarn
 		re2_python_configure
 		grpc_python_configure
 
-		cython_set_cython_slot "${CYTHON_SLOT}"
 		cython_python_configure
 		if use python ; then
 			export PYTHON_BIN_PATH="${PYTHON}"

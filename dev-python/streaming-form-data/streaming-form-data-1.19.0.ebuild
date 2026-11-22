@@ -76,7 +76,6 @@ src_unpack() {
 
 python_configure() {
 	if use dev ; then
-		cython_set_cython_slot "${CYTHON_SLOT}"
 		cython_python_configure
 	fi
 }

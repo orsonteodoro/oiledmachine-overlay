@@ -93,7 +93,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 python_configure() {
-	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 	ffmpeg_python_configure
 }

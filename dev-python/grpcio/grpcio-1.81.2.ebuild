@@ -100,7 +100,6 @@ python_prepare_all() {
 
 python_configure() {
 	chkl_check_many_timestamps
-	cython_set_cython_slot "${CYTHON_PV}"
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
