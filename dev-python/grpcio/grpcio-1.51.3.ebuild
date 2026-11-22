@@ -55,7 +55,7 @@ SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}") # Use wrapper for PYTHONPATH
 IUSE+="
 ${_CXX_STANDARD[@]}
 doc protobuf
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	^^ (
@@ -79,7 +79,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.26:0.29=[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
@@ -110,7 +110,7 @@ python_prepare_all() {
 
 python_configure() {
 	chkl_check_many_timestamps
-	cython_set_cython_slot "0.29"
+	cython_set_cython_slot "${CYTHON_PV}"
 	cython_python_configure
 	append-cppflags -I"${ESYSROOT}/usr/lib/abseil-cpp/${ABSEIL_CPP_SLOT}/include"
 	export PATH="${ESYSROOT}/usr/bin/protobuf/${PROTOBUF_CPP_SLOT}/bin:${PATH}"
