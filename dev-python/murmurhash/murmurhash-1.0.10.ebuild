@@ -4,12 +4,11 @@
 
 EAPI=8
 
-CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -29,7 +28,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 "
@@ -37,7 +36,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.23:${CYTHON_SLOT}
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=
 	dev-python/cython:=
 	dev-python/pytest
 "
