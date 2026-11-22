@@ -216,7 +216,7 @@ ${PATENT_STATUS_IUSE[@]}
 +opencl +openexr +openimagedenoise +openimageio +opensubdiv +openvdb +openxr
 -optix +osl +pdf +pipewire +potrace +pulseaudio release -rocm -sdl +sndfile sycl
 +tbb test +tiff +usd +uv-slim -valgrind +wayland +webp +X
-ebuild_revision_37
+ebuild_revision_38
 "
 # hip is default ON upstream.
 inherit libcxx-slot libstdcxx-slot blender
@@ -947,10 +947,10 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-build/meson-0.63.0[${PYTHON_USEDEP}]
-		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
-		=dev-python/cython-3*:=[${PYTHON_USEDEP}]
 		>=dev-python/autopep8-2.3.1[${PYTHON_USEDEP}]
+		>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 		>=dev-python/pycodestyle-2.13.0[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP}]
@@ -1202,7 +1202,7 @@ eerror "You must enable the wayland USE flag or uninstall wayland."
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
-	cython_set_cython_slot "3"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 
 	if use rocm ; then
