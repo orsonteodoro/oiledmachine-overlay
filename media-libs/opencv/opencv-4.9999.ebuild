@@ -9,6 +9,9 @@ EAPI=8
 # https://github.com/opencv/opencv/blob/4.x/modules/dnn/misc/tflite/schema_generated.h#L11
 # (The patch will allow for newer revisions.)
 
+# For protobuf, see https://github.com/opencv/opencv/issues/24369
+# The AI said that the 4.x series is compatible with external Protobuf v22 and later.
+
 # For python versions, see https://github.com/opencv/opencv/blob/4.x/modules/python/package/setup.py
 
 # For CUDA, check optical flow driver requirement.
@@ -394,8 +397,8 @@ IUSE+="
 	${_CXX_STANDARD[@]}
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +protobuf +python
-	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_63
+	-system-flatbuffers +system-protobuf test -testprograms -vulkan -zlib-ng
+	ebuild_revision_64
 "
 # hal for acceleration
 IUSE+="
@@ -755,11 +758,6 @@ RDEPEND="
 	${PATENT_STATUS_RDEPEND}
 	>=app-arch/bzip2-${BZIP2_PV}:=[${MULTILIB_USEDEP}]
 	>=virtual/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:=
-	|| (
-		dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
-		dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
-	)
 	atlas? (
 		>=sci-libs/atlas-3.10.3:=
 	)
@@ -858,6 +856,15 @@ RDEPEND="
 	)
 	png? (
 		>=media-libs/libpng-${LIBPNG_PV}:=[${MULTILIB_USEDEP}]
+	)
+	protobuf? (
+		system-protobuf? (
+			dev-libs/protobuf:=
+			|| (
+				dev-libs/protobuf:3/3.12[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
+				dev-libs/protobuf:3/3.21[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},${MULTILIB_USEDEP},cxx_standard_cxx17]
+			)
+		)
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -1226,26 +1233,13 @@ multilib_src_configure() {
 	cflags-hardened_append
 	chkl_check_many_timestamps
 
-	# Protobuf version requirement relaxed
-	if has_version "dev-libs/protobuf:3/3.12" ; then
-		ABSEIL_CPP_SLOT="20200225"
-		PROTOBUF_CPP_SLOT="3"
-	elif has_version "dev-libs/protobuf:3/3.21" ; then
-		ABSEIL_CPP_SLOT="20220623"
-		PROTOBUF_CPP_SLOT="3"
-	fi
-
-	abseil-cpp_src_configure
-	protobuf_src_configure
 	ffmpeg_src_configure
 
 	export LIBDIR=$(get_libdir)
 	local mycmakeargs=(
-		$(abseil-cpp_append_cmake)
-		$(protobuf_append_cmake)
-		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '')				# Project default
+		$(usex cxx_standard_cxx11 '-DCMAKE_CXX_STANDARD=11' '')			# Project default
 		$(usex cxx_standard_cxx14 '-DCMAKE_CXX_STANDARD=14' '')
-		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')				# For Protobuf
+		$(usex cxx_standard_cxx17 '-DCMAKE_CXX_STANDARD=17' '')			# For Protobuf
 		-DBUILD_ANDROID_EXAMPLES=OFF
 		#-DBUILD_ANDROID_SERVICE=OFF
 		-DBUILD_CUDA_STUBS=$(multilib_native_usex cuda)
@@ -1272,7 +1266,6 @@ multilib_src_configure() {
 		#-DBUILD_opencv_world=ON
 		-DBUILD_PACKAGE=OFF
 		-DBUILD_PERF_TESTS=OFF
-		-DBUILD_PROTOBUF=OFF
 		-DBUILD_SHARED_LIBS=ON
 		-DBUILD_TESTS=$(multilib_native_usex test)
 	# bug 733796, but PCH is a risky game in CMake anyway \
@@ -1319,7 +1312,6 @@ multilib_src_configure() {
 		-DOPENCV_WARNINGS_ARE_ERRORS=OFF
 		-DOpenGL_GL_PREFERENCE="GLVND"
 		-DProtobuf_MODULE_COMPATIBLE=ON
-		-DPROTOBUF_UPDATE_FILES=ON
 		-DVIDEOIO_PLUGIN_LIST="all"
 		-DWITH_1394=$(usex ieee1394)
 		-DWITH_ARAVIS=OFF
@@ -1397,6 +1389,31 @@ multilib_src_configure() {
 		-DWITH_XINE=$(multilib_native_usex xine)
 		-DWITH_ZLIB_NG=$(usex zlib-ng)
 	)
+
+	if use protobuf && use system-protobuf ; then
+		# Protobuf version requirement relaxed
+		if has_version "dev-libs/protobuf:3/3.12" ; then
+			ABSEIL_CPP_SLOT="20200225"
+			PROTOBUF_CPP_SLOT="3"
+		elif has_version "dev-libs/protobuf:3/3.21" ; then
+			ABSEIL_CPP_SLOT="20220623"
+			PROTOBUF_CPP_SLOT="3"
+		fi
+
+		abseil-cpp_src_configure
+		protobuf_src_configure
+
+		mycmakeargs+=(
+			$(abseil-cpp_append_cmake)
+			$(protobuf_append_cmake)
+			-DBUILD_PROTOBUF=OFF
+			-DPROTOBUF_UPDATE_FILES=ON
+		)
+	else
+		mycmakeargs+=(
+			-DBUILD_PROTOBUF=$(usex protobuf)
+		)
+	fi
 
 	if [[ "${ARCH}" == "arm" || "${ARCH}" == "arm64" ]] ; then
 		mycmakeargs+=(
