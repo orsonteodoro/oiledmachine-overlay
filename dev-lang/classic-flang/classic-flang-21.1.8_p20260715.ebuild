@@ -11,6 +11,7 @@ EAPI=8
 MY_PV=$(ver_cut "1-3" "${PV}") # See https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_21x/llvm/CMakeLists.txt#L18
 MY_TS=$(ver_cut "5" "${PV}")
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=21 # Same as classic-flang-llvm-project llvm version
@@ -40,7 +41,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 19, 21, 22
 )
 
-inherit cmake llvm libcxx-slot libstdcxx-slot python-any-r1
+inherit cflags-hardened cmake llvm libcxx-slot libstdcxx-slot python-any-r1
 
 S="${WORKDIR}/flang-flang_${MY_TS}"
 S_LLVM="${WORKDIR}/classic-flang-llvm-project-${EGIT_COMMIT_FLANG_COMPILER_CLASSIC_FLANG_LLVM_PROJECT}"
@@ -328,6 +329,9 @@ ewarn
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin|g")
 	einfo "PATH=${PATH} (after)"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	cflags-hardened_append
 }
 
 src_compile() {
