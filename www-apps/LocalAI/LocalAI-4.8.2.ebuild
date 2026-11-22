@@ -173,7 +173,7 @@ CHKL_TIMESTAMPS=(
 	"sys-apps/firejail-9999"
 )
 
-inherit abseil-cpp cflags-hardened chkl dep-prepare desktop edo flag-o-matic
+inherit abseil-cpp cflags-hardened chkl cython dep-prepare desktop edo flag-o-matic
 inherit go-download-cache grpc npm protobuf python-single-r1 re2 sandbox-changes
 inherit secure-version toolchain-funcs xdg
 
@@ -260,7 +260,7 @@ ${MODES[@]/+}
 ${PYTHON_BACKENDS[@]/#/localai_backends_}
 ci cuda debug devcontainer docker +firejail native openblas opencl
 openrc rag rocm stt sycl-f16 sycl-f32 systemd tts vulkan
-ebuild_revision_53
+ebuild_revision_54
 "
 
 REQUIRED_USE="
@@ -557,7 +557,7 @@ PIPER_RDEPEND="
 			>=dev-python/librosa-0.9.2[${PYTHON_USEDEP}]
 			<dev-python/librosa-1[${PYTHON_USEDEP}]
 		)
-		>=dev-python/cython-0.29.0:0.29[${PYTHON_USEDEP}]
+		>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 		>=dev-python/piper-phonemize-1.1.0[${PYTHON_USEDEP}]
 		virtual/numpy:=[${PYTHON_USEDEP}]
 	')
@@ -922,6 +922,10 @@ src_configure() {
 eerror "Re-emerge sys-apps/firejail::oiledmachine-overlay to add the local-ai.profile."
 			die
 		fi
+	fi
+
+	if use localai_backends_piper ; then
+		cython_python_configure
 	fi
 
 	abseil-cpp_src_configure
