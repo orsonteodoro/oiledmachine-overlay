@@ -60,9 +60,19 @@ This overlay primarily supports the distro's latest stable release (G) for libc.
 However, if the distro does not backport security fixes, this overlay may force
 the use of the current upstream release.
 
+| Libc flavor                       | Last update since Nov 2026 |
+| ---                               | ---                        |
+| glibc 2.44 (upstream)             | 3m ago                     |
+| glibc 2.44 (w/distro patches, G~) | 3w ago                     |
+| glibc 2.43 (upstream)             | 9m ago                     |
+| glibc 2.43 (w/distro patches, G)  | 3w ago                     |
+| glibc 2.43 (w/distro patches, G~) | 3w ago                     |
+| musl 1.2.6 (upstream)             | 8m ago                     |
+| musl 1.2.6 (w/distro patches, G)  | 3w ago                     |
+
 Compilers and interpreters used in this overlay
 
-| Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI/CD image correspondence                                                   | Last updated since Nov 2026 |
+| Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI/CD image correspondence                                                   | Last update since Nov 2026  |
 | ---                               | ---                                   | ---                                                                                    | ---                         |
 | Clang <= 21                       | Not supported                         | D13 (21.1.8), F43 (21.1.8), G (21.1.8), Nunstable (21.1.8), U26 (21.1.8)               | 11m ago                     |
 | Clang 22 [D]                      | Fully supported                       | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
@@ -210,7 +220,7 @@ vulnerabilities on both sides.
 
 For C/C++ the Rust slot rules for version pinning are as follows:
 
-| LLVM slot          | Rust slot  | Allowed in network facing? [1] | Allowed to be used in security-critical? [1] | Last updated since Nov 2026?  |
+| LLVM slot          | Rust slot  | Allowed in network facing? [1] | Allowed to be used in security-critical? [1] | Last update since Nov 2026?   |
 | ---                | ---        | ---                            | ---                                          | ---                           |
 | 23 (Live)          | 9999 [2]   | Y                              | Y                                            | 2 weeks ago to now            |
 | 23 (Rolling)       | 1.99.1     | Y                              | Y                                            | 1 month ago                   |
