@@ -61,7 +61,7 @@ Compilers and interpreters used in this overlay
 | Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI/CD image correspondence                                                   | Last updated since Nov 2026 |
 | ---                               | ---                                   | ---                                                                                    | ---                         |
 | Clang <= 21                       | Not supported                         | D13 (21.1.8), F43 (21.1.8), G (21.1.8), Nunstable (21.1.8), U26 (21.1.8)               | 11m ago                     |
-| Clang 22 [D]                      | Partially supported                   | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
+| Clang 22 [D]                      | Fully supported                       | D12 (22.1.8), D13 (22.1.8), F44 (22.1.8), G (22.1.8), U26 (22.1.2)                     | 5m ago                      |
 | Clang 23                          | Available                             | F45 (23.1.5), G~ (23.1.5)                                                              | 3d ago                      |
 | Clang 24                          | Limited support                       | G**                                                                                    | Now                         |
 | Cython 0.29.37.1 [4]              | Deprecated, limited [4]               | D12 (0.29.32), U22 (0.29), Nunstable (0.29.37)                                         | 3y ago                      |
@@ -73,7 +73,7 @@ Compilers and interpreters used in this overlay
 | GCC 11 [1]                        | Limited [1]                           | U22 (11.2), G (11.5.0)                                                                 | 2y ago                      |
 | GCC 12                            | Not supported                         | D12 (12.2), G (12.5.0)                                                                 | 1y ago                      |
 | GCC 13                            | Not supported                         | U24 (13.2), G (13.4.1_p20260603)                                                       | 2m ago                      |
-| GCC 14                            | Partially supported                   | D13 (14.2), G (14.3.1_p20260604)                                                       | 5m ago                      |
+| GCC 14                            | Available                             | D13 (14.2), G (14.3.1_p20260604)                                                       | 5m ago                      |
 | GCC 15 [D]                        | Fully supported                       | F43 (15.3.1), G (15.3.0), U26 (15.2.0)                                                 | 5m ago                      |
 | GCC 16			    | Available                             | F45 (16.2.1), G (16.2.1_p20260926), Nunstable (16.2.0)                                 | 3m ago                      |
 | GCC 17                            | Available but not supported           | G**                                                                                    | Now                         |
@@ -96,10 +96,10 @@ Compilers and interpreters used in this overlay
 | Python 3.15                       | Available                             | F45 (3.15.2_p1), G~ (3.15.2)                                                           | 1m ago                      |
 | Python 3.16 [7]                   | Not supported                         | G**                                                                                    | 2w ago                      |
 | Rust <= 1.98.0                    | Not supported                         |                                                                                        | 3m ago                      |
-| Rust 1.98.1 [LTS]                 | Available                             | G (1.98.1)                                                                             | 3m ago                      |
+| Rust 1.98.1 [LTS]                 | Fully supported                       | G (1.98.1)                                                                             | 3m ago                      |
 | Rust 1.99.0                       | Not supported                         |                                                                                        | 2m ago                      |
-| Rust 1.99.1                       | Fully supported                       | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)                            | 1m ago                      |
-| Rust 1.100.0 [RSC]                | WIP / Planned                         | F45 (1.100.1)                                                                          | 1w ago                      |
+| Rust 1.99.1                       | Available                             | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)                            | 1m ago                      |
+| Rust 1.100.0 [RSC]                | Fully supported                       | F45 (1.100.1)                                                                          | 1w ago                      |
 | Rust-9999 (1.102.0-nightly) [LSC] | Limited support                       | G**                                                                                    | Now or 2w ago               |
 
 [D] Current default slots on this overlay.
