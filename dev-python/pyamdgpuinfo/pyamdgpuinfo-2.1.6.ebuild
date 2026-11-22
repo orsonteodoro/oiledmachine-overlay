@@ -8,7 +8,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -38,7 +38,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-ebuild_revison_3
+ebuild_revison_4
 "
 RDEPEND+="
 "
@@ -46,8 +46,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
@@ -64,9 +63,6 @@ src_unpack() {
 }
 
 python_configure() {
-	local cython_slot=$(best_version "=dev-python/cython-3*" | sed -e "s|dev-python/cython-||g")
-	cython_slot=$(ver_cut "1-2" "${cython_slot}")
-	export CYTHON_SLOT="${cython_slot}"
 	cython_python_configure
 }
 
