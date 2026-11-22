@@ -10,7 +10,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -45,7 +45,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE+="
 doc system-soxr test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	virtual/numpy[${PYTHON_USEDEP}]
@@ -57,9 +57,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-3.0_alpha7[${PYTHON_USEDEP}]
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-6.2[${PYTHON_USEDEP}]
 	dev-python/oldest-supported-numpy[${PYTHON_USEDEP}]
@@ -116,7 +114,7 @@ src_unpack() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 	export USE_SYSTEM_LIBSOXR=$(usex system-soxr "1" "0")
 }
