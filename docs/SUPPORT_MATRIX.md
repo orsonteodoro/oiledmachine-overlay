@@ -74,7 +74,7 @@ the use of the current upstream release.
 * [1] During the commit audit, it was discovered that the patchset was missing
 serious security backports.  The audit found missing mitigation for 4x
 crashes, overflow, out-of-bounds read, information disclosure (ID), 3x memory
-leaks, off-by-one or off-by many, unsantized pointer and stack guards
+leaks, off-by-one or off-by-many, unsantized pointer and stack guards
 buffers (ID), 3x improper/inappropriate initalization, stack overflow, divide
 by zero, overflow, 2x undefined behavior, segfault, race condition, deadlock.
 
