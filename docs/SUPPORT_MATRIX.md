@@ -111,9 +111,8 @@ Compilers and interpreters used in this overlay
 | Python 3.16 [7]                   | Not supported                         | G**                                                                                    | 2w ago                      |
 | Rust <= 1.98.0                    | Not supported                         |                                                                                        | 3m ago                      |
 | Rust 1.98.1 [LTS]                 | Fully supported                       | G (1.98.1)                                                                             | 3m ago                      |
-| Rust 1.99.0                       | Not supported                         |                                                                                        | 2m ago                      |
-| Rust 1.99.1                       | Available                             | F43 (1.99.1), F44 (1.99.1), G~ (1.99.0), Nunstable (1.99.1)                            | 1m ago                      |
-| Rust 1.100.0 [RSC]                | Fully supported                       | F45 (1.100.1)                                                                          | 1w ago                      |
+| Rust 1.99.1                       | Available                             | F43 (1.99.1), F44 (1.99.1), G~ (1.99.1), Nunstable (1.99.1)                            | 1m ago                      |
+| Rust 1.100.0 [RSC]                | Fully supported                       | F45 (1.100.1), G~ (1.100.0)                                                            | 1w ago                      |
 | Rust-9999 (1.102.0-nightly) [LSC] | Limited support                       | G**                                                                                    | Now or 2w ago               |
 
 [D] Current default slots on this overlay.
