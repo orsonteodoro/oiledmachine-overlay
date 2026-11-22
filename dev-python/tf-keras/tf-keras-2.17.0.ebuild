@@ -64,7 +64,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -139,22 +139,14 @@ einfo "Disabling ccache"
 }
 
 add_sandbox_rules() {
-	local CYTHON_SLOTS=(
-		"0.29"
-		"3.0"
-		"3.1"
-	)
 	local L=()
 
-	local s
-	for s in "${CYTHON_SLOTS[@]}" ; do
-		L+=(
-			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages"
-			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/__pycache__"
-			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Cython/__pycache__"
-			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
-		)
-	done
+	L+=(
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+	)
 
 einfo "Adding sandbox rules"
 	local path
