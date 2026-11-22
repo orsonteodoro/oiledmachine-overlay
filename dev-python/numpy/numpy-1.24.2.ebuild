@@ -7,7 +7,6 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO CE DOS IL ISD NPD SYM"
-CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 DL_SOURCE=${DL_SOURCE:-"git"}
@@ -17,7 +16,7 @@ PYTHON_REQ_USE="threads(+)"
 
 DOC_PV="${PV}"
 
-inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2 toolchain-funcs
+inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2 secure-version toolchain-funcs
 
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
 
@@ -48,7 +47,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 doc lapack linter release test
-ebuild_revision_8
+ebuild_revision_9
 "
 
 RDEPEND="
@@ -59,10 +58,9 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
-	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
@@ -93,8 +91,7 @@ BDEPEND="
 		dev-python/paver[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
-		<dev-python/cython-0.29.30[${PYTHON_USEDEP}]
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 
 		~dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 		~dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]

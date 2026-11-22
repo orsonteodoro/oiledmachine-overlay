@@ -7,7 +7,6 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="AFW BO CE DOS IL ISD NPD SYM"
-CYTHON_SLOT="3.0"
 EPYTEST_XDIST=1
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
@@ -21,7 +20,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 	"vrndq_f32"
 )
 
-inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2
+inherit cflags-hardened cython distutils-r1 flag-o-matic fortran-2 secure-version
 
 KEYWORDS="~alpha amd64 ~arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
 
@@ -49,7 +48,7 @@ SLOT="0/2"
 # is barely supported anyway, see bug #914358.
 IUSE="
 all big-endian build ci ci32 doc -lapack linter release test
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	all? (
@@ -69,13 +68,11 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-build/meson-0.15.0[${PYTHON_USEDEP}]
-	dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
 	build? (
 		>=dev-build/meson-0.13.1[${PYTHON_USEDEP}]
-		dev-python/cython:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-		dev-python/cython:=
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 		dev-build/ninja
 		~dev-python/spin-0.13[${PYTHON_USEDEP}]
 		dev-python/build[${PYTHON_USEDEP}]
@@ -124,7 +121,7 @@ BDEPEND="
 		dev-python/packaging[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/cython[${PYTHON_USEDEP}]
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 		~dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		~dev-python/hypothesis-6.104.1[${PYTHON_USEDEP}]
