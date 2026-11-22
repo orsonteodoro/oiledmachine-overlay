@@ -56,6 +56,10 @@ microarchitecture references exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
+This overlay primarily supports the distro's latest stable release (G) for libc.
+However, if the distro does not backport security fixes, this overlay may force
+the use of the current upstream release.
+
 Compilers and interpreters used in this overlay
 
 | Compiler [3a]                     | Ebuild level of support [3b]          | Distro or CI/CD image correspondence                                                   | Last updated since Nov 2026 |
