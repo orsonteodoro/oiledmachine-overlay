@@ -28,7 +28,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-ebuild_revision_5
+ebuild_revision_10
 "
 RDEPEND+="
 "
@@ -36,7 +36,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-python/cython:=
 	dev-python/pytest
 "
