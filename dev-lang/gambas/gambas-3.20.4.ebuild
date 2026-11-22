@@ -5,7 +5,13 @@ EAPI=8
 
 # D11 D12 D13 DUnstable U14.04 U16.04 U18.04 U20.04 U22.04 U24.04 U24.10
 
-inherit autotools check-compiler-switch desktop flag-o-matic toolchain-funcs xdg
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+
+LIBSDL_PV="1.2.8"
+LIBSDL2_PV="2.0.2"
+QT_MIN_PV="5.3"
+
+inherit autotools cflags-hardened check-compiler-switch desktop flag-o-matic toolchain-funcs xdg
 
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${PN}-${PV}"
@@ -25,9 +31,6 @@ bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 htmlview httpd
 imlib2 jit mime mixer mongodb mysql ncurses network odbc openal opengl openssl pcre pdf
 pixbuf poppler postgresql qt5 qt6 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 )
-LIBSDL_PV="1.2.8"
-LIBSDL2_PV="2.0.2"
-QT_MIN_PV="5.3"
 # On each minor release, re-inspect the code quality.
 # Disabled unstable and unfinished code for security and productivity reasons.
 # Deprecated is enabled until the component is deleted.
@@ -552,6 +555,8 @@ _use_enable_lto() {
 
 src_configure() {
 	local lto_option=""
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
