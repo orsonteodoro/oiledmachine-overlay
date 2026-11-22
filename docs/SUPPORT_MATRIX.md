@@ -413,7 +413,7 @@ Pairing rules and support
 | ROCm OpenMP offload [2]              | WIP                                     |                                                                         |
 | DPC++ OpenMP offload                 | Not Supported                           |                                                                         |
 | OpenRC                               | Fully supported                         |                                                                         |
-| Protobuf-cpp 3/21.12 [3]             | Fully supported                         | D12 (3.21.12), D13 (3.21.12), F43 (3.19.6), F44 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
+| Protobuf-cpp 3/21.12 [3]             | Fully supported                         | D12 (3.21.12), D13 (3.21.12), F43 (3.19.6), F44 (3.19.6), G (3/21.12), U24 (3.21.12), U26 (3.21.12) |
 | Protobuf-cpp 4/25.9 [3]              | Available                               |                                                                         |
 | Protobuf-cpp 5/29.6 [3]              | Available                               |                                                                         |
 | Protobuf-cpp 6/33.6 [3]              | Available                               | F45 (6/33.5), G (6/33.1)                                                |
