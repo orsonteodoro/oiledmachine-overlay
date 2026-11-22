@@ -10,7 +10,7 @@ PYTHON_REQ_USE="threads(+)"
 
 VIRTUALX_REQUIRED="manual"
 
-inherit cython distutils-r1 optfeature pypi virtualx
+inherit cython optfeature pypi secure-version virtualx distutils-r1
 
 DESCRIPTION="Powerful data structures for data analysis and statistics"
 HOMEPAGE="
@@ -74,7 +74,7 @@ COMMON_DEPEND="
 BDEPEND="
 	${COMMON_DEPEND}
 	>=dev-build/meson-1.2.1
-	>=dev-python/cython-3.0.5:3.0[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/versioneer-0.28[${PYTHON_USEDEP}]
 	test? (
 		${VIRTUALX_DEPEND}
@@ -102,7 +102,7 @@ EPYTEST_XDIST=1
 distutils_enable_tests pytest
 
 python_configure() {
-	cython_set_cython_slot "3.0"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 	cython -V || die
 	cython3 -V || die
