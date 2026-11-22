@@ -6,7 +6,6 @@ EAPI=8
 MY_PV=$(ver_cut "1-3" "${PV}")
 
 ABSEIL_CPP_SLOT="20220623"
-CYTHON_SLOT="0.29"
 CXX_STANDARD=14 # Originally 14
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -33,7 +32,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}"
 )
 
-inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix
+inherit cython flag-o-matic libcxx-slot libstdcxx-slot distutils-r1 multiprocessing prefix secure-version
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
@@ -53,7 +52,7 @@ LICENSE="Apache-2.0"
 SLOT="${GRPC_SLOT}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${_CXX_STANDARD[@]}
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	^^ (
@@ -64,7 +63,7 @@ REQUIRED_USE="
 # See https://github.com/grpc/grpc/tree/v1.51.3/third_party
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20220623.0:${ABSEIL_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
-	>=dev-python/cython-0.29.8:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-libs/protobuf:${PROTOBUF_CPP_SLOT}=[${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},cxx_standard_cxx14?,cxx_standard_cxx17?]
 	dev-python/protobuf:=[${PYTHON_USEDEP}]
 	|| (
