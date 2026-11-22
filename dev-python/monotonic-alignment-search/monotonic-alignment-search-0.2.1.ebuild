@@ -7,7 +7,7 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..14} )
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -36,7 +36,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" cpu cuda dev"
+IUSE+="
+cpu cuda dev
+ebuild_revision_1
+"
 RDEPEND+="
 	virtual/numpy[${PYTHON_USEDEP}]
 	cpu? (
@@ -51,7 +54,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
-	>=dev-python/cython-3.0.0:3.0[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	virtual/numpy
 	dev? (
 		>=dev-python/coverage-7.6.4[${PYTHON_USEDEP}]
@@ -75,6 +78,10 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	cython_python_configure
 }
 
 src_install() {
