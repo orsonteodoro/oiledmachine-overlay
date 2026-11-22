@@ -17,12 +17,12 @@ YARN_SLOT="1"
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 18, 19
+	"${LIBCXX_COMPAT_STDCXX17[@]/llvm_slot_}" # 22
 )
 
 inherit abseil-cpp bazel check-compiler-switch flag-o-matic flag-o-matic-om grpc libcxx-slot libstdcxx-slot llvm-r1 distutils-r1 protobuf re2 yarn
@@ -85,48 +85,24 @@ RDEPEND="
 		dev-python/packaging[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
-		gcc_slot_11_5? (
-			dev-python/grpcio:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP},gcc_slot_11_5,cxx_standard_cxx17]
-			dev-python/protobuf:3.12['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.30['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
-			test? (
-				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.30[${PYTHON_USEDEP}]
-			)
-		)
-		gcc_slot_12_5? (
-			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_12_5,cxx_standard_cxx17]
+		gcc_slot_14_4? (
+			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_14_4,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
 		)
-		gcc_slot_13_4? (
-			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_13_4,cxx_standard_cxx17]
+		gcc_slot_15_3? (
+			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_15_3,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
 				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
 			)
 		)
-		gcc_slot_14_3? (
-			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},gcc_slot_14_3,cxx_standard_cxx17]
-			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
-			test? (
-				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
-			)
-		)
-		llvm_slot_18? (
-			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_18,cxx_standard_cxx17]
-			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
-			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
-			test? (
-				dev-python/grpcio-testing:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP}]
-			)
-		)
-		llvm_slot_19? (
-			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_19,cxx_standard_cxx17]
+		llvm_slot_22? (
+			dev-python/grpcio:'${GRPC_SLOT}'/1.51[${PYTHON_USEDEP},llvm_slot_22,cxx_standard_cxx17]
 			dev-python/protobuf:4.21['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP}]
 			net-libs/grpc:'${GRPC_SLOT}'/1.51['"${LIBCXX_USEDEP},${LIBSTDCXX_USEDEP},"'${PYTHON_USEDEP},python]
 			test? (
@@ -326,42 +302,21 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 }
 
 src_configure() {
-	if use gcc_slot_11_5 ; then
-		ABSEIL_CPP_SLOT="20200225"
-		GRPC_SLOT="3"
-		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_3}"
-		RE2_SLOT="20220623"
-	fi
-	if use gcc_slot_12_5 ; then
+	if use gcc_slot_14_4 ; then
 		ABSEIL_CPP_SLOT="20220623"
 		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
 		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 		RE2_SLOT="20220623"
 	fi
-	if use gcc_slot_13_4 ; then
+	if use gcc_slot_15_3 ; then
 		ABSEIL_CPP_SLOT="20220623"
 		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
 		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
 		RE2_SLOT="20220623"
 	fi
-	if use gcc_slot_14_3 ; then
-		ABSEIL_CPP_SLOT="20220623"
-		GRPC_SLOT="3"
-		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
-		RE2_SLOT="20220623"
-	fi
-	if use llvm_slot_18 ; then
-		ABSEIL_CPP_SLOT="20220623"
-		GRPC_SLOT="3"
-		PROTOBUF_CPP_SLOT="3"
-		PROTOBUF_PYTHON_SLOT="${PROTOBUF_PYTHON_SLOT_4_WITH_PROTOBUF_CPP_3}"
-		RE2_SLOT="20220623"
-	fi
-	if use llvm_slot_19 ; then
+	if use llvm_slot_22 ; then
 		ABSEIL_CPP_SLOT="20220623"
 		GRPC_SLOT="3"
 		PROTOBUF_CPP_SLOT="3"
@@ -429,18 +384,10 @@ ewarn
 
 add_sandbox_rules() {
 	local exceptions=()
-	local CYTHON_SLOTS=(
-		"0.29"
-		"3.0"
-		"3.1"
+	exceptions+=(
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Distutils/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/__pycache__"
 	)
-	local s
-	for s in "${CYTHON_SLOTS[@]}" ; do
-		exceptions+=(
-			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/Distutils/__pycache__"
-			"/usr/lib/cython/${s}/lib/${EPYTHON}/site-packages/__pycache__"
-		)
-	done
 einfo "Adding sandbox rules"
 	local path
 	for path in "${exceptions[@]}" ; do
