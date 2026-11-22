@@ -32,7 +32,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 test
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND+="
 	virtual/numpy[${PYTHON_USEDEP}]
@@ -41,7 +41,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	virtual/numpy[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/hypothesis-4.0.0
