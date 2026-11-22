@@ -97,7 +97,7 @@ sd_listen selinux +server +socks sound-forwarding sql sqlite +ssh sshpass
 +ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
 wayland +webcam webcam-forwarding webp +websockets +websockets-browser-cookie
 -wireshark +X x264 +xdg xdummy +xinput +yaml zeroconf zlib
-ebuild_revision_30
+ebuild_revision_31
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -687,8 +687,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep "
 		cython? (
-			>=dev-python/cython-3.0.0_alpha11[\${PYTHON_USEDEP}]
-			=dev-python/cython-3*:=
+			>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[\${PYTHON_USEDEP}]
 			dev-python/xxhash
 		)
 		test? (
@@ -862,7 +861,7 @@ python_prepare_all() {
 
 python_configure() {
 	if use cython ; then
-		cython_set_cython_slot "3"
+		cython_set_cython_slot "${CYTHON_SLOT}"
 		cython_python_configure
 	fi
 }
