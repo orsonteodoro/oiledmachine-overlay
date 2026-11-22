@@ -7,13 +7,12 @@ EAPI=8
 # TODO package (optional)
 # cupy-wheel
 
-CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-release-v${PV}"
@@ -34,7 +33,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 cuda cuda-autodetect datasets mxnet pytorch tensorflow
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -76,8 +75,7 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/cython-0.25:'${CYTHON_SLOT}'[${PYTHON_USEDEP}]
-		dev-python/cython:=
+		>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 		>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 		>=dev-python/murmurhash-1.0.2[${PYTHON_USEDEP}]
