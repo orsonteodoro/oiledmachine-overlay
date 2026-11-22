@@ -4,13 +4,12 @@
 
 EAPI=8
 
-CYTHON_SLOT="3.2"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 ODPI_COMMIT="c0bb1328c4d535743a64f08ec51fb822c2bbcc1e"
 
-inherit cython dep-prepare distutils-r1
+inherit cython dep-prepare secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="0c8db52ad1d25c3aae98169334e7509f9bb6a4a2" # May 4, 2026
@@ -46,6 +45,7 @@ RESTRICT="mirror test" # untested
 SLOT="0"
 IUSE+="
 azure_auth azure_config oci_auth oci_config test
+ebuild_revision_1
 "
 RDEPEND+="
 	>=dev-python/cryptography-3.2.1[${PYTHON_USEDEP}]
@@ -71,7 +71,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-77.0.0[${PYTHON_USEDEP}]
-	dev-python/cython:3.2[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-python/anyio[${PYTHON_USEDEP}]
@@ -102,7 +102,6 @@ src_prepare() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3.2"
 	cython_python_configure
 }
 
