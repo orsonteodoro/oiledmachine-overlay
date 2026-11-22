@@ -372,7 +372,7 @@ Pairing rules and support
 | Lib A (C++17, GCC13) depends on Lib B (C++20, GCC13)                 | N        | The dependee B library C++ version typically cannot exceed the depender A library C++ version                                                                                   |                                                |
 | Lib A (C++14, GCC13) depends on Lib B (C++17, GCC13)                 | Y        | The exception, it is allowed if using the same GCC compiler slot.  LTS lib with LTS lib is allowed.                                                                             | Boost links to ICU                             |
 
-* Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption.
+* Security note:  FAFO or breaking the rules may cause undefined behavior (UB) or memory corruption that leads to RCE (Remote Code Execution).
 
 
 | Platform                             | Ebuild level of support                 | Distro or CI/CD image correspondence                                    |
