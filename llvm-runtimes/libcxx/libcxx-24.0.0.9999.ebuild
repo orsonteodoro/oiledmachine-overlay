@@ -21,6 +21,20 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+CFLAGS_HARDENED_USE_CASES="casual-messaging credentials crypto dss multithreaded-confedential network p2p sandbox secure-messaging security-critical server sensitive-data untrusted-data web-browser web-server"
+CMAKE_ECLASS="cmake"
+CXX_STANDARD=23
+LLVM_MAX_SLOT="${PV%%.*}"
+PYTHON_COMPAT=( "python3_"{13..14} )
+
+LLVM_COMPONENTS=(
+	"runtimes"
+	"libcxx"{"","abi"}
+	"libc"
+	"llvm/"{"cmake","utils"}
+	"cmake"
+)
+
 inherit libstdcxx-compat
 GCC_COMPAT=(
 	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
@@ -32,20 +46,6 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
-
-LLVM_COMPONENTS=(
-	"runtimes"
-	"libcxx"{"","abi"}
-	"libc"
-	"llvm/"{"cmake","utils"}
-	"cmake"
-)
-
-CFLAGS_HARDENED_USE_CASES="casual-messaging credentials crypto dss multithreaded-confedential network p2p sandbox secure-messaging security-critical server sensitive-data untrusted-data web-browser web-server"
-CMAKE_ECLASS="cmake"
-CXX_STANDARD=23
-LLVM_MAX_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( "python3_"{13..14} )
 
 inherit check-compiler-switch cflags-hardened cmake-multilib crossdev flag-o-matic libcxx-slot libstdcxx-slot llvm.org llvm-utils python-any-r1 toolchain-funcs
 
@@ -76,7 +76,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM24_REVISION}
 clang +libcxxabi +static-libs test +threads
-ebuild_revision_21
+ebuild_revision_22
 "
 RDEPEND="
 	!libcxxabi? (
@@ -149,7 +149,6 @@ src_configure() {
 	is_crosspkg && install_prefix+="/usr/${CTARGET}"
 
 	check-compiler-switch_end
-	cflags-hardened_append
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
@@ -212,6 +211,8 @@ eerror "You must emerge clang:${PV%%.*} to build with clang."
 
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then

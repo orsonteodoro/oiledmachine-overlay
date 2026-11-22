@@ -3,11 +3,6 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -25,14 +20,20 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-inherit check-compiler-switch cmake crossdev flag-o-matic flag-o-matic-om libstdcxx-slot llvm.org llvm-utils python-any-r1
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit cflags-hardened check-compiler-switch cmake crossdev flag-o-matic flag-o-matic-om libstdcxx-slot llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
@@ -56,7 +57,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang debug test
-ebuild_revision_5
+ebuild_revision_7
 "
 REQUIRED_USE="
 	atomic-builtins? (
@@ -136,6 +137,8 @@ src_configure() {
 	if use clang || use test ; then
 		llvm_prepend_path -b "${LLVM_MAJOR}"
 	fi
+
+	cflags-hardened_append
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"

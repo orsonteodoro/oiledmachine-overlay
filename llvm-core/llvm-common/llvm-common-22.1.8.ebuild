@@ -38,7 +38,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM22_REVISION}
 emacs
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	!llvm-core/llvm:0

@@ -3,11 +3,6 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -25,11 +20,17 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 LLVM_MAJOR="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-inherit flag-o-matic cmake-multilib linux-info libstdcxx-slot llvm llvm.org
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit cflags-hardened flag-o-matic cmake-multilib linux-info libstdcxx-slot llvm llvm.org
 inherit python-single-r1 toolchain-funcs
 
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
@@ -44,7 +45,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 	debug test
-	ebuild_revision_5
+	ebuild_revision_6
 ${LLVM_EBUILDS_LLVM24_REVISION}
 "
 REQUIRED_USE="
@@ -108,6 +109,9 @@ eerror "Missing libLLVMCodeGenTypes.a.  It requires that llvm-${PV} be modded in
 eerror
 		die
 	fi
+
+	cflags-hardened_append
+
 	# LTO causes issues in other packages building, #870127
 	filter-lto
 

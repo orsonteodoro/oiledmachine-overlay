@@ -25,7 +25,7 @@ unset -f _llvm_set_globals
 inherit check-compiler-switch flag-o-matic elisp-common llvm.org shell-completion multilib
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Common files shared between multiple slots of clang"
@@ -39,7 +39,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 bootstrap-prefix cet default-compiler-rt default-libcxx default-lld
 llvm-libunwind emacs hardened
-ebuild_revision_5
+ebuild_revision_6
 "
 # Enforce clang-runtime USE flags on clang-runtime as well to aid transition
 PDEPEND="

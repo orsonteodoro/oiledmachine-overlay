@@ -39,7 +39,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM22_REVISION}
 bootstrap-prefix cet default-compiler-rt default-libcxx default-lld
 llvm-libunwind emacs hardened
-ebuild_revision_5
+ebuild_revision_6
 "
 # Enforce clang-runtime USE flags on clang-runtime as well to aid transition
 PDEPEND="

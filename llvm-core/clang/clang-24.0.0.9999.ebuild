@@ -4,11 +4,7 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
-)
-
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{13..14} )
 
@@ -29,11 +25,16 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
 CHKL_TIMESTAMPS=(
 	"dev-libs/libxml2-9999"
 )
 
-inherit check-compiler-switch chkl cmake dhms flag-o-matic git-r3 libstdcxx-slot llvm.org multilib
+inherit cflags-hardened check-compiler-switch chkl cmake dhms flag-o-matic git-r3 libstdcxx-slot llvm.org multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 secure-version toolchain-funcs
 
 #KEYWORDS="
@@ -56,7 +57,7 @@ cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
-ebuild_revision_13
+ebuild_revision_15
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -598,6 +599,8 @@ _src_configure_compiler() {
 
 _src_configure() {
 	llvm-ebuilds_fix_toolchain # Compiler switch
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then

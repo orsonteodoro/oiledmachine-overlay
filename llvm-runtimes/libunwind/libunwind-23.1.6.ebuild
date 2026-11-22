@@ -22,13 +22,14 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-inherit check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1
+inherit cflags-hardened check-compiler-switch cmake-multilib crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
@@ -44,7 +45,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 cet +clang debug static-libs test
-ebuild_revision_6
+ebuild_revision_8
 "
 REQUIRED_USE="
 	test? (
@@ -158,6 +159,8 @@ multilib_src_configure() {
 		local -x LDFLAGS="${LDFLAGS} ${nostdlib_flags[*]}"
 		ewarn "${CXX} seems to lack runtime, trying with ${nostdlib_flags[*]}"
 	fi
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then

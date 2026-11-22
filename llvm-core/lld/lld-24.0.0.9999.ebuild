@@ -4,11 +4,7 @@
 
 EAPI=8
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
-)
-
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{13..14} )
 
@@ -29,11 +25,16 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
 CHKL_TIMESTAMPS=(
 	"app-arch/zstd-9999"
 )
 
-inherit check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot llvm.org llvm-utils python-single-r1 secure-version toolchain-funcs
+inherit cflags-hardened check-compiler-switch chkl cmake flag-o-matic libstdcxx-slot llvm.org llvm-utils python-single-r1 secure-version toolchain-funcs
 
 #KEYWORDS="
 #~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
@@ -50,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM24_REVISION}
 +debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	^^ (
@@ -236,6 +237,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 _src_configure() {
+	cflags-hardened_append
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"

@@ -10,13 +10,13 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX23[@]}
+	"${LIBSTDCXX_COMPAT_STDCXX23[@]}"
 )
 LIBSTDCXX_USEDEP_LTS="gcc_slot_skip(+)"
 
 inherit libcxx-compat
 LLVM_COMPAT=(
-	${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}
+	"${LIBCXX_COMPAT_STDCXX23[@]/llvm_slot_}"
 )
 LIBCXX_USEDEP_LTS="llvm_slot_skip(+)"
 
@@ -41,7 +41,7 @@ inherit cflags-hardened check-compiler-switch cmake-multilib crossdev flag-o-mat
 
 LLVM_MAX_SLOT="${LLVM_MAJOR}"
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+amd64 arm arm64 ~loong ~riscv ~sparc x86 ~arm64-macos ~x64-macos
 "
 
 DESCRIPTION="Low level support for a standard C++ library"
@@ -57,7 +57,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 clang +static-libs test
-ebuild_revision_16
+ebuild_revision_17
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
@@ -133,7 +133,6 @@ src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
 
 	check-compiler-switch_end
-	cflags-hardened_append
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
@@ -192,6 +191,8 @@ eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
 
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then

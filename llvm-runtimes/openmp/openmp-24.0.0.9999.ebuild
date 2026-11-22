@@ -3,14 +3,13 @@
 
 EAPI=8
 
-# Last update:  2024-07-23
-
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
 	"
 fi
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{13..14} )
@@ -22,13 +21,13 @@ PYTHON_COMPAT=( "python3_"{13..14} )
 
 inherit libstdcxx-compat
 GCC_COMPAT=(
-	#${LIBSTDCXX_COMPAT_CUDA_12[@]} # 14
-	#${LIBSTDCXX_COMPAT_CUDA_13[@]} # 14, 15, 16
+	#"${LIBSTDCXX_COMPAT_CUDA_12[@]}" # 14
+	#"${LIBSTDCXX_COMPAT_CUDA_13[@]}" # 14, 15, 16
 	"${LIBSTDCXX_COMPAT_STDCXX17[@]}" # 14, 15
 )
 
 inherit llvm-ebuilds
-inherit abseil-cpp cmake-multilib crossdev flag-o-matic grpc libstdcxx-slot llvm.org llvm-utils protobuf python-single-r1
+inherit abseil-cpp cflags-hardened cmake-multilib crossdev flag-o-matic grpc libstdcxx-slot llvm.org llvm-utils protobuf python-single-r1
 inherit re2 secure-version toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -61,7 +60,7 @@ SLOT="0/${LLVM_SOABI}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM24_REVISION}
 +clang cuda +debug gdb-plugin hwloc level-zero offload ompt remote-offloading rocm test llvm_targets_NVPTX
-ebuild_revision_11
+ebuild_revision_13
 "
 REQUIRED_USE="
 	cuda? (
@@ -218,6 +217,8 @@ multilib_src_configure() {
 	fi
 
 	use offload && llvm_prepend_path "${LLVM_MAJOR}"
+
+	cflags-hardened_append
 
 	# LTO causes issues in other packages building, #870127
 	filter-lto

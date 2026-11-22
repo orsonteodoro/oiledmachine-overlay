@@ -21,19 +21,20 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit libstdcxx-compat
-GCC_COMPAT=(
-	${LIBSTDCXX_COMPAT_STDCXX17[@]}
-)
-
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CXX_STANDARD=17
 PYTHON_COMPAT=( "python3_"{13..14} )
 
-inherit check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
+inherit libstdcxx-compat
+GCC_COMPAT=(
+	"${LIBSTDCXX_COMPAT_STDCXX17[@]}"
+)
+
+inherit cflags-hardened check-compiler-switch check-reqs cmake flag-o-matic flag-o-matic-om libstdcxx-slot linux-info llvm.org llvm-utils python-any-r1
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~x64-macos
+amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -50,7 +51,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM23_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_19
+ebuild_revision_21
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -502,6 +503,9 @@ src_configure() {
 		CPP="${CC} -E" \
 		strip-unsupported-flags
 	fi
+
+	cflags-hardened_append
+	filter-flags "-fsanitize=*"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
