@@ -9,7 +9,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit cython distutils-r1
+inherit cython secure-version distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -39,7 +39,10 @@ RESTRICT="
 	test
 "
 SLOT="0/${PV%.*}"
-IUSE+=" doc nlp test"
+IUSE+="
+doc nlp test
+ebuild_revision_1
+"
 if [[ "${PV}" =~ "9999" ]] ; then
 	RDEPEND+="
 		$(python_gen_cond_dep '
@@ -58,13 +61,13 @@ else
 fi
 RDEPEND+="
 	$(python_gen_cond_dep '
+		>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 		>=dev-python/google-api-python-client-1.6.7[${PYTHON_USEDEP}]
 		>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
 		>=dev-python/pandas-0.22.0[${PYTHON_USEDEP}]
 		>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
 		>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
-		dev-python/cython[${PYTHON_USEDEP}]
 		dev-python/immutabledict[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/oauth2client[${PYTHON_USEDEP}]
@@ -109,7 +112,7 @@ einfo "To get the research models use the live (9999) version."
 }
 
 python_configure() {
-	cython_set_cython_slot
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
