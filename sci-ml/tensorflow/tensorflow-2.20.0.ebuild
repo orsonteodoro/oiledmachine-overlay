@@ -405,7 +405,7 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_35
+ebuild_revision_36
 "
 REQUIRED_USE="
 	!rocm
@@ -681,11 +681,7 @@ BDEPEND="
 			${RDEPEND_GRPCIO}
 		)
 		$(python_gen_cond_dep '
-			>=dev-python/cython-3.1.2:=[${PYTHON_USEDEP}]
-			|| (
-				dev-python/cython:3.1[${PYTHON_USEDEP}]
-			)
-			=dev-python/cython-3*:=[${PYTHON_USEDEP}]
+			>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 			>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
 			>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-78.1.1[${PYTHON_USEDEP}]
@@ -1169,7 +1165,7 @@ ewarn
 		re2_python_configure
 		grpc_python_configure
 
-		cython_set_cython_slot "3"
+		cython_set_cython_slot "${CYTHON_SLOT}"
 		cython_python_configure
 		if use python ; then
 			export PYTHON_BIN_PATH="${PYTHON}"
@@ -1349,9 +1345,7 @@ add_sandbox_rules() {
 	local L=()
 
 	local CYTHON_SLOTS=(
-		"0.29"
-		"3.0"
-		"3.1"
+		"${CYTHON_SLOT}"
 	)
 	local x
 	for x in "${CYTHON_SLOTS[@]}" ; do
