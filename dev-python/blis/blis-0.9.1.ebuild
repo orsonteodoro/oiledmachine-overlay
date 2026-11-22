@@ -4,13 +4,12 @@
 
 EAPI=8
 
-CYTHON_SLOT="0.29"
 BLIS_COMMIT="8137f660d8351c3a3c3b38f4606121578e128b70"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only lists up to 3.10
 
-inherit cython dep-prepare distutils-r1 pypi
+inherit cython dep-prepare pypi secure-version distutils-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/cython-${PN}-${PV}"
@@ -33,7 +32,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND+="
 	virtual/numpy[${PYTHON_USEDEP}]
@@ -42,8 +41,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.25:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}[${PYTHON_USEDEP}]
 	virtual/numpy[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/hypothesis-4.0.0
