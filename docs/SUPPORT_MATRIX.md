@@ -65,12 +65,13 @@ the use of the current upstream release.
 | glibc 2.44 (upstream)                 | 3m ago                     |
 | glibc 2.44 (w/distro patches, G~) [D] | 3w ago                     |
 | glibc 2.43 (upstream)                 | 9m ago                     |
-| glibc 2.43 (w/distro patches, G)      | 3w ago                     |
+| glibc 2.43 (w/distro patches, G) [1]  | 3w ago                     |
 | glibc 2.43 (w/distro patches, G~)     | 3w ago                     |
 | musl 1.2.6 (upstream)                 | 8m ago                     |
 | musl 1.2.6 (w/distro patches, G)      | 3w ago                     |
 
 [D] The default on this overlay.
+[1] During the commit audit, it was discovered that the patchset was missing serious security backports.
 
 Compilers and interpreters used in this overlay
 
