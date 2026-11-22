@@ -5,9 +5,9 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=standalone
-PYTHON_COMPAT=( python3_{11..14} python3_{13,14}t pypy3_11 )
+PYTHON_COMPAT=( "python3_"{11..14} "pypy3_"{11..12} )
 
-inherit cython distutils-r1
+inherit cython secure-version distutils-r1
 
 MY_P=${P/_}
 DESCRIPTION="YAML parser and emitter for Python"
@@ -25,7 +25,10 @@ S=${WORKDIR}/${MY_P}
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
-IUSE="examples"
+IUSE="
+examples
+ebuild_revision_1
+"
 
 DEPEND="
 	dev-libs/libyaml:=
@@ -34,8 +37,7 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	=dev-python/cython-3.0*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 
@@ -44,7 +46,7 @@ distutils_enable_tests pytest
 
 python_configure() {
 	export PYYAML_FORCE_CYTHON=1
-	cython_set_cython_slot "3.0"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
