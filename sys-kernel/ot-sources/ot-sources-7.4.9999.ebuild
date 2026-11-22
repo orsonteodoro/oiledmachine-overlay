@@ -9,14 +9,14 @@ EAPI=8
 # See also https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/
 
 GENPATCHES_FALLBACK_COMMIT="d4fa92430e875432c3a61bb3abd9b6e68ea9fcbd" # 2026-06-04 18:26:32 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="aebb7274476403040d582c61478df8f4a7bf9cd3" # 2026-11-15 14:30:11 -0800 @ Linux 7.4-rc3
+LINUX_SOURCES_FALLBACK_COMMIT="2dc60bd9975fc8666a13d58410499e06e6799ba9" # 2026-11-22 10:12:27 -0800 @ Merge tag 'rust-fixes-7.4-4'
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=7.4
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="ebuild_revision_70"
+EBUILD_REV="ebuild_revision_71"
 GENPATCHES_VER="9999" # can be live only when 9999
 PATCH_PROJC_VER="7.3-r0"
 PATCH_RT_VER="7.3-rt2"
