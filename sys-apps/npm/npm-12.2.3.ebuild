@@ -4,7 +4,7 @@
 
 EAPI=8
 
-LOCKFILE_VER="2" # See also https://github.com/npm/cli/blob/v8.13.0/package-lock.json#L4
+LOCKFILE_VER="3" # See https://github.com/npm/cli/blob/v12.2.3/package-lock.json#L4
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
@@ -19,7 +19,7 @@ LICENSE="
 	Artistic-2
 "
 RESTRICT="mirror"
-SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
+SLOT="${LOCKFILE_VER}/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +ssl
 ebuild_revision_5
@@ -27,9 +27,9 @@ ebuild_revision_5
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
-		>=net-libs/nodejs-12.13.0:12[corepack,ssl?]
-		>=net-libs/nodejs-14.15.0:14[corepack,ssl?]
-		>=net-libs/nodejs-16[corepack,ssl?]
+		>=net-libs/nodejs-22.22.2:22[corepack,ssl?]
+		>=net-libs/nodejs-24.15.0:24[corepack,ssl?]
+		>=net-libs/nodejs-26.0.0[corepack,ssl?]
 	)
 "
 DEPEND+="
@@ -44,7 +44,7 @@ BDEPEND+="
 
 get_min_node_slot() {
 	local x
-	for x in $(seq 12 30) ; do
+	for x in $(seq 20 30) ; do
 		if [[ -e "${ESYSROOT}/usr/lib/node/${x}/bin/corepack" ]] ; then
 			echo "${x}"
 			return
@@ -61,27 +61,13 @@ einfo "PATH:  ${PATH}"
 
 src_configure() {
 	local node_version=$(node --version | sed -e "s|v||g")
-	if ver_test "${node_version%%.*}" -eq "12" ; then
+	if ver_test "${node_version%%.*}" -eq "20" ; then
 		:
-	elif ver_test "${node_version%%.*}" -eq "14" ; then
-		:
-	elif ver_test "${node_version%%.*}" -ge "16" ; then
+	elif ver_test "${node_version%%.*}" -ge "22" ; then
 		:
 	else
 eerror
 eerror "Do either:"
-eerror
-eerror "  eselect nodejs set node12"
-eerror
-eerror "    or"
-eerror
-eerror "  eselect nodejs set node14"
-eerror
-eerror "    or"
-eerror
-eerror "  eselect nodejs set node18"
-eerror
-eerror "    or"
 eerror
 eerror "  eselect nodejs set node20"
 eerror
@@ -98,12 +84,11 @@ eerror
 }
 
 pkg_postinst() {
-	local node_slot=$(node --version \
-		| sed -e "s|^v||g" \
-		| cut -f 1 -d ".")
-	if ver_test "${node_slot}" -eq "18" ; then
-		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
-	fi
+	# Corepack issue 612
+	# Cached to mitigate against MITM
+	#export COREPACK_INTEGRITY_KEYS=0 # Solution #1
+	#export COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" # Solution #2
+	export COREPACK_INTEGRITY_KEYS='{"npm":[{"expires":"2025-01-29T00:00:00.000Z","keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","keytype":"ecdsa-sha2-nistp256","scheme":"ecdsa-sha2-nistp256","key":"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1Olb3zMAFFxXKHiIkQO5cJ3Yhl5i6UPp+IhuteBJbuHcA5UogKo0EWtlWwW6KSaKoTNEYL7JlCQiVnkhBktUgg=="},{"expires":null,"keyid":"SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U","keytype":"ecdsa-sha2-nistp256","scheme":"ecdsa-sha2-nistp256","key":"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEY6Ya7W++7aUPzvMTrezH6Ycx3c+HOKYCcNGybJZSCJq/fd7Qa8uuAKtdIkUQtQiEKERhAmE5lMMJhP8OkDOa2g=="}]}'
 
 	corepack enable
 	mkdir -p "${EROOT}/usr/share/${PN}"
