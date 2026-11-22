@@ -4,12 +4,11 @@
 
 EAPI=8
 
-CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -30,7 +29,7 @@ RESTRICT="mirror test" # untested
 SLOT="0"
 IUSE+="
 dev test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	test? (
@@ -44,8 +43,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.29.1:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.3[${PYTHON_USEDEP}]
