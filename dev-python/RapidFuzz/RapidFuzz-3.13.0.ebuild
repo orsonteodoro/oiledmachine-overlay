@@ -8,9 +8,9 @@ MY_PN="${PN,,}"
 
 DISTUTILS_USE_PEP517="scikit-build-core"
 EPYTEST_XDIST=1
-PYTHON_COMPAT=( "python3_"{8..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
-inherit cython distutils-r1 pypi
+inherit cython distutils-r1 pypi secure-version
 
 KEYWORDS="~amd64"
 
@@ -21,7 +21,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 cpp doc numpy test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RDEPEND+="
@@ -43,8 +43,7 @@ BDEPEND+="
 		virtual/numpy[${PYTHON_USEDEP}]
 	)
 	cpp? (
-		=dev-python/cython-3*[${PYTHON_USEDEP}]
-		dev-python/cython:=
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 		>=dev-python/scikit-build-0.17.0[${PYTHON_USEDEP}]
 		>=dev-build/cmake-3.22.5
 		>=dev-build/ninja-1.10.2.3
@@ -81,7 +80,7 @@ src_prepare() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
