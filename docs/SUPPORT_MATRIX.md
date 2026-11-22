@@ -427,11 +427,10 @@ Pairing rules and support
 | systemd                              | Partially supported                     |                                                                         |
 | Tauri 1.x                            | Not supported                           |                                                                         |
 | Tauri 2.x                            | Supported                               |                                                                         |
-| TensorFlow 2.17 (CPU)                | WIP                                     |                                                                         |
-| TensorFlow 2.17 (CUDA 12.3)          | Not supported                           |                                                                         |
+| TensorFlow <2.20                     | Not supported                           |                                                                         |
 | TensorFlow 2.20 (CPU)                | WIP                                     |                                                                         |
-| TensorFlow 2.20 (CUDA 12.5)          | Not supported                           |                                                                         |
-| TensorFlow 2.20 (ROCm 6.4)           | WIP                                     |                                                                         |
+| TensorFlow 2.20 (CUDA)               | Not supported                           |                                                                         |
+| TensorFlow 2.20 (ROCm)               | Not supported                           |                                                                         |
 | Vulkan                               | Fully supported                         |                                                                         |
 | Wayland                              | Fully supported                         |                                                                         |
 | X                                    | Fully supported                         |                                                                         |
