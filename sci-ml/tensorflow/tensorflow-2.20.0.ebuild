@@ -405,7 +405,7 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_36
+ebuild_revision_37
 "
 REQUIRED_USE="
 	!rocm
@@ -1343,26 +1343,20 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 add_sandbox_rules() {
 	local L=()
 
-	local CYTHON_SLOTS=(
-		"${CYTHON_SLOT}"
+	L+=(
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Compiler"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Plex"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Utility"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Tempita"
+		"/usr/lib/cython/${CYTHON_SLOT}/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
 	)
-	local x
-	for x in "${CYTHON_SLOTS[@]}" ; do
-		L+=(
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/__pycache__"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/__pycache__"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Compiler"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Plex"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Utility"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Tempita"
-			"/usr/lib/cython/${x}/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
-		)
-	done
 
 einfo "Adding sandbox rules"
 	local path
