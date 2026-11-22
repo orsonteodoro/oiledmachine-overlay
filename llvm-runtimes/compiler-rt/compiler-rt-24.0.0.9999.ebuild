@@ -57,7 +57,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM24_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	atomic-builtins? (
@@ -138,8 +138,6 @@ src_configure() {
 		llvm_prepend_path -b "${LLVM_MAJOR}"
 	fi
 
-	cflags-hardened_append
-
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
@@ -166,6 +164,8 @@ src_configure() {
 		local -x CXXFLAGS="${CXXFLAGS} ${flags[@]}"
 		local -x LDFLAGS="${LDFLAGS} ${flags[@]}"
 	fi
+
+	cflags-hardened_append
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
