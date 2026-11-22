@@ -17,7 +17,6 @@ EAPI=8
 
 inherit secure-version
 
-CYTHON_SLOT="3.2"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 DULWICH_PV="1"
@@ -106,7 +105,7 @@ SLOT="0"
 IUSE+="
 cext dev developer-docs doc fastimport git github launchpad paramiko pgp subunit
 test user-docs workspace
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -189,7 +188,7 @@ BDEPEND+="
 	>=dev-python/mypy-0.942[${PYTHON_USEDEP}]
 	>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
 	cext? (
-		>=dev-python/cython-${CYTHON_SLOT}:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+		>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/docutils-0.17.1[${PYTHON_USEDEP}]
