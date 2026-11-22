@@ -7,7 +7,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{10..13} )
 
-inherit cython distutils-r1 optfeature pypi
+inherit cython optfeature pypi secure-version distutils-r1
 
 DESCRIPTION="Statistical computations and models for use with SciPy"
 HOMEPAGE="
@@ -21,7 +21,7 @@ SLOT="0"
 KEYWORDS="amd64 arm64 ~loong ~riscv ~amd64-linux"
 IUSE="
 examples
-ebuild_revision_2
+ebuild_revision_3
 "
 
 DEPEND="
@@ -36,8 +36,7 @@ RDEPEND="
 "
 BDEPEND="
 	${DEPEND}
-	=dev-python/cython-3*[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
 "
 
@@ -60,7 +59,6 @@ python_prepare_all() {
 }
 
 python_configure() {
-	cython_set_cython_slot "3"
 	cython_python_configure
 }
 
