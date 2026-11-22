@@ -40,7 +40,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 doc examples +threads test
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="
 	!test? (
@@ -59,7 +59,7 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-python/cython-3.2.4:3.2=[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	doc? (
@@ -98,7 +98,7 @@ python_prepare_all() {
 
 python_configure() {
 	chkl_check_many_timestamps
-	cython_set_cython_slot "3.2"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
