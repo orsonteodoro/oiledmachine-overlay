@@ -9,6 +9,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CXX_STANDARD=17
 
 inherit libstdcxx-compat
@@ -30,7 +31,7 @@ _llvm_set_globals() {
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic libstdcxx-slot llvm.org python-any-r1 toolchain-funcs
+inherit cflags-hardened cmake flag-o-matic libstdcxx-slot llvm.org python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 
@@ -83,6 +84,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	if tc-is-gcc && ver_test $(gcc-version) -ge "13.1" ; then
 #/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::ErrIfLHSAndRHSSymbolsMatch(const Fortran::parser::Variable&, const Fortran::parser::Expr&)':
 #/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
