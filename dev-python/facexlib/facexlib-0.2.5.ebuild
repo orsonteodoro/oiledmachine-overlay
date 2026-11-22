@@ -11,7 +11,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cython distutils-r1 pypi
+inherit cython distutils-r1 pypi secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -40,7 +40,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/filterpy[${PYTHON_USEDEP}]
@@ -59,8 +61,7 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/cython[${PYTHON_USEDEP}]
-		dev-python/cython:=
+		>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 		virtual/numpy[${PYTHON_USEDEP}]
 	')
 "
@@ -77,7 +78,7 @@ src_unpack() {
 }
 
 python_configure() {
-	cython_set_cython_slot
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 }
 
