@@ -6,12 +6,11 @@ EAPI=8
 
 # U 22.04
 
-CYTHON_SLOT="3.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..14} "pypy3" ) # Relaxed
+PYTHON_COMPAT=( "python3_"{10..14} "pypy3_"{11..12} ) # Relaxed
 
-inherit cython distutils-r1
+inherit cython secure-version distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -27,7 +26,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 "
@@ -35,8 +34,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-3.0:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	test? (
