@@ -377,7 +377,7 @@ Pairing rules and support
 
 | Platform                             | Ebuild level of support                 | Distro or CI/CD image correspondence                                    |
 | ---                                  | ---                                     | ---                                                                     |
-| CUDA <=13.3                          | Not supported                           | D12, D13, F44, U22, U24, U26                                            |
+| CUDA < 13.4                          | Not supported                           | D12, D13, F44, U22, U24, U26                                            |
 | CUDA 13.4                            | Available                               | D12, D13, F44, G~, U22, U24, U26                                        |
 | Electron (amd64)                     | Fully supported                         |                                                                         |
 | Electron (arm64)                     | Available (WIP)                         |                                                                         |
@@ -427,7 +427,7 @@ Pairing rules and support
 | systemd                              | Partially supported                     |                                                                         |
 | Tauri 1.x                            | Not supported                           |                                                                         |
 | Tauri 2.x                            | Supported                               |                                                                         |
-| TensorFlow <2.20                     | Not supported                           |                                                                         |
+| TensorFlow < 2.20                    | Not supported                           |                                                                         |
 | TensorFlow 2.20 (CPU)                | WIP                                     |                                                                         |
 | TensorFlow 2.20 (CUDA)               | Not supported                           |                                                                         |
 | TensorFlow 2.20 (ROCm)               | Not supported                           |                                                                         |
