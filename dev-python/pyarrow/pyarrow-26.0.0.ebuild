@@ -47,7 +47,7 @@ LLVM_COMPAT=(
 	"${LIBCXX_COMPAT_STDCXX20[@]/llvm_slot_}"
 )
 
-inherit cython distutils-r1 libcxx-slot libstdcxx-slot multiprocessing
+inherit cython distutils-r1 libcxx-slot libstdcxx-slot multiprocessing secure-version
 
 KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
 S="${WORKDIR}/apache-arrow-${PV}/python"
@@ -74,7 +74,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +parquet +snappy ssl test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	cpu_flags_x86_avx? (
@@ -106,7 +106,7 @@ RDEPEND="
 	virtual/numpy
 "
 BDEPEND="
-	>=dev-python/cython-3.1:3.1[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 
 	>=dev-python/setuptools-58[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-8[${PYTHON_USEDEP}]
@@ -209,7 +209,7 @@ get_runtime_simd_level() {
 }
 
 python_configure() {
-	cython_set_cython_slot 3.1
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 
 	local mycmakeargs=()
