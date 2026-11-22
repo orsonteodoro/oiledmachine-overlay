@@ -4,12 +4,11 @@
 
 EAPI=8
 
-CYTHON_SLOT="0.29"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream lists to 3.11
 
-inherit cython distutils-r1 pypi
+inherit cython pypi secure-version distutils-r1
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -30,7 +29,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
@@ -40,8 +39,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.28:${CYTHON_SLOT}[${PYTHON_USEDEP}]
-	dev-python/cython:=
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
