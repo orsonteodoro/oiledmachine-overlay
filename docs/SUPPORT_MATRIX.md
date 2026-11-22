@@ -387,9 +387,9 @@ Pairing rules and support
 | gRPC 1.48.4 [3]                      | Not supported                           | F43 (1.48.4), F44 (1.48.4), F45 (1.48.4)                                |
 | gRPC 1.51.3 [3]                      | Fully supported                         | D12 (1.51.1), D13 (1.51.1), U24 (1.51.1), U26 (1.51.1)                  |
 | gRPC 1.62.3 [3]                      | Available                               |                                                                         |
-| gRPC 1.71.2 [3]                      | Available                               |                                                                         |
+| gRPC 1.71.2 [3]                      | Available                               | G (1.71.0)                                                              |
 | gRPC 1.81.2 [3]                      | Available                               |                                                                         |
-| gRPC 1.85.3 [3]                      | Available                               | Nunstable (1.81.4)                                                      |
+| gRPC 1.85.3 [3]                      | Available                               | G~ (1.85.1), Nunstable (1.81.4)                                         |
 | GTK 2 [4]                            | Not Supported                           |                                                                         |
 | GTK 3 live                           | Fully supported                         |                                                                         |
 | GTK 4 live                           | Fully supported                         |                                                                         |
@@ -416,8 +416,8 @@ Pairing rules and support
 | Protobuf-cpp 3/21.12 [3]             | Fully supported                         | D12 (3.21.12), D13 (3.21.12), F43 (3.19.6), F44 (3.19.6), U24 (3.21.12), U26 (3.21.12) |
 | Protobuf-cpp 4/25.9 [3]              | Available                               |                                                                         |
 | Protobuf-cpp 5/29.6 [3]              | Available                               |                                                                         |
-| Protobuf-cpp 6/33.6 [3]              | Available                               | F45 (6.33.5)                                                            |
-| Protobuf-cpp 7/36.2 [3]              | Available                               | Nunstable (7.36.2)                                                      |
+| Protobuf-cpp 6/33.6 [3]              | Available                               | F45 (6/33.5), G (6/33.1)                                                |
+| Protobuf-cpp 7/36.2 [3]              | Available                               | Nunstable (7/36.2), G~ (7/34.2)                                         |
 | PyTorch <= 2.13                      | Not supported                           |                                                                         |
 | PyTorch 2.13 (CPU)                   | WIP                                     |                                                                         |
 | PyTorch 2.13 (CUDA 12.6, 12.8, 13.x) | WIP                                     |                                                                         |
@@ -441,7 +441,9 @@ Pairing rules and support
 * [2] Via llvm-roc-libomp
 * [3] Multislotted on this overlay to allow LTS and rolling packages to
       coexist without resorting to containerization or separate LTS and rolling
-      partitions.
+      partitions.  The distro overlay uses inappropriate monoslotting which
+      causes mutual exclusion installation package decisions between packages
+      (e.g. PyTorch vs TensorFlow, PyTorch vs LocalAI).
 * [4] Backporting security patches is likely to be incomplete.  No hardened
       ebuilds will be provided.  You must either keep a local ebuild fork
       with cflags-hardened changes or add per-package hardening CFLAGS (e.g.
