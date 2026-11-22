@@ -29,7 +29,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 dev
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 "
@@ -37,7 +37,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
