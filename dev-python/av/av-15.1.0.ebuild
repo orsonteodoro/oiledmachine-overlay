@@ -16,7 +16,7 @@ FFMPEG_COMPAT_SLOTS=(
 	"${FFMPEG_COMPAT_SLOTS_8[@]}"
 )
 
-inherit cython check-compiler-switch distutils-r1 flag-o-matic
+inherit cython check-compiler-switch distutils-r1 flag-o-matic secure-version
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
@@ -34,7 +34,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 lint test
-ebuild_revision_7
+ebuild_revision_8
 "
 RESTRICT="
 	!test? (
@@ -53,8 +53,7 @@ RDEPEND="
 # Cython relaxed
 BDEPEND="
 	$(python_gen_cond_dep '
-		=dev-python/cython-3.1*[${PYTHON_USEDEP}]
-		dev-python/cython:=
+		>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-77.0[${PYTHON_USEDEP}]
 		lint? (
 			>=dev-python/mypy-1.16.1[${PYTHON_USEDEP}]
@@ -65,8 +64,7 @@ BDEPEND="
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 		test? (
-			dev-python/cython[${PYTHON_USEDEP}]
-			dev-python/cython:=
+			>=dev-python/cython-'${CYTHON_PV}:${CYTHON_SLOT}'=[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			virtual/numpy[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
@@ -95,7 +93,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 python_configure() {
-	cython_set_cython_slot "3.1"
+	cython_set_cython_slot "${CYTHON_SLOT}"
 	cython_python_configure
 	ffmpeg_python_configure
 }
