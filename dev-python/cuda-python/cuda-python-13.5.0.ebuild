@@ -37,7 +37,7 @@ LICENSE="
 # The distro's Apache-2.0 license template doesn't contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" "
+IUSE+=" doc"
 RDEPEND+="
 	>=dev-python/cuda-bindings-13.5.0[${PYTHON_USEDEP}]
 	>=dev-python/cuda-core-1.2.0[${PYTHON_USEDEP}]
@@ -57,6 +57,24 @@ BDEPEND+="
 	!=dev-python/setuptools-scm-10.1*
 	dev-python/wheel[${PYTHON_USEDEP}]
 	virtual/numpy[${PYTHON_USEDEP}]
+	doc? (
+		>=dev-python/cython-${CYTHON_3_2_PV}:3.2=[${PYTHON_USEDEP}]
+		dev-python/myst-parser[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/numpydoc[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/pydata-sphinx-theme[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		<dev-python/sphinx-8.2.0[${PYTHON_USEDEP}]
+		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
+		dev-python/myst-nb[${PYTHON_USEDEP}]
+		dev-python/enum_tools[${PYTHON_USEDEP}]
+		dev-python/sphinx-toolbox[${PYTHON_USEDEP}]
+		dev-python/pyclibrary[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/nvidia-sphinx-theme[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.md" )
 
