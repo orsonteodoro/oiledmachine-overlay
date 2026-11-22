@@ -36,7 +36,7 @@ RESTRICT="mirror test" # untested
 SLOT="0"
 IUSE+="
 dev doc test
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND+="
 "
@@ -44,7 +44,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/cython-${CYTHON_PV}:${CYTHON_SLOT}=[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
