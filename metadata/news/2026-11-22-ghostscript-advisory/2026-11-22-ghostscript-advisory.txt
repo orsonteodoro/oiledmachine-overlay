@@ -17,7 +17,7 @@ vulnerabilities/bugs.
 
 Triage history of the ghostscript-gpl ebuild:
 
-Nov 22, 2026 - BOR, OF, UB, SHFTOF mitigation
+Nov 22, 2026 - BOR, OF, UB, SHOF mitigation
 Oct 28, 2026 - Brotli RCE mitigation
 Oct 11, 2026 - OF, UF, HO, BOR mitigation
 Sep 11, 2026 - Upstream hardening
@@ -39,7 +39,7 @@ IL - Infinite Loop
 IV - Insufficient Validation
 OF - Overflow
 SBE - SandBox Escape
-SHFTOF - Shift Overflow
+SHOF - Shift Overflow
 SS - Subsequent System [nothing, so the blast radius is limited to direct system]
 UB - Undefined Behavior
 UF - Underflow
