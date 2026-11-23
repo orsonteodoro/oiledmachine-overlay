@@ -38,7 +38,7 @@ OOBR - Out Of Bounds Read
 OOBW - Out Of Bounds Write
 RCE - Remote Code Execution
 RVB - Recursive Validation Bypass
-SF - SegFault
+SEGFLT - SegFault
 UAF - Use After Free
 UB - Undefined Behavior
 UBMA - UnBounded Memory Allocation
