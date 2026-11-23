@@ -2,10 +2,9 @@ Title: glibc update
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
-Display-If-Installed: www-apps/wordpress
-Display-If-Installed: app-text/ghostscript-gpl
+Display-If-Installed: sys-libs/glibc
 
 This overlay will be using glibc 2.44-r2 as the default.  It is the maintainers
 job to stay on top of security so that the developer machine and repositories
