@@ -60,15 +60,15 @@ This overlay primarily supports the distro's latest stable release (G) for libc.
 However, if the distro does not backport security fixes, this overlay may force
 the use of the current upstream release.
 
-| Libc flavor                           | Last update since Nov 2026 |
-| ---                                   | ---                        |
-| glibc 2.44 (upstream)                 | 3m ago                     |
-| glibc 2.44 (w/distro patches, G~) [D] | 3w ago                     |
-| glibc 2.43 (upstream)                 | 9m ago                     |
-| glibc 2.43 (w/distro patches, G) [1]  | 3w ago                     |
-| glibc 2.43 (w/distro patches, G~)     | 3w ago                     |
-| musl 1.2.6 (upstream)                 | 8m ago                     |
-| musl 1.2.6 (w/distro patches, G)      | 3w ago                     |
+| Libc flavor                              | Last update since Nov 2026 |
+| ---                                      | ---                        |
+| glibc 2.44 (upstream)                    | 3m ago                     |
+| glibc 2.44-r4 (w/distro patches, G~) [D] | 3w ago                     |
+| glibc 2.43 (upstream)                    | 9m ago                     |
+| glibc 2.43-r4 (w/distro patches, G)      | 3w ago                     |
+| glibc 2.43-r6 (w/distro patches, G~) [1] | 3w ago                     |
+| musl 1.2.6 (upstream)                    | 8m ago                     |
+| musl 1.2.6-r3 (w/distro patches, G)      | 3w ago                     |
 
 * [D] The default on this overlay.
 * [1] During the commit audit, it was discovered that the patchset was missing
