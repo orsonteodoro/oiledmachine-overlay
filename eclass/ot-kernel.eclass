@@ -486,6 +486,7 @@ VULNERABILITIES_FIXED=(
 	"Fragnesia, CVE-2026-46300;AEITW, KEV, ACP, PCC, LPE, UVAR, DoS, DT, ID;7.8 High on CVSS 3, ACP in PHP RCE"
 	"PwnEscape, CVE-2026-99999;EBR, VME, CE, IV, DoS, DT, ID;9.3 Critical on CVSS 3"
 	"CVE-2026-98432;ZC, RC, UAF, RCE, DoS, DT, ID;9.8 Critical on CVSS 3"
+	"CVE-2026-99312;HVE, DoS, DT, ID;9.8 high, KVM hypervisor escape"
 
 	# Less popular or under the radar:
 	"CVE-2026-99804;;"
@@ -981,7 +982,6 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-99316;;"
 	"CVE-2026-99315;NPD, DoS;"
 	"CVE-2026-99314;;"
-	"CVE-2026-99312;;"
 	"CVE-2026-99313;RC;"
 
 	"CVE-2026-99298;;"

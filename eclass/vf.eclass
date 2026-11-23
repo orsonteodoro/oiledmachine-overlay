@@ -329,6 +329,9 @@ einfo "HL = Hard Lockup"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HVE"($|" "|";"|",") ]] ; then
+einfo "HVE = HyperVisor Escape"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HWF"($|" "|";"|",") ]] ; then
 einfo "HWF = Hardware Fault"
 		fi
