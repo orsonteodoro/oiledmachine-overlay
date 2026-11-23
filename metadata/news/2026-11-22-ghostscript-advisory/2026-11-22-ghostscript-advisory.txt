@@ -1,0 +1,55 @@
+Title: ghostscript advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-11-22
+Revision: 5
+News-Item-Format: 2.0
+Display-If-Installed: www-apps/wordpress
+Display-If-Installed: app-text/ghostscript-gpl
+
+This overlay already mitigates the vulnerability.  The oiledmachine-overlay uses
+the live ebuild as the default.  It treats the PDF stack as high priority
+monitored asset to mitigate zero-click attacks like the 2021 FORCEDENTRY attack.
+The AI said that the advisory was released on Nov 21, 2026.  The ebuild had
+triaged earlier at 14b98b1 (Oct 2026).  It is recommended to update to the
+latest commit (Nov 20, 2026 or newer at 41bdda6) to mitigate newer
+vulnerabilities/bugs.
+
+Triage history of the ghostscript-gpl ebuild:
+
+Nov 22, 2026 - BOR, OF, UB, shift overflow mitigation
+Oct 28, 2026 - Brotli RCE mitigation
+Oct 11, 2026 - OF, UF, HO, BOR mitigation
+Sep 11, 2026 - Upstream hardening
+Sep 7, 2027 - Upstream remediation
+Sep 3, 2026 - IL mitigation
+
+This security advisory is primarily for users that have a Wordpress website
+who accept uploads or who have not updated their systems for months after
+reading this advisory.
+
+Aliases:  Upload2Shell, -dSAFER bypass vulnerability
+Vulnerability ID:  CVE-2026-125396
+Impact vectors:  SBE, IV, UAF, VS(DoS, DT, ID) SS(None)
+Severity:  High, 8.5 score CVSS 4, 7.8 score CVSS 3
+
+SBE - SandBox Escape
+IV - Insufficient Validation
+UAF - Use After Free
+VS - Vulnerable direct system
+
+Nov 2026 vulnerabilities/bugs:
+Buffer overrread (BOR)
+Overflow (OF)
+Shift overflow (UB)
+Undefined behavior (UB)
+
+Commits that triaged the issue by upstream:
+
+1484854 - direct fix; Sep 7, 2026
+e042176 - hardening; Sep 11, 2026
+
+Some of this advisory is based on AI inference.
+
+References:
+[1] https://github.com/orsonteodoro/oiledmachine-overlay/commits/master/app-text/ghostscript-gpl
