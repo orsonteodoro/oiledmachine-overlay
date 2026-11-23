@@ -2,7 +2,7 @@ Title: ghostscript advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 6
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: www-apps/wordpress
 Display-If-Installed: app-text/ghostscript-gpl
@@ -21,7 +21,8 @@ Nov 22, 2026 - BOR, OF, UB, SHOF mitigation
 Oct 28, 2026 - Brotli RCE mitigation
 Oct 11, 2026 - OF, UF, HO, BOR mitigation
 Sep 11, 2026 - Upstream hardening
-Sep 7, 2027 - Upstream remediation
+Sep 10, 2026 - Upstream remediation on master
+Sep 7, 2026 - Upstream remediation on tagged release
 Sep 3, 2026 - IL mitigation
 
 This security advisory is primarily for users that have a Wordpress website
@@ -49,6 +50,7 @@ VS - Vulnerable direct system
 Commits that triaged the issue by upstream:
 
 1484854 - direct fix; Sep 7, 2026
+a5d596b - master's copy of 1484854; Sep 10, 2026
 e042176 - hardening; Sep 11, 2026
 
 Some of this advisory is based on AI inference.
