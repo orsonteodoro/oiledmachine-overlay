@@ -2,7 +2,7 @@ Title: ghostscript advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 7
+Revision: 8
 News-Item-Format: 2.0
 Display-If-Installed: www-apps/wordpress
 Display-If-Installed: app-text/ghostscript-gpl
@@ -27,7 +27,8 @@ Sep 3, 2026 - IL mitigation
 
 This security advisory is primarily for users that have a Wordpress website
 who accept uploads or who have not updated their systems for months after
-reading this advisory.
+reading this advisory.  It also applies to users that prefer the tagged
+over the live ebuild via GHOSTSCRIPT_GPL_PV user override.
 
 Aliases:  Upload2Shell, -dSAFER bypass vulnerability
 Vulnerability ID:  CVE-2026-125396
@@ -54,6 +55,9 @@ a5d596b - master's copy of 1484854; Sep 10, 2026
 e042176 - hardening; Sep 11, 2026
 
 Some of this advisory is based on AI inference.
+
+If you did the user override, update to atleast 10.08.0.  The live is still
+recommened to mitigate against Nov 2026 issues.
 
 References:
 [1] https://github.com/orsonteodoro/oiledmachine-overlay/commits/master/app-text/ghostscript-gpl
