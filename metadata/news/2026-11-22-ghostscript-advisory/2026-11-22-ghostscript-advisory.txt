@@ -2,7 +2,7 @@ Title: ghostscript advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 8
+Revision: 9
 News-Item-Format: 2.0
 Display-If-Installed: www-apps/wordpress
 Display-If-Installed: app-text/ghostscript-gpl
