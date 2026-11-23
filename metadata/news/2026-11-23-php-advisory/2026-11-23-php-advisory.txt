@@ -8,6 +8,9 @@ Display-If-Installed: dev-lang/php
 
 Multiple vulnerabilies were fixed in the latest PHP update.
 
+PHP announced ahead of time about this release and shared on the socials.  This
+announcement was received before remediation.
+
 A sample list of vulnerabilities patched:
 
 BOR - Buffer Over-Read
@@ -53,6 +56,7 @@ Remediated versions
 
 References
 
+https://www.php.net/archive/2026.php#2026-11-18-1
 https://www.php.net/ChangeLog-8.php#8.6.0
 https://www.php.net/ChangeLog-8.php#8.5.13
 https://www.php.net/ChangeLog-8.php#8.4.28
