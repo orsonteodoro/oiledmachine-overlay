@@ -2,11 +2,11 @@ Title: glibc update
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 1
+Revision: 2
 News-Item-Format: 2.0
 Display-If-Installed: sys-libs/glibc
 
-This overlay will be using glibc 2.44-r2 as the default.  It is the maintainers
+This overlay will be using glibc 2.44-r4 as the default.  It is the maintainers
 job to stay on top of security so that the developer machine and repositories
 are not compromised.
 
