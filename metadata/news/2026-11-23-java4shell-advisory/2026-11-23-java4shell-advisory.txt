@@ -1,0 +1,31 @@
+Title: Java4Shell advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-11-23
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: dev-java/openjdk
+Display-If-Installed: dev-java/openjdk-bin
+Display-If-Installed: dev-java/openjdk-jre-bin
+
+This advisory only applies to users that have a CPU with AVX512VBMI.  Everyone
+else is unaffected.
+
+On the oiledmachine-overlay, not many packages use Java and not many Java based
+programs are being updated daily.  So it is recommended to uninstall it since
+the packages are not up to date.
+
+If you have this CPU flags, you have 2 choices.
+
+1. Uninstall Java (Recommended, if not used daily or if haven't cleaned out your world file)
+2. Update to latest openjdk flavor.
+
+Remediated versions
+
+17.0.21.1
+21.0.13.1
+25.0.5.1
+27.0.1.1
+8u513-perf 
+
+This advisory uses AI inference for details.

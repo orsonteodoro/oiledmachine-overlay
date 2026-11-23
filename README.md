@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-11-22 - [Java4Shell advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-11-23-java4shell-advisory/2026-11-23-java4shell-advisory.txt)
 * 2026-11-22 - [KVM hypervisor escape advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-11-22-kvm-hypervisor-escape-advisory/2026-11-22-kvm-hypervisor-escape-advisory.txt)
 * 2026-11-22 - [glibc update](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-11-22-glibc-update/2026-11-22-glibc-update.txt)
 * 2026-11-22 - [ghostscript advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-11-22-ghostscript-advisory/2026-11-22-ghostscript-advisory.txt)
