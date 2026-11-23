@@ -32,11 +32,15 @@ over the live ebuild via GHOSTSCRIPT_GPL_PV user override.
 
 Aliases:  Upload2Shell, -dSAFER bypass vulnerability
 Vulnerability ID:  CVE-2026-125396
-Impact vectors:  SBE, IV, UAF, VS(DoS, DT, ID) SS(None)
+Impact vectors:  ACE, SBE, IV, UAF, VS(DoS, DT, ID), SS(None)
 Severity:  High, 8.5 score CVSS 4, 7.8 score CVSS 3
 
+ACE - Arbitrary Code Execution
 BOR - Buffer overread
+DoS - Denial of Service
+DT - Data Tampering
 HO - Heap overflow
+ID - Information Disclosure
 IL - Infinite Loop
 IV - Insufficient Validation
 OF - Overflow
