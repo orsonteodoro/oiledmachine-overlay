@@ -2,7 +2,7 @@ Title: glibc update
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: sys-libs/glibc
 
@@ -32,6 +32,7 @@ Add to /etc/portage/package.accept_keywords/glibc:
 =sys-libs/glibc-2.44-r4 ~amd64 **
 
 # Sample full update.  Modify for your needs.
+emaint sync -A
 # gcc:15 for LTS packages (c++17 or earlier, e.g. most packages)
 # gcc:16 for rolling packages (c++20 or later, e.g. hyprland)
 emerge -vO linux-headers binutils-libs binutils gcc:15 gcc:16 glibc
