@@ -75,7 +75,7 @@ the use of the current upstream release.
 serious security backports.  The audit found missing mitigation for 4
 crashes, 2 overflow, out-of-bounds read, information disclosure (ID), 3 memory
 leaks, off-by-one or off-by-many, unsanitized/unobfuscated pointer and stack guards
-buffers (ID), 3x improper/inappropriate initialization, stack overflow, divide
+buffers (ID), 3 improper/inappropriate initializations, stack overflow, divide
 by zero, 2 undefined behavior, segfault, race condition, deadlock.
 
 Compilers and interpreters used in this overlay
