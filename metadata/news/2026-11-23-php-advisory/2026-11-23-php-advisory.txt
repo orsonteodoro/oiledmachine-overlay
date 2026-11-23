@@ -35,13 +35,15 @@ MC - Memory Corruption
 ML - Memory Leak
 NPD - Null Pointer Dereference
 OOBR - Out Of Bounds Read
+OOBW - Out Of Bounds Write
 RCE - Remote Code Execution
 RVB - Recursive Validation Bypass
 SF - SegFault
 UAF - Use After Free
 UB - Undefined Behavior
-UBMA - Unbounded Memory Allocation
-UBRECUR = Unbounded Recursion
+UBMA - UnBounded Memory Allocation
+UBRECUR = UnBounded Recursion
+UFUNC = Use of Unintialized Fuction
 XSS - Cross Site Scripting attack
 
 The AI claims that multiple vulnerabilities in the Nov 19 release could be used
