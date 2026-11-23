@@ -2,7 +2,7 @@ Title: ghostscript advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 5
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: www-apps/wordpress
 Display-If-Installed: app-text/ghostscript-gpl
@@ -17,7 +17,7 @@ vulnerabilities/bugs.
 
 Triage history of the ghostscript-gpl ebuild:
 
-Nov 22, 2026 - BOR, OF, UB, shift overflow mitigation
+Nov 22, 2026 - BOR, OF, UB, SHFTOF mitigation
 Oct 28, 2026 - Brotli RCE mitigation
 Oct 11, 2026 - OF, UF, HO, BOR mitigation
 Sep 11, 2026 - Upstream hardening
@@ -33,16 +33,18 @@ Vulnerability ID:  CVE-2026-125396
 Impact vectors:  SBE, IV, UAF, VS(DoS, DT, ID) SS(None)
 Severity:  High, 8.5 score CVSS 4, 7.8 score CVSS 3
 
-SBE - SandBox Escape
+BOR - Buffer overread
+HO - Heap overflow
+IL - Infinite Loop
 IV - Insufficient Validation
+OF - Overflow
+SBE - SandBox Escape
+SHFTOF - Shift Overflow
+SS - Subsequent System [nothing, so the blast radius is limited to direct system]
+UB - Undefined Behavior
+UF - Underflow
 UAF - Use After Free
 VS - Vulnerable direct system
-
-Nov 2026 vulnerabilities/bugs:
-Buffer overrread (BOR)
-Overflow (OF)
-Shift overflow (UB)
-Undefined behavior (UB)
 
 Commits that triaged the issue by upstream:
 
