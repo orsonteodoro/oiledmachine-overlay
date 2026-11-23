@@ -40,6 +40,9 @@ UBMA - Unbounded Memory Allocation
 UBRECUR = Unbounded Recursion
 XSS - Cross Site Scripting attack
 
+The AI claims that multiple vulnerabilities above could be used as attack chain
+primitives in this vulnerability set prior to the security update.
+
 Remediated versions
 
 >= 8.6.0 for the 8.6 series
