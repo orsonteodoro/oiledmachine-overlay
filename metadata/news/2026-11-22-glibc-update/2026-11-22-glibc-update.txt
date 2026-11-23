@@ -1,0 +1,28 @@
+Title: glibc update
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-11-22
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: www-apps/wordpress
+Display-If-Installed: app-text/ghostscript-gpl
+
+This overlay will be using glibc 2.44-r2 as the default.  It is the maintainers
+job to stay on top of security so that the developer machine and repositories
+are not compromised.
+
+However, you may opt out.  To opt out on the eager bump, add GLIBC_PV="2.43" to
+/etc/portage/make.conf.  It is equivalent to RDEPEND=">=sys-libs/glibc-2.43".
+The overlay sets it GLIBC_PV="2.44" but can be overwritten by the admin.
+
+When the patch set was reviewed, it was viewed as incomplete.  This is why the
+bump was eager ahead of stable KEYWORDS.  There is some suspicion as to why the
+2.44 hasn't been been marked stable in 1 month for a critically-secure package.
+It could be interpreted in a bad light as to leave several possible
+vulnerability like bugs as unpatched.  One that overly takes security way too
+seriously may assume that the system is already compromised and worthy of a
+clean install.  For the Feds, they typically triage systems within 14 or 3 days
+in comparison.
+
+If you want to use 2.44, it is recommended to use the 2.44-r4 and to stay away
+from the implied unfinished 2.44-r5.

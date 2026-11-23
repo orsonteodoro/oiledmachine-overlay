@@ -46,6 +46,7 @@ to the .txt file at:
 
 The selected first news items:
 
+* 2026-11-22 - [glibc update](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-11-22-glibc-update/2026-11-22-glibc-update.txt)
 * 2026-11-22 - [ghostscript advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-11-22-ghostscript-advisory/2026-11-22-ghostscript-advisory.txt)
 * 2026-10-27 - [eMudhra intermediate CA advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-27-emudhra-intermediate-ca-advisory/2026-10-27-emudhra-intermediate-ca-advisory.txt)
 * 2026-10-26 - [Brotli advisory](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2026-10-26-brotli-advisory/2026-10-26-brotli-advisory.txt)
