@@ -2,7 +2,7 @@ Title: glibc update
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 4
+Revision: 5
 News-Item-Format: 2.0
 Display-If-Installed: sys-libs/glibc
 
@@ -39,6 +39,8 @@ emerge -vO linux-headers binutils-libs binutils gcc:15 gcc:16 glibc
 # set compiler with eselect gcc set <number>
 # view linker with eselect binutils list
 # set linker with eselect binutils <number>
+etc-update
+source /etc/profile
 emerge -pve @system # Fix all package manager issues first
 emerge -ave @system
 emerge -pve @world # Fix all package manager issues first
