@@ -16,7 +16,7 @@ DF - Double Free
 DoS - Denial of Service
 H - Hang
 HC - Heap Corruption
-HRS - HTTP Request Smuggling
+HTTPRS - HTTP Request Smuggling
 ICI - Improper Cryptographic Implementation
 ID - Information Disclosure
 IEH - Improper Exception Handling

@@ -329,8 +329,8 @@ einfo "HL = Hard Lockup"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HO"($|" "|";"|",") ]] ; then
 einfo "HO = Heap Based Buffer Overflow"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HRS"($|" "|";"|",") ]] ; then
-einfo "HRS = HTTP Request Smuggling"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HTTPRS"($|" "|";"|",") ]] ; then
+einfo "HTTPRS = HTTP Request Smuggling"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HVE"($|" "|";"|",") ]] ; then
 einfo "HVE = HyperVisor Escape"
