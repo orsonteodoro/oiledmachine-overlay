@@ -2,7 +2,7 @@ Title: KVM hypervisor escape advisory
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 0
+Revision: 1
 News-Item-Format: 2.0
 Display-If-Installed: virtual/dist-kernel
 Display-If-Installed: virtual/linux-sources
@@ -15,6 +15,9 @@ important and relevant.
 The vulnerability may allow the guest virtual machine to steal sensitive
 data from the host bare metal machine on AMD machines with nested paging
 enabled.
+
+This advisory is about a Linux kernel vulnerability that affects the
+kernel on the bare metal level.
 
 Informal description:  KVM hypervisor escape
 Vulnerability ID:  CVE-2026-99312
