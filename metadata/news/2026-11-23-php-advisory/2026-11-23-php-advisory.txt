@@ -1,0 +1,59 @@
+Title: PHP advisory
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2026-11-23
+Revision: 0
+News-Item-Format: 2.0
+Display-If-Installed: dev-lang/php
+
+Multiple vulnerabilies were fixed in the latest PHP update.
+
+A sample list of vulnerabilities patched:
+
+BOR - Buffer Over-Read
+CRSH - Crash
+DF - Double Free
+DoS - Denial of Service
+H - Hang
+HC - Heap Corruption
+HRS - HTTP Request Smuggling
+ICI - Improper Cryptographic Implementation
+ID - Information Disclosure
+IEH - Improper Exception Handling
+IF - Improper Free
+IL - Infinite Loop
+IO - Integer Overflow
+IV - Insufficient Validation
+JITM = JIT Miscompilation
+LEAK - Miscellanous Leaks
+LPE - Local Privilege Escalation
+MC - Memory Corruption
+ML - Memory Leak
+NPD - Null Pointer Dereference
+OOBR - Out Of Bounds Read
+RCE - Remote Code Execution
+RVB - Recursive Validation Bypass
+SF - SegFault
+UAF - Use After Free
+UB - Undefined Behavior
+UBMA - Unbounded Memory Allocation
+UBRECUR = Unbounded Recursion
+XSS - Cross Site Scripting attack
+
+Remediated versions
+
+>= 8.6.0 for the 8.6 series
+>= 8.5.13 for the 8.5 series
+>= 8.4.28 for the 8.4 series
+>= 8.3.37 for the 8.3 series
+>= 8.2.36 for the 8.2 series
+
+References
+
+https://www.php.net/ChangeLog-8.php#8.6.0
+https://www.php.net/ChangeLog-8.php#8.5.13
+https://www.php.net/ChangeLog-8.php#8.4.28
+https://www.php.net/ChangeLog-8.php#8.3.37
+https://www.php.net/ChangeLog-8.php#8.2.36
+
+This news item uses AI partly for verification.
