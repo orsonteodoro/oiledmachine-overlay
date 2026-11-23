@@ -2,7 +2,7 @@ Title: glibc update
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2026-11-22
-Revision: 6
+Revision: 7
 News-Item-Format: 2.0
 Display-If-Installed: sys-libs/glibc
 
@@ -46,3 +46,6 @@ emerge -pve @system # Fix all package manager issues first
 emerge -ave @system
 emerge -pve @world # Fix all package manager issues first
 emerge -ave @world
+emerge @preserved-rebuild
+emerge -a --depclean
+emerge @preserved-rebuild
