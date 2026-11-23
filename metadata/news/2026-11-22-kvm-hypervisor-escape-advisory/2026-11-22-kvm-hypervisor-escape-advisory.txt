@@ -19,7 +19,7 @@ enabled.
 This advisory is about a Linux kernel vulnerability that affects the
 kernel on the bare metal level.
 
-Informal description:  KVM hypervisor escape
+Informal descriptions:  KVM hypervisor escape, KVM guest-to-host escape
 Vulnerability ID:  CVE-2026-99312
 Impact vectors:  HVE, DoS, DT, ID
 Severity:  8.8 high with CVSS 3
