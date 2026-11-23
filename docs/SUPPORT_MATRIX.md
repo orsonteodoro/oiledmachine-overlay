@@ -72,11 +72,11 @@ the use of the current upstream release.
 
 * [D] The default on this overlay.
 * [1] During the commit audit, it was discovered that the patchset was missing
-serious security backports.  The audit found missing mitigation for 4x
-crashes, 2x overflow, out-of-bounds read, information disclosure (ID), 3x memory
+serious security backports.  The audit found missing mitigation for 4
+crashes, 2 overflow, out-of-bounds read, information disclosure (ID), 3 memory
 leaks, off-by-one or off-by-many, unsanitized/unobfuscated pointer and stack guards
 buffers (ID), 3x improper/inappropriate initialization, stack overflow, divide
-by zero, 2x undefined behavior, segfault, race condition, deadlock.
+by zero, 2 undefined behavior, segfault, race condition, deadlock.
 
 Compilers and interpreters used in this overlay
 
