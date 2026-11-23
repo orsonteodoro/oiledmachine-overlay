@@ -9,7 +9,8 @@ Display-If-Installed: dev-lang/php
 Multiple vulnerabilies were fixed in the latest PHP update.
 
 PHP announced ahead of time about this release and shared on the socials.  This
-announcement was received before remediation.
+announcement was received before remediation.  This notice noted CRITICAL
+severity.
 
 A sample list of vulnerabilities patched:
 
@@ -43,8 +44,8 @@ UBMA - Unbounded Memory Allocation
 UBRECUR = Unbounded Recursion
 XSS - Cross Site Scripting attack
 
-The AI claims that multiple vulnerabilities in the Nov 19 release be used as
-attack chain primitives prior to the security update.
+The AI claims that multiple vulnerabilities in the Nov 19 release could be used
+as attack chain primitives prior to the security update.
 
 Remediated versions
 
