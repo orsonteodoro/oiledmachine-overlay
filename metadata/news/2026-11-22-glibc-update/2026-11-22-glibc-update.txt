@@ -47,5 +47,6 @@ emerge -ave @system
 emerge -pve @world # Fix all package manager issues first
 emerge -ave @world
 emerge @preserved-rebuild
+# add packages you want keep in /var/lib/portage/world
 emerge -a --depclean
 emerge @preserved-rebuild
