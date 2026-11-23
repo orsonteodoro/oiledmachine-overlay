@@ -43,7 +43,7 @@ UAF - Use After Free
 UB - Undefined Behavior
 UBMA - UnBounded Memory Allocation
 UBRECUR = UnBounded Recursion
-UFUNC = Use of Unintialized Fuction
+UFN = Use of Uninitialized Function
 XSS - Cross Site Scripting attack
 
 The AI claims that multiple vulnerabilities in the Nov 19 release could be used

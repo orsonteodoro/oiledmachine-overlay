@@ -787,6 +787,9 @@ einfo "UESE = UnExpected Sign Extension"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UF"($|" "|";"|",") ]] ; then
 einfo "UF = Underflow"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFN"($|" "|";"|",") ]] ; then
+einfo "UFN = Use of Uninitialized Function"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"UFNPTR"($|" "|";"|",") ]] ; then
 einfo "UFNPTR = Use of Uninitialized Function Pointer"
 		fi
