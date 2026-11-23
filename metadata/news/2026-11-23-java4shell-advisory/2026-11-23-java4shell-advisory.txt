@@ -17,7 +17,7 @@ the packages are not up to date.
 
 If you have this CPU flags, you have 2 choices.
 
-1. Uninstall Java (Recommended, if not used daily or if haven't cleaned out your world file)
+1. Uninstall Java (Recommended, if not used daily or if you haven't cleaned out your world file)
 2. Update to latest openjdk flavor.
 
 Remediated versions
