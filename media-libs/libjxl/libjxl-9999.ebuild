@@ -41,7 +41,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		'-third_party/highway'
 		'-third_party/googletest'
 	)
-	FALLBACK_COMMIT="ee558e954094079fdac63c96cde6f11b962dfde1"
+	FALLBACK_COMMIT="12e4bf4087bcfc2a936596cade001f6a1f30b9ef"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/libjxl/libjxl.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -69,7 +69,7 @@ LICENSE="BSD"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 +gdk-pixbuf gif jpeg openexr +png test
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="test? ( png )"
 RESTRICT="!test? ( test )"
