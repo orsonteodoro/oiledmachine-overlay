@@ -78,8 +78,9 @@ DEPEND="
 	systemtap? ( dev-debug/systemtap:= )
 "
 BDEPEND="
-	dev-build/gtk-doc-am
 	>=virtual/pkgconfig-0-r1
+	dev-build/gtk-doc-am
+	dev-util/gtk-doc
 	doc? ( dev-util/gtk-doc )
 	nls? ( sys-devel/gettext )
 	test-full? (
