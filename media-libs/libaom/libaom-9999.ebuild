@@ -12,7 +12,7 @@ GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
 CXX_STANDARD=17
 N_SAMPLES=1
-PYTHON_COMPAT=( "python3_"{10..14} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -81,7 +81,7 @@ inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o
 inherit libcxx-slot libstdcxx-slot multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="b57fd4438bf9db9c48b6c9743e7bcdc53ad9aac8"
+	FALLBACK_COMMIT="cbe535b0626cf14722678cbc92d3cd9d9c29eab7"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
