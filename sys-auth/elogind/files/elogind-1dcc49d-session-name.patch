@@ -1,0 +1,11 @@
+# This is an AI suggested fix.
+--- a/src/login/logind-core.c.orig	2026-11-23 17:59:20.548761807 -0800
++++ b/src/login/logind-core.c	2026-11-23 18:05:42.951450704 -0800
+@@ -536,6 +536,7 @@ int manager_get_session_by_pidref(Manage
+ int manager_get_session_by_leader(Manager *m, const PidRef *pid, Session **ret) {
+         Session *s;
+         int r;
++	_cleanup_free_ char *session_name = NULL;
+ 
+         assert(m);
+ 

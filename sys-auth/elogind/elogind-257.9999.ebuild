@@ -68,6 +68,9 @@ PDEPEND="
 "
 
 DOCS=( README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-1dcc49d-session-name.patch"
+)
 
 python_check_deps() {
 	python_has_version "dev-python/jinja2[${PYTHON_USEDEP}]" &&
