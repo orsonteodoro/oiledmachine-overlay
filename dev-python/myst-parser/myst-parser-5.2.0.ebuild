@@ -15,7 +15,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
 MY_PN="MyST-Parser"
-PYTHON_COMPAT=( "python3_"{11..14} )
+PYTHON_COMPAT=( "python3_"{11..14} "pypy3_"{11..12} )
 
 inherit cro distutils-r1
 
