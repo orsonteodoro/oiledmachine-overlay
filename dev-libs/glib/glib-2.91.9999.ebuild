@@ -16,7 +16,7 @@ INTROSPECTION_SOURCE_DIR="${WORKDIR}/${INTROSPECTION_P}"
 INTROSPECTION_BUILD_DIR="${WORKDIR}/${INTROSPECTION_P}-build"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ab35c7fd8d928cd712fc6bc8f2ac99e3dbe598ad" # 2026-11-06 T17:20:02 +00:00
+	FALLBACK_COMMIT="7f628cebcbb8541a2bb109e64fe31a6b85cec4b8" # 2026-11-24 T13:27:22 +00:00
 fi
 
 inherit dot-a eapi9-ver gnome.org gnome2-utils linux-info meson-multilib multilib python-any-r1 secure-version toolchain-funcs xdg
@@ -38,7 +38,7 @@ SLOT="2"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap test utils xattr
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="!test? ( test )"
 
