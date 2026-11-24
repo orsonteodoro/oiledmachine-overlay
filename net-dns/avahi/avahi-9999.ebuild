@@ -19,7 +19,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools chkl multilib-minimal python-single-r1 secure-version systemd
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="ef903fb0a29bc4394c5a76309405e5a827a4e390"
+	FALLBACK_COMMIT="9c17c1337b4272ecef7608f21b1fdfc9214a6f3d"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
