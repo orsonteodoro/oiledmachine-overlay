@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="multiuser-system security-critical untrusted-data sen
 PYTHON_COMPAT=( python3_{10..14} )
 
 if [[ ${PV} = *9999* ]]; then
-	FALLBACK_COMMIT="d7956ed0b1496db7ff404d1765c31cbd9f6c7aab"
+	FALLBACK_COMMIT="1dcc49d68a4569a5714a69655ea7c5e1645af54a"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/elogind/elogind.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -21,6 +21,7 @@ else
 fi
 
 CHKL_TIMESTAMPS=(
+	"sys-apps/dbus-9999"
 	"sys-auth/polkit-9999"
 	"sys-libs/libselinux-9999"
 	"sys-process/audit-9999"
@@ -33,17 +34,20 @@ HOMEPAGE="https://github.com/elogind/elogind"
 
 LICENSE="CC0-1.0 LGPL-2.1+ public-domain"
 SLOT="0"
-IUSE+=" +acl audit cgroup-hybrid debug doc +pam +policykit selinux test"
+IUSE+="
++acl audit cgroup-hybrid debug doc +pam +policykit selinux test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
+	$(python_gen_any_dep 'dev-python/jinja2[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep 'dev-python/lxml[${PYTHON_USEDEP}]')
 	app-text/docbook-xml-dtd:4.2
 	app-text/docbook-xml-dtd:4.5
 	app-text/docbook-xsl-stylesheets
 	dev-util/gperf
 	virtual/pkgconfig
-	$(python_gen_any_dep 'dev-python/jinja2[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep 'dev-python/lxml[${PYTHON_USEDEP}]')
 "
 DEPEND="
 	audit? ( >=sys-process/audit-${AUDIT_PV}:= )
@@ -56,10 +60,10 @@ DEPEND="
 "
 RDEPEND="${DEPEND}
 	!sys-apps/systemd
-	>=sys-apps/systemd-utils-255.7-r4[udev]
+	>=sys-apps/systemd-utils-255.7-r4:=[udev]
 "
 PDEPEND="
-	sys-apps/dbus
+	>=sys-apps/dbus-${DBUS_PV}
 	policykit? ( >=sys-auth/polkit-${POLKIT_PV} )
 "
 
@@ -86,6 +90,9 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+# LIBSYSTEMD_257 { # Used as slot
+# [...]
+# } LIBSYSTEMD_256; # Not used as slot
 	local actual_slot=$(grep -r -e "LIBSYSTEMD_.*{" "${S}/src/libelogind/libelogind.sym" | tail -n 1 | grep -E -o "[0-9]+")
 	local expected_slot="${PV%%.*}"
 	if ver_test "${actual_slot}" "-ne" "${expected_slot}" ; then
