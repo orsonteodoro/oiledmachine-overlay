@@ -6,6 +6,8 @@ EAPI=8
 PYTHON_COMPAT=( python3_{10..14} )
 XORG_MODULE=proto/
 
+FALLBACK_COMMIT="dea37a7033abfdef3376dc9ad5e8756e9fee959b"
+
 inherit python-r1 secure-version xorg-3
 
 DESCRIPTION="X C-language Bindings protocol headers"
@@ -13,6 +15,9 @@ HOMEPAGE="https://xcb.freedesktop.org/ https://gitlab.freedesktop.org/xorg/proto
 EGIT_REPO_URI="https://gitlab.freedesktop.org/xorg/proto/xcbproto.git"
 
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos ~x64-solaris"
+IUSE+="
+ebuild_revision_1
+"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # DEPEND=""

@@ -10,23 +10,30 @@ XORG_MULTILIB=yes
 XORG_DOC=doc
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="4d6e1c8fffaf811cf4d0e68ff3bc6f50e62c32c7"
+	FALLBACK_COMMIT="aa7f3256060451ad65a38feeccf792f44181a4e0"
 fi
 
-inherit python-any-r1 xorg-3
+CHKL_TIMESTAMPS=(
+	"x11-base/xcb-proto-9999"
+)
+
+inherit chkl python-any-r1 secure-version xorg-3
 
 DESCRIPTION="X C-language Bindings library"
 HOMEPAGE="https://xcb.freedesktop.org/ https://gitlab.freedesktop.org/xorg/lib/libxcb"
 
 SLOT="0/1.12"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos ~x64-solaris"
-IUSE="doc selinux test +xkb"
+IUSE="
+doc selinux test +xkb
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 XCB_PROTO_DEP=">=x11-base/xcb-proto-${PV}:="
 RDEPEND="
 	>=x11-libs/libXau-1.0.7-r1:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXdmcp-1.1.1-r1:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXdmcp-${LIBXDMCP_PV}:=[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}
 	x11-base/xorg-proto:=
@@ -38,7 +45,7 @@ DEPEND="${RDEPEND}
 BDEPEND="${PYTHON_DEPS}
 	$(python_gen_any_dep "${XCB_PROTO_DEP}"'[${PYTHON_USEDEP}]')
 	doc? ( app-text/doxygen[dot] )
-	test? ( dev-libs/libxslt )
+	test? ( >=dev-libs/libxslt-${LIBXSLT_PV} )
 "
 
 python_check_deps() {
@@ -51,6 +58,7 @@ pkg_setup() {
 }
 
 src_configure() {
+	chkl_check_many_timestamps
 	local XORG_CONFIGURE_OPTIONS=(
 		$(use_enable doc devel-docs)
 		$(use_enable selinux)
