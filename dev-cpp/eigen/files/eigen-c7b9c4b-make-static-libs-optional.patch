@@ -1,0 +1,55 @@
+diff '--color=auto' -urp eigen-9999.orig/blas/CMakeLists.txt eigen-9999/blas/CMakeLists.txt
+--- eigen-9999.orig/blas/CMakeLists.txt	2026-11-23 21:17:38.547468731 -0800
++++ eigen-9999/blas/CMakeLists.txt	2026-11-23 21:18:24.039221882 -0800
+@@ -13,8 +13,10 @@ set(EigenBlas_SRCS  single.cpp double.cp
+ 
+ set(EIGEN_BLAS_TARGETS "")
+ 
++if (EIGEN_BUILD_STATIC_LIBS)
+ add_library(eigen_blas_static STATIC ${EigenBlas_SRCS})
+ list(APPEND EIGEN_BLAS_TARGETS eigen_blas_static)
++endif()
+ 
+ if (EIGEN_BUILD_SHARED_LIBS)
+   add_library(eigen_blas SHARED ${EigenBlas_SRCS} "eigen_blas.def")
+@@ -56,7 +58,9 @@ foreach(target IN LISTS EIGEN_BLAS_TARGE
+   add_dependencies(blas ${target})
+   if(EIGEN_INSTALL)
+     include(GNUInstallDirs)
+-    install(TARGETS ${target})
++    if (NOT EIGEN_INSTALL_STATIC_LIBS AND NOT ${target} EQUAL eigen_blas_static)
++      install(TARGETS ${target})
++    endif()
+   endif()
+ endforeach()
+ 
+Only in eigen-9999/blas: CMakeLists.txt.orig
+Only in eigen-9999/blas: CMakeLists.txt.rej
+diff '--color=auto' -urp eigen-9999.orig/lapack/CMakeLists.txt eigen-9999/lapack/CMakeLists.txt
+--- eigen-9999.orig/lapack/CMakeLists.txt	2026-11-23 21:17:38.548452263 -0800
++++ eigen-9999/lapack/CMakeLists.txt	2026-11-23 21:19:08.917974580 -0800
+@@ -79,9 +79,11 @@ endif()
+ 
+ set(EIGEN_LAPACK_TARGETS "")
+ 
++if (EIGEN_BUILD_STATIC_LIBS)
+ add_library(eigen_lapack_static STATIC ${EigenLapack_SRCS})
+ target_link_libraries(eigen_lapack_static  eigen_blas_static)
+ list(APPEND EIGEN_LAPACK_TARGETS eigen_lapack_static)
++endif()
+ 
+ if (EIGEN_BUILD_SHARED_LIBS)
+   add_library(eigen_lapack SHARED ${EigenLapack_SRCS} ${EIGEN_LAPACK_DEF})
+@@ -135,7 +137,9 @@ foreach(target IN LISTS EIGEN_LAPACK_TAR
+   add_dependencies(lapack ${target})
+   if(EIGEN_INSTALL)
+     include(GNUInstallDirs)
+-    install(TARGETS ${target})
++    if (NOT EIGEN_INSTALL_STATIC_LIBS AND NOT ${target} EQUAL eigen_lapack_static)
++      install(TARGETS ${target})
++    endif()
+   endif()
+ endforeach()
+ 
+Only in eigen-9999/lapack: CMakeLists.txt.orig
+Only in eigen-9999/lapack: CMakeLists.txt.rej

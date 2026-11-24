@@ -1,0 +1,49 @@
+diff '--color=auto' -urp eigen-9999.orig/blas/CMakeLists.txt eigen-9999/blas/CMakeLists.txt
+--- eigen-9999.orig/blas/CMakeLists.txt	2026-11-23 21:13:27.456384561 -0800
++++ eigen-9999/blas/CMakeLists.txt	2026-11-23 21:15:17.372797320 -0800
+@@ -55,10 +55,8 @@ foreach(target IN LISTS EIGEN_BLAS_TARGE
+ 
+   add_dependencies(blas ${target})
+   if(EIGEN_INSTALL)
+-    install(TARGETS ${target}
+-            RUNTIME DESTINATION bin
+-            LIBRARY DESTINATION lib
+-            ARCHIVE DESTINATION lib)
++    include(GNUInstallDirs)
++    install(TARGETS ${target})
+   endif()
+ endforeach()
+ 
+Only in eigen-9999/blas: CMakeLists.txt.orig
+Only in eigen-9999/blas: CMakeLists.txt.rej
+diff '--color=auto' -urp eigen-9999.orig/doc/CMakeLists.txt eigen-9999/doc/CMakeLists.txt
+--- eigen-9999.orig/doc/CMakeLists.txt	2026-11-23 21:13:28.221930626 -0800
++++ eigen-9999/doc/CMakeLists.txt	2026-11-23 21:13:44.466606292 -0800
+@@ -7,6 +7,8 @@ set_directory_properties(PROPERTIES EXCL
+ 
+ project(EigenDoc)
+ 
++include(GNUInstallDirs)
++
+ if(CMAKE_COMPILER_IS_GNUCXX)
+   if(CMAKE_SYSTEM_NAME MATCHES Linux)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -g1")
+Only in eigen-9999/doc: CMakeLists.txt.orig
+diff '--color=auto' -urp eigen-9999.orig/lapack/CMakeLists.txt eigen-9999/lapack/CMakeLists.txt
+--- eigen-9999.orig/lapack/CMakeLists.txt	2026-11-23 21:13:27.692167025 -0800
++++ eigen-9999/lapack/CMakeLists.txt	2026-11-23 21:15:44.556079049 -0800
+@@ -134,10 +134,8 @@ foreach(target IN LISTS EIGEN_LAPACK_TAR
+   endif()
+   add_dependencies(lapack ${target})
+   if(EIGEN_INSTALL)
+-    install(TARGETS ${target}
+-            RUNTIME DESTINATION bin
+-            LIBRARY DESTINATION lib
+-            ARCHIVE DESTINATION lib)
++    include(GNUInstallDirs)
++    install(TARGETS ${target})
+   endif()
+ endforeach()
+ 
+Only in eigen-9999/lapack: CMakeLists.txt.orig
+Only in eigen-9999/lapack: CMakeLists.txt.rej
