@@ -40,6 +40,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+# The previous strict requirements interpretation was to mitigate supply chain attacks.
+# The relaxed requirements is just a practical solution to fix the long term issue, reviewed by AI.
+# Sometimes a supply chain attack will use unusual versioning to force update to the compromised package.
 # AI said that it can be relaxed.
 BDEPEND="
 	>=dev-python/flit-core-3.11[${PYTHON_USEDEP}]
