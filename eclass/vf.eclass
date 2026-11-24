@@ -148,11 +148,21 @@ einfo "AFW = Arbitrary File Write"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AIOOR"($|" "|";"|",") ]] ; then
 einfo "AIOOR = Array Index Out Of Range"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ALSCPB"($|" "|";"|",") ]] ; then
+einfo "ALSCPB = App Level Security Control Policy Bypass"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AR"($|" "|";"|",") ]] ; then
 einfo "AR = Arbitrary Read"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ASLRBP"($|" "|";"|",") ]] ; then
 einfo "ASLRBP = ASLR Bypass"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ASPI"($|" "|";"|",") ]] ; then
+# This is a general category of security policy for apps and not Manadatory Access Control (MAC).
+# Same as ImageMagick Policy Bypass
+# Same as Web Browser Security Policy Bypass
+# Same as Missing Security Policy
+einfo "ASPI = App Security Policy Issue"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"ATO"($|" "|";"|",") ]] ; then
 # Same as Account Hijack
