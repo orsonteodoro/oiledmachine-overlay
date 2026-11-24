@@ -44,7 +44,7 @@ inherit meson
 inherit check-compiler-switch cflags-hardened chkl flag-o-matic multilib-minimal python-any-r1 secure-version toolchain-funcs uopts virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
-	FALLBACK_COMMIT="9078abcde5c3b557d71d31045807f54f0bfa7e2a"
+	FALLBACK_COMMIT="ca8e5a038d34312876ed730dd6ab8a7f930fc509"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/cairo/cairo.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
