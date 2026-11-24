@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( "python3_"{10..14} "pypy3" )
+PYTHON_COMPAT=( "python3_"{11..14} "pypy"{11..12} )
 
 inherit distutils-r1 optfeature pypi
 
@@ -15,13 +15,24 @@ HOMEPAGE="
 "
 
 # GPL-3+ only for emacs/rst.el
-LICENSE="BSD BSD-2 GPL-3+ PSF-2.4 public-domain"
+LICENSE="
+	BSD
+	BSD-2
+	GPL-3+
+	PSF-2.4
+	public-domain
+"
 SLOT="0"
 KEYWORDS="~amd64"
+IUSE+=" pillow pygments"
 
 RDEPEND="
-	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/pygments[${PYTHON_USEDEP}]
+	pillow? (
+		virtual/pillow[${PYTHON_USEDEP}]
+	)
+	pygments? (
+		dev-python/pygments[${PYTHON_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}
