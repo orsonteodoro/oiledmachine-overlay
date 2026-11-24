@@ -31,7 +31,7 @@ SLOT="0/1.10.0-meson"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 static-libs test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 
