@@ -117,6 +117,10 @@ Compilers and interpreters used in this overlay
 | Python 3.14                       | Available                             | F43 (3.14.10), F44 (3.14.10), G (3.14.10_p1), U26 (3.14.3)                             | 1m ago                      |
 | Python 3.15                       | Available                             | F45 (3.15.2_p1), G~ (3.15.2)                                                           | 1m ago                      |
 | Python 3.16 [7]                   | Not supported                         | G**                                                                                    | 2w ago                      |
+| Ruby <= 3.2                       | Not supported                         | U24 (3.2)                                                                              | 8m ago                      |
+| Ruby 3.3 [D]                      | Limited support                       | D13 (3.3), G (3.3.14), U26 (3.3)                                                       | 5d ago                      |
+| Ruby 3.4                          | Available                             | F43 (3.4.12), G~ (3.4.13), Nunstable (3.4.12)                                          | 5d ago                      |
+| Ruby 4.0                          | Available                             | F44 (4.0.9), F45 (4.0.9), G~ (4.0.10)                                                  | 5d ago                      |
 | Rust <= 1.98.0                    | Not supported                         |                                                                                        | 3m ago                      |
 | Rust 1.98.1 [LTS]                 | Fully supported                       | G (1.98.1)                                                                             | 3m ago                      |
 | Rust 1.99.1                       | Available                             | F43 (1.99.1), F44 (1.99.1), G~ (1.99.1), Nunstable (1.99.1)                            | 1m ago                      |
