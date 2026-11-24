@@ -18,7 +18,7 @@ LLVM_COMPAT=(
 # See https://github.com/lemenkov/libyuv/commits/main/README.chromium for activity
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CXX_STANDARD=17 # Compiler default
-EGIT_COMMIT="c1e9e698264a904048561483ec5c1f1ca81d2164"
+EGIT_COMMIT="0ec9f68d82634f6f3414aaaf780e03f9edf002b3" # Same commit corresponding exactly to PV
 
 inherit cflags-hardened cmake libcxx-slot libstdcxx-slot multilib-minimal
 
@@ -36,6 +36,7 @@ LICENSE="
 	BSD
 	libyuv-PATENTS
 "
+RESTRICT="mirror" # Speed up and stop snooping
 SLOT="0/"$(ver_cut "1-2" "${PV}")
 IUSE+="
 ${GIT_BRANCHES}
