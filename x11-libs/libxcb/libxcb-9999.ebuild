@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -47,6 +47,9 @@ BDEPEND="${PYTHON_DEPS}
 	doc? ( app-text/doxygen[dot] )
 	test? ( >=dev-libs/libxslt-${LIBXSLT_PV} )
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-1.17.0-unquoted-var.patch"
+)
 
 python_check_deps() {
 	python_has_version "${XCB_PROTO_DEP}[${PYTHON_USEDEP}]"
