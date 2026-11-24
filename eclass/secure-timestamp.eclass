@@ -196,7 +196,7 @@ SECURE_TIMESTAMP["dev_libs_lief_9999"]="Jul 11, 2026 5:51 AM PDT"
 SECURE_TIMESTAMP["dev_libs_nettle_9999"]="May 8, 2026 6:29 AM PDT"
 SECURE_TIMESTAMP["dev_libs_newt_9999"]="2025-06-19 06:48:28 UTC"
 SECURE_TIMESTAMP["dev_libs_nspr_9999"]="05-May-2026 13:21"
-SECURE_TIMESTAMP["dev_libs_nss_9999"]="Nov 4, 2026 7:57 AM PST"
+SECURE_TIMESTAMP["dev_libs_nss_9999"]="Nov 20, 2026 2:21 PM PST"
 
 # For EOL dates, see
 # https://openssl-library.org/source/

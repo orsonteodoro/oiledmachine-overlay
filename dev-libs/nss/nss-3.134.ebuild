@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# For the latest release, see also https://firefox-source-docs.mozilla.org/security/nss/releases/index.html
+
 # Sanitizers break test results
 CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
@@ -15,7 +17,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO NPD OOBR UAF TA"
 
 inherit cflags-hardened dot-a flag-o-matic multilib toolchain-funcs multilib-minimal
 
-NSPR_VER="4.39" # See https://github.com/mozilla/nss/blob/NSS_3_133_RTM/automation/release/nspr-version.txt
+NSPR_VER="4.41" # See https://github.com/mozilla/nss/blob/NSS_3_134_RTM/automation/release/nspr-version.txt
 RTM_NAME="NSS_${PV//./_}_RTM"
 
 # If the release is made in Github only, not released at the official archive.mozilla.org. These
