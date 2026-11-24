@@ -24,7 +24,10 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE+=" pillow pygments"
+IUSE+="
+pillow pygments
+ebuild_revision_1
+"
 
 RDEPEND="
 	pillow? (
@@ -37,12 +40,19 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+# AI said that it can be relaxed.
 BDEPEND="
 	>=dev-python/flit-core-3.11[${PYTHON_USEDEP}]
 	|| (
 		=dev-python/flit-core-3*[${PYTHON_USEDEP}]
+		=dev-python/flit-core-4*[${PYTHON_USEDEP}]
 	)
 "
+
+python_prepare() {
+	# AI suggested change
+	sed -i -e "s|flit_core>=3.11,<4|flit_core>=3.11,<5|g" "${S}/pyproject.toml" || die
+}
 
 python_compile_all() {
 	# Generate html docs from reStructured text sources.
