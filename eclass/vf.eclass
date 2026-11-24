@@ -133,6 +133,9 @@ einfo "AFA = Arbitrary File Access"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFC"($|" "|";"|",") ]] ; then
 einfo "AFC = Arbitrary File Create"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFD"($|" "|";"|",") ]] ; then
+einfo "AFD = Arbitrary File Delete"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"AFO"($|" "|";"|",") ]] ; then
 einfo "AFO = Arbitrary File Overwrite"
 		fi
@@ -173,13 +176,15 @@ einfo "BLA = Billion Laughs Attack"
 einfo "BO = Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BOR"($|" "|";"|",") ]] ; then
-einfo "BOR = Buffer Overread"
+# General scope -- stack, heap, global/static data segment, BSS
+einfo "BOR = Buffer Over-read"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BU"($|" "|";"|",") ]] ; then
 einfo "BU = Buffer Underflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"BUR"($|" "|";"|",") ]] ; then
-einfo "BUR = Buffer Underread"
+# General scope -- stack, heap, global/static data segment, BSS
+einfo "BUR = Buffer Under-read"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"C"($|" "|";"|",") ]] ; then
 # Same as ID
@@ -313,6 +318,13 @@ einfo "GPF = General Protection Fault"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"H"($|" "|";"|",") ]] ; then
 einfo "H = Hang"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HBOR"($|" "|";"|",") ]] ; then
+# See also BOR
+einfo "HBOR = Heap Buffer Over-Read"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HBOW"($|" "|";"|",") ]] ; then
+einfo "HBOW = Heap Buffer Over-Write"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"HC"($|" "|";"|",") ]] ; then
 einfo "HC = Heap Corruption"
@@ -876,6 +888,9 @@ einfo "WWWC = Write What Where Condition"
 # Same as Billion Laughs Attack (BLA) [in AI chat, particular example]
 # Same as Expodential Entity Expansion Attack (EEEA) [in commit messages]
 einfo "XMLBOMB = XML Bomb"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"XORPRA"($|" "|";"|",") ]] ; then
+einfo "XORPRA = XOR Plaintext Recovery Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^|" "|";"|",")"XSRF"($|" "|";"|",") ]] ; then
 einfo "XSRF = Cross Site Request Forgery"
