@@ -12,7 +12,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
 inherit cflags-hardened check-compiler-switch dot-a flag-o-matic libtool multilib multilib-minimal preserve-libs toolchain-funcs
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="9fc6f5cd8774ebef8d4e030f7081fb6984c0dc3f"
+	FALLBACK_COMMIT="c308e9f27201300fd042d3e7324a21e55c25852f"
 	EGIT_BRANCH="master"
 	# Per tukaani.org, git.tukaani.org is a mirror of github and
 	# may be behind.
@@ -57,7 +57,7 @@ LICENSE="0BSD LGPL-2.1+ GPL-2+ doc? ( CC-BY-SA-4.0 )"
 SLOT="0"
 IUSE+="
 cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs
-ebuild_revision_1
+ebuild_revision_3
 "
 
 if [[ ${PV} != 9999 ]] ; then
