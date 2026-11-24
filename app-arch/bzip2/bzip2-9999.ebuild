@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This ebuild is the classic stable version.
+
 # There are three versions
 # 1.0.8 - classic stable - sourceware.org - distro unpatched - oiledmachine-overlay live patched
 # 1.1.0 - experimental c - vulnerable - gitlab - vulnerable - CVE-2026-42250 - OOBR, MC, DoS
