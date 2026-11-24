@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# See also https://cgit.git.savannah.gnu.org/cgit/tar.git/
+
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data system-set"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CRSH DOS IL MC NPD OOBR PT SYM"
 
@@ -10,7 +12,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/tar.asc
 inherit branding cflags-hardened check-reqs multiprocessing verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="08c3fc2e9337094aff01a511170fd35fdb8f1ee3"
+	FALLBACK_COMMIT="4e76fbad0b19c912305d53ff9a57baf8e9c63819"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://https.git.savannah.gnu.org/git/tar.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -36,7 +38,10 @@ SLOT="0"
 if [[ -z "$(ver_cut 3)" || "$(ver_cut 3)" -lt 90 ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
-IUSE+=" acl minimal nls selinux test xattr"
+IUSE+="
+acl minimal nls selinux test xattr
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
