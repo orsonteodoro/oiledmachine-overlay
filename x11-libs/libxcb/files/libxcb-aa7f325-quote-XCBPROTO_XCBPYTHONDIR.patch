@@ -1,0 +1,11 @@
+--- a/src/Makefile.am.orig	2026-11-23 20:21:49.777805087 -0800
++++ b/src/Makefile.am	2026-11-23 20:22:30.148381879 -0800
+@@ -270,7 +270,7 @@ endif
+ 
+ $(EXTSOURCES): c_client.py $(XCBPROTO_XCBINCLUDEDIR)/$(@:.c=.xml)
+ 	$(AM_V_GEN)$(PYTHON) $(srcdir)/c_client.py	-c "$(PACKAGE_STRING)" -l "$(XORG_MAN_PAGE)" \
+-		-s "$(LIB_MAN_SUFFIX)" -p $(XCBPROTO_XCBPYTHONDIR) \
++		-s "$(LIB_MAN_SUFFIX)" -p "$(XCBPROTO_XCBPYTHONDIR)" \
+ 		$(C_CLIENT_PY_EXTRA_ARGS) \
+ 		$(XCBPROTO_XCBINCLUDEDIR)/$(@:.c=.xml)
+ 

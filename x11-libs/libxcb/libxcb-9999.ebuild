@@ -48,7 +48,7 @@ BDEPEND="${PYTHON_DEPS}
 	test? ( >=dev-libs/libxslt-${LIBXSLT_PV} )
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.17.0-unquoted-var.patch"
+	"${FILESDIR}/${PN}-aa7f325-quote-XCBPROTO_XCBPYTHONDIR.patch"
 )
 
 python_check_deps() {
