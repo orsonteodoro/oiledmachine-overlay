@@ -14,7 +14,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened check-compiler-switch chkl flag-o-matic meson-multilib secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="5233c58e6ca0b1c4c6b353ad79649191ed195bdc"
+	FALLBACK_COMMIT="bbcc6389c3403614ee357d1bb2e2863a7f8a3502"
 	EGIT_BRANCH="dev"
 	EGIT_REPO_URI="https://github.com/facebook/zstd.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
