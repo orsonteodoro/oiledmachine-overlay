@@ -9,9 +9,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 inherit cflags-hardened dot-a meson-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	INTERNAL_VERSION="1.11.1"
+	INTERNAL_VERSION="1.11.2"
 	SOVER=$(ver_cut 1 "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="92a08d0a3eab9208183891ff0f1a5d3a8c601cde"
+	FALLBACK_COMMIT="707de205aac1f161be4cddb23d364e45bb566650"
 	EGIT_BRANCH="dev"
 	EGIT_REPO_URI="https://github.com/lz4/lz4.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
