@@ -36,7 +36,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" code-style doc linkify rtd test test-docutils"
+IUSE+=" code-style doc linkify mypy rtd ruff test test-docutils"
 REQUIRED_USE="
 	doc? (
 		linkify
@@ -45,11 +45,11 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	>=dev-python/docutils-0.20[${PYTHON_USEDEP}]
-	<dev-python/docutils-0.23[${PYTHON_USEDEP}]
+	<dev-python/docutils-0.24[${PYTHON_USEDEP}]
 
 	$(cro dev-python/markdown-it-py 4.2 '[${PYTHON_USEDEP}]')
 
-	$(cro dev-python/mdit-py-plugins 0.6 '[${PYTHON_USEDEP}]')
+	$(cro dev-python/mdit-py-plugins 0.7.0 '[${PYTHON_USEDEP}]')
 	>=dev-python/mdit-py-plugins-0.6.1[${PYTHON_USEDEP}]
 
 	>=dev-python/sphinx-8[${PYTHON_USEDEP}]
@@ -66,7 +66,7 @@ TRASH="
 "
 BDEPEND+="
 	>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
-	<dev-python/flit-core-4[${PYTHON_USEDEP}]
+	<dev-python/flit-core-5[${PYTHON_USEDEP}]
 
 	code-style? (
 		$(python_gen_any_dep '
@@ -76,6 +76,14 @@ BDEPEND+="
 	)
 	linkify? (
 		$(cro dev-python/linkify-it-py 2.0 '[${PYTHON_USEDEP}]')
+	)
+	mypy? (
+		>=dev-python/mypy-2.4.1[${PYTHON_USEDEP}]
+		$(cro dev-python/sphinx 8.2 '[${PYTHON_USEDEP}]')
+		dev-python/types-urllib3[${PYTHON_USEDEP}]
+		$(cro dev-python/markdown-it-py 4.2 '[${PYTHON_USEDEP}]')
+		$(cro dev-python/mdit-py-plugins 0.7.0 '[${PYTHON_USEDEP}]')
+		$(cro dev-python/sphinx-syntax-example 0.2.0 '[${PYTHON_USEDEP}]')
 	)
 	rtd? (
 		>=dev-python/sphinx-8[${PYTHON_USEDEP}]
@@ -89,6 +97,10 @@ BDEPEND+="
 		dev-python/sphinx-design[${PYTHON_USEDEP}]
 		dev-python/sphinx-pyscript[${PYTHON_USEDEP}]
 		dev-python/sphinx-togglebutton[${PYTHON_USEDEP}]
+		$(cro dev-python/sphinx-syntax-example 0.2.0 '[${PYTHON_USEDEP}]')
+	)
+	ruff? (
+		~dev-util/ruff-0.17.4
 	)
 	test? (
 		>=dev-python/pytest-9[${PYTHON_USEDEP}]
@@ -102,13 +114,7 @@ BDEPEND+="
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/pytest-regressions[${PYTHON_USEDEP}]
 		$(cro dev-python/sphinx-pytest 0.3.0 '[${PYTHON_USEDEP}]')
-		<dev-python/pygments-2.21[${PYTHON_USEDEP}]
-
-		>=dev-python/mypy-1.19.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-8.2[${PYTHON_USEDEP}]
-		dev-python/types-urllib3[${PYTHON_USEDEP}]
-
-		>=dev-util/ruff-0.14.11
+		<dev-python/pygments-2.22[${PYTHON_USEDEP}]
 	)
 	test-docutils? (
 		>=dev-python/pytest-9[${PYTHON_USEDEP}]
