@@ -10,7 +10,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/bradhouse.asc
 inherit edo libtool multilib-minimal verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="a13b89cc4d9d768ed401f3acdaf0b71d4f097404"
+	FALLBACK_COMMIT="46266f4ae2d309ce52009d85fc6198b5f0db6225"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/c-ares/c-ares.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -37,7 +37,7 @@ SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 static-libs test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
