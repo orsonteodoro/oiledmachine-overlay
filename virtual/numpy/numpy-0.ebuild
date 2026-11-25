@@ -17,7 +17,7 @@ EAPI=8
 # For dropped FAFO distro versions, see https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L55
 
 DISTUTILS_USE_PEP517="no"
-PYTHON_COMPAT=( "python3_"{10..14} )
+PYTHON_COMPAT=( "python3_"{11..14} )
 
 inherit distutils-r1
 
@@ -37,7 +37,6 @@ ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
-		python_targets_python3_10
 		python_targets_python3_11
 		python_targets_python3_12
 		python_targets_python3_13
@@ -46,9 +45,6 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		python_targets_python3_10? (
-			=dev-python/numpy-1.21*[${PYTHON_USEDEP}]
-		)
 		python_targets_python3_11? (
 			=dev-python/numpy-1.24*[${PYTHON_USEDEP}]
 		)
