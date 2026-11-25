@@ -40,7 +40,7 @@ if [[ -z "$(ver_cut 3)" || "$(ver_cut 3)" -lt 90 ]] ; then
 fi
 IUSE+="
 acl minimal nls selinux test xattr
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
