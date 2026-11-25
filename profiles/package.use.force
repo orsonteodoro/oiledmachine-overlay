@@ -44,7 +44,7 @@ sys-apps/firejail suid
 # A guardrail for people who don't read or have rash tendencies
 llvm-runtimes/compiler-rt-sanitizers-logging production
 
-# Guardrails to prevent broken emerge/autotools/boot/emerge-downloader
+# Guardrails to prevent broken emerge/autotools/boot/emerge-downloader/@system-unpack
 app-arch/bzip2 fallback-commit
 app-arch/zstd fallback-commit
 dev-libs/expat fallback-commit
@@ -61,6 +61,9 @@ sys-libs/readline fallback-commit
 net-libs/gnutls fallback-commit
 net-misc/wget fallback-commit
 net-misc/wget2 fallback-commit
+app-arch/gzip fallback-commit # a commit on Nov 2026 breaks dev-lang/go unpack
+app-arch/tar fallback-commit
+app-arch/xz-utils fallback-commit
 
 # Guardrail to mitigate unseen memory corruption vulnerability from dev code
 dev-libs/jemalloc fallback-commit

@@ -13,7 +13,8 @@ DESCRIPTION="Standard GNU compressor"
 HOMEPAGE="https://www.gnu.org/software/gzip/"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="b4ed8e73401968bcad749afb0e636dd3ec205ca7"
+#	FALLBACK_COMMIT="23a2a86ef7fb1381ceff499d03a55c05476d856d" # breaks live build
+	FALLBACK_COMMIT="c10174c45824f7af52ba1c57ccedb4c0dcdaec15" # works / pass
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://https.git.savannah.gnu.org/git/gzip.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -36,7 +37,7 @@ if [[ ${PV} != *_p* ]] ; then
 fi
 IUSE+="
 doc pic static
-ebuild_revision_1
+ebuild_revision_2
 "
 
 BDEPEND="verify-sig? ( sec-keys/openpgp-keys-gzip )"
