@@ -438,7 +438,7 @@ SECURE_TIMESTAMP["sys_apps_systemd_9999"]="Aug 15, 2026 9:18 AM PDT"
 SECURE_TIMESTAMP["sys_apps_util_linux_9999"]="Nov 18, 2026 3:02 PM PST"
 SECURE_TIMESTAMP["sys_apps_uutils_coreutils_9999"]="Sep 18, 2026 3:13 PM PDT"
 SECURE_TIMESTAMP["sys_auth_elogind_257_9999"]="Nov 6, 2026 2:36 AM PST"
-SECURE_TIMESTAMP["sys_auth_pambase_999999999"]="Nov 4, 2025 1:38 AM PST"
+SECURE_TIMESTAMP["sys_auth_pambase_999999999"]="Jul 30, 2026 12:30 PM PDT"
 SECURE_TIMESTAMP["sys_auth_polkit_9999"]="May 11, 2026 9:29 AM PDT"
 SECURE_TIMESTAMP["sys_auth_seatd_9999"]="Apr 20, 2026 5:27 AM PDT"
 # For binutils, monitor binutils, bfd, gold folders commit messages.
