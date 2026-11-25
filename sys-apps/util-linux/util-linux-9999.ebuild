@@ -27,7 +27,7 @@ DESCRIPTION="Various useful Linux utilities"
 HOMEPAGE="https://www.kernel.org/pub/linux/utils/util-linux/ https://github.com/util-linux/util-linux"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="203287d46f992349d5af40a1d88966f572f8bb12"
+	FALLBACK_COMMIT="f9ea4c3e37dbe215621a6b6895f48b8ce68a75a6"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -55,7 +55,7 @@ SLOT="0"
 # oiledmachine-overlay: added split-usr
 IUSE+="
 audit build caps +cramfs cryptsetup fdformat +hardlink kill +logger magic ncurses nls pam python +readline rtas selinux slang split-usr static-libs +su +suid systemd test tty-helpers udev unicode uuidd
-ebuild_revision_10
+ebuild_revision_11
 "
 
 # Most lib deps here are related to programs rather than our libs,
@@ -269,7 +269,7 @@ python_configure() {
 
 multilib_src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
+#	cflags-hardened_append
 
 	if tc-is-gcc && ver_test $(gcc-major-version) "-le" "11" ; then
 eerror "Unsupported compiler"
