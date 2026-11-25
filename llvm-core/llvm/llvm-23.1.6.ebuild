@@ -208,7 +208,7 @@ llvm.org_set_globals
 BDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/myst-parser[${PYTHON_USEDEP}]
-		dev-python/sphinx
+		dev-python/sphinx[${PYTHON_USEDEP}]
 	')
 "
 [[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
