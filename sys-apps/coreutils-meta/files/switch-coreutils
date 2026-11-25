@@ -1,0 +1,114 @@
+#!/bin/sh
+# This file is AI generated.
+set -eu
+
+# Default to / unless --root is passed (e.g., /mnt/gentoo from SystemRescueCD)
+TARGET_ROOT=""
+ACTION=""
+
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+		--root)
+			TARGET_ROOT="${2%/}"
+			shift 2
+			;;
+		gnu|uutils|uutils-bin|status|--init)
+			ACTION="$1"
+			shift
+			;;
+		*)
+			echo "Usage: $0 [--root /mnt/gentoo] <gnu|uutils|uutils-bin|status|--init>" >&2
+			exit 1
+			;;
+	esac
+done
+
+# Helper to resolve paths relative to TARGET_ROOT
+rpath() {
+	printf '%s%s' "$TARGET_ROOT" "$1"
+}
+
+get_src_dir() {
+	case "$1" in
+		gnu)        echo "/usr/lib/gnu-coreutils" ;;
+		uutils)     echo "/usr/lib/uucore-utils" ;;
+		uutils-bin) echo "/usr/lib/uutils-coreutils-bin" ;;
+		*)          return 1 ;;
+	esac
+}
+
+# List of standard coreutils binaries typically expected in /bin vs /usr/bin on Gentoo
+# (If your system is merged-usr, everything can simply link into /usr/bin)
+apply_links() {
+	PROVIDER="$1"
+	SRC_BASE="$(get_src_dir "$PROVIDER")"
+	ABS_SRC_BASE="$(rpath "$SRC_BASE")"
+
+	if [ ! -d "$ABS_SRC_BASE/bin" ]; then
+		echo "Error: Provider '$PROVIDER' is not installed at $ABS_SRC_BASE/bin" >&2
+		exit 1
+	fi
+
+	echo "Switching coreutils in '${TARGET_ROOT:-/}' to: $PROVIDER ($SRC_BASE)"
+
+	# Link everything in bin/
+	for bin_path in "$ABS_SRC_BASE"/bin/*; do
+		[ -e "$bin_path" ] || continue
+		bin_name="$(basename "$bin_path")"
+
+		# Create relative or absolute-within-chroot symlinks in /usr/bin
+		# Note: Symlink target must NOT include $TARGET_ROOT so it works after chroot/reboot
+		ln -sfn "${SRC_BASE}/bin/${bin_name}" "$(rpath "/usr/bin/${bin_name}")"
+
+		# If /bin is not a symlink to /usr/bin (split-usr), link /bin too
+		if [ ! -L "$(rpath "/bin")" ]; then
+			ln -sfn "${SRC_BASE}/bin/${bin_name}" "$(rpath "/bin/${bin_name}")"
+		fi
+	done
+
+	# Link everything in sbin/ if present
+	if [ -d "$ABS_SRC_BASE/sbin" ]; then
+		for sbin_path in "$ABS_SRC_BASE"/sbin/*; do
+			[ -e "$sbin_path" ] || continue
+			sbin_name="$(basename "$sbin_path")"
+			ln -sfn "${SRC_BASE}/sbin/${sbin_name}" "$(rpath "/usr/sbin/${sbin_name}")"
+			if [ ! -L "$(rpath "/sbin")" ]; then
+				ln -sfn "${SRC_BASE}/sbin/${sbin_name}" "$(rpath "/sbin/${sbin_name}")"
+			fi
+		done
+	fi
+
+	mkdir -p "$(rpath "/etc")"
+	echo "$PROVIDER" > "$(rpath "/etc/coreutils-provider")"
+	echo "Done."
+}
+
+case "$ACTION" in
+	gnu|uutils|uutils-bin)
+		apply_links "$ACTION"
+		;;
+	--init)
+		if [ ! -f "$(rpath "/etc/coreutils-provider")" ]; then
+			for cand in gnu uutils uutils-bin; do
+				if [ -d "$(rpath "$(get_src_dir "$cand")/bin")" ]; then
+					apply_links "$cand"
+					exit 0
+				fi
+			done
+			echo "No coreutils provider found to initialize." >&2
+			exit 1
+		fi
+		;;
+	status)
+		if [ -f "$(rpath "/etc/coreutils-provider")" ]; then
+			echo "Active provider: $(cat "$(rpath "/etc/coreutils-provider")")"
+		else
+			echo "Active provider: unknown (/etc/coreutils-provider not set)"
+		fi
+		ls -l "$(rpath "/usr/bin/ls")" "$(rpath "/usr/bin/cp")" 2>/dev/null || true
+		;;
+	*)
+		echo "Usage: $0 [--root /mnt/gentoo] <gnu|uutils|uutils-bin|status>" >&2
+		exit 1
+		;;
+esac
