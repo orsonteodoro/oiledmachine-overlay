@@ -46,6 +46,19 @@ EPYTEST_DESELECT=(
 	'tests/test_build.py::test_translations'
 )
 
+python_check_deps() {
+	python_has_version -b "dev-python/accessible-pygments[${PYTHON_USEDEP}]" && \
+	python_has_version -b "dev-python/babel[${PYTHON_USEDEP}]" && \
+	python_has_version -b "dev-python/beautifulsoup4[${PYTHON_USEDEP}]" && \
+	python_has_version -b "dev-python/docutils[${PYTHON_USEDEP}]" && \
+	python_has_version -b ">=dev-python/pygments-2.7[${PYTHON_USEDEP}]" && \
+	python_has_version -b "dev-python/requests[${PYTHON_USEDEP}]" && \
+	python_has_version -b "<dev-python/sphinx-10[${PYTHON_USEDEP}]" && \
+	python_has_version -b ">=dev-python/sphinx-8.2[${PYTHON_USEDEP}]" && \
+	true
+
+}
+
 python_compile() {
 	distutils_wheel_install "${BUILD_DIR}/install" \
 		"${DISTDIR}/$(pypi_wheel_name)"
