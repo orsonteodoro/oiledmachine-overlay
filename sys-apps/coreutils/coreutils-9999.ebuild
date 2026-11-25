@@ -34,7 +34,7 @@ DESCRIPTION="Standard GNU utilities (chmod, cp, dd, ls, sort, tr, head, wc, who,
 HOMEPAGE="https://www.gnu.org/software/coreutils/"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="b25722854370b8206d7f53f8934c36710cdd9974"
+	FALLBACK_COMMIT="7da6f665217ec8238fa231c93806f3ea967df167"
 	EGIT_COMMIT="master"
 	EGIT_REPO_URI="https://git.savannah.gnu.org/git/coreutils.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -63,7 +63,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
 acl caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
 
