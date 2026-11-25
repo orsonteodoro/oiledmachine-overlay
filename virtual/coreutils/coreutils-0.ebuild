@@ -15,39 +15,30 @@ EAPI=8
 # uutils-coreutils-bin will install to /usr/lib/uutils-coreutils-bin/{bin,sbin}.
 # then i will switch using a muxer to either uutils-coreutils prebuilt or source
 # based uutils core utils. i want to use a muxer installed at
-# /usr/bin/switch-coreutils controlled from systemrescuecd to control the
-# symlinks and the system mounted in /mnt/gentoo.
+# /usr/bin/switch-coreutils controlled from systemrescuecd to control the symlinks
+# and the system mounted in /mnt/gentoo. if a package requires gnu-coreutils will
+# it be easy to just do a path change? do i need to uninstall the
+# sys-apps/coreutils before using the muxer or should a separate script be used to
+# save and restore sys-apps/coreutils install? for the muxer script, it needs to
+# add the PATH before using ln if sys-apps/coreutils is uninstalled.
 
 # sys-apps/uutils-coreutils-bin is prebuilt from uutils-coreutils repo.
 
-DESCRIPTION="Meta-package for switching between GNU and uutils coreutils"
-HOMEPAGE="https://gentoo.org"
+# AI notes:
+#
 
-LICENSE="metapackage"
+
+EAPI=8
+
+DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
-#KEYWORDS="~amd64 ~arm64" # Untested
+KEYWORDS="~amd64 ~arm64"
 
 IUSE="+gnu uutils uutils-bin"
 REQUIRED_USE="|| ( gnu uutils uutils-bin )"
 
 RDEPEND="
-	sys-apps/coreutils-muxer
 	gnu? ( sys-apps/gnu-coreutils-alt )
 	uutils? ( sys-apps/uutils-coreutils-alt )
 	uutils-bin? ( sys-apps/uutils-coreutils-bin )
 "
-
-S="${WORKDIR}"
-
-pkg_setup() {
-ewarn "This script is a draft and untested.  Use at your own risk."
-	sleep 1
-}
-
-pkg_postinst() {
-	if [[ -z "${ROOT}" ]]; then
-		ebegin "Initializing coreutils symlinks if unset"
-		/usr/bin/switch-coreutils --init
-		eend $?
-	fi
-}
