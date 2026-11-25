@@ -18,7 +18,7 @@ CHKL_TIMESTAMPS=(
 inherit autotools cflags-hardened check-compiler-switch chkl multilib-minimal secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="9c4a699e5aacc1995a27ca3bf1643c8b2378616c"
+	FALLBACK_COMMIT="940c869211dd8d93ab593df546db75f47dfb86b3"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://chromium.googlesource.com/webm/libwebp"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -41,7 +41,7 @@ SOVER="7"
 SLOT="0/${SOVER}" # subslot = libwebp soname version
 IUSE+="
 cpu_flags_arm_neon cpu_flags_x86_avx2 cpu_flags_x86_sse2 cpu_flags_x86_sse4_1 gif +jpeg opengl +png static-libs swap-16bit-csp tiff
-ebuild_revision_12
+ebuild_revision_13
 "
 
 # TODO: dev-lang/swig bindings in swig/ subdirectory
