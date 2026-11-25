@@ -1091,6 +1091,19 @@ ewarn "Release quality:  Entering development quality (adding 7.4 commits, devel
 	fi
 ewarn "Merge window:  Closed"
 ewarn
+	if [[ "${OT_KERNEL_7_4_EXT4_ACCEPT_RISK:-0}" != "1" ]] ; then
+eerror
+eerror "The AI says that the recent merged pull request of 41,000 lines of code is"
+eerror "not safe for production yet and to wait until 7.4-rc6 or 7.4-rc7."
+eerror "To mitigate possible data/metadata corruption and data loss, the 7.4"
+eerror "ebuild series has halted now as a precaution."
+eerror
+eerror "To continue, set OT_KERNEL_7_4_EXT4_ACCEPT_RISK=1 in /etc/portage/make.conf,"
+eerror "or add the environment variable as a per-package env file, or in your"
+eerror "per kernel flavor env file."
+eerror
+		die
+	fi
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
 ewarn "The merge window - the period when reworks or new code are accepted."

@@ -457,7 +457,7 @@ UKSM_BASE_URI="https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="2026-11-20  7:02 UTC" # Advisory date
+MITIGATION_DATE="2026-11-25 18:26 UTC" # Advisory date
 MITIGATION_LAST_UPDATE=1795419864 # From `date --date="Mon Nov 23, 2026 08:44:24 +0100" +%s` from changelog for latest tag from either mainline, stable, or longterm
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
@@ -489,6 +489,16 @@ VULNERABILITIES_FIXED=(
 	"CVE-2026-99312;HVE, DoS, DT, ID;9.8 high, KVM hypervisor escape"
 
 	# Less popular or under the radar:
+	"CVE-2026-99811;;"
+	"CVE-2026-99810;;"
+	"CVE-2026-99809;;"
+	"CVE-2026-99808;;"
+	"CVE-2026-99807;IV;"
+	"CVE-2026-99805;;"
+	"CVE-2026-99806;IV;"
+	"CVE-2026-97547;IV;Rejected"
+	"CVE-2026-98447;IV;Rejected"
+
 	"CVE-2026-99804;;"
 	"CVE-2026-99803;;"
 	"CVE-2026-99802;;"
