@@ -4,7 +4,7 @@
 EAPI=8
 
 MY_PN=Vulkan-Loader
-COMMIT_ID="b8b96a2862bff1eed468e602d43f706beae89cf1"
+COMMIT_ID="bdeb6dc40fe4330a7dda0aa630a5b80c65c5f8f3"
 FLAVOR="vulkan-tmp" # vulkan-tmp or vulkan-sdk
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
