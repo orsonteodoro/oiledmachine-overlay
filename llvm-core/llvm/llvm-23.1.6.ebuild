@@ -204,14 +204,14 @@ LLVM_MANPAGES=1
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
-[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
-BDEPEND+="
+[[ -n ${LLVM_MANPAGE_DIST} ]] && _BDEPEND+=" doc? ( "
+_BDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/myst-parser[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	')
 "
-[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
+[[ -n ${LLVM_MANPAGE_DIST} ]] && _BDEPEND+=" ) "
 
 pkg_setup() {
 	llvm-ebuilds_message
@@ -271,8 +271,8 @@ einfo
 python_check_deps() {
 	llvm_are_manpages_built || return 0
 
-	python_has_version -b "dev-python/myst-parser[${PYTHON_USEDEP}]" &&
-	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
+#	python_has_version -b "dev-python/myst-parser[${PYTHON_USEDEP}]" &&
+#	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
 check_uptodate() {

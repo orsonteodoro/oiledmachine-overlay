@@ -173,14 +173,14 @@ LLVM_TEST_COMPONENTS=(
 )
 LLVM_USE_TARGETS="llvm+eq"
 llvm.org_set_globals
-[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
-BDEPEND+="
+[[ -n ${LLVM_MANPAGE_DIST} ]] && _BDEPEND+=" doc? ( "
+_BDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/myst-parser[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	' python3_{13,14})
 "
-[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
+[[ -n ${LLVM_MANPAGE_DIST} ]] && _BDEPEND+=" ) "
 
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch
