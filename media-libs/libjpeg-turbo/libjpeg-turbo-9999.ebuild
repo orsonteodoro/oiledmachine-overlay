@@ -104,7 +104,7 @@ IUSE+="
 ${_TRAINERS[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +asm cpu_flags_arm_neon debug java test pgo static-libs
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE="
 	?? (
