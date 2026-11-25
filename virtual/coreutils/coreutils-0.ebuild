@@ -20,13 +20,15 @@ EAPI=8
 # it be easy to just do a path change? do i need to uninstall the
 # sys-apps/coreutils before using the muxer or should a separate script be used to
 # save and restore sys-apps/coreutils install? for the muxer script, it needs to
-# add the PATH before using ln if sys-apps/coreutils is uninstalled.
+# add the PATH before using ln if sys-apps/coreutils is uninstalled. is the script
+# split-usr compatible? should i change the path to /lib/gnu-coreutils,
+# /lib/uutils-coreutils instead? i am using split-usr.
 
-# sys-apps/uutils-coreutils-bin is prebuilt from uutils-coreutils repo.
-
-# AI notes:
-#
-
+# sys-apps/coreutils            - Installed in /bin, /sbin
+# sys-apps/gnu-coreutils-alt    - Installed in /lib/gnu-coreutils/{bin,sbin}
+# sys-apps/uutils-coreutils-alt - Installed in /lib/uucore-utils/{bin,sbin}
+# sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin};  prebuilt from uutils-coreutils repo as an alternative/recovery for GNU Coreutils stage3 tarball prebuilt.
+# Using multislot can increase the attack surface.  The multislot can be used for compatibility but uses the rust based as fallback for mitigation.
 
 EAPI=8
 
@@ -34,11 +36,11 @@ DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 
-IUSE="+gnu uutils uutils-bin"
-REQUIRED_USE="|| ( gnu uutils uutils-bin )"
-
 RDEPEND="
-	gnu? ( sys-apps/gnu-coreutils-alt )
-	uutils? ( sys-apps/uutils-coreutils-alt )
-	uutils-bin? ( sys-apps/uutils-coreutils-bin )
+	|| (
+		sys-apps/gnu-coreutils-alt
+		sys-apps/uutils-coreutils-alt
+		sys-apps/uutils-coreutils-bin
+		sys-apps/coreutils
+	)
 "
