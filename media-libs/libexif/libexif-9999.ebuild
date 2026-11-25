@@ -14,7 +14,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	SO_CURRENT=15
 	SO_AGE=3
 	SOVER=$(( ${SO_CURRENT} - ${SO_AGE} ))
-	FALLBACK_COMMIT="7915d4f6e7d637b5cac41d7c2332fe3e610e1392"
+	FALLBACK_COMMIT="11fe112094c9ca53fb85865e6b65002b266a86cb"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libexif/libexif.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -39,7 +39,7 @@ SLOT="0/${SOVER}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 IUSE+="
 doc nls
-ebuild_revision_1
+ebuild_revision_3
 "
 
 RDEPEND="nls? ( virtual/libintl )"
