@@ -11,7 +11,7 @@ BD_ABS=""
 NEED_EMACS="27.2"
 EGIT_COMMIT="c17ff9e0250a9b39d23af37015a2b300e2f36fed"
 EMACS_SLOT="${NEED_EMACS%%.*}"
-PYTHON_COMPAT=( "python2_7" "python3_"{7..14} ) # Relaxed version
+PYTHON_COMPAT=( "python3_"{11..14} ) # Relaxed version
 SITEFILE="50emacs-ycmd-gentoo.el"
 
 inherit elisp java-pkg-opt-2 python-single-r1 sandbox-changes
