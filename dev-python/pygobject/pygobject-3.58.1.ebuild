@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,28 +7,29 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=no
-PYTHON_COMPAT=( python3_{11..13} )
+GNOME_TARBALL_SUFFIX="gz"
+PYTHON_COMPAT=( python3_{12..15} )
 
 inherit cflags-hardened gnome.org meson virtualx xdg distutils-r1
 
 DESCRIPTION="Python bindings for GObject Introspection"
 HOMEPAGE="
-	https://pygobject.readthedocs.io/
+	https://pygobject.gnome.org/
 	https://gitlab.gnome.org/GNOME/pygobject/
 "
 
 LICENSE="LGPL-2.1+"
 SLOT="3"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~x64-macos ~x64-solaris"
 IUSE="
-+cairo examples test
++cairo test
 ebuild_revision_17
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	>=dev-libs/glib-2.64:2
-	>=dev-libs/gobject-introspection-1.64:=
+	>=dev-libs/glib-2.80:2
+	>=dev-libs/gobject-introspection-1.84:=
 	dev-libs/libffi:=
 	cairo? (
 		>=dev-python/pycairo-1.16.0[${PYTHON_USEDEP}]
@@ -72,15 +73,20 @@ python_test() {
 	local -x GIO_USE_VOLUME_MONITOR="unix" # prevent udisks-related failures in chroots, bug #449484
 	local -x PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
 	local -x XDG_CACHE_HOME="${T}/${EPYTHON}"
-	meson_src_test --timeout-multiplier 3 || die "test failed for ${EPYTHON}"
+	local _PYTEST_ADDOPTS=(
+		 # see epytest in python-utils-r1.eclass
+		-vv -ra -l -o filterwarnings=
+		# test_python_calls_sync: timeout
+		--deselect tests/test_gdbus.py::TestGDBusClient::test_python_calls_sync
+		# test_pointer_array_struct_with_guint8: broken on BE but test is dodgy anyway, bug #978759
+		--deselect tests/test_gi.py::TestStructure::test_pointer_array_struct_with_guint8
+	)
+	local -x PYTEST_ADDOPTS="${_PYTEST_ADDOPTS[@]}"
+
+	meson_src_test --timeout-multiplier 3 || die "test for ${EPYTHON}"
 }
 
 python_install() {
 	meson_src_install
 	python_optimize
-}
-
-python_install_all() {
-	distutils-r1_python_install_all
-	use examples && dodoc -r examples
 }

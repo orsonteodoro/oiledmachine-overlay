@@ -175,10 +175,8 @@ LLVM_USE_TARGETS="llvm+eq"
 llvm.org_set_globals
 [[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
 BDEPEND+="
-	$(python_gen_cond_dep '
-		dev-python/myst-parser[${PYTHON_USEDEP}]
-		dev-python/sphinx[${PYTHON_USEDEP}]
-	')
+	dev-python/myst-parser
+	dev-python/sphinx
 "
 [[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
 
