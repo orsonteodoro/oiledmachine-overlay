@@ -4,6 +4,7 @@
 EAPI=8
 
 # This ebuild fork contains AI fixes.
+# This is for GNU Coreutils only systems.  For multi slot coreutils, see gnu-coreutils-alt, uutils-coreutils-alt, uutils-coreutils-bin.
 
 # Try to keep an eye on Fedora's packaging: https://src.fedoraproject.org/rpms/coreutils
 # The upstream coreutils maintainers also maintain the package in Fedora and may
