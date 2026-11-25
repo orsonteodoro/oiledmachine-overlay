@@ -61,10 +61,10 @@ sys-libs/readline fallback-commit
 net-libs/gnutls fallback-commit
 net-misc/wget fallback-commit
 net-misc/wget2 fallback-commit
-app-arch/gzip fallback-commit # a commit on Nov 2026 breaks dev-lang/go unpack
+app-arch/gzip fallback-commit		# Commit 23a2a86 (Nov 2026) breaks dev-lang/go unpack
 app-arch/tar fallback-commit
 app-arch/xz-utils fallback-commit
-app-arch/libarchive fallback-commit # it can affect unpacking @world via bsdtar and unpacker.eclass
+app-arch/libarchive fallback-commit	# It can affect unpacking @world via bsdtar and unpacker.eclass.
 
 # Guardrail to mitigate unseen memory corruption vulnerability from dev code
 dev-libs/jemalloc fallback-commit
