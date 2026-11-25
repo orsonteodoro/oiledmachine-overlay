@@ -11,7 +11,7 @@ DESCRIPTION="Heavily optimized DEFLATE/zlib/gzip (de)compression"
 HOMEPAGE="https://github.com/ebiggers/libdeflate"
 
 if [[ ${PV} == *9999* ]]; then
-	FALLBACK_COMMIT="0079686dd605ebf1901cdd1d856dffe45bf35806"
+	FALLBACK_COMMIT="aa5181e82536b9508f2319816b5780e86415d3b5"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/ebiggers/libdeflate.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -29,7 +29,7 @@ SLOT="0"
 # the test USE-flag programs depend on virtual/zlib for comparison tests
 IUSE+="
 +utils test
-ebuild_revision_1
+ebuild_revision_3
 "
 
 RESTRICT="
