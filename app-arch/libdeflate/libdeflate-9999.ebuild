@@ -41,7 +41,7 @@ DEPEND="
 "
 
 PATCHES=(
-	"A${FILESDIR}/${PN}-aa5181e-make-gzip-tests-conditional.patch"
+	"${FILESDIR}/${PN}-aa5181e-make-gzip-tests-conditional.patch"
 )
 
 src_unpack() {
