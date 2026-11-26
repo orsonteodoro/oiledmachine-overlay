@@ -9,32 +9,44 @@ EAPI=8
 #
 # Prompt:
 #
-# what would the meta package for gentoo for gnu coreutils and uutils coreutils
-# look like? I need to create two separate installs for gnu-coreutils,
-# uutils-coreutils, uutils-coreutils-bin (prebuilt) with modified ebuilds.
-# gnu-coreutils-alt will install in
-# /usr/lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share}.
-# uutils-coreutils-alt installs to
-# /usr/lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share}.
-# uutils-coreutils-bin will install to
-# /usr/lib/uutils-coreutils-bin/{bin,usr/bin,usr/libexec,etc,usr/share}. then i
-# will switch using a muxer to either uutils-coreutils prebuilt or source based
-# uutils core utils. i want to use a muxer installed at /switch-coreutils in
-# the gentoo root partition controlled from systemrescuecd to control the
-# symlinks and the system mounted in /mnt/gentoo. if a package requires
-# gnu-coreutils will it be easy to just do a path change? do i need to uninstall
-# the sys-apps/coreutils before using the muxer or should a separate script be
-# used to save and restore sys-apps/coreutils install? for the muxer script, it
-# will assume the ln command will be used from liveusb or systemrescuecd. should
-# i change the path to /lib/gnu-coreutils, /lib/uutils-coreutils instead? i am
-# using split-usr but the script and configs need to also accomodate merge-usr
-# cases.
-#
+_PROMPT="
+what would the meta package for gentoo for gnu coreutils and uutils coreutils
+look like? I need to create two separate installs for gnu-coreutils,
+uutils-coreutils, uutils-coreutils-bin (prebuilt) with modified ebuilds.
+gnu-coreutils-alt will install in
+/usr/lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share}.
+uutils-coreutils-alt installs to
+/usr/lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share}.
+uutils-coreutils-bin will install to
+/usr/lib/uutils-coreutils-bin/{bin,usr/bin,usr/libexec,etc,usr/share}. then i
+will switch using a muxer to either uutils-coreutils prebuilt or source based
+uutils core utils. i want to use a muxer installed at /switch-coreutils in the
+gentoo root partition controlled from systemrescuecd to control the symlinks
+and the system mounted in /mnt/gentoo. if a package requires gnu-coreutils will
+it be easy to just do a path change? do i need to uninstall the
+sys-apps/coreutils before using the muxer or should a separate script be used to
+save and restore sys-apps/coreutils install? for the muxer script, it will
+assume the ln command will be used from liveusb or systemrescuecd. should i
+change the path to /lib/gnu coreutils, /lib/uutils-coreutils instead? i am
+using split-usr but the script and configs need to also accomodate merge-usr
+cases. the current uutils-coreutils-alt ebuild assumes only merged-usr and
+uu- prefix. The current gnu-coreutils handles both merged-usr, split-usr. the
+muxer needs to correct the issue for uutils-coreutils-alt. should i modify the
+uutils-coreutils-alt, uutils-coreutils-bin, gnu-coreutils ebuild to assume
+merged-usr and the muxer is responsible for split-usr conversion?
+"
+unset _PROMPT
 
+#
 # sys-apps/coreutils            - Installed in /bin, /usr/bin, /etc, /usr/share
 # sys-apps/gnu-coreutils        - Installed in /lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 # sys-apps/uutils-coreutils-alt - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 # sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
+#
+# sys-apps/gnu-coreutils, sys-apps/uutils-coreutils-alt,
+# sys-apps/uutils-coreutils-bin assume merged-usr in prefixed directories.
+#
+# The coreutils-muxer will handle the merged-usr to split-usr conversion.
 #
 # The uutils-coreutils-bin uses prebuilts from uutils-coreutils repo as an
 # alternative or recovery for GNU coreutils stage3 tarball prebuilt.
