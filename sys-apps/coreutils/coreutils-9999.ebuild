@@ -20,7 +20,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH BUR DOS ID HO PE SO SYM"
 
 #
 # /bin assets for FHS (FSSTND 1.0 -> Filesystem Hierarchy Standard, 1994):
-# cat chgrp chmod chown cp date dd df echo false ln ls
+# cat chgrp chmod chown cp date dd df echo false hostname kill ln ls
 # mkdir mknod mv pwd rm rmdir stty sync true uname
 #
 # /bin common assets for booting:
@@ -48,6 +48,8 @@ BIN_ESSENTIAL=(
 	"expr"
 	"false"
 	"head"
+	"hostname"
+	"kill"
 	"ln"
 	"ls"
 	"mkdir"
@@ -209,7 +211,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
 acl +backup caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr
-ebuild_revision_4
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 
