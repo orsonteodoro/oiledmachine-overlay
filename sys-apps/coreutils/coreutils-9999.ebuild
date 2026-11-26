@@ -36,7 +36,7 @@ HOMEPAGE="https://www.gnu.org/software/coreutils/"
 
 if [[ ${PV} == 9999 ]] ; then
 	FALLBACK_COMMIT="7da6f665217ec8238fa231c93806f3ea967df167"
-	EGIT_COMMIT="master"
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://git.savannah.gnu.org/git/coreutils.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
