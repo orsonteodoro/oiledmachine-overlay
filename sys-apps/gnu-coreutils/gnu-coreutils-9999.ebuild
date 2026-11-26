@@ -70,8 +70,8 @@ SRC_URI+=" !vanilla? ( https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${MY_PN
 LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
-acl caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr
-ebuild_revision_4
+acl caps gmp hostname kill multicall nls +openssl selinux static test test-full vanilla xattr
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 
@@ -197,11 +197,7 @@ src_prepare() {
 }
 
 get_prefix() {
-	if use split-usr ; then
-		echo "/lib/${PN}"
-	else
-		echo "/usr/lib/${PN}"
-	fi
+	echo "/usr/lib/${PN}"
 }
 
 src_configure() {
@@ -357,38 +353,7 @@ src_install() {
 	insinto "${prefix}/etc"
 	newins src/dircolors.hin DIR_COLORS
 
-	if use split-usr ; then
-		cd "${ED}${prefix}"/usr/bin || die
-		dodir ${prefix}/bin
-
-		# Move critical binaries into /bin (required by FHS)
-		local fhs="cat chgrp chmod chown cp date dd df echo false ln ls
-		           mkdir mknod mv pwd rm rmdir stty sync true uname"
-		mv ${fhs} ../../bin/ || die "Could not move FHS bins!"
-
-		if use hostname ; then
-			mv hostname ../../bin/ || die
-		fi
-
-		if use kill ; then
-			mv kill ../../bin/ || die
-		fi
-
-		# Move critical binaries into /bin (common scripts)
-		# (Why are these required for booting?)
-		local com="basename chroot cut dir dirname du env expr head mkfifo
-		           mktemp readlink seq sleep sort tail touch tr tty vdir wc yes"
-		mv ${com} ../../bin/ || die "Could not move common bins!"
-
-		# Create a symlink for uname in /usr/bin/ since autotools require it.
-		# (Other than uname, we need to figure out why we are
-		# creating symlinks for these in /usr/bin instead of leaving
-		# the files there in the first place...)
-		local x
-		for x in ${com} uname ; do
-			dosym ../../bin/${x} ${prefix}/usr/bin/${x}
-		done
-	fi
+	# The muxer handles split-usr.
 }
 
 pkg_postinst() {

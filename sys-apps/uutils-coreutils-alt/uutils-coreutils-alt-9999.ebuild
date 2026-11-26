@@ -58,8 +58,8 @@ LICENSE+="
 "
 SLOT="0"
 IUSE="
-debug selinux split-usr test
-ebuild_revision_1
+debug selinux test
+ebuild_revision_2
 "
 RESTRICT="!test? ( test )"
 
@@ -108,11 +108,7 @@ src_configure() {
 }
 
 get_prefix() {
-	if use split-usr ; then
-		echo "/lib/${MY_PN}"
-	else
-		echo "/usr/lib/${MY_PN}"
-	fi
+	echo "/usr/lib/${MY_PN}"
 }
 
 src_compile() {
