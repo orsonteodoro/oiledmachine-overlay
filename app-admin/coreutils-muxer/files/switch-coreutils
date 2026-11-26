@@ -1,5 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
+# /switch-coreutils - Offline/Online Coreutils Multiplexer for Gentoo
+# Designed to run from SystemRescueCD against /mnt/gentoo (or custom root)
 
 # This file is mostly AI generated.
 
@@ -8,13 +9,9 @@ set -euo pipefail
 # SystemRescue.  This script runs in that context not on the live production
 # system.
 
-echo "WARNING:  DRAFT.  This script is not tested yet."
-
-#!/bin/sh
-# /switch-coreutils - Offline/Online Coreutils Multiplexer for Gentoo
-# Designed to run from SystemRescueCD against /mnt/gentoo (or custom root)
-
 set -eu
+
+echo "WARNING:  DRAFT.  This script is not tested yet."
 
 PROVIDERS="gnu-coreutils uutils-coreutils uutils-coreutils-bin"
 TARGET_ROOT="/mnt/gentoo"
