@@ -93,3 +93,6 @@ sci-ml/therock fallback-commit
 
 # Pinned to avoid build failure
 sys-devel/hip-clang fallback-commit
+
+# Still WIP
+virtual/coreutils legacy

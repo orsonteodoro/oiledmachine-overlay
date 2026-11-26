@@ -299,3 +299,7 @@ media-plugins/gst-plugins-rs burn # AFW, RCE in zip crate
 # Protect Godot built apps (e.g. chat or messenger apps) that use certs and to mitigate MITM from eMudhra intermediate CA.
 dev-games/godot-editor portable
 
+# Still WIP
+virtual/coreutils gnu
+virtual/coreutils uutils
+virtual/coreutils uutils-bin
