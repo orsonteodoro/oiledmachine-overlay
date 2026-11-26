@@ -7,6 +7,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <flag name="backup">
+      Make a backup copy of sys-apps/coreutils before using the muxer.
+    </flag>
     <flag name="gnu">
       Install the source based GNU coreutils for build system compatibility,
       as modular and switchable.

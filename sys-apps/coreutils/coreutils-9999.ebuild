@@ -18,6 +18,148 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH BUR DOS ID HO PE SO SYM"
 
+#
+# /bin assets for FHS (FSSTND 1.0 -> Filesystem Hierarchy Standard, 1994):
+# cat chgrp chmod chown cp date dd df echo false ln ls
+# mkdir mknod mv pwd rm rmdir stty sync true uname
+#
+# /bin common assets for booting:
+# basename chroot cut dir dirname du env expr head mkfifo
+# mktemp readlink seq sleep sort tail touch tr tty vdir wc yes
+#
+
+BIN_ESSENTIAL=(
+	"basename"
+	"cat"
+	"chgrp"
+	"chmod"
+	"chown"
+	"chroot"
+	"cp"
+	"cut"
+	"date"
+	"dd"
+	"df"
+	"dir"
+	"dirname"
+	"du"
+	"echo"
+	"env"
+	"expr"
+	"false"
+	"head"
+	"ln"
+	"ls"
+	"mkdir"
+	"mkfifo"
+	"mknod"
+	"mktemp"
+	"mv"
+	"pwd"
+	"readlink"
+	"rm"
+	"rmdir"
+	"seq"
+	"sleep"
+	"sort"
+	"stty"
+	"sync"
+	"tail"
+	"touch"
+	"tr"
+	"true"
+	"tty"
+	"uname"
+	"vdir"
+	"wc"
+	"yes"
+)
+
+BIN_NON_ESSENTIAL=(
+	"["
+	"arch"
+	"b2sum"
+	"base32"
+	"base64"
+	"basename"
+	"basenc"
+	"chroot"
+	"cksum"
+	"comm"
+	"csplit"
+	"cut"
+	"dir"
+	"dircolors"
+	"dirname"
+	"du"
+	"env"
+	"expand"
+	"expr"
+	"factor"
+	"fmt"
+	"fold"
+	"groups"
+	"head"
+	"hostid"
+	"id"
+	"install"
+	"join"
+	"link"
+	"logname"
+	"md5sum"
+	"mkfifo"
+	"mktemp"
+	"nice"
+	"nl"
+	"nohup"
+	"nproc"
+	"numfmt"
+	"od"
+	"paste"
+	"pathchk"
+	"pinky"
+	"pr"
+	"printenv"
+	"printf"
+	"ptx"
+	"readlink"
+	"realpath"
+	"seq"
+	"sha1sum"
+	"sha224sum"
+	"sha256sum"
+	"sha384sum"
+	"sha512sum"
+	"shred"
+	"shuf"
+	"sleep"
+	"sort"
+	"split"
+	"stat"
+	"stdbuf"
+	"sum"
+	"tac"
+	"tail"
+	"tee"
+	"test"
+	"timeout"
+	"touch"
+	"tr"
+	"truncate"
+	"tsort"
+	"tty"
+	"uname"
+	"unexpand"
+	"uniq"
+	"unlink"
+	"users"
+	"vdir"
+	"wc"
+	"who"
+	"whoami"
+	"yes"
+)
+
 CHKL_TIMESTAMPS=(
 	"app-arch/xz-utils-9999"
 	"dev-libs/openssl-4.0.9999"
@@ -66,7 +208,7 @@ SRC_URI+=" !vanilla? ( https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/$
 LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
-acl caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr
+acl +backup caps gmp hostname kill multicall nls +openssl selinux +split-usr static test test-full vanilla xattr
 ebuild_revision_4
 "
 RESTRICT="!test? ( test )"
@@ -361,4 +503,34 @@ pkg_postinst() {
 	ewarn "Make sure you run 'hash -r' in your active shells."
 	ewarn "You should also re-source your shell settings for LS_COLORS"
 	ewarn "  changes, such as: source /etc/profile"
+
+	# Copy the /bin, /usr/bin to /lib/coreutils-backup before the
+	# coreutils-muxer clobber.  Allow to unemerge sys-apps/coreutils.
+	# but keep the /lib/coreutils-backup folder after emerge.
+	if use backup ; then
+		local prefix="/lib/coreutils-backup"
+einfo "Making backup copy to ${EROOT}${prefix}"
+		rm -rf "${EROOT}${prefix}" || true
+		if use split-usr ; then
+			mkdir -p "${EROOT}${prefix}/bin" || true
+			mkdir -p "${EROOT}${prefix}/usr/bin" || true
+
+			local x
+			for x in "${BIN_ESSENTIAL[@]}" ; do
+				cp -a "${EROOT}/bin/${x}" "${EROOT}${prefix}/bin/" || true
+			done
+			for x in "${BIN_NON_ESSENTIAL[@]}" ; do
+				cp -a "${EROOT}/usr/bin/${x}" "${EROOT}${prefix}/usr/bin/" || true
+			done
+		else
+		# merged-usr
+			mkdir -p "${EROOT}${prefix}/usr/bin" || true
+
+			local x
+			for x in "${BIN_ESSENTIAL[@]}" "${BIN_NON_ESSENTIAL[@]}" ; do
+				cp -a "${EROOT}/usr/bin/${x}" "${EROOT}${prefix}/usr/bin/" || true
+			done
+		fi
+		touch "${EROOT}${prefix}/.atomic-backup-complete" || true
+	fi
 }

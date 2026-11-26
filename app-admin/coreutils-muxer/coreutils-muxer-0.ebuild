@@ -33,6 +33,7 @@ einfo "/mnt/gentoo/switch-coreutils uutils /mnt/gentoo"
 einfo "/mnt/gentoo/switch-coreutils uutils-bin /mnt/gentoo"
 einfo
 einfo "Before switching or unemerging sys-apps/coreutils make a backup of"
-einfo "/bin, /usr/bin to /lib/coreutils-backup."
+einfo "/bin, /usr/bin to /lib/coreutils-backup or use the backup USE flag"
+einfo "with the sys-apps/coreutils ebuild."
 einfo
 }

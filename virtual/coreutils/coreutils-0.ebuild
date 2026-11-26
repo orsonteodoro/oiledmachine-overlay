@@ -82,7 +82,7 @@ inherit chkl secure-version
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 IUSE+="
-gnu hostname kill +legacy uutils uutils-bin
++backup gnu hostname kill +legacy uutils uutils-bin
 ebuild_revision_1
 " # Bump the ebuild revision when live timestamp check (chkl, secure-timestamp) is bumped.
 REQUIRED_USE="
@@ -106,7 +106,7 @@ RDEPEND="
 		>=sys-apps/gnu-coreutils-${COREUTILS_PV}[hostname?,kill?]
 	)
 	legacy? (
-		>=sys-apps/coreutils-${COREUTILS_PV}[hostname?,kill?]
+		>=sys-apps/coreutils-${COREUTILS_PV}[backup?,hostname?,kill?]
 	)
 	uutils? (
 		>=sys-apps/uutils-coreutils-alt-${UUTILS_COREUTILS_PV}[hostname?,kill?]
