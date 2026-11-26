@@ -1,67 +1,65 @@
 #!/bin/sh
-# This file is AI generated.
-# DRAFT.  It is not tested yet.
 set -e
 
-echo "WARNING:  This script is not tested yet."
+# This file is mostly AI generated.
 
-# 1. Bootstrap PATH immediately using gnu-coreutils-alt as fallback 
-# so 'ln', 'rm', and 'basename' work even if /bin symlinks are broken.
-ROOT_PREFIX=""
-if [ -d "/mnt/gentoo/lib" ] && [ ! -f "/etc/gentoo-release" ]; then
-    ROOT_PREFIX="/mnt/gentoo"
-fi
+# It is assumed that the system is booted with Gentoo LiveUSB, SystemRescue, or
+# rescue partition with unpacked Gentoo state3 tarball or SystemRescue.
 
-export PATH="${ROOT_PREFIX}/lib/gnu-coreutils/bin:${ROOT_PREFIX}/lib/uutils-coreutils/bin:${ROOT_PREFIX}/lib/uutils-coreutils-bin/bin:/bin:/usr/bin:/sbin:/usr/sbin"
+echo "WARNING:  DRAFT.  This script is not tested yet."
 
-TARGET="$1"
-PROVIDER_DIR="${ROOT_PREFIX}/lib/${TARGET}"
+TARGET="${1}"
+ROOT_DIR="${2:-/}" # Defaults to / if not provided (e.g., /mnt/gentoo)
 
-if [ -z "$TARGET" ] || [ ! -d "$PROVIDER_DIR/bin" ]; then
-    echo "Usage: $0 <gnu-coreutils|uutils-coreutils|uutils-coreutils-bin>"
-    echo "Detected root: ${ROOT_PREFIX:-/}"
+# Normalize ROOT_DIR (strip trailing slash unless it's just /)
+ROOT_DIR="${ROOT_DIR%/}"
+
+case "${TARGET}" in
+    gnu)
+        SRC_DIR="lib/gnu-coreutils"
+        ;;
+    uutils-src)
+        SRC_DIR="lib/uutils-coreutils"
+        ;;
+    uutils-bin)
+        SRC_DIR="lib/uutils-coreutils-bin"
+        ;;
+    *)
+        echo "Usage: $0 <gnu|uutils-src|uutils-bin> [target_root]"
+        echo "Example (RescueCD): $0 gnu /mnt/gentoo"
+        exit 1
+        ;;
+esac
+
+if [ ! -d "${ROOT_DIR}/${SRC_DIR}/bin" ]; then
+    echo "Error: Implementation directory ${ROOT_DIR}/${SRC_DIR}/bin does not exist."
     exit 1
 fi
 
-# 2. Standard split-usr root /bin binaries required for early boot
-ROOT_BINS="arch base64 basename cat chgrp chmod chown cp date dd df dir echo false ln ls mkdir mknod mktemp mv pwd readlink rm rmdir sleep stty sync touch true uname vdir"
+echo "Switching coreutils in '${ROOT_DIR:-/}' to '${TARGET}'..."
 
-echo "Switching coreutils on '${ROOT_PREFIX:-/}' to '$TARGET'..."
-
-for bin_path in "$PROVIDER_DIR/bin/"*; do
-    [ -e "$bin_path" ] || continue
-    bin_name=$(basename "$bin_path")
+# Map /bin utilities (Critical for split-usr early boot)
+for bin_path in "${ROOT_DIR}/${SRC_DIR}/bin/"*; do
+    [ -e "${bin_path}" ] || continue
+    tool="$(basename "${bin_path}")"
     
-    # Target relative path inside the chroot/system
-    rel_target="/lib/${TARGET}/bin/${bin_name}"
+    # Create relative symlink: /bin/ls -> ../lib/gnu-coreutils/bin/ls
+    ln -sfn "../${SRC_DIR}/bin/${tool}" "${ROOT_DIR}/bin/${tool}"
     
-    # Check if binary belongs in /bin (split-usr) or /usr/bin
-    is_root_bin=0
-    for rb in $ROOT_BINS; do
-        if [ "$bin_name" = "$rb" ]; then
-            is_root_bin=1
-            break
-        fi
-    done
-
-    if [ "$is_root_bin" -eq 1 ]; then
-        # Place in /bin, and provide compatibility symlink in /usr/bin if needed
-        ln -sfn "$rel_target" "${ROOT_PREFIX}/bin/${bin_name}"
-        rm -f "${ROOT_PREFIX}/usr/bin/${bin_name}"
-    else
-        # Place in /usr/bin
-        ln -sfn "$rel_target" "${ROOT_PREFIX}/usr/bin/${bin_name}"
-        rm -f "${ROOT_PREFIX}/bin/${bin_name}"
+    # Optional: Maintain /usr/bin compatibility symlinks if legacy scripts hardcode /usr/bin
+    if [ -L "${ROOT_DIR}/usr/bin/${tool}" ] || [ ! -e "${ROOT_DIR}/usr/bin/${tool}" ]; then
+        ln -sfn "../../bin/${tool}" "${ROOT_DIR}/usr/bin/${tool}"
     fi
 done
 
-# Handle sbin if present (e.g., chroot)
-if [ -d "$PROVIDER_DIR/sbin" ]; then
-    for sbin_path in "$PROVIDER_DIR/sbin/"*; do
-        [ -e "$sbin_path" ] || continue
-        sbin_name=$(basename "$sbin_path")
-        ln -sfn "/lib/${TARGET}/sbin/${sbin_name}" "${ROOT_PREFIX}/usr/sbin/${sbin_name}"
+# Map /sbin utilities (e.g., chroot, if applicable)
+if [ -d "${ROOT_DIR}/${SRC_DIR}/sbin" ]; then
+    for sbin_path in "${ROOT_DIR}/${SRC_DIR}/sbin/"*; do
+        [ -e "${sbin_path}" ] || continue
+        tool="$(basename "${sbin_path}")"
+        ln -sfn "../${SRC_DIR}/sbin/${tool}" "${ROOT_DIR}/sbin/${tool}"
     done
 fi
 
-echo "Done. Active coreutils provider: $TARGET"
+echo "Done. Active implementation: ${TARGET}"
+
