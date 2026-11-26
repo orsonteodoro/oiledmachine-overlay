@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # /switch-coreutils - Offline-safe coreutils symlink muxer
 # Usage: /mnt/gentoo/switch-coreutils <gnu|uutils|uutils-bin> [target_root]
 
@@ -9,107 +9,94 @@
 # SystemRescue.  This script runs in that context not on the live production
 # system.
 
-set -eu
+set -euo pipefail
 
 echo "WARNING:  DRAFT.  This script is not tested yet."
 
-PROVIDER="${1:-}"
-ROOT="${2:-/mnt/gentoo}"
 
-# Strip trailing slash from ROOT if not "/"
-[ "$ROOT" != "/" ] && ROOT="${ROOT%/}"
+# Usage: /mnt/gentoo/switch-coreutils <gnu|uutils|uutils-bin> [target_root]
+PROVIDER="${1:-}"
+ROOT_DIR="${2:-/mnt/gentoo}"
+
+# Normalize ROOT_DIR (strip trailing slash, handle '/' cleanly)
+ROOT_DIR="${ROOT_DIR%/}"
 
 case "$PROVIDER" in
     gnu)        SRC_BASE="/lib/gnu-coreutils" ;;
     uutils)     SRC_BASE="/lib/uutils-coreutils" ;;
     uutils-bin) SRC_BASE="/lib/uutils-coreutils-bin" ;;
     *)
-        echo "Usage: $0 <gnu|uutils|uutils-bin> [target_root (default: /mnt/gentoo)]" >&2
+        echo "Usage: $0 <gnu|uutils|uutils-bin> [target_root]"
         exit 1
         ;;
 esac
 
-if [ ! -d "${ROOT}${SRC_BASE}" ]; then
-    echo "Error: Provider directory ${ROOT}${SRC_BASE} does not exist." >&2
+if [[ ! -d "${ROOT_DIR}${SRC_BASE}" ]]; then
+    echo "Error: Staging directory ${ROOT_DIR}${SRC_BASE} does not exist."
     exit 1
 fi
 
-# Detect merged-usr vs split-usr on target root
-if [ -L "${ROOT}/bin" ]; then
-    LAYOUT="merged-usr"
-else
-    LAYOUT="split-usr"
+# Detect if target root uses merged-usr (/bin is a symlink)
+IS_MERGED_USR=0
+if [[ -L "${ROOT_DIR}/bin" ]]; then
+    IS_MERGED_USR=1
 fi
 
-echo "Target Root : ${ROOT}"
-echo "Provider    : ${PROVIDER} (${SRC_BASE})"
-echo "Layout      : ${LAYOUT}"
-
-# FHS / Gentoo split-usr essential binaries that MUST reside in /bin
-ROOT_BIN_LIST="
-basename cat chgrp chmod chown cp cut date dd df dirname echo env expr false
-head id ln ls mkdir mknod mktemp mv pwd readlink realpath rm rmdir seq sleep
-sort stty sync tail tee test touch tr true tty uname uniq wc whoami yes [
-"
-
-is_root_bin() {
-    case " $ROOT_BIN_LIST " in
-        *" $1 "*) return 0 ;;
-        *)        return 1 ;;
-    esac
-}
-
-# Helper to atomically replace symlinks using host/liveusb ln
-link_file() {
-    src_rel="$1"   # Path relative to target root (e.g., /lib/gnu-coreutils/bin/ls)
-    dest_abs="$2"  # Full path on live system (e.g., /mnt/gentoo/bin/ls)
-
-    mkdir -p "$(dirname "$dest_abs")"
-    # Remove existing file/symlink if it is not a directory
-    [ -e "$dest_abs" ] || [ -L "$dest_abs" ] && rm -f "$dest_abs"
-    # Create relative or root-anchored symlink valid inside chroot/boot
-    ln -sfn "$src_rel" "$dest_abs"
-}
-
-# Collect all binaries provided by the chosen implementation
-for subdir in "bin" "usr/bin"; do
-    src_dir="${ROOT}${SRC_BASE}/${subdir}"
-    [ -d "$src_dir" ] || continue
-
-    for bin_path in "$src_dir"/*; do
-        [ -e "$bin_path" ] || [ -L "$bin_path" ] || continue
-        bin_name="$(basename "$bin_path")"
-        rel_target="${SRC_BASE}/${subdir}/${bin_name}"
-
-        if [ "$LAYOUT" = "merged-usr" ]; then
-            # On merged-usr, /bin -> usr/bin, so place everything in /usr/bin
-            link_file "$rel_target" "${ROOT}/usr/bin/${bin_name}"
-        else
-            # On split-usr, route essential tools to /bin, others to /usr/bin
-            if is_root_bin "$bin_name"; then
-                link_file "$rel_target" "${ROOT}/bin/${bin_name}"
-                # Remove stale link in /usr/bin if switching from a different layout
-                [ -L "${ROOT}/usr/bin/${bin_name}" ] && rm -f "${ROOT}/usr/bin/${bin_name}"
-            else
-                link_file "$rel_target" "${ROOT}/usr/bin/${bin_name}"
-                [ -L "${ROOT}/bin/${bin_name}" ] && rm -f "${ROOT}/bin/${bin_name}"
+# Backup original coreutils if not already backed up
+BACKUP_DIR="${ROOT_DIR}/lib/coreutils-backup"
+if [[ ! -d "$BACKUP_DIR" ]]; then
+    echo "Creating initial backup at ${BACKUP_DIR}..."
+    mkdir -p "${BACKUP_DIR}/bin" "${BACKUP_DIR}/usr/bin"
+    for dir in bin usr/bin; do
+        for item in "${ROOT_DIR}${SRC_BASE}/${dir}"/*; do
+            [[ -e "$item" ]] || continue
+            base="$(basename "$item")"
+            target="${ROOT_DIR}/${dir}/${base}"
+            if [[ -f "$target" && ! -L "$target" ]]; then
+                cp -a "$target" "${BACKUP_DIR}/${dir}/"
             fi
-        fi
-    done
-done
-
-# Link auxiliary directories (libexec, share/man, etc.)
-for aux_dir in "usr/libexec" "usr/share/man" "usr/share/info"; do
-    src_aux="${ROOT}${SRC_BASE}/${aux_dir}"
-    [ -d "$src_aux" ] || continue
-    # Find all files and symlink them into /usr/...
-    (
-        cd "$src_aux"
-        find . -type f -o -type l | while read -r item; do
-            item="${item#./}"
-            link_file "${SRC_BASE}/${aux_dir}/${item}" "${ROOT}/usr/${aux_dir#usr/}/${item}"
         done
-    )
+    done
+fi
+
+echo "Switching coreutils to '${PROVIDER}' on '${ROOT_DIR:-/}' (merged-usr=${IS_MERGED_USR})..."
+
+link_binaries() {
+    local src_subdir="$1"   # e.g., bin or usr/bin
+    local dest_subdir="$2"  # e.g., bin or usr/bin
+    local rel_prefix="$3"   # e.g., .. or ../..
+
+    mkdir -p "${ROOT_DIR}/${dest_subdir}"
+
+    for item in "${ROOT_DIR}${SRC_BASE}/${src_subdir}"/*; do
+        [[ -e "$item" ]] || continue
+        local name
+        name="$(basename "$item")"
+        local dest="${ROOT_DIR}/${dest_subdir}/${name}"
+
+        # Remove existing binary or symlink safely
+        rm -f "$dest"
+        # Use host's ln with relative target path
+        /bin/ln -s "${rel_prefix}${SRC_BASE}/${src_subdir}/${name}" "$dest"
+    done
+}
+
+if [[ "$IS_MERGED_USR" -eq 1 ]]; then
+    # Target is merged-usr: map both staging /bin and /usr/bin into target /usr/bin
+    link_binaries "bin" "usr/bin" "../.."
+    link_binaries "usr/bin" "usr/bin" "../.."
+else
+    # Target is split-usr: preserve exact /bin and /usr/bin separation
+    link_binaries "bin" "bin" ".."
+    link_binaries "usr/bin" "usr/bin" "../.."
+fi
+
+# Link /usr/libexec and /usr/share if present in the provider
+for extra in usr/libexec usr/share; do
+    if [[ -d "${ROOT_DIR}${SRC_BASE}/${extra}" ]]; then
+        mkdir -p "${ROOT_DIR}/${extra}"
+        cp -rsf "${ROOT_DIR}${SRC_BASE}/${extra}"/* "${ROOT_DIR}/${extra}/" 2>/dev/null || true
+    fi
 done
 
-echo "Successfully switched ${ROOT} to ${PROVIDER}."
+echo "Done. Active coreutils set to ${PROVIDER}."
