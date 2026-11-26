@@ -33,7 +33,11 @@ cases. the current uutils-coreutils-alt ebuild assumes only merged-usr and
 uu- prefix. The current gnu-coreutils handles both merged-usr, split-usr. the
 muxer needs to correct the issue for uutils-coreutils-alt. should i modify the
 uutils-coreutils-alt, uutils-coreutils-bin, gnu-coreutils ebuild to assume
-merged-usr and the muxer is responsible for split-usr conversion?
+merged-usr and the muxer is responsible for split-usr conversion? The coreutils
+package will save a copy of /bin and /usr/bin to /lib/coreutils-backup. the
+uutils-coreutils-alt, gnu-coreutils, uutils-coreutils-bin will assume split-usr
+but the muxer will convert the split-usr staging copies to merged-usr if
+necessary.
 "
 unset _PROMPT
 
