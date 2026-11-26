@@ -3,8 +3,10 @@ set -e
 
 # This file is mostly AI generated.
 
-# It is assumed that the system is booted with Gentoo LiveUSB, SystemRescue, or
-# rescue partition with unpacked Gentoo state3 tarball or SystemRescue.
+# It is assumed that the system is booted with either Gentoo LiveUSB,
+# SystemRescue, or a rescue partition with unpacked Gentoo state3 tarball or
+# SystemRescue.  This script runs in that context not on the live production
+# system.
 
 echo "WARNING:  DRAFT.  This script is not tested yet."
 

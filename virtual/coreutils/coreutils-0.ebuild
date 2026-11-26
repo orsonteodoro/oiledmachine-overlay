@@ -78,8 +78,8 @@ pkg_postinst() {
 einfo
 einfo "The switch-coreutils muxer has been installed."
 einfo "You must use it to set up symlinks to uutils coreutils from either"
-einfo "SystemRescue, Gentoo LiveUSB, rescue partition with unpacked"
-einfo "Gentoo stage3 tarball or SystemRescue.  See also"
+einfo "SystemRescue, Gentoo LiveUSB, or a rescue partition containing"
+einfo "unpacked Gentoo stage3 tarball or SystemRescue.  See also"
 einfo "https://wiki.gentoo.org/wiki/LiveUSB"
 einfo "https://www.system-rescue.org/"
 einfo
