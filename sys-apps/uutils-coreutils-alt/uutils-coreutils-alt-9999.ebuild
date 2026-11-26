@@ -102,8 +102,8 @@ src_unpack() {
 
 src_configure() {
 	chkl_check_many_timestamps
-	cflags-hardened_append
-	rustflags-hardened_append
+	cflags-hardened_append		# For *-sys crates
+	rustflags-hardened_append	# For retpoline/cet, int overflow mitigation
 	default
 }
 
