@@ -20,6 +20,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH BUR DOS ID HO PE SO SYM"
 
 CHKL_TIMESTAMPS=(
 	"app-arch/xz-utils-9999"
+	"dev-libs/openssl-4.0.9999"
+	"dev-libs/openssl-3.6.9999"
+	"dev-libs/openssl-3.5.9999"
 	"sys-apps/acl-9999"
 	"sys-apps/attr-9999"
 	"sys-libs/libcap-9999"
