@@ -1,0 +1,12 @@
+--- a/gnulib/tests/test-readutmp.c.orig	2026-06-30 10:04:53.477237715 -0700
++++ b/gnulib/tests/test-readutmp.c	2026-06-30 10:08:42.322709609 -0700
+@@ -43,6 +43,9 @@ main (int argc, char *argv[])
+   STRUCT_UTMP *entries;
+   idx_t num_entries;
+ 
++  fprintf (stderr, "Skipping test: Gentoo: examines host entries, so unreliable in ebuild\n");
++  return 77;
++
+   if (read_utmp (UTMP_FILE, &num_entries, &entries, 0) < 0)
+     {
+       #if READ_UTMP_SUPPORTED

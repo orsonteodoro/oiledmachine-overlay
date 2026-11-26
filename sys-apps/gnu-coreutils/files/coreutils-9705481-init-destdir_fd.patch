@@ -1,0 +1,12 @@
+# This contains an AI suggested fix
+--- a/src/ln.c.orig	2026-06-30 10:39:45.814440286 -0700
++++ b/src/ln.c	2026-06-30 10:46:14.254381021 -0700
+@@ -518,7 +518,7 @@ main (int argc, char **argv)
+   char const *backup_suffix = NULL;
+   char *version_control_string = NULL;
+   char const *target_directory = NULL;
+-  int destdir_fd;
++  int destdir_fd = -1;
+   bool no_target_directory = false;
+   int n_files;
+   char **file;
