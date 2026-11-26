@@ -10,6 +10,148 @@ EAPI=8
 MY_P="uutils-coreutils-${PV}"
 MY_PN="uutils-coreutils"
 
+#
+# /bin assets for FHS (FSSTND 1.0 -> Filesystem Hierarchy Standard, 1994):
+# cat chgrp chmod chown cp date dd df echo false ln ls
+# mkdir mknod mv pwd rm rmdir stty sync true uname
+#
+# /bin common assets for booting:
+# basename chroot cut dir dirname du env expr head mkfifo
+# mktemp readlink seq sleep sort tail touch tr tty vdir wc yes
+#
+
+BIN_ESSENTIAL=(
+	"basename"
+	"cat"
+	"chgrp"
+	"chmod"
+	"chown"
+	"chroot"
+	"cp"
+	"cut"
+	"date"
+	"dd"
+	"df"
+	"dir"
+	"dirname"
+	"du"
+	"echo"
+	"env"
+	"expr"
+	"false"
+	"head"
+	"ln"
+	"ls"
+	"mkdir"
+	"mkfifo"
+	"mknod"
+	"mktemp"
+	"mv"
+	"pwd"
+	"readlink"
+	"rm"
+	"rmdir"
+	"seq"
+	"sleep"
+	"sort"
+	"stty"
+	"sync"
+	"tail"
+	"touch"
+	"tr"
+	"true"
+	"tty"
+	"uname"
+	"vdir"
+	"wc"
+	"yes"
+)
+
+BIN_NON_ESSENTIAL=(
+	"["
+	"arch"
+	"b2sum"
+	"base32"
+	"base64"
+	"basename"
+	"basenc"
+	"chroot"
+	"cksum"
+	"comm"
+	"csplit"
+	"cut"
+	"dir"
+	"dircolors"
+	"dirname"
+	"du"
+	"env"
+	"expand"
+	"expr"
+	"factor"
+	"fmt"
+	"fold"
+	"groups"
+	"head"
+	"hostid"
+	"id"
+	"install"
+	"join"
+	"link"
+	"logname"
+	"md5sum"
+	"mkfifo"
+	"mktemp"
+	"nice"
+	"nl"
+	"nohup"
+	"nproc"
+	"numfmt"
+	"od"
+	"paste"
+	"pathchk"
+	"pinky"
+	"pr"
+	"printenv"
+	"printf"
+	"ptx"
+	"readlink"
+	"realpath"
+	"seq"
+	"sha1sum"
+	"sha224sum"
+	"sha256sum"
+	"sha384sum"
+	"sha512sum"
+	"shred"
+	"shuf"
+	"sleep"
+	"sort"
+	"split"
+	"stat"
+	"stdbuf"
+	"sum"
+	"tac"
+	"tail"
+	"tee"
+	"test"
+	"timeout"
+	"touch"
+	"tr"
+	"truncate"
+	"tsort"
+	"tty"
+	"uname"
+	"unexpand"
+	"uniq"
+	"unlink"
+	"users"
+	"vdir"
+	"wc"
+	"who"
+	"whoami"
+	"yes"
+)
+
 inherit secure-version
 
 CRATES="
@@ -58,13 +200,20 @@ LICENSE+="
 "
 SLOT="0"
 IUSE="
-debug selinux test
-ebuild_revision_2
+debug kill hostname selinux test
+ebuild_revision_3
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	dev-libs/oniguruma:=
+	hostname? (
+		!sys-apps/net-tools[hostname]
+	)
+	kill? (
+		!sys-apps/util-linux[kill]
+		!sys-process/procps[kill]
+	)
 	selinux? (
 		>=sys-libs/libselinux-${LIBSELINUX_PV}:=
 	)
@@ -129,7 +278,7 @@ src_compile() {
 		PROFILE=$(usex debug debug release)
 
 		PREFIX="${EPREFIX}${prefix}/usr"
-		PROG_PREFIX="uu-"
+		PROG_PREFIX=""
 		MULTICALL=y
 		MANDIR="${prefix}/share/man/man1"
 
@@ -159,4 +308,27 @@ src_test() {
 
 src_install() {
 	emake "${makeargs[@]}" DESTDIR="${D}" install
+	# Install rules:
+	# 1.  Install package into /usr/<pkg-name>
+	# 2.  remove uu- prefix
+	# 3.  standard layout
+	#     /lib/<provider>/
+	#     ├── bin/          # Essential boot/POSIX utilities (cat, cp, dd, ln, ls, mkdir, mv, rm, etc.)
+	#     ├── usr/
+	#     │   ├── bin/      # Non-essential utilities (sha256sum, factor, pinky, etc.)
+	#     │   ├── libexec/
+	#     │   └── share/    # man pages, locales, info
+	#     └── etc/
+
+	local prefix=$(get_prefix)
+	dodir "${prefix}/bin"
+	for x in "${BIN_ESSENTIAL[@]}" ; do
+		mv "${ED}${prefix}/usr/bin/${x}" "${ED}${prefix}/bin/" || die
+	done
+	if ! use hostname ; then
+		rm "${ED}${prefix}/usr/bin/hostname" || true
+	fi
+	if ! use kill ; then
+		rm "${ED}${prefix}/usr/bin/kill" || true
+	fi
 }

@@ -44,9 +44,9 @@ unset _PROMPT
 # sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 #
 # sys-apps/gnu-coreutils, sys-apps/uutils-coreutils-alt,
-# sys-apps/uutils-coreutils-bin assume merged-usr in prefixed directories.
+# sys-apps/uutils-coreutils-bin assume split-usr in prefixed directories.
 #
-# The coreutils-muxer will handle the merged-usr to split-usr conversion.
+# The coreutils-muxer will handle the split-usr to merge-usr conversion.
 #
 # The uutils-coreutils-bin uses prebuilts from uutils-coreutils repo as an
 # alternative or recovery for GNU coreutils stage3 tarball prebuilt.
@@ -73,7 +73,7 @@ inherit chkl secure-version
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 IUSE+="
-gnu +legacy uutils uutils-bin
+gnu hostname kill +legacy uutils uutils-bin
 ebuild_revision_1
 " # Bump the ebuild revision when live timestamp check (chkl, secure-timestamp) is bumped.
 REQUIRED_USE="
@@ -94,16 +94,16 @@ KEYWORDS="~amd64 ~arm64"
 RDEPEND="
 	app-admin/coreutils-muxer
 	gnu? (
-		>=sys-apps/gnu-coreutils-${COREUTILS_PV}
+		>=sys-apps/gnu-coreutils-${COREUTILS_PV}[hostname?,kill?]
 	)
 	legacy? (
-		>=sys-apps/coreutils-${COREUTILS_PV}
+		>=sys-apps/coreutils-${COREUTILS_PV}[hostname?,kill?]
 	)
 	uutils? (
-		>=sys-apps/uutils-coreutils-alt-${UUTILS_COREUTILS_PV}
+		>=sys-apps/uutils-coreutils-alt-${UUTILS_COREUTILS_PV}[hostname?,kill?]
 	)
 	uutils-bin? (
-		>=sys-apps/uutils-coreutils-bin-${UUTILS_COREUTILS_PV}
+		>=sys-apps/uutils-coreutils-bin-${UUTILS_COREUTILS_PV}[hostname?,kill?]
 	)
 "
 

@@ -22,6 +22,148 @@ MY_PN="coreutils"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CRSH BUR DOS ID HO PE SO SYM"
 
+#
+# /bin assets for FHS (FSSTND 1.0 -> Filesystem Hierarchy Standard, 1994):
+# cat chgrp chmod chown cp date dd df echo false ln ls
+# mkdir mknod mv pwd rm rmdir stty sync true uname
+#
+# /bin common assets for booting:
+# basename chroot cut dir dirname du env expr head mkfifo
+# mktemp readlink seq sleep sort tail touch tr tty vdir wc yes
+#
+
+BIN_ESSENTIAL=(
+	"basename"
+	"cat"
+	"chgrp"
+	"chmod"
+	"chown"
+	"chroot"
+	"cp"
+	"cut"
+	"date"
+	"dd"
+	"df"
+	"dir"
+	"dirname"
+	"du"
+	"echo"
+	"env"
+	"expr"
+	"false"
+	"head"
+	"ln"
+	"ls"
+	"mkdir"
+	"mkfifo"
+	"mknod"
+	"mktemp"
+	"mv"
+	"pwd"
+	"readlink"
+	"rm"
+	"rmdir"
+	"seq"
+	"sleep"
+	"sort"
+	"stty"
+	"sync"
+	"tail"
+	"touch"
+	"tr"
+	"true"
+	"tty"
+	"uname"
+	"vdir"
+	"wc"
+	"yes"
+)
+
+BIN_NON_ESSENTIAL=(
+	"["
+	"arch"
+	"b2sum"
+	"base32"
+	"base64"
+	"basename"
+	"basenc"
+	"chroot"
+	"cksum"
+	"comm"
+	"csplit"
+	"cut"
+	"dir"
+	"dircolors"
+	"dirname"
+	"du"
+	"env"
+	"expand"
+	"expr"
+	"factor"
+	"fmt"
+	"fold"
+	"groups"
+	"head"
+	"hostid"
+	"id"
+	"install"
+	"join"
+	"link"
+	"logname"
+	"md5sum"
+	"mkfifo"
+	"mktemp"
+	"nice"
+	"nl"
+	"nohup"
+	"nproc"
+	"numfmt"
+	"od"
+	"paste"
+	"pathchk"
+	"pinky"
+	"pr"
+	"printenv"
+	"printf"
+	"ptx"
+	"readlink"
+	"realpath"
+	"seq"
+	"sha1sum"
+	"sha224sum"
+	"sha256sum"
+	"sha384sum"
+	"sha512sum"
+	"shred"
+	"shuf"
+	"sleep"
+	"sort"
+	"split"
+	"stat"
+	"stdbuf"
+	"sum"
+	"tac"
+	"tail"
+	"tee"
+	"test"
+	"timeout"
+	"touch"
+	"tr"
+	"truncate"
+	"tsort"
+	"tty"
+	"uname"
+	"unexpand"
+	"uniq"
+	"unlink"
+	"users"
+	"vdir"
+	"wc"
+	"who"
+	"whoami"
+	"yes"
+)
+
 CHKL_TIMESTAMPS=(
 	"app-arch/xz-utils-9999"
 	"dev-libs/openssl-4.0.9999"
@@ -354,6 +496,29 @@ src_install() {
 	newins src/dircolors.hin DIR_COLORS
 
 	# The muxer handles split-usr.
+	# Install rules:
+	# 1.  Install package into /usr/<pkg-name>
+	# 2.  remove any prefix
+	# 3.  standard layout
+	#     /lib/<provider>/
+	#     ├── bin/          # Essential boot/POSIX utilities (cat, cp, dd, ln, ls, mkdir, mv, rm, etc.)
+	#     ├── usr/
+	#     │   ├── bin/      # Non-essential utilities (sha256sum, factor, pinky, etc.)
+	#     │   ├── libexec/
+	#     │   └── share/    # man pages, locales, info
+	#     └── etc/
+
+	local prefix=$(get_prefix)
+	dodir "${prefix}/bin"
+	for x in "${BIN_ESSENTIAL[@]}" ; do
+		mv "${ED}${prefix}/usr/bin/${x}" "${ED}${prefix}/bin/" || die
+	done
+	if ! use hostname ; then
+		rm "${ED}${prefix}/usr/bin/hostname" || true
+	fi
+	if ! use kill ; then
+		rm "${ED}${prefix}/usr/bin/kill" || true
+	fi
 }
 
 pkg_postinst() {

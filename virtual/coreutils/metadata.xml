@@ -7,12 +7,18 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
-    <flag name="legacy">
-      Install the GNU coreutils as the only coreutils, as tightly integrated.
-    </flag>
     <flag name="gnu">
       Install the source based GNU coreutils for build system compatibility,
       as modular and switchable.
+    </flag>
+    <flag name="hostname">
+      Prefer the audited coreutils hostname command implementation over others.
+    </flag>
+    <flag name="kill">
+      Prefer the audited coreutils kill command implementation over others.
+    </flag>
+    <flag name="legacy">
+      Install the GNU coreutils as the only coreutils, as tightly integrated.
     </flag>
     <flag name="uutils">
       Install the source based uutils coreutils for security-critical with
