@@ -156,7 +156,7 @@ multilib_src_install_all() {
 	einstalldocs
 
 	if use programs ; then
-		# avoid file collisions with sys-apps/coreutils
+		# avoid file collisions with coreutils
 		local p e
 		for p in "${ED}"/usr/bin/* ; do
 			if [[ -x "${p}" && ! -d "${p}" ]] ; then

@@ -64,7 +64,7 @@ RDEPEND="
 	app-shells/bash
 	dev-vcs/git
 	net-misc/curl
-	sys-apps/coreutils
+	virtual/coreutils
 "
 DEPEND="${RDEPEND}"
 BDEPEND="

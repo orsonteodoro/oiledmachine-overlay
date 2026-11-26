@@ -2146,7 +2146,7 @@ ot-kernel-pkgflags_corefreq() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the coreutils package
 ot-kernel-pkgflags_coreutils() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-apps/coreutils" ; then
+	if ot-kernel_has_version_pkgflags "virtual/coreutils" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
@@ -13293,7 +13293,6 @@ _ot-kernel_set_acl() {
 		"net-proxy/privoxy"
 		"sci-geosciences/qgis"
 		"sys-apps/bfs"
-		"sys-apps/coreutils"
 		"sys-apps/fakeroot"
 		"sys-apps/sed"
 		"sys-apps/shadow"
@@ -13308,6 +13307,7 @@ _ot-kernel_set_acl() {
 		"sys-fs/ntfs3g"
 		"sys-fs/udisks"
 		"virtual/acl"
+		"virtual/coreutils"
 		"www-apps/tt-rss"
 	)
 

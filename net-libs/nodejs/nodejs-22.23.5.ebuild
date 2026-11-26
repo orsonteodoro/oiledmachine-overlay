@@ -201,7 +201,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-build/ninja
-	sys-apps/coreutils
+	virtual/coreutils
 	virtual/pkgconfig
 	mold? (
 		>=sys-devel/mold-${MOLD_PV}:=[${LIBCXX_USEDEP_DEV},${LIBSTDCXX_USEDEP_DEV}]

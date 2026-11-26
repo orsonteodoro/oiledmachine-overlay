@@ -101,7 +101,7 @@ RDEPEND+="
 	hardlink? ( !app-arch/hardlink )
 	logger? ( !>=app-admin/sysklogd-2.0[logger] )
 	kill? (
-		!sys-apps/coreutils[kill]
+		!virtual/coreutils[kill]
 		!sys-process/procps[kill]
 	)
 	su? (

@@ -182,11 +182,6 @@ CFI_BASE_URI="https://github.com/torvalds/linux/commit/"
 CK_BASE_URI="https://github.com/torvalds/linux/commit/"
 CLANG_PGO_FN="clang-pgo-v9.patch"
 
-COREUTILS_IMPL=(
-	"+coreutils"
-	"uutils-coreutils"
-)
-
 EOL_VERSIONS=(
 	"0"
 	"1"
@@ -2197,10 +2192,8 @@ CHKL_TIMESTAMPS+=(
 	"media-gfx/graphicsmagick-9999"
 	"net-misc/curl-9999"
 	"net-misc/iputils-99999999"
-	"sys-apps/coreutils-9999"
 	"sys-apps/findutils-9999"
 	"sys-apps/util-linux-9999"
-	"sys-apps/uutils-coreutils-9999"
 	"sys-kernel/linux-firmware-99999999"
 	"sys-process/procps-9999"
 )
@@ -2295,7 +2288,6 @@ SLOT=${SLOT:-${PV}}
 
 # Upstream keeps reiserfs
 IUSE+="
-${COREUTILS_IMPL[@]/+}
 ${EBUILD_REV}
 ${TRAINERS[@]/#/ot_kernel_trainers_}
 big-endian bzip2 cpu_flags_arm_thumb cuda gost graphicsmagick gtk gzip imagemagick
@@ -2304,9 +2296,6 @@ xz zstd
 "
 
 REQUIRED_USE+="
-	^^ (
-		${COREUTILS_IMPL[@]/+}
-	)
 	ot_kernel_trainers_2d? (
 		pgo
 	)
@@ -2386,9 +2375,7 @@ BDEPEND+="
 	>=sys-apps/util-linux-${UTIL_LINUX_PV}
 	dev-util/patchutils
 	>=sys-apps/findutils-${FINDUTILS_PV}
-	coreutils? (
-		>=sys-apps/coreutils-${COREUTILS_PV}
-	)
+	virtual/coreutils
 	imagemagick? (
 		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}
 		>=app-crypt/rhash-${RHASH_PV}
@@ -2399,9 +2386,6 @@ BDEPEND+="
 	graphicsmagick? (
 		>=media-gfx/graphicsmagick-${GRAPHICSMAGICK_PV}[imagemagick]
 		>=app-crypt/rhash-${RHASH_PV}
-	)
-	uutils-coreutils? (
-		>=sys-apps/uutils-coreutils-${UUTILS_COREUTILS_PV}
 	)
 "
 
@@ -17041,18 +17025,6 @@ eerror "QTCORE_PV is not the same version as Qt5Widgets"
 # Run menuconfig
 ot-kernel_src_configure() {
 	chkl_check_many_timestamps
-	if has_version "sys-apps/uutils-coreutils" ; then
-		if ! use uutils-coreutils ; then
-eerror "Detected sys-apps/uutils-coreutils.  The uutils-coreutils USE flag must be enabled for ${CATEGORY}/${PN}."
-			die
-		fi
-	fi
-	if has_version "sys-apps/coreutils" ; then
-		if ! use coreutils ; then
-eerror "Detected sys-apps/coreutils.  The uutils-coreutils USE flag must be enabled for ${CATEGORY}/${PN}."
-			die
-		fi
-	fi
 	ot-kernel_is_build || return
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do

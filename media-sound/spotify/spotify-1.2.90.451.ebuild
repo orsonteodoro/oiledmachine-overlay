@@ -149,11 +149,6 @@ declare -A atabs=(
 	["sha512"]="\t"
 )
 
-COREUTILS_IMPLS=(
-	"+coreutils"
-	"uutils-coreutils"
-)
-
 CHKL_TIMESTAMPS=(
 	"app-accessibility/at-spi2-core-9999"
 	"app-arch/brotli-9999"
@@ -171,10 +166,8 @@ CHKL_TIMESTAMPS=(
 	"net-libs/nghttp2-9999"
 	"net-misc/wget-9999"
 	"net-print/cups-9999"
-	"sys-apps/coreutils-9999"
 	"sys-apps/dbus-9999"
 	"sys-apps/firejail-9999"
-	"sys-apps/uutils-coreutils-9999"
 	"x11-libs/cairo-9999"
 	"x11-libs/libX11-9999"
 	"x11-libs/libxkbcommon-9999"
@@ -218,7 +211,6 @@ LICENSE="
 RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
-${COREUTILS_IMPLS[@]}
 clang emoji ffmpeg gcc firejail libnotify wayland +X
 ebuild_revision_9
 "
@@ -234,9 +226,6 @@ else
 fi
 
 REQUIRED_USE+="
-	^^ (
-		${COREUTILS_IMPLS[@]/+}
-	)
 	|| (
 		wayland
 		X
@@ -314,12 +303,7 @@ BDEPEND+="
 	>=app-crypt/rhash-${RHASH_PV}
 	>=net-misc/wget-${WGET_PV}
 	app-alternatives/gzip:*
-	coreutils? (
-		>=sys-apps/coreutils-${COREUTILS_PV}
-	)
-	uutils-coreutils? (
-		>=sys-apps/uutils-coreutils-${UUTILS_COREUTILS_PV}
-	)
+	virtual/coreutils
 	wayland? (
 		clang? (
 			>=llvm-core/clang-${CLANG_PV}:=

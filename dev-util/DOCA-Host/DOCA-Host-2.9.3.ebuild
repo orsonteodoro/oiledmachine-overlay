@@ -104,12 +104,12 @@ MLNX_OFED_KERNEL_DKMS_DEPEND="
 	sys-kernel/linux-headers
 "
 MLNX_OFED_KERNEL_UTILS_DEPEND="
-	sys-apps/coreutils
 	sys-apps/grep
 	sys-apps/kmod
 	sys-apps/pciutils
 	sys-process/lsof
 	sys-process/procps
+	virtual/coreutils
 "
 RDEPEND="
 	mlnx-ofed-kernel? (
