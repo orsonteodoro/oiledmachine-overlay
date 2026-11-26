@@ -49,9 +49,21 @@ EAPI=8
 # predominantly the security-critical coreutils.
 #
 
+CHKL_TIMESTAMPS=(
+	"sys-apps/coreutils-9999"
+	"sys-apps/gnu-coreutils-9999"
+	"sys-apps/uutils-coreutils-alt-9999"
+	"sys-apps/uutils-coreutils-bin-9999"
+)
+
+inherit chkl secure-version
+
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
-IUSE+=" gnu +legacy uutils uutils-bin"
+IUSE+="
+gnu +legacy uutils uutils-bin
+ebuild_revision_1
+" # Bump the ebuild revision when live timestamp check (chkl, secure-timestamp) is bumped.
 REQUIRED_USE="
 	legacy? (
 		!gnu
@@ -70,15 +82,19 @@ KEYWORDS="~amd64 ~arm64"
 RDEPEND="
 	app-admin/coreutils-muxer
 	gnu? (
-		sys-apps/gnu-coreutils
+		>=sys-apps/gnu-coreutils-${COREUTILS_PV}
 	)
 	legacy? (
-		sys-apps/coreutils
+		>=sys-apps/coreutils-${COREUTILS_PV}
 	)
 	uutils? (
-		sys-apps/uutils-coreutils-alt
+		>=sys-apps/uutils-coreutils-alt-${UUTILS_COREUTILS_PV}
 	)
 	uutils-bin? (
-		sys-apps/uutils-coreutils-bin
+		>=sys-apps/uutils-coreutils-bin-${UUTILS_COREUTILS_PV}
 	)
 "
+
+src_configure() {
+	chkl_check_many_timestamps
+}
