@@ -26,7 +26,7 @@ CHKL_TIMESTAMPS=(
 	"sys-libs/libselinux-9999"
 )
 
-inherit cargo cflags-hardened flag-o-matic llvm-r2 multiprocessing rustflags-hardened
+inherit cargo cflags-hardened chkl flag-o-matic llvm-r2 multiprocessing rustflags-hardened
 
 DESCRIPTION="GNU coreutils rewritten in Rust"
 HOMEPAGE="https://uutils.github.io/coreutils/ https://github.com/uutils/coreutils"
@@ -57,7 +57,10 @@ LICENSE+="
 	Apache-2.0 BSD-2 BSD Boost-1.0 CC0-1.0 ISC MIT Unicode-3.0 ZLIB
 "
 SLOT="0"
-IUSE="debug selinux split-usr test"
+IUSE="
+debug selinux split-usr test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -99,6 +102,8 @@ src_unpack() {
 
 src_configure() {
 	chkl_check_many_timestamps
+	cflags-hardened_append
+	rustflags-hardened_append
 	default
 }
 
