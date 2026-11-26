@@ -1,6 +1,6 @@
 #!/bin/sh
-# /switch-coreutils - Offline/Online Coreutils Multiplexer for Gentoo
-# Designed to run from SystemRescueCD against /mnt/gentoo (or custom root)
+# /switch-coreutils - Offline-safe coreutils symlink muxer
+# Usage: /mnt/gentoo/switch-coreutils <gnu|uutils|uutils-bin> [target_root]
 
 # This file is mostly AI generated.
 
@@ -13,125 +13,103 @@ set -eu
 
 echo "WARNING:  DRAFT.  This script is not tested yet."
 
-PROVIDERS="gnu-coreutils uutils-coreutils uutils-coreutils-bin"
-TARGET_ROOT="/mnt/gentoo"
-PROVIDER=""
+PROVIDER="${1:-}"
+ROOT="${2:-/mnt/gentoo}"
 
-usage() {
-    cat <<EOF
-Usage: $0 <provider> [target_root]
+# Strip trailing slash from ROOT if not "/"
+[ "$ROOT" != "/" ] && ROOT="${ROOT%/}"
 
-Providers:
-  gnu-coreutils         Switch to source-built GNU coreutils
-  uutils-coreutils      Switch to source-built uutils-coreutils
-  uutils-coreutils-bin  Switch to prebuilt uutils-coreutils-bin
+case "$PROVIDER" in
+    gnu)        SRC_BASE="/lib/gnu-coreutils" ;;
+    uutils)     SRC_BASE="/lib/uutils-coreutils" ;;
+    uutils-bin) SRC_BASE="/lib/uutils-coreutils-bin" ;;
+    *)
+        echo "Usage: $0 <gnu|uutils|uutils-bin> [target_root (default: /mnt/gentoo)]" >&2
+        exit 1
+        ;;
+esac
 
-Arguments:
-  target_root           Path to mounted Gentoo root (default: /mnt/gentoo)
-
-Example (from SystemRescueCD):
-  /mnt/gentoo/switch-coreutils uutils-coreutils /mnt/gentoo
-EOF
-    exit 1
-}
-
-[ $# -lt 1 ] && usage
-PROVIDER="$1"
-[ $# -ge 2 ] && TARGET_ROOT="${2%/}"
-
-# Validate provider
-VALID=0
-for p in $PROVIDERS; do
-    [ "$PROVIDER" = "$p" ] && VALID=1
-done
-if [ "$VALID" -ne 1 ]; then
-    echo "Error: Unknown provider '$PROVIDER'." >&2
-    usage
-fi
-
-# Handle root='/' cleanly
-[ "$TARGET_ROOT" = "/" ] && TARGET_ROOT=""
-
-PROVIDER_DIR="${TARGET_ROOT}/lib/${PROVIDER}"
-if [ ! -d "$PROVIDER_DIR" ]; then
-    echo "Error: Provider directory '$PROVIDER_DIR' does not exist." >&2
+if [ ! -d "${ROOT}${SRC_BASE}" ]; then
+    echo "Error: Provider directory ${ROOT}${SRC_BASE} does not exist." >&2
     exit 1
 fi
 
-# Detect merged-usr vs split-usr
-IS_MERGED_USR=0
-if [ -L "${TARGET_ROOT}/bin" ]; then
-    IS_MERGED_USR=1
-    echo "Detected merged-usr layout at ${TARGET_ROOT:-/}"
+# Detect merged-usr vs split-usr on target root
+if [ -L "${ROOT}/bin" ]; then
+    LAYOUT="merged-usr"
 else
-    echo "Detected split-usr layout at ${TARGET_ROOT:-/}"
+    LAYOUT="split-usr"
 fi
 
-# Helper: Remove old symlinks pointing to ANY managed coreutils provider
-clean_stale_links() {
-    dir="$1"
-    [ ! -d "$dir" ] && return 0
+echo "Target Root : ${ROOT}"
+echo "Provider    : ${PROVIDER} (${SRC_BASE})"
+echo "Layout      : ${LAYOUT}"
 
-    for item in "$dir"/*; do
-        [ -L "$item" ] || continue
-        target=$(readlink "$item" || true)
-        for p in $PROVIDERS; do
-            case "$target" in
-                *"/lib/${p}/"*)
-                    rm -f "$item"
-                    break
-                    ;;
-            esac
-        done
-    done
+# FHS / Gentoo split-usr essential binaries that MUST reside in /bin
+ROOT_BIN_LIST="
+basename cat chgrp chmod chown cp cut date dd df dirname echo env expr false
+head id ln ls mkdir mknod mktemp mv pwd readlink realpath rm rmdir seq sleep
+sort stty sync tail tee test touch tr true tty uname uniq wc whoami yes [
+"
+
+is_root_bin() {
+    case " $ROOT_BIN_LIST " in
+        *" $1 "*) return 0 ;;
+        *)        return 1 ;;
+    esac
 }
 
-# Helper: Link all files from a provider subdir into the system subdir
-link_tree() {
-    rel_sub="$1"
-    src_dir="${PROVIDER_DIR}/${rel_sub}"
-    dst_dir="${TARGET_ROOT}/${rel_sub}"
+# Helper to atomically replace symlinks using host/liveusb ln
+link_file() {
+    src_rel="$1"   # Path relative to target root (e.g., /lib/gnu-coreutils/bin/ls)
+    dest_abs="$2"  # Full path on live system (e.g., /mnt/gentoo/bin/ls)
 
-    # Skip /bin and /sbin on merged-usr systems
-    if [ "$IS_MERGED_USR" -eq 1 ]; then
-        case "$rel_sub" in
-            bin|sbin) return 0 ;;
-        esac
-    fi
+    mkdir -p "$(dirname "$dest_abs")"
+    # Remove existing file/symlink if it is not a directory
+    [ -e "$dest_abs" ] || [ -L "$dest_abs" ] && rm -f "$dest_abs"
+    # Create relative or root-anchored symlink valid inside chroot/boot
+    ln -sfn "$src_rel" "$dest_abs"
+}
 
-    [ -d "$dst_dir" ] || mkdir -p "$dst_dir"
+# Collect all binaries provided by the chosen implementation
+for subdir in "bin" "usr/bin"; do
+    src_dir="${ROOT}${SRC_BASE}/${subdir}"
+    [ -d "$src_dir" ] || continue
 
-    # 1. Clean up existing muxed symlinks in destination
-    clean_stale_links "$dst_dir"
-
-    # 2. Create relative symlinks (-r) for every binary/file in provider
-    [ ! -d "$src_dir" ] && return 0
     for bin_path in "$src_dir"/*; do
-        [ -e "$bin_path" ] || continue
-        bin_name=$(basename "$bin_path")
-        dst_link="${dst_dir}/${bin_name}"
+        [ -e "$bin_path" ] || [ -L "$bin_path" ] || continue
+        bin_name="$(basename "$bin_path")"
+        rel_target="${SRC_BASE}/${subdir}/${bin_name}"
 
-        # Safety check: do not clobber real files owned by other packages (e.g., util-linux)
-        if [ -e "$dst_link" ] && [ ! -L "$dst_link" ]; then
-            echo "Warning: Skipping '${dst_link}' (real file exists, not a symlink)" >&2
-            continue
+        if [ "$LAYOUT" = "merged-usr" ]; then
+            # On merged-usr, /bin -> usr/bin, so place everything in /usr/bin
+            link_file "$rel_target" "${ROOT}/usr/bin/${bin_name}"
+        else
+            # On split-usr, route essential tools to /bin, others to /usr/bin
+            if is_root_bin "$bin_name"; then
+                link_file "$rel_target" "${ROOT}/bin/${bin_name}"
+                # Remove stale link in /usr/bin if switching from a different layout
+                [ -L "${ROOT}/usr/bin/${bin_name}" ] && rm -f "${ROOT}/usr/bin/${bin_name}"
+            else
+                link_file "$rel_target" "${ROOT}/usr/bin/${bin_name}"
+                [ -L "${ROOT}/bin/${bin_name}" ] && rm -f "${ROOT}/bin/${bin_name}"
+            fi
         fi
-
-        # Use GNU ln -sfnr to generate portable relative symlinks
-        ln -sfnr "$bin_path" "$dst_link"
     done
-}
+done
 
-echo "Switching coreutils provider in '${TARGET_ROOT:-/}' to '${PROVIDER}'..."
+# Link auxiliary directories (libexec, share/man, etc.)
+for aux_dir in "usr/libexec" "usr/share/man" "usr/share/info"; do
+    src_aux="${ROOT}${SRC_BASE}/${aux_dir}"
+    [ -d "$src_aux" ] || continue
+    # Find all files and symlink them into /usr/...
+    (
+        cd "$src_aux"
+        find . -type f -o -type l | while read -r item; do
+            item="${item#./}"
+            link_file "${SRC_BASE}/${aux_dir}/${item}" "${ROOT}/usr/${aux_dir#usr/}/${item}"
+        done
+    )
+done
 
-# Link executable directories
-link_tree "bin"
-#link_tree "sbin"
-link_tree "usr/bin"
-#link_tree "usr/sbin"
-link_tree "usr/libexec/coreutils"
-
-# Record active state
-echo "$PROVIDER" > "${TARGET_ROOT}/etc/coreutils-provider"
-echo "Done. Active provider is now: $PROVIDER"
-
+echo "Successfully switched ${ROOT} to ${PROVIDER}."

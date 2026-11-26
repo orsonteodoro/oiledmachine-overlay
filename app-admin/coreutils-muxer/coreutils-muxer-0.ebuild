@@ -8,7 +8,7 @@ DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE="
-ebuild_revision_2
+ebuild_revision_3
 "
 
 src_install() {
