@@ -7,6 +7,9 @@ EAPI=8
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
+IUSE="
+ebuild_revision_1
+"
 
 src_install() {
 	exeinto "/"
