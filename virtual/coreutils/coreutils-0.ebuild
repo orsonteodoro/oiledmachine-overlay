@@ -33,7 +33,7 @@ EAPI=8
 
 # sys-apps/coreutils            - Installed in /bin, /usr/bin, /etc, /usr/share
 # sys-apps/gnu-coreutils        - Installed in /lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
-# sys-apps/uutils-coreutils     - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
+# sys-apps/uutils-coreutils-alt - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 # sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 #
 # The uutils-coreutils-bin uses prebuilts from uutils-coreutils repo as an
@@ -76,7 +76,7 @@ RDEPEND="
 		sys-apps/coreutils
 	)
 	uutils? (
-		sys-apps/uutils-coreutils
+		sys-apps/uutils-coreutils-alt
 	)
 	uutils-bin? (
 		sys-apps/uutils-coreutils-bin
