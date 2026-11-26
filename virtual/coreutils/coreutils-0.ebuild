@@ -34,8 +34,6 @@ EAPI=8
 # sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin};  prebuilt from uutils-coreutils repo as an alternative/recovery for GNU Coreutils stage3 tarball prebuilt.
 # Using multislot can increase the attack surface.  The multislot can be used for compatibility but uses the rust based as fallback for mitigation.
 
-EAPI=8
-
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 IUSE+=" gnu +legacy uutils uutils-bin"
