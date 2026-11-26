@@ -34,13 +34,38 @@ EAPI=8
 
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
+IUSE+=" gnu +legacy uutils uutils-bin"
+REQUIRED_USE="
+	legacy? (
+		!gnu
+		!uutils
+		!uutils-bin
+	)
+	|| (
+		gnu
+		legacy
+		uutils
+		uutils-bin
+	)
+"
 KEYWORDS="~amd64 ~arm64"
 
 RDEPEND="
-	|| (
+	gnu? (
 		sys-apps/gnu-coreutils-alt
-		sys-apps/uutils-coreutils-alt
-		sys-apps/uutils-coreutils-bin
+	)
+	legacy? (
 		sys-apps/coreutils
 	)
+	uutils? (
+		sys-apps/uutils-coreutils-alt
+	)
+	uutils-bin? (
+		sys-apps/uutils-coreutils-bin
+	)
 "
+
+src_install() {
+	exeinto "/"
+	doexe "${FILESDIR}/switch-coreutils"
+}

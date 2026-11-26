@@ -1,6 +1,9 @@
 #!/bin/sh
 # This file is AI generated.
+# DRAFT.  It is not tested yet.
 set -e
+
+echo "WARNING:  This script is not tested yet."
 
 # 1. Bootstrap PATH immediately using gnu-coreutils-alt as fallback 
 # so 'ln', 'rm', and 'basename' work even if /bin symlinks are broken.

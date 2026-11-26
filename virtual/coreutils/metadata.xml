@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="legacy">
+      Install the GNU coreutils as the only coreutils without symlinks.
+    </flag>
+    <flag name="gnu">
+      Install the source based GNU coreutils for build system compatibility.
+    </flag>
+    <flag name="uutils">
+      Install the source based uutils coreutils for security-critical with
+      additional native hardening.
+    </flag>
+    <flag name="uutils-bin">
+      Install the prebuilt uutils coreutils for recovery or quick installs for
+      test driving.
+    </flag>
+  </use>
+</pkgmetadata>
