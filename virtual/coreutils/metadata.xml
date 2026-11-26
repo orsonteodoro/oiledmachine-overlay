@@ -8,7 +8,9 @@
   </maintainer>
   <use>
     <flag name="backup">
-      Make a backup copy of sys-apps/coreutils before using the muxer.
+      Make a backup copy of sys-apps/coreutils before using the
+      coreutils-muxer, a script that allows to switch between GNU coreutils
+      and uutils coreutils during use of a rescue boot disk.
     </flag>
     <flag name="gnu">
       Install the source based GNU coreutils for build system compatibility,
@@ -24,7 +26,7 @@
       Install the GNU coreutils as the only coreutils, as tightly integrated.
     </flag>
     <flag name="uutils">
-      Install the source based uutils coreutils for security-critical with
+      Install the source based uutils coreutils for security-criticality with
       additional native hardening, as modular and switchable.
     </flag>
     <flag name="uutils-bin">
