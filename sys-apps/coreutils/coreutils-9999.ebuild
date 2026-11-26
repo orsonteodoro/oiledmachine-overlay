@@ -505,7 +505,7 @@ pkg_postinst() {
 	ewarn "  changes, such as: source /etc/profile"
 
 	# Copy the /bin, /usr/bin to /lib/coreutils-backup before the
-	# coreutils-muxer clobber.  Allow to unemerge sys-apps/coreutils.
+	# coreutils-muxer clobber.  Allow to unemerge sys-apps/coreutils
 	# but keep the /lib/coreutils-backup folder after emerge.
 	if use backup ; then
 		local prefix="/lib/coreutils-backup"
