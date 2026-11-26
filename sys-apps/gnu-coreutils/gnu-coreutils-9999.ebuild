@@ -213,7 +213,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 IUSE+="
 acl caps gmp hostname kill multicall nls +openssl selinux static test test-full vanilla xattr
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="!test? ( test )"
 
