@@ -132,7 +132,7 @@ src_compile() {
 
 		PROFILE=$(usex debug debug release)
 
-		PREFIX="${EPREFIX}${prefix}"
+		PREFIX="${EPREFIX}${prefix}/usr"
 		PROG_PREFIX="uu-"
 		MULTICALL=y
 		MANDIR="${prefix}/share/man/man1"
@@ -144,7 +144,7 @@ src_compile() {
 		SKIP_UTILS="$(usev elibc_musl "pinky uptime users who")"
 
 		# bug #963516
-		LIBSTDBUF_DIR="${EPREFIX}${prefix}/libexec/${MY_PN}"
+		LIBSTDBUF_DIR="${EPREFIX}${prefix}/usr/libexec/${MY_PN}"
 	)
 
 	emake "${makeargs[@]}"
