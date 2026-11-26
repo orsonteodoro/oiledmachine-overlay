@@ -32,8 +32,8 @@ EAPI=8
 #
 
 # sys-apps/coreutils            - Installed in /bin, /usr/bin, /etc, /usr/share
-# sys-apps/gnu-coreutils    - Installed in /lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
-# sys-apps/uutils-coreutils - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
+# sys-apps/gnu-coreutils        - Installed in /lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
+# sys-apps/uutils-coreutils     - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 # sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 #
 # The uutils-coreutils-bin uses prebuilts from uutils-coreutils repo as an
@@ -41,6 +41,12 @@ EAPI=8
 #
 # Using multislot can increase the attack surface.  The multislot can be
 # used for compatibility but uses the rust based as fallback for mitigation.
+# The decoupling allows for mitigation against hardcoded paths.  The hard
+# coded paths get redirected to compatibility-critical or security-critical
+# coreutils depending on what the user selects with the muxer.  The
+# user can decide to switch to compatibility for @world update then switch
+# to hardened, or use stupid PATH tricks to switch to compatibility but use
+# predominantly the security-critical coreutils.
 #
 
 DESCRIPTION="Virtual for coreutils implementations"
