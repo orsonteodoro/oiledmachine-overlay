@@ -8,18 +8,19 @@
   </maintainer>
   <use>
     <flag name="legacy">
-      Install the GNU coreutils as the only coreutils without symlinks.
+      Install the GNU coreutils as the only coreutils, as tightly integrated.
     </flag>
     <flag name="gnu">
-      Install the source based GNU coreutils for build system compatibility.
+      Install the source based GNU coreutils for build system compatibility,
+      as modular and switchable.
     </flag>
     <flag name="uutils">
       Install the source based uutils coreutils for security-critical with
-      additional native hardening.
+      additional native hardening, as modular and switchable.
     </flag>
     <flag name="uutils-bin">
       Install the prebuilt uutils coreutils for recovery or quick installs for
-      test driving.
+      test driving, as modular and switchable.
     </flag>
   </use>
 </pkgmetadata>

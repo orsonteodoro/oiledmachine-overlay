@@ -1,5 +1,5 @@
-#!/bin/sh
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
 # This file is mostly AI generated.
 
@@ -10,10 +10,12 @@ set -e
 
 echo "WARNING:  DRAFT.  This script is not tested yet."
 
-#!/usr/bin/env bash
-set -euo pipefail
+# Explicitly use host tools (critical when running from SystemRescueCD)
+LN_BIN="/bin/ln"
+RM_BIN="/bin/rm"
+MKDIR_BIN="/bin/mkdir"
 
-ROOT_DIR="/"
+TARGET_ROOT="/"
 PROVIDER=""
 
 usage() {
@@ -24,8 +26,8 @@ usage() {
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --root)
-            ROOT_DIR="${2%/}"
-            [[ -z "$ROOT_DIR" ]] && ROOT_DIR="/"
+            TARGET_ROOT="${2%/}"
+            [[ -z "$TARGET_ROOT" ]] && TARGET_ROOT="/"
             shift 2
             ;;
         gnu|uutils|uutils-bin)
@@ -41,73 +43,71 @@ done
 [[ -z "$PROVIDER" ]] && usage
 
 case "$PROVIDER" in
-    gnu)        SRC_BASE="/usr/lib/gnu-coreutils" ;;
-    uutils)     SRC_BASE="/usr/lib/uucore-utils" ;;
-    uutils-bin) SRC_BASE="/usr/lib/uutils-coreutils-bin" ;;
+    gnu)        SRC_SUBDIR="usr/lib/gnu-coreutils" ;;
+    uutils)     SRC_SUBDIR="usr/lib/uucore-utils" ;;
+    uutils-bin) SRC_SUBDIR="usr/lib/uutils-coreutils-bin" ;;
 esac
 
-TARGET_SRC="${ROOT_DIR}${SRC_BASE}"
+FULL_SRC="${TARGET_ROOT}/${SRC_SUBDIR}"
+[[ "$TARGET_ROOT" == "/" ]] && FULL_SRC="/${SRC_SUBDIR}"
 
-if [[ ! -d "${TARGET_SRC}/bin" ]]; then
-    echo "Error: ${TARGET_SRC}/bin does not exist." >&2
+if [[ ! -d "$FULL_SRC" ]]; then
+    echo "Error: Provider directory $FULL_SRC does not exist." >&2
     exit 1
 fi
 
-# Detect merged-usr on target root
-IS_MERGED=0
-if [[ -L "${ROOT_DIR}/bin" ]]; then
-    IS_MERGED=1
-    echo "Detected merged-usr layout at ${ROOT_DIR}"
+# Detect merged-usr vs split-usr in the target root
+IS_MERGED_USR=0
+if [[ -L "${TARGET_ROOT}/bin" ]]; then
+    IS_MERGED_USR=1
+    echo "Detected merged-usr layout in ${TARGET_ROOT}"
 else
-    echo "Detected split-usr layout at ${ROOT_DIR}"
+    echo "Detected split-usr layout in ${TARGET_ROOT}"
 fi
 
-# Core utilities typically expected in /bin on split-usr Gentoo systems
-ROOT_BIN_UTILS=(
-    basename cat chgrp chmod chown cp date dd df echo false ln ls mkdir
-    mknod mv pwd rm rmdir sleep stty sync true uname
-)
+link_tree() {
+    local sub="$1"          # e.g., "bin", "usr/bin", "usr/share"
+    local target_dir="$2"   # Destination relative to TARGET_ROOT, e.g., "usr/bin"
+    local rel_prefix="$3"   # Relative path back to root from target_dir, e.g., ".." or "../.."
 
-is_root_bin() {
-    local item="$1"
-    for b in "${ROOT_BIN_UTILS[@]}"; do
-        [[ "$b" == "$item" ]] && return 0
-    done
-    return 1
-}
+    local src_path="${FULL_SRC}/${sub}"
+    local dst_path="${TARGET_ROOT}/${target_dir}"
+    [[ "$TARGET_ROOT" == "/" ]] && dst_path="/${target_dir}"
 
-link_dir() {
-    local sub="$1" # bin or sbin
-    local src_dir="${TARGET_SRC}/${sub}"
-    [[ ! -d "$src_dir" ]] && return 0
+    [[ ! -d "$src_path" ]] && return 0
 
-    for bin_path in "${src_dir}"/*; do
-        [[ ! -e "$bin_path" ]] && continue
-        local bin_name
-        bin_name=$(basename "$bin_path")
+    "$MKDIR_BIN" -p "$dst_path"
 
-        if [[ $IS_MERGED -eq 1 ]]; then
-            # Merged-usr: everything links from /usr/{bin,sbin}
-            ln -sfn "../lib/${SRC_BASE#/usr/lib/}/${sub}/${bin_name}" \
-                "${ROOT_DIR}/usr/${sub}/${bin_name}"
-        else
-            # Split-usr: essential utils go to /{bin,sbin}, others to /usr/{bin,sbin}
-            if [[ "$sub" == "bin" ]] && is_root_bin "$bin_name"; then
-                ln -sfn "..${SRC_BASE}/${sub}/${bin_name}" \
-                    "${ROOT_DIR}/${sub}/${bin_name}"
-                # Optional: remove /usr/bin duplicate if present, or link it too
-                ln -sfn "../lib/${SRC_BASE#/usr/lib/}/${sub}/${bin_name}" \
-                    "${ROOT_DIR}/usr/${sub}/${bin_name}"
-            else
-                ln -sfn "../lib/${SRC_BASE#/usr/lib/}/${sub}/${bin_name}" \
-                    "${ROOT_DIR}/usr/${sub}/${bin_name}"
-            fi
-        fi
+    # Iterate through files/symlinks in the provider's directory
+    local item base
+    for item in "$src_path"/*; do
+        [[ -e "$item" || -L "$item" ]] || continue
+        base="${item##*/}"
+        
+        # Create relative symlink so it works both in /mnt/gentoo and after reboot
+        # e.g., /usr/bin/ls -> ../../usr/lib/uucore-utils/usr/bin/ls
+        "$LN_BIN" -sfn "${rel_prefix}/${SRC_SUBDIR}/${sub}/${base}" "${dst_path}/${base}"
     done
 }
 
-echo "Switching coreutils at ${ROOT_DIR} to ${PROVIDER}..."
-link_dir "bin"
-link_dir "sbin"
-echo "Done."
+# 1. Handle /bin and /usr/bin based on split-usr vs merged-usr
+if [[ "$IS_MERGED_USR" -eq 1 ]]; then
+    # In merged-usr, everything goes into /usr/bin (which /bin points to)
+    link_tree "bin" "usr/bin" "../.."
+    link_tree "usr/bin" "usr/bin" "../.."
+else
+    # In split-usr, keep /bin and /usr/bin distinct
+    link_tree "bin" "bin" ".."
+    link_tree "usr/bin" "usr/bin" "../.."
+fi
 
+# 2. Handle libexec, share (manpages/locales), and etc
+link_tree "usr/libexec" "usr/libexec" "../.."
+link_tree "etc" "etc" ".."
+
+# For /usr/share, link subdirectories/files carefully (e.g., man/man1, locale)
+if [[ -d "${FULL_SRC}/usr/share/man/man1" ]]; then
+    link_tree "usr/share/man/man1" "usr/share/man/man1" "../../../.."
+fi
+
+echo "Successfully switched coreutils in '${TARGET_ROOT}' to '${PROVIDER}'."
