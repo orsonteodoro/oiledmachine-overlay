@@ -10,8 +10,8 @@ EAPI=8
 # Prompt:
 #
 # what would the meta package for gentoo for gnu coreutils and uutils coreutils
-# look like? I need to create two separate installs for gnu-coreutils-alt,
-# uutils-coreutils-alt, uutils-coreutils-bin (prebuilt) with modified ebuilds.
+# look like? I need to create two separate installs for gnu-coreutils,
+# uutils-coreutils, uutils-coreutils-bin (prebuilt) with modified ebuilds.
 # gnu-coreutils-alt will install in
 # /usr/lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share}.
 # uutils-coreutils-alt installs to
@@ -19,8 +19,8 @@ EAPI=8
 # uutils-coreutils-bin will install to
 # /usr/lib/uutils-coreutils-bin/{bin,usr/bin,usr/libexec,etc,usr/share}. then i
 # will switch using a muxer to either uutils-coreutils prebuilt or source based
-# uutils core utils. i want to use a muxer installed at
-# /usr/bin/switch-coreutils controlled from systemrescuecd to control the
+# uutils core utils. i want to use a muxer installed at /switch-coreutils in
+# the gentoo root partition controlled from systemrescuecd to control the
 # symlinks and the system mounted in /mnt/gentoo. if a package requires
 # gnu-coreutils will it be easy to just do a path change? do i need to uninstall
 # the sys-apps/coreutils before using the muxer or should a separate script be
@@ -32,8 +32,8 @@ EAPI=8
 #
 
 # sys-apps/coreutils            - Installed in /bin, /usr/bin, /etc, /usr/share
-# sys-apps/gnu-coreutils-alt    - Installed in /lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
-# sys-apps/uutils-coreutils-alt - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
+# sys-apps/gnu-coreutils    - Installed in /lib/gnu-coreutils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
+# sys-apps/uutils-coreutils - Installed in /lib/uucore-utils/{bin,usr/bin,usr/libexec,etc,usr/share} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 # sys-apps/uutils-coreutils-bin - Installed in /lib/uutils-coreutils-bin/{bin,sbin} then symlinked to /bin, /usr/bin, /etc, /usr/share via a muxer.
 #
 # The uutils-coreutils-bin uses prebuilts from uutils-coreutils repo as an
@@ -64,13 +64,13 @@ KEYWORDS="~amd64 ~arm64"
 RDEPEND="
 	app-admin/coreutils-muxer
 	gnu? (
-		sys-apps/gnu-coreutils-alt
+		sys-apps/gnu-coreutils
 	)
 	legacy? (
 		sys-apps/coreutils
 	)
 	uutils? (
-		sys-apps/uutils-coreutils-alt
+		sys-apps/uutils-coreutils
 	)
 	uutils-bin? (
 		sys-apps/uutils-coreutils-bin
