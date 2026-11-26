@@ -36,4 +36,9 @@ einfo "Before switching or unemerging sys-apps/coreutils make a backup of"
 einfo "/bin, /usr/bin to /lib/coreutils-backup or use the backup USE flag"
 einfo "with the sys-apps/coreutils ebuild."
 einfo
+einfo "To satisfy sys-apps/coreutils for @system without uninstalling conflicts:"
+einfo
+einfo "mkdir -p /etc/portage/profile"
+einfo "echo \"sys-apps/coreutils-9.5\" >> /etc/portage/profile/package.provided"
+einfo
 }
