@@ -6,7 +6,9 @@ EAPI=8
 
 # This file is mostly AI generated.
 
+#
 # Prompt:
+#
 # what would the meta package for gentoo for gnu coreutils and uutils coreutils
 # look like? I need to create two separate installs for gnu-coreutils-alt,
 # uutils-coreutils-alt, uutils-coreutils-bin (prebuilt) with modified ebuilds.
@@ -22,7 +24,9 @@ EAPI=8
 # save and restore sys-apps/coreutils install?  for the muxer script, it will
 # assume the ln command will be used from liveusb or systemrescuecd.  is the
 # script split-usr compatible? should i change the path to /lib/gnu-coreutils,
-# /lib/uutils-coreutils instead? i am using split-usr.
+# /lib/uutils-coreutils instead?  i am using split-usr but the script and configs
+# need to also accomodate merge-usr cases.
+#
 
 # sys-apps/coreutils            - Installed in /bin, /sbin
 # sys-apps/gnu-coreutils-alt    - Installed in /lib/gnu-coreutils/{bin,sbin}

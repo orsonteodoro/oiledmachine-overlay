@@ -8,58 +8,104 @@ set -e
 
 echo "WARNING:  DRAFT.  This script is not tested yet."
 
-TARGET="${1}"
-ROOT_DIR="${2:-/}" # Defaults to / if not provided (e.g., /mnt/gentoo)
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Normalize ROOT_DIR (strip trailing slash unless it's just /)
-ROOT_DIR="${ROOT_DIR%/}"
+ROOT_DIR="/"
+PROVIDER=""
 
-case "${TARGET}" in
-    gnu)
-        SRC_DIR="lib/gnu-coreutils"
-        ;;
-    uutils-src)
-        SRC_DIR="lib/uutils-coreutils"
-        ;;
-    uutils-bin)
-        SRC_DIR="lib/uutils-coreutils-bin"
-        ;;
-    *)
-        echo "Usage: $0 <gnu|uutils-src|uutils-bin> [target_root]"
-        echo "Example (RescueCD): $0 gnu /mnt/gentoo"
-        exit 1
-        ;;
+usage() {
+    echo "Usage: $0 [--root /mnt/gentoo] <gnu|uutils|uutils-bin>"
+    exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --root)
+            ROOT_DIR="${2%/}"
+            [[ -z "$ROOT_DIR" ]] && ROOT_DIR="/"
+            shift 2
+            ;;
+        gnu|uutils|uutils-bin)
+            PROVIDER="$1"
+            shift
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+[[ -z "$PROVIDER" ]] && usage
+
+case "$PROVIDER" in
+    gnu)        SRC_BASE="/usr/lib/gnu-coreutils" ;;
+    uutils)     SRC_BASE="/usr/lib/uucore-utils" ;;
+    uutils-bin) SRC_BASE="/usr/lib/uutils-coreutils-bin" ;;
 esac
 
-if [ ! -d "${ROOT_DIR}/${SRC_DIR}/bin" ]; then
-    echo "Error: Implementation directory ${ROOT_DIR}/${SRC_DIR}/bin does not exist."
+TARGET_SRC="${ROOT_DIR}${SRC_BASE}"
+
+if [[ ! -d "${TARGET_SRC}/bin" ]]; then
+    echo "Error: ${TARGET_SRC}/bin does not exist." >&2
     exit 1
 fi
 
-echo "Switching coreutils in '${ROOT_DIR:-/}' to '${TARGET}'..."
-
-# Map /bin utilities (Critical for split-usr early boot)
-for bin_path in "${ROOT_DIR}/${SRC_DIR}/bin/"*; do
-    [ -e "${bin_path}" ] || continue
-    tool="$(basename "${bin_path}")"
-    
-    # Create relative symlink: /bin/ls -> ../lib/gnu-coreutils/bin/ls
-    ln -sfn "../${SRC_DIR}/bin/${tool}" "${ROOT_DIR}/bin/${tool}"
-    
-    # Optional: Maintain /usr/bin compatibility symlinks if legacy scripts hardcode /usr/bin
-    if [ -L "${ROOT_DIR}/usr/bin/${tool}" ] || [ ! -e "${ROOT_DIR}/usr/bin/${tool}" ]; then
-        ln -sfn "../../bin/${tool}" "${ROOT_DIR}/usr/bin/${tool}"
-    fi
-done
-
-# Map /sbin utilities (e.g., chroot, if applicable)
-if [ -d "${ROOT_DIR}/${SRC_DIR}/sbin" ]; then
-    for sbin_path in "${ROOT_DIR}/${SRC_DIR}/sbin/"*; do
-        [ -e "${sbin_path}" ] || continue
-        tool="$(basename "${sbin_path}")"
-        ln -sfn "../${SRC_DIR}/sbin/${tool}" "${ROOT_DIR}/sbin/${tool}"
-    done
+# Detect merged-usr on target root
+IS_MERGED=0
+if [[ -L "${ROOT_DIR}/bin" ]]; then
+    IS_MERGED=1
+    echo "Detected merged-usr layout at ${ROOT_DIR}"
+else
+    echo "Detected split-usr layout at ${ROOT_DIR}"
 fi
 
-echo "Done. Active implementation: ${TARGET}"
+# Core utilities typically expected in /bin on split-usr Gentoo systems
+ROOT_BIN_UTILS=(
+    basename cat chgrp chmod chown cp date dd df echo false ln ls mkdir
+    mknod mv pwd rm rmdir sleep stty sync true uname
+)
+
+is_root_bin() {
+    local item="$1"
+    for b in "${ROOT_BIN_UTILS[@]}"; do
+        [[ "$b" == "$item" ]] && return 0
+    done
+    return 1
+}
+
+link_dir() {
+    local sub="$1" # bin or sbin
+    local src_dir="${TARGET_SRC}/${sub}"
+    [[ ! -d "$src_dir" ]] && return 0
+
+    for bin_path in "${src_dir}"/*; do
+        [[ ! -e "$bin_path" ]] && continue
+        local bin_name
+        bin_name=$(basename "$bin_path")
+
+        if [[ $IS_MERGED -eq 1 ]]; then
+            # Merged-usr: everything links from /usr/{bin,sbin}
+            ln -sfn "../lib/${SRC_BASE#/usr/lib/}/${sub}/${bin_name}" \
+                "${ROOT_DIR}/usr/${sub}/${bin_name}"
+        else
+            # Split-usr: essential utils go to /{bin,sbin}, others to /usr/{bin,sbin}
+            if [[ "$sub" == "bin" ]] && is_root_bin "$bin_name"; then
+                ln -sfn "..${SRC_BASE}/${sub}/${bin_name}" \
+                    "${ROOT_DIR}/${sub}/${bin_name}"
+                # Optional: remove /usr/bin duplicate if present, or link it too
+                ln -sfn "../lib/${SRC_BASE#/usr/lib/}/${sub}/${bin_name}" \
+                    "${ROOT_DIR}/usr/${sub}/${bin_name}"
+            else
+                ln -sfn "../lib/${SRC_BASE#/usr/lib/}/${sub}/${bin_name}" \
+                    "${ROOT_DIR}/usr/${sub}/${bin_name}"
+            fi
+        fi
+    done
+}
+
+echo "Switching coreutils at ${ROOT_DIR} to ${PROVIDER}..."
+link_dir "bin"
+link_dir "sbin"
+echo "Done."
 
