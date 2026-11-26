@@ -25,4 +25,11 @@ einfo "unpacked Gentoo stage3 tarball or SystemRescue.  See also"
 einfo "https://wiki.gentoo.org/wiki/LiveUSB"
 einfo "https://www.system-rescue.org/"
 einfo
+einfo
+einfo "To switch, use one of the following with one of the boot disks:"
+einfo
+einfo "/mnt/gentoo/switch-coreutils gnu /mnt/gentoo"
+einfo "/mnt/gentoo/switch-coreutils uutils /mnt/gentoo"
+einfo "/mnt/gentoo/switch-coreutils uutils-bin /mnt/gentoo"
+einfo
 }

@@ -522,7 +522,14 @@ src_install() {
 }
 
 pkg_postinst() {
-	ewarn "Make sure you run 'hash -r' in your active shells."
-	ewarn "You should also re-source your shell settings for LS_COLORS"
-	ewarn "  changes, such as: source /etc/profile"
+ewarn
+ewarn "Make sure you run 'hash -r' in your active shells."
+ewarn "You should also re-source your shell settings for LS_COLORS"
+ewarn "  changes, such as: source /etc/profile"
+ewarn
+einfo
+einfo "To switch, use the following with one of the boot disks:"
+einfo
+einfo "/mnt/gentoo/switch-coreutils gnu /mnt/gentoo"
+einfo
 }

@@ -60,6 +60,15 @@ unset _PROMPT
 # to hardened, or use stupid PATH tricks to switch to compatibility but use
 # predominantly the security-critical coreutils.
 #
+# For packages that require gnu coreutils, you can use
+# PATH="/lib/gnu-coreutils/bin:/lib/gnu-coreutils/usr/bin:${PATH}"
+#
+# To switch, use one of the following from one of the boot disks:
+#
+# /mnt/gentoo/switch-coreutils gnu /mnt/gentoo
+# /mnt/gentoo/switch-coreutils uutils /mnt/gentoo
+# /mnt/gentoo/switch-coreutils uutils-bin /mnt/gentoo
+#
 
 CHKL_TIMESTAMPS=(
 	"sys-apps/coreutils-9999"

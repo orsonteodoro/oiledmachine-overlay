@@ -332,3 +332,11 @@ src_install() {
 		rm "${ED}${prefix}/usr/bin/kill" || true
 	fi
 }
+
+pkg_postinst() {
+einfo
+einfo "To switch, use the following with one of the boot disks:"
+einfo
+einfo "/mnt/gentoo/switch-coreutils uutils /mnt/gentoo"
+einfo
+}
