@@ -55,6 +55,7 @@ REQUIRED_USE="
 KEYWORDS="~amd64 ~arm64"
 
 RDEPEND="
+	app-admin/coreutils-muxer
 	gnu? (
 		sys-apps/gnu-coreutils-alt
 	)
@@ -68,19 +69,3 @@ RDEPEND="
 		sys-apps/uutils-coreutils-bin
 	)
 "
-
-src_install() {
-	exeinto "/"
-	doexe "${FILESDIR}/switch-coreutils"
-}
-
-pkg_postinst() {
-einfo
-einfo "The switch-coreutils muxer has been installed."
-einfo "You must use it to set up symlinks to uutils coreutils from either"
-einfo "SystemRescue, Gentoo LiveUSB, or a rescue partition containing"
-einfo "unpacked Gentoo stage3 tarball or SystemRescue.  See also"
-einfo "https://wiki.gentoo.org/wiki/LiveUSB"
-einfo "https://www.system-rescue.org/"
-einfo
-}
