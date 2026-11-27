@@ -220,6 +220,7 @@ SECURE_TIMESTAMP["dev_lang_mujs_9999"]="May 6, 2026 8:40 AM PDT"
 SECURE_TIMESTAMP["dev_lang_rust_9999"]="Fri, 6 Nov 2026 10:09:36 -0800" # Same as latest version bump.  See https://github.com/rust-lang/rust/commits/main/src/version
 SECURE_TIMESTAMP["dev_lang_rust_bin_9999"]="Fri, 6 Nov 2026 10:09:36 -0800" # Same as latest version bump.  See https://github.com/rust-lang/rust/commits/main/src/version
 SECURE_TIMESTAMP["dev_qt_qtbase_6_9999"]="Jun 24, 2026 7:51 AM PDT"
+SECURE_TIMESTAMP["dev_util_ccache_9999"]="Nov 22, 2026 12:28 AM PST"
 SECURE_TIMESTAMP["dev_util_glslang_9999"]="Nov 25, 2026 7:10 PM PST"
 SECURE_TIMESTAMP["dev_util_spirv_headers_9999"]="Nov 25, 2026 8:47 AM PST"
 SECURE_TIMESTAMP["dev_util_spirv_llvm_translator_9999"]="Nov 25, 2026 1:14 PM PST"
