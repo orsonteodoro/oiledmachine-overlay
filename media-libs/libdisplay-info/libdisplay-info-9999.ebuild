@@ -8,13 +8,13 @@ PYTHON_COMPAT=( python3_{10..14} )
 inherit meson-multilib python-any-r1 verify-sig
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="8057b299308828aeefb97076b1b0a0649f8fcae5"
+	FALLBACK_COMMIT="548330bca9bd3c6518cf4c6b38c954cfaabe782d"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/emersion/libdisplay-info.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
 		IUSE+=" fallback-commit"
 	fi
-	SOVER="4"
+	SOVER="5"
 	SLOT="0/${SOVER}"
 	inherit git-r3
 else
@@ -29,7 +29,7 @@ fi
 DESCRIPTION="EDID and DisplayID library"
 HOMEPAGE="https://gitlab.freedesktop.org/emersion/libdisplay-info"
 LICENSE="MIT"
-IUSE+=" ebuild_revision_1"
+IUSE+=" ebuild_revision_2"
 BDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
