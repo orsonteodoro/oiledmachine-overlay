@@ -10,7 +10,7 @@ CHKL_TIMESTAMPS=(
 inherit chkl cmake-multilib secure-version
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="55ceae49ba0882d4c514a1828a7e3f0ad2c75d30"
+	FALLBACK_COMMIT="f151d86c1b14fd6cabcd495c0968b9134b782161"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/taglib/taglib.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -30,7 +30,7 @@ SOVER="2"
 SLOT="0/${SOVER}"
 IUSE+="
 doc examples test
-ebuild_revision_2
+ebuild_revision_3
 "
 
 RESTRICT="!test? ( test )"
