@@ -14,9 +14,9 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl flag-o-matic secure-version toolchain-funcs multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	INTERNAL_VERSION="1.4.6"
+	INTERNAL_VERSION="1.4.6" # See https://github.com/rhash/RHash/blob/master/version.h
 	SOVER=$(ver_cut 1 "${INTERNAL_VERSION}")
-	FALLBACK_COMMIT="3dbba4baa3cbdc3baf06d3ba086d8094bd98cd88"
+	FALLBACK_COMMIT="bc322d52abc48b9aba0c2131247f1afa5a1ba7d3"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/RHash-${PV}"
 	EGIT_REPO_URI="https://github.com/rhash/RHash.git"
@@ -29,14 +29,17 @@ else
 	SRC_URI="https://downloads.sourceforge.net/${PN}/${P}-src.tar.gz"
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86 ~arm64-macos ~x64-macos ~x64-solaris"
 fi
+S="${WORKDIR}/RHash-${PV}"
 
 DESCRIPTION="Console utility and library for computing and verifying file hash sums"
 HOMEPAGE="https://rhash.sourceforge.net/"
 
 LICENSE="0BSD"
 SLOT="0/${SOVER}"
-IUSE="cpu_flags_x86_sha debug nls ssl static-libs"
-S="${WORKDIR}/RHash-${PV}"
+IUSE="
+cpu_flags_x86_sha debug nls ssl static-libs
+ebuild_revision_1
+"
 
 RDEPEND="
 	ssl? (
@@ -63,7 +66,8 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
-	local actual_sover=$(grep -E -o -e "[0-9.]+" "${S}/version.h" | cut -f 1 -d ".")
+	local actual_sover=$(grep -E -o -e "[0-9.]+" "${S}/version.h" \
+		| cut -f 1 -d ".")
 	local expected_sover="${SOVER}"
 	if ver_test "${actual_sover}" "-ne" "${expected_sover}" ; then
 eerror "QA:  Update PV or INTERNAL_VERSION"
