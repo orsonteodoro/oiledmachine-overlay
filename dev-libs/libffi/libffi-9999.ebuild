@@ -17,7 +17,7 @@ DESCRIPTION="Portable, high level programming interface to various calling conve
 HOMEPAGE="https://sourceware.org/libffi/"
 
 if [[ ${PV} == 9999 ]] ; then
-	FALLBACK_COMMIT="c93f9428d17cde4eb35517b58feeae6fb43aba5b"
+	FALLBACK_COMMIT="ddd2fe13ee32da9b41fbcc68e03bf2854b25d1c5"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/libffi/libffi"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -43,7 +43,7 @@ SOVER="8" # SOVER = CURRENT - AGE, C:R:A in https://github.com/libffi/libffi/blo
 SLOT="0/${SOVER}" # SONAME=libffi.so.8
 IUSE+="
 debug +exec-static-trampoline pax-kernel static-libs test
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RESTRICT="!test? ( test )"
