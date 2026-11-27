@@ -18,6 +18,7 @@ else
 fi
 
 # Processes untrusted repos, environment variable secrets (e.g. Cloud LLM API keys)
+# Because of live ebuilds, it becomes security-critical.
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data"
 
 MY_DOCS_PREBUILT_DEV=sam
