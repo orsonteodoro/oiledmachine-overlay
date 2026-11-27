@@ -10,7 +10,7 @@ COMMIT_ID="d277a0a3cda9c682708c93279f0c72cd6b0ae3f3"
 inherit cmake
 
 if [[ ${PV} == *9999* ]]; then
-	INTERNAL_PV="1.4.368" # https://github.com/KhronosGroup/Vulkan-Headers/blob/main/include/vulkan/vulkan_core.h#L66
+	INTERNAL_PV="1.4.369" # https://github.com/KhronosGroup/Vulkan-Headers/blob/main/include/vulkan/vulkan_core.h#L66
 	FALLBACK_COMMIT="${COMMIT_ID}"
 	if [[ -n "${FLAVOR}" ]] ; then
 		EGIT_BRANCH="${FLAVOR}-1.4.356"
@@ -36,7 +36,10 @@ HOMEPAGE="https://github.com/KhronosGroup/Vulkan-Headers"
 
 LICENSE="Apache-2.0"
 SLOT="0/${INTERNAL_PV}"
-IUSE+=" test"
+IUSE+="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 src_unpack() {
