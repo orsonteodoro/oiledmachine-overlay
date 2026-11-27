@@ -1,0 +1,14 @@
+diff '--color=auto' -urp libdisplay-info-9999.orig/meson.build libdisplay-info-9999/meson.build
+--- libdisplay-info-9999.orig/meson.build	2026-11-26 20:28:21.531041852 -0800
++++ libdisplay-info-9999/meson.build	2026-11-26 20:30:26.461877035 -0800
+@@ -1,7 +1,7 @@
+ project(
+ 	'libdisplay-info',
+ 	'c',
+-	version: '0.5.0-dev',
++	version: '0.4.9999,
+ 	license: 'MIT',
+ 	meson_version: '>= 0.60.0',
+ 	default_options: [
+Only in libdisplay-info-9999: meson.build.orig
+Only in libdisplay-info-9999: meson.build.rej

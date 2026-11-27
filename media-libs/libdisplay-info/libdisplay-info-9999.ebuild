@@ -39,7 +39,7 @@ BDEPEND="
 
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/emersion.asc"
 PATCHES=(
-	"${FILESDIR}/${PN}-772d506-remove-dev-suffix.patch"
+	"${FILESDIR}/${PN}-548330b-remove-dev-suffix.patch"
 )
 
 src_unpack() {
