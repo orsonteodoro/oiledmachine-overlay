@@ -1,0 +1,308 @@
+[package]
+# Should match .rustfmt.toml
+edition = "2024"
+name = "sccache"
+rust-version = "1.91.0"
+version = "0.20.1"
+
+categories = ["command-line-utilities", "development-tools::build-utils"]
+description = "Sccache is a ccache-like tool. It is used as a compiler wrapper and avoids compilation when possible. Sccache has the capability to utilize caching in remote storage environments, including various cloud storage options, or alternatively, in local storage."
+keywords = ["ccache"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/mozilla/sccache/"
+
+[package.metadata.binstall]
+bin-dir = "sccache-v{ version }-{ target }/{ bin }{ binary-ext }"
+pkg-fmt = "tgz"
+pkg-url = "{ repo }/releases/download/v{ version }/sccache-v{ version }-{ target }{ archive-suffix }"
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-fmt = "zip"
+
+[package.metadata.binstall.overrides.aarch64-pc-windows-msvc]
+pkg-fmt = "zip"
+
+[[bin]]
+name = "sccache"
+
+[[bin]]
+name = "sccache-dist"
+required-features = ["dist-server"]
+
+[profile.test]
+debug = false # save disk space
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true
+
+[dependencies]
+anyhow = { version = "1.0", features = ["backtrace"] }
+ar = "0.9"
+async-trait = "0.1"
+backon = { version = "1", default-features = false, features = [
+  "std-blocking-sleep",
+] }
+base64 = "0.23"
+bincode = "1"
+blake3 = "1"
+byteorder = "1.5"
+bytes = "1"
+chrono = "0.4"
+clap = { version = "4.5.13", features = ["derive", "env", "wrap_help"] }
+directories = "6.0"
+encoding_rs = "0.8"
+env_logger = "0.11"
+filetime = "0.2"
+flate2 = { version = "1.0", optional = true, default-features = false, features = [
+  "rust_backend",
+] }
+fs-err = "3"
+futures = "0.3.32"
+gzp = { version = "2", default-features = false, features = ["deflate_rust"] }
+http = "1.0"
+http-body-util = { version = "0.1", optional = true }
+hyper = { version = "1.1", optional = true, features = ["server", "http1"] }
+hyper-util = { version = "0.1.3", optional = true, features = [
+  "tokio",
+  "server",
+] }
+itertools = "0.14"
+jobserver = "0.1"
+jwt = { package = "jsonwebtoken", version = "9", optional = true }
+libc = "0.2.153"
+linked-hash-map = "0.5"
+log = "0.4"
+memchr = "2"
+memmap2 = "0.9.4"
+mime = "0.3"
+object = "0.40"
+opendal = { version = "0.58.1", optional = true, default-features = false }
+opendal-http-transport-reqwest = { version = "0.58.1", optional = true }
+opendal-layer-logging = { version = "0.58.1", optional = true }
+opendal-layer-timeout = { version = "0.58.1", optional = true }
+openssl = { version = "0.10.75", optional = true }
+rand = "0.8.4"
+regex = "1.10.3"
+reqsign-google = { version = "3.2", optional = true }
+reqwest = { version = "0.13", features = [
+  "json",
+  "blocking",
+  "stream",
+  "rustls",
+], optional = true }
+semver = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = { version = "0.10.8", optional = true }
+shlex = "2.0.1"
+strip-ansi-escapes = "0.2"
+tar = "0.4.45"
+tempfile = "3.20"
+tokio = { version = "1", features = [
+  "rt-multi-thread",
+  "io-util",
+  "time",
+  "net",
+  "process",
+  "macros",
+] }
+tokio-serde = "0.9"
+tokio-util = { version = "0.7.18", features = ["codec", "io", "rt"] }
+toml = "0.9"
+tower-service = "0.3"
+typed-path = "0.13.0"
+unit-prefix = "0.5"
+url = { version = "2", optional = true }
+uuid = { version = "1.9", features = ["v4"] }
+walkdir = "2"
+webpki-root-certs = { version = "1.0.11", optional = true }
+# by default which pulls in an outdated failure version
+which = { version = "6", default-features = false }
+zip = { version = "9", default-features = false }
+zstd = "0.13"
+
+# dist-server only
+nix = { version = "0.30.0", optional = true, features = [
+  "mount",
+  "user",
+  "sched",
+  "signal",
+  "process",
+] }
+rouille = { version = "3.6", optional = true, default-features = false, features = [
+  "ssl",
+] }
+syslog = { version = "7", optional = true }
+version-compare = { version = "0.1.1", optional = true }
+
+[build-dependencies]
+cfg_aliases = "0.2.2"
+
+[dev-dependencies]
+assert_cmd = "2.0.13"
+cc = "1.9"
+chrono = "0.4.42"
+divan = { package = "codspeed-divan-compat", version = "4" }
+filetime = "0.2"
+object = { version = "0.40", features = ["write"] }
+predicates = "=3.1.0"
+serial_test = "3.1"
+socket2 = "0.6"
+temp-env = "0.3.6"
+test-case = "3.3.1"
+thirtyfour = { version = "0.38.1", default-features = false, features = [
+  "reqwest",
+  "rustls",
+] }
+tokio = { version = "1", features = ["test-util"] }
+
+[target.'cfg(unix)'.dependencies]
+daemonix = "0.1"
+
+[target.'cfg(not(target_os = "freebsd"))'.dependencies.libmount]
+optional = true
+version = "0.1.15"
+
+[target.'cfg(windows)'.dependencies.windows-sys]
+features = [
+  "Win32_Foundation",
+  "Win32_Globalization",
+  "Win32_Storage_FileSystem",
+  "Win32_System_Threading",
+  "Win32_System_Console",
+  "Win32_Security",
+]
+version = "0.52"
+
+[features]
+all = [
+  "dist-client",
+  "redis",
+  "s3",
+  "memcached",
+  "gcs",
+  "azure",
+  "gha",
+  "webdav",
+  "oss",
+  "cos",
+]
+azure = [
+  "opendal/services-azblob",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqwest",
+]
+cos = [
+  "opendal/services-cos",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqwest",
+]
+default = ["all"]
+gcs = [
+  "opendal/services-gcs",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqsign-google",
+  "url",
+  "reqwest",
+]
+gha = [
+  "opendal/services-ghac",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqwest",
+]
+memcached = ["opendal/services-memcached", "opendal-layer-logging"]
+native-zlib = []
+oss = [
+  "opendal/services-oss",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqwest",
+]
+redis = [
+  "url",
+  "opendal/services-redis",
+  "opendal-layer-logging",
+  "opendal-layer-timeout",
+]
+reqwest = ["dep:reqwest", "dep:webpki-root-certs"]
+s3 = [
+  "opendal/services-s3",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqwest",
+]
+webdav = [
+  "opendal/services-webdav",
+  "opendal-layer-logging",
+  "opendal-http-transport-reqwest",
+  "reqwest",
+]
+# Enable features that will build a vendored version of openssl and
+# statically linked with it, instead of linking against the system-wide openssl
+# dynamically or statically.
+vendored-openssl = ["openssl?/vendored", "reqwest?/native-tls-vendored"]
+# Enable features that require unstable features of Nightly Rust.
+unstable = []
+# Enables distributed support in the sccache client
+dist-client = [
+  "flate2",
+  "hyper",
+  "http-body-util",
+  "hyper-util",
+  "reqwest",
+  "url",
+  "sha2",
+]
+# Enables the sccache-dist binary
+dist-server = [
+  "jwt",
+  "flate2",
+  "libmount",
+  "nix",
+  "openssl",
+  "reqwest",
+  "rouille",
+  "syslog",
+  "version-compare",
+]
+# Enables dist tests with external requirements
+dist-tests = ["dist-client", "dist-server"]
+
+[workspace]
+exclude = ["tests/test-crate"]
+members = ["tests/integration/randomize_readdir"]
+
+[[bench]]
+harness = false
+name = "sccache_bench"
+test = false
+
+[[bench]]
+harness = false
+name = "preprocessor_cache_bench"
+test = false
+
+[lints]
+workspace = true
+
+[workspace.lints.rust]
+# Set by scripts/build-pgo.sh on the instrumented build.
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(pgo_training)'] }
+
+[workspace.lints.clippy]
+cloned_instead_of_copied = "warn"
+cloned_ref_to_slice_refs = "warn"
+explicit_into_iter_loop = "warn"
+implicit_clone = "warn"
+manual_string_new = "warn"
+ptr_as_ptr = "warn"
+ref_option = "warn"
+semicolon_if_nothing_returned = "warn"
+unnecessary_semicolon = "warn"

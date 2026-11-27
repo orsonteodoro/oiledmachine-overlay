@@ -1,0 +1,16 @@
+[package]
+authors = ["Ted Mielczarek <ted@mielczarek.org>"]
+name = "test-crate"
+version = "0.1.0"
+
+[dependencies]
+# Arbitrary crate dependency that doesn't pull in any transitive dependencies.
+itoa = "0.3.4"
+
+[lib]
+name = "mylib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mybin"
+path = "src/bin.rs"
