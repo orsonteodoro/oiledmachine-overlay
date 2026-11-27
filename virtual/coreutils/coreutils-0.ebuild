@@ -83,6 +83,8 @@ CHKL_TIMESTAMPS=(
 
 inherit chkl secure-version
 
+S="${WORKDIR}"
+
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 IUSE+="
