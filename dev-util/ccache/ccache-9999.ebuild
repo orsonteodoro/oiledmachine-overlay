@@ -69,7 +69,11 @@ LICENSE+=" elibc_mingw? ( LGPL-3 ISC PSF-2 )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 # Enable 'static-c++' by default to make 'gcc' ebuild Just Work: bug #761220
-IUSE="${MY_DOCS_USEFLAG} http redis +static-c++ test"
+IUSE+="
+${MY_DOCS_USEFLAG}
+http redis +static-c++ test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 DEPEND="
