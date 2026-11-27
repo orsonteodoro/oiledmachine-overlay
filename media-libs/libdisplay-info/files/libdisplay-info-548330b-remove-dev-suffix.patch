@@ -6,7 +6,7 @@ diff '--color=auto' -urp libdisplay-info-9999.orig/meson.build libdisplay-info-9
  	'libdisplay-info',
  	'c',
 -	version: '0.5.0-dev',
-+	version: '0.4.9999,
++	version: '0.4.9999',
  	license: 'MIT',
  	meson_version: '>= 0.60.0',
  	default_options: [
