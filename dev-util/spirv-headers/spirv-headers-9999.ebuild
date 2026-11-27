@@ -5,12 +5,12 @@ EAPI=8
 
 MY_PN=SPIRV-Headers
 
-INTERNAL_VERSION="1.6.7" # https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
+INTERNAL_VERSION="1.6.8" # https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
 
 inherit cmake
 
 if [[ ${PV} == *9999* ]]; then
-	FALLBACK_COMMIT="fb1379425b16e58dcbdda7be0f8604a7f5cdce78"
+	FALLBACK_COMMIT="f6f78c717057ac7f5f3ea021f3f962aaf9d4da7e"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	if [[ "${FALLBACK_COMMIT}" ]] ; then
@@ -28,7 +28,7 @@ HOMEPAGE="https://registry.khronos.org/SPIR-V/ https://github.com/KhronosGroup/S
 
 LICENSE="MIT"
 SLOT="0/${INTERNAL_VERSION}"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 
 src_unpack() {
 	if [[ ${PV} == *9999* ]]; then
