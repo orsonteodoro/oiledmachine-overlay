@@ -4,8 +4,8 @@
 EAPI=8
 
 MY_PN="SPIRV-Tools"
-INTERNAL_SPIRV_HEADERS_SLOT="1.6.7" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
-INTERNAL_VERSION="2026.4" # From https://github.com/KhronosGroup/SPIRV-Tools/blob/main/CHANGES
+INTERNAL_SPIRV_HEADERS_SLOT="1.6.8" # See https://github.com/KhronosGroup/SPIRV-Headers/blob/main/include/spirv/unified1/spirv.core.grammar.json#L12
+INTERNAL_VERSION="2026.5" # From https://github.com/KhronosGroup/SPIRV-Tools/blob/main/CHANGES
 
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CXX_STANDARD=17
@@ -29,7 +29,7 @@ CHKL_TIMESTAMPS=(
 inherit cflags-hardened chkl cmake-multilib libcxx-slot libstdcxx-slot secure-version python-any-r1
 
 if [[ "${PV}" == *"9999"* ]]; then
-	FALLBACK_COMMIT="3c8fd35297315682906894621677f1b7003461ef"
+	FALLBACK_COMMIT="b1d2dc272aee6e6c9454d202fe88cbcbbeaab72c"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/KhronosGroup/${MY_PN}.git"
 	if [[ -n "${FALLBACK_COMMIT}" ]] ; then
@@ -50,7 +50,7 @@ LICENSE="Apache-2.0"
 SLOT="0/${INTERNAL_VERSION}"
 IUSE+="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="!test? ( test )"
 
