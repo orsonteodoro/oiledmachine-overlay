@@ -620,6 +620,7 @@ RUST_LLVM_19_PV=${RUST_LLVM_19_PV:-"1.86.0"} # 1y ago, for C++ and multislot LLV
 RUST_LLVM_18_PV=${RUST_LLVM_18_PV:-"1.81.0"} # 2y ago, for C++ and multislot LLVM scenario, network facing disallowed
 RUST_LLVM_17_PV=${RUST_LLVM_17_PV:-"1.77.2"} # 2y ago, for C++ and multislot LLVM scenario, network facing disallowed
 SAMBA_PV=${SAMBA_PV:-"9999"}
+SCCACHE_PV=${SCCACHE_PV:-"0.20.1"}
 SEATD_PV=${SEATD_PV:-"9999"}
 SED_PV=${SED_PV:-"4.10"}
 SELENIUM_PV=${SELENIUM_PV:-"4.14.0"}
