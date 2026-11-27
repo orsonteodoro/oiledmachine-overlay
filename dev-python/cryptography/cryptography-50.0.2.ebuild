@@ -15,8 +15,8 @@ PYTHON_REQ_USE="threads(+)"
 
 inherit secure-version
 
-RUST_MAX_VER="${RUST_LLVM_22_PV}"
-RUST_MIN_VER="${RUST_LLVM_22_PV}"
+RUST_MAX_VER="${RUST_LLVM_LIVE_PV}"
+RUST_MIN_VER="${RUST_LLVM_LIVE_PV}"
 
 # Misnomer
 DISABLED_CRATES="
@@ -35,9 +35,9 @@ asn1-0.24.2
 asn1_derive-0.24.2
 base64-0.23.1
 bitflags-2.13.2
-cc-1.11.2
+cc-1.12.0
 cfg-if-1.0.5
-find-msvc-tools-0.1.15
+find-msvc-tools-0.1.16
 foreign-types-0.3.2
 foreign-types-shared-0.1.1
 heck-0.5.0
@@ -72,7 +72,8 @@ CHKL_TIMESTAMPS=(
 	"dev-libs/openssl-3.5.9999"
 )
 
-inherit cargo cflags-hardened chkl distutils-r1 flag-o-matic pypi rustflags-hardened
+inherit cargo cflags-hardened chkl distutils-r1 flag-o-matic pypi
+inherit rustflags-hardened secure-version secure-version-python
 
 VEC_P=cryptography_vectors-$(ver_cut 1-3)
 DESCRIPTION="Library providing cryptographic recipes and primitives"
@@ -110,7 +111,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+=" ebuild_revision_4"
 RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/cffi-2.0.0:=[${PYTHON_USEDEP}]
+		>=dev-python/cffi-'${PYTHON_CFFI_PV}':=[${PYTHON_USEDEP}]
 	' python3_{10..14})
 	$(secure-version_gen_openssl_depends)
 "
@@ -121,18 +122,15 @@ DEPEND="
 BDEPEND="
 	${RUST_DEPEND}
 	$(python_gen_cond_dep '
-		>=dev-python/cffi-2.0.0[${PYTHON_USEDEP}]
-	' python3_{10..14})
-	$(python_gen_cond_dep '
-		>=dev-python/cffi-2.1[${PYTHON_USEDEP}]
-	' python3_15)
+		>=dev-python/cffi-'${PYTHON_CFFI_PV}'[${PYTHON_USEDEP}]
+	' python3_{10..15})
 	>=dev-util/maturin-1.14.1[${PYTHON_USEDEP}]
 	<dev-util/maturin-2[${PYTHON_USEDEP}]
 	!~dev-python/setuptools-74.0.0[${PYTHON_USEDEP}]
 	!~dev-python/setuptools-74.1.0[${PYTHON_USEDEP}]
 	!~dev-python/setuptools-74.1.2[${PYTHON_USEDEP}]
 	test? (
-		dev-python/certifi[${PYTHON_USEDEP}]
+		>=dev-python/certifi-${PYTHON_CERTIFI_PV}[${PYTHON_USEDEP}]
 		dev-python/iso8601[${PYTHON_USEDEP}]
 		dev-python/pretend[${PYTHON_USEDEP}]
 		dev-python/pyasn1-modules[${PYTHON_USEDEP}]
@@ -147,6 +145,53 @@ EPYTEST_PLUGINS=( "hypothesis" "pytest-subtests" )
 EPYTEST_XDIST=1
 distutils_enable_tests pytest
 
+verify_rust_nightly() {
+	local is_nightly=$("${RUSTC}" --version | grep -q "nightly")
+	is_nightly=$(( "${?}" == 0 ? 1 : 0 ))
+
+	if (( ${is_nightly} == 0 )) ; then
+eerror "Only nightly Rust is currently supported."
+eerror "Switch to live with \`eselect rust\`"
+		die
+	fi
+
+	if "${RUSTC}" --version | grep -q -e "nightly" ; then
+		local compatible_time=$(date --date="${RUST_LLVM_LIVE_TIMESTAMP}" "+%s")
+
+		local merge_time
+		local pkg_name
+		if [[ "${RUSTC}" =~ "rust-bin" ]] ; then
+			pkg_name="rust-bin"
+			merge_time=$(cat "/var/db/pkg/dev-lang/rust-bin-9999/BUILD_TIME")
+		else
+			pkg_name="rust"
+			merge_time=$(cat "/var/db/pkg/dev-lang/rust-9999/BUILD_TIME")
+		fi
+		if (( ${merge_time} < ${compatible_time} )) ; then
+eerror
+eerror "Detected old live timestamp."
+eerror "Re-emerge ${pkg_name} or switch to Rust ${RUST_LLVM_LIVE_INTERNAL_VERSION} or later."
+eerror
+eerror "Current timestamp:  "$(date --date="@${merge_time}")
+eerror "Expected timestamp:  >= "$(date --date="@${compatible_time}")
+eerror
+			die
+		fi
+	else
+		local actual_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
+		if ver_test "${actual_pv}" "-lt" "${RUST_MIN_VER}" ; then
+eerror "Switch Rust to >= ${RUST_MIN_VER}"
+			die
+		fi
+	fi
+}
+
+pkg_setup() {
+	python_setup
+	rust_pkg_setup
+	verify_rust_nightly
+}
+
 src_unpack() {
 	if use verify-provenance; then
 		pypi_verify_provenance "${DISTDIR}/${P}.tar.gz"{,.provenance}
@@ -154,7 +199,7 @@ src_unpack() {
 	fi
 
 	cargo_src_unpack
-	die
+	#die
 	cp -aT \
 		"${FILESDIR}/${PV}"* \
 		"${S}" \
