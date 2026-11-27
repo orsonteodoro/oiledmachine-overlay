@@ -4,11 +4,13 @@
 
 EAPI=8
 
+S="${WORKDIR}"
+
 DESCRIPTION="Virtual for coreutils implementations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 
 src_install() {
