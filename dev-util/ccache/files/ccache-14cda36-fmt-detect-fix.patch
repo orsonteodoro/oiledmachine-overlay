@@ -1,0 +1,15 @@
+--- a/cmake/FindFmt.cmake.orig	2026-11-27 10:04:06.788064059 -0800
++++ b/cmake/FindFmt.cmake	2026-11-27 10:08:30.978981270 -0800
+@@ -10,11 +10,7 @@ else()
+   find_path(FMT_INCLUDE_DIR NAMES fmt/base.h fmt/core.h)
+   find_library(FMT_LIBRARY fmt)
+   if(FMT_INCLUDE_DIR AND FMT_LIBRARY)
+-    if(EXISTS "${FMT_INCLUDE_DIR}/fmt/base.h")
+-      set(_fmt_h base.h)
+-    else()
+-      set(_fmt_h core.h)
+-    endif()
++    set(_fmt_h core.h)
+     file(READ "${FMT_INCLUDE_DIR}/fmt/${_fmt_h}" _fmt_h_content)
+     string(REGEX MATCH "#define FMT_VERSION ([0-9]+)" _ "${_fmt_h_content}")
+     if("${CMAKE_MATCH_0}" STREQUAL "")
