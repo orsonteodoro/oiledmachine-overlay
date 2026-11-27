@@ -11,7 +11,11 @@ CXX_STANDARD=20
 # Generate using https://github.com/thesamesam/sam-gentoo-scripts/blob/main/niche/generate-ccache-docs
 # Set to 1 if prebuilt, 0 if not
 # (the construct below is to allow overriding from env for script)
-: ${MY_DOCS_PREBUILT:=1}
+if [[ "${PV}" =~ "9999" ]] ; then
+	: ${MY_DOCS_PREBUILT:=0}
+else
+	: ${MY_DOCS_PREBUILT:=1}
+fi
 
 # Processes untrusted repos, environment variable secrets (e.g. Cloud LLM API keys)
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data sensitive-data"
