@@ -513,13 +513,17 @@ src_install() {
 	local prefix=$(get_prefix)
 	dodir "${prefix}/bin"
 	for x in "${BIN_ESSENTIAL[@]}" ; do
-		mv "${ED}${prefix}/usr/bin/${x}" "${ED}${prefix}/bin/" || die
+		if [[ -e "${ED}${prefix}/usr/bin/${x}" ]] ; then
+			mv "${ED}${prefix}/usr/bin/${x}" "${ED}${prefix}/bin/" || die
+		else
+ewarn "Skipping /usr/bin/${x}"
+		fi
 	done
 	if ! use hostname ; then
-		rm "${ED}${prefix}/bin/hostname" || true
+		rm -f "${ED}${prefix}/bin/hostname" || true
 	fi
 	if ! use kill ; then
-		rm "${ED}${prefix}/bin/kill" || true
+		rm -f "${ED}${prefix}/bin/kill" || true
 	fi
 }
 
