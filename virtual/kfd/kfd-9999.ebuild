@@ -7,6 +7,9 @@ inherit secure-version
 
 # This ebuild uses AI inference for clarification.
 
+#KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
+S="${WORKDIR}"
+
 # ROCm driver versions:
 # Last GC:    https://github.com/ROCm/amdgpu/blob/master/drivers/gpu/drm/amd/amdgpu/gfx_v12_1.c
 # DCN:        https://github.com/ROCm/amdgpu/blob/master/drivers/gpu/drm/amd/display/include/dal_types.h#L67
@@ -81,7 +84,6 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 
 DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
-#KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
 IUSE="
 amdgpu-dkms amdgpu-dkms-firmware linux-firmware custom-kernel kernel
 strict-pairing

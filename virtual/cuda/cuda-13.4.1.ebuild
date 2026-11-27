@@ -17,6 +17,8 @@ LLVM_COMPAT=(
 
 inherit secure-version
 
+S="${WORKDIR}"
+
 DESCRIPTION="CUDA requirements"
 LICENSE="metapackage"
 SLOT="0/"$(ver_cut "1-2" "${PV}")
