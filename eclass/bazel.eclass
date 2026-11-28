@@ -34,45 +34,67 @@ fi
 # e.g., `bazel-5`, `bazel-6`.
 BAZEL_BINARY="${BAZEL_BINARY:-bazel}"
 
-# @FUNCTION: bazel_get_flags
+# @FUNCTION: bazel_get_build_flags
 # @DESCRIPTION:
-# Obtain and print the bazel flags for target and host *FLAGS.
+# Obtain and print the bazel flags for target and host *FLAGS for `bazel build`.
 #
 # To add more flags to this, append the flags to the
 # appropriate variable before calling this function
-bazel_get_flags() {
+bazel_get_build_flags() {
 	local i fs=()
+	local L=()
 	for i in ${CFLAGS}; do
-		echo "build --conlyopt='${i}'"
+		L+=(
+			"--conlyopt='${i}'"
+		)
 	done
 	for i in ${BUILD_CFLAGS}; do
-		echo "build --host_conlyopt='${i}'"
+		L+=(
+			"--host_conlyopt='${i}'"
+		)
 	done
 	for i in ${CXXFLAGS}; do
-		echo "build --cxxopt='${i}'"
+		L+=(
+			"--cxxopt='${i}'"
+		)
 	done
 	for i in ${BUILD_CXXFLAGS}; do
-		echo "build --host_cxxopt='${i}'"
+		L+=(
+			"--host_cxxopt='${i}'"
+		)
 	done
 	for i in ${CPPFLAGS}; do
-		echo "build --conlyopt='${i}'"
-		echo "build --cxxopt='${i}'"
+		L+=(
+			"--conlyopt='${i}'"
+			"--cxxopt='${i}'"
+		)
 	done
 	for i in ${BUILD_CPPFLAGS}; do
-		echo "build --host_conlyopt='${i}'"
-		echo "build --host_cxxopt='${i}'"
+		L+=(
+			"--host_conlyopt='${i}'"
+			"--host_cxxopt='${i}'"
+		)
 	done
 	for i in ${LDFLAGS}; do
-		echo "build --linkopt='${i}'"
+		L+=(
+			"--linkopt='${i}'"
+		)
 	done
 	for i in ${BUILD_LDFLAGS}; do
-		echo "build --host_linkopt='${i}'"
+		L+=(
+			"--host_linkopt='${i}'"
+		)
 	done
+	echo "${L[@]}"
 }
 
-gen_bazel_flags() {
-ewarn "QA:  gen_bazel_flags is deprecated.  Use bazel_get_flags instead"
-	bazel_get_flags
+get_build_flags() {
+eerror "QA:  Remove get_build_flags"
+}
+
+bazel_get_flags() {
+eerror "QA:  Remove bazel_get_flags"
+	die
 }
 
 # @FUNCTION: bazel_setup_bazelrc
