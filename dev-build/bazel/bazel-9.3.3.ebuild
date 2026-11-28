@@ -3,9 +3,10 @@
 
 EAPI=8
 
-JAVA_SLOT=11 # https://github.com/bazelbuild/bazel/blob/6.5.0/scripts/bootstrap/buildenv.sh#L80
+CFLAGS_HARDENED_USE_CASES="network secure-critical untrusted-data sensitive-data"
+JAVA_SLOT=21 # https://github.com/bazelbuild/bazel/blob/9.3.3/scripts/bootstrap/buildenv.sh#L80
 
-inherit bash-completion-r1 bazel flag-o-matic java-pkg-2 multiprocessing
+inherit bash-completion-r1 bazel cflags-hardened flag-o-matic java-pkg-2 multiprocessing
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -23,7 +24,7 @@ RESTRICT="
 SLOT="$(ver_cut 1-2 ${PV})"
 IUSE="
 bash-completion examples tools zsh-completion
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	!dev-build/bazel:0
@@ -66,8 +67,12 @@ src_prepare() {
 	java-pkg-2_src_prepare
 }
 
+src_configure() {
+	cflags-hardened_append
+	default
+}
+
 src_compile() {
-	replace-flags '-O0' '-O1' # Package uses _FORTIFY_SOURCE
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 einfo "JAVA_HOME:  ${JAVA_HOME}"
 	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) $(bazel_get_flags)
