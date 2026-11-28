@@ -1,0 +1,15 @@
+# This is based on an AI suggested patch.
+--- a/MODULE.bazel.orig	1980-01-01 00:00:00.000000000 -0800
++++ b/MODULE.bazel	2026-11-28 09:05:57.806070899 -0800
+@@ -8,6 +8,11 @@ module(
+     repo_name = "io_bazel",
+ )
+ 
++single_version_override(
++    module_name = "bazel_features",
++    version = "1.11.0",
++)
++
+ # =========================================
+ # Bazel module dependencies
+ # =========================================

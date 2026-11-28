@@ -9,7 +9,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network secure-critical untrusted-data sensitive-data"
 JAVA_SLOT=21 # https://github.com/bazelbuild/bazel/blob/9.3.3/scripts/bootstrap/buildenv.sh#L80
 
-inherit bash-completion-r1 bazel cflags-hardened flag-o-matic java-pkg-2 multiprocessing secure-version
+inherit bash-completion-r1 bazel cflags-hardened flag-o-matic java-pkg-2 multiprocessing sandbox-changes secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -50,6 +50,7 @@ ewarn "${PN} usually fails to compile with ccache, you have been warned"
 	fi
 	java-pkg-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	sandbox-changes_no_network_sandbox "For downloading dependencies and metadata files"
 }
 
 src_unpack() {
@@ -78,6 +79,7 @@ src_configure() {
 src_compile() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 einfo "JAVA_HOME:  ${JAVA_HOME}"
+	export EMBED_LABEL="${PV}"
 	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) $(bazel_get_flags)
 		--java_runtime_version=local_jdk
 		--tool_java_runtime_version=local_jdk"
