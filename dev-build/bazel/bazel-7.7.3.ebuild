@@ -27,7 +27,7 @@ RESTRICT="
 SLOT="${PV}" # Version sensitive command line args or dependency hashes
 IUSE="
 bash-completion examples tools zsh-completion
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND="
 	!dev-build/bazel:0
@@ -107,7 +107,7 @@ src_test() {
 }
 
 src_install() {
-	newbin output/bazel bazel-$(ver_cut 1-2 ${PV})
+	newbin output/bazel bazel-${SLOT}
 	if use bash-completion ; then
 		newbashcomp bazel-complete.bash ${PN}
 		bashcomp_alias ${PN} ibazel
