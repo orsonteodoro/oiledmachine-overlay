@@ -88,6 +88,43 @@ bazel_get_build_flags() {
 	echo "${L[@]}"
 }
 
+# @FUNCTION: bazel_get_build_flags_for_bazelrc
+# @DESCRIPTION:
+# Obtain and print the bazel flags for target and host *FLAGS for inserting into .bazelrc.
+#
+# To add more flags to this, append the flags to the
+# appropriate variable before calling this function
+bazel_get_build_flags_for_bazelrc() {
+	local i fs=()
+	local L=()
+	for i in ${CFLAGS}; do
+		echo "build --conlyopt='${i}'"
+	done
+	for i in ${BUILD_CFLAGS}; do
+		echo "build --host_conlyopt='${i}'"
+	done
+	for i in ${CXXFLAGS}; do
+		echo "build --cxxopt='${i}'"
+	done
+	for i in ${BUILD_CXXFLAGS}; do
+		echo "build --host_cxxopt='${i}'"
+	done
+	for i in ${CPPFLAGS}; do
+		echo "build --conlyopt='${i}'"
+		echo "build --cxxopt='${i}'"
+	done
+	for i in ${BUILD_CPPFLAGS}; do
+		echo "build --host_conlyopt='${i}'"
+		echo "build --host_cxxopt='${i}'"
+	done
+	for i in ${LDFLAGS}; do
+		echo "build --linkopt='${i}'"
+	done
+	for i in ${BUILD_LDFLAGS}; do
+		echo "build --host_linkopt='${i}'"
+	done
+}
+
 get_build_flags() {
 eerror "QA:  Remove get_build_flags"
 }
