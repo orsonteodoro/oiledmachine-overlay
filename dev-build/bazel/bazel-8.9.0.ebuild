@@ -21,7 +21,7 @@ RESTRICT="
 	strip
 	test
 "
-SLOT="$(ver_cut 1-2 ${PV})"
+SLOT="${PV}" # Version sensitive command line args
 IUSE="
 bash-completion examples tools zsh-completion
 ebuild_revision_6
