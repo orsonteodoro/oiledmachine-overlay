@@ -27,7 +27,7 @@ RESTRICT="
 SLOT="${PV}" # Version sensitive command line args or dependency hashes
 IUSE="
 bash-completion examples tools zsh-completion
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	!dev-build/bazel:0

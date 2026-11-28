@@ -40,7 +40,7 @@ BAZEL_BINARY="${BAZEL_BINARY:-bazel}"
 #
 # To add more flags to this, append the flags to the
 # appropriate variable before calling this function
-gen_bazel_flags() {
+bazel_get_flags() {
 	local i fs=()
 	for i in ${CFLAGS}; do
 		echo "build --conlyopt='${i}'"
@@ -68,6 +68,11 @@ gen_bazel_flags() {
 	for i in ${BUILD_LDFLAGS}; do
 		echo "build --host_linkopt='${i}'"
 	done
+}
+
+gen_bazel_flags() {
+ewarn "QA:  gen_bazel_flags is deprecated.  Use bazel_get_flags instead"
+	bazel_get_flags
 }
 
 # @FUNCTION: bazel_setup_bazelrc
