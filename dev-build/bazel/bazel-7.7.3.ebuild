@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="network secure-critical untrusted-data sensitive-data"
 JAVA_SLOT=21 # https://github.com/bazelbuild/bazel/blob/7.7.3/scripts/bootstrap/buildenv.sh#L80
 
-inherit bash-completion-r1 bazel cflags-hardened flag-o-matic java-pkg-2 multiprocessing
+inherit bash-completion-r1 bazel cflags-hardened flag-o-matic java-pkg-2 multiprocessing secure-version
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -29,12 +29,12 @@ ebuild_revision_6
 RDEPEND="
 	!dev-build/bazel:0
 	>=virtual/jre-${JAVA_SLOT}:${JAVA_SLOT}
-	sys-devel/gcc[cxx]
-	sys-libs/glibc
+	sys-devel/gcc:=[cxx]
+	>=sys-libs/glibc-${GLIBC_PV}:=
 "
 DEPEND="
-	app-arch/unzip
-	app-arch/zip
+	>=app-arch/unzip-${UNZIP_PV}
+	>=app-arch/zip-${ZIP_PV}
 	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND="
