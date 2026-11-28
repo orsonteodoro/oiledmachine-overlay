@@ -83,14 +83,21 @@ src_compile() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 einfo "JAVA_HOME:  ${JAVA_HOME}"
 	export EMBED_LABEL="${PV}"
-	export EXTRA_BAZEL_ARGS="
+	EXTRA_BAZEL_ARGS="
 		$(bazel_get_build_flags)
 		--jobs=$(makeopts_jobs)
 		--java_runtime_version=local_jdk
 		--tool_java_runtime_version=local_jdk
+	"
+
+	# Show compiler output
+	EXTRA_BAZEL_ARGS+="
 		--subcommands
 		--verbose_failures
 	"
+
+	export EXTRA_BAZEL_ARGS
+
 	VERBOSE=yes ./compile.sh || die "Failed compiling bazel"
 
 	./scripts/generate_bash_completion.sh \
