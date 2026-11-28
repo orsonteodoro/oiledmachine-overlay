@@ -36,7 +36,23 @@ BDEPEND="app-arch/unzip"
 
 src_prepare() {
 	PATCHES=(
-		$(sed -e 's:^:../debian/patches/:' "${WORKDIR}"/debian/patches/series || die)
+		"${FILESDIR}/debian/patches/typo-it-is-transferring-not-transfering.patch"
+		"${FILESDIR}/debian/patches/typo-it-is-privileges-not-priviliges.patch"
+		"${FILESDIR}/debian/patches/manpages-in-section-1-not-in-section-1l.patch"
+		"${FILESDIR}/debian/patches/do-not-set-unwanted-cflags.patch"
+		"${FILESDIR}/debian/patches/typo-it-is-preceding-not-preceeding.patch"
+		"${FILESDIR}/debian/patches/stack-markings-to-avoid-executable-stack.patch"
+		"${FILESDIR}/debian/patches/fclose-in-file-not-fclose-x.patch"
+		"${FILESDIR}/debian/patches/hardening-build-fix-1.patch"
+		"${FILESDIR}/debian/patches/hardening-build-fix-2.patch"
+		"${FILESDIR}/debian/patches/remove-build-date.patch"
+		"${FILESDIR}/debian/patches/typo-it-is-ambiguities-not-amgibuities.patch"
+		"${FILESDIR}/debian/patches/fix-build-with-gcc-14.patch"
+		"${FILESDIR}/debian/patches/typo-it-is-os-2-not-risc-os-2.patch"
+		"${FILESDIR}/debian/patches/buffer-overflow-unicode-filename.patch"
+		"${FILESDIR}/debian/patches/buffer-overflow-cve-2018-13410.patch"
+		"${FILESDIR}/debian/patches/fix-symlink-update-detection.patch"
+		"${FILESDIR}/debian/patches/fix-command-injection.patch"
 
 		"${FILESDIR}"/${PN}-3.0-no-crypt.patch # bug #238398
 		"${FILESDIR}"/${PN}-3.0-pic.patch
