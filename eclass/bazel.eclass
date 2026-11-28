@@ -42,50 +42,32 @@ BAZEL_BINARY="${BAZEL_BINARY:-bazel}"
 # appropriate variable before calling this function
 bazel_get_build_flags() {
 	local i fs=()
-	local L=()
 	for i in ${CFLAGS}; do
-		L+=(
-			"--conlyopt='${i}'"
-		)
+		echo "--conlyopt=${i}"
 	done
 	for i in ${BUILD_CFLAGS}; do
-		L+=(
-			"--host_conlyopt='${i}'"
-		)
+		echo "--host_conlyopt=${i}"
 	done
 	for i in ${CXXFLAGS}; do
-		L+=(
-			"--cxxopt='${i}'"
-		)
+		echo "--cxxopt=${i}"
 	done
 	for i in ${BUILD_CXXFLAGS}; do
-		L+=(
-			"--host_cxxopt='${i}'"
-		)
+		echo "--host_cxxopt=${i}"
 	done
 	for i in ${CPPFLAGS}; do
-		L+=(
-			"--conlyopt='${i}'"
-			"--cxxopt='${i}'"
-		)
+		echo "--conlyopt=${i}"
+		echo "--cxxopt=${i}"
 	done
 	for i in ${BUILD_CPPFLAGS}; do
-		L+=(
-			"--host_conlyopt='${i}'"
-			"--host_cxxopt='${i}'"
-		)
+		echo "--host_conlyopt=${i}"
+		echo "--host_cxxopt=${i}"
 	done
 	for i in ${LDFLAGS}; do
-		L+=(
-			"--linkopt='${i}'"
-		)
+		echo "--linkopt=${i}"
 	done
 	for i in ${BUILD_LDFLAGS}; do
-		L+=(
-			"--host_linkopt='${i}'"
-		)
+		echo "--host_linkopt=${i}"
 	done
-	echo "${L[@]}"
 }
 
 # @FUNCTION: bazel_get_build_flags_for_bazelrc
@@ -96,32 +78,31 @@ bazel_get_build_flags() {
 # appropriate variable before calling this function
 bazel_get_build_flags_for_bazelrc() {
 	local i fs=()
-	local L=()
 	for i in ${CFLAGS}; do
-		echo "build --conlyopt='${i}'"
+		echo "build --conlyopt=${i}"
 	done
 	for i in ${BUILD_CFLAGS}; do
-		echo "build --host_conlyopt='${i}'"
+		echo "build --host_conlyopt=${i}"
 	done
 	for i in ${CXXFLAGS}; do
-		echo "build --cxxopt='${i}'"
+		echo "build --cxxopt=${i}"
 	done
 	for i in ${BUILD_CXXFLAGS}; do
-		echo "build --host_cxxopt='${i}'"
+		echo "build --host_cxxopt=${i}"
 	done
 	for i in ${CPPFLAGS}; do
-		echo "build --conlyopt='${i}'"
-		echo "build --cxxopt='${i}'"
+		echo "build --conlyopt=${i}"
+		echo "build --cxxopt=${i}"
 	done
 	for i in ${BUILD_CPPFLAGS}; do
-		echo "build --host_conlyopt='${i}'"
-		echo "build --host_cxxopt='${i}'"
+		echo "build --host_conlyopt=${i}"
+		echo "build --host_cxxopt=${i}"
 	done
 	for i in ${LDFLAGS}; do
-		echo "build --linkopt='${i}'"
+		echo "build --linkopt=${i}"
 	done
 	for i in ${BUILD_LDFLAGS}; do
-		echo "build --host_linkopt='${i}'"
+		echo "build --host_linkopt=${i}"
 	done
 }
 
