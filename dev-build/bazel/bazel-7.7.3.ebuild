@@ -4,7 +4,7 @@
 EAPI=8
 
 # Leave the point release in the folder until EOL or older than 6 months.
-# The deps hashes will break easily when bazel used in ebuilds.
+# The deps hashes will break easily when bazel is bumped systemwide for dependent packages.
 
 CFLAGS_HARDENED_USE_CASES="network secure-critical untrusted-data sensitive-data"
 JAVA_SLOT=21 # https://github.com/bazelbuild/bazel/blob/7.7.3/scripts/bootstrap/buildenv.sh#L80
