@@ -688,6 +688,20 @@ WILDMIDI_PV=${WILDMIDI_PV:-"9999"}
 WLROOTS_PV=${WLROOTS_PV:-"9999"}
 WOFF2_PV=${WOFF2_PV:-"9999"}
 X264_PV=${X264_PV:-"9999"}
+# OpenJDK = dev-java/openjdk
+OPENJDK_8_PV=${OPENJDK_8_PV:-"8.514_p01"} # https://github.com/openjdk/jdk8u/tags
+OPENJDK_11_PV=${OPENJDK_11_PV:-"11.0.33.1_p1"} # https://github.com/openjdk/jdk11u/tags
+OPENJDK_17_PV=${OPENJDK_17_PV:-"17.0.21.1_p2"} # https://github.com/openjdk/jdk17u/tags
+OPENJDK_21_PV=${OPENJDK_21_PV:-"21.0.13.1_p2"} # https://github.com/openjdk/jdk21u/tags
+OPENJDK_25_PV=${OPENJDK_25_PV:-"25.0.5.1_p2"} # https://github.com/openjdk/jdk25u/tags
+OPENJDK_27_PV=${OPENJDK_27_PV:-"27.0.1.1_p4"} # https://github.com/openjdk/jdk27u/tags
+# Eclipse Temurin = dev-java/openjdk-bin, dev-java/openjdk-jre-bin
+OPENJDK_BIN_8_PV=${OPENJDK_BIN_8_PV:-"8.514_p01"} # https://github.com/adoptium/temurin8-binaries/tags
+OPENJDK_BIN_11_PV=${OPENJDK_BIN_11_PV:-"11.0.33.1_p1"} # https://github.com/adoptium/temurin11-binaries/tags
+OPENJDK_BIN_17_PV=${OPENJDK_BIN_17_PV:-"17.0.21.1_p2"} # https://github.com/adoptium/temurin17-binaries/tags
+OPENJDK_BIN_21_PV=${OPENJDK_BIN_21_PV:-"21.0.13.1_p2"} # https://github.com/adoptium/temurin21-binaries/tags
+OPENJDK_BIN_25_PV=${OPENJDK_BIN_25_PV:-"25.0.5.1_p2"} # https://github.com/adoptium/temurin25-binaries/tags
+OPENJDK_BIN_27_PV=${OPENJDK_BIN_27_PV:-"27.0.1.1_p4"} # https://github.com/adoptium/temurin27-binaries/tags
 X265_PV=${X265_PV:-"9999"}
 XAUTH_PV=${XAUTH_PV:-"1.1.4"}
 XDG_DESKTOP_PORTAL_PV=${XDG_DESKTOP_PORTAL_PV:-"1.21.1"}
@@ -743,6 +757,8 @@ secure-version_gen_openssl_depends() {
 		elif [[ -z "${l}" ]] ; then
 	# LTS
 			r="3.5"
+		#else
+	# User choice
 		fi
 		if [[ "${r}" == "l" ]] ; then
 	# LTS
@@ -753,6 +769,8 @@ secure-version_gen_openssl_depends() {
 		elif [[ -z "${r}" ]] ; then
 	# Rolling
 			r="4.0"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -834,6 +852,8 @@ secure-version_gen_ffmpeg_depends() {
 		elif [[ -z "${l}" ]] ; then
 	# LTS
 			r="5.1"
+		#else
+	# User choice
 		fi
 
 		if [[ "${r}" == "s" ]] ; then
@@ -848,6 +868,8 @@ secure-version_gen_ffmpeg_depends() {
 		elif [[ -z "${r}" ]] ; then
 	# Rolling
 			r="9.0"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -935,6 +957,8 @@ secure-version_gen_perl_depends() {
 		elif [[ -z "${l}" ]] ; then
 	# LTS
 			r="5.40"
+		#else
+	# User choice
 		fi
 
 		if [[ "${r}" == "s" ]] ; then
@@ -946,6 +970,8 @@ secure-version_gen_perl_depends() {
 		elif [[ -z "${r}" ]] ; then
 	# Rolling
 			r="5.44"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -1035,6 +1061,8 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 		elif [[ -z "${l}" ]] ; then
 	# LTS
 			l="3.11"
+		#else
+	# User choice
 		fi
 
 		if [[ "${r}" == "s" ]] ; then
@@ -1049,6 +1077,8 @@ eerror "You must inherit python-r1 or python-single-r1 before inherit secure-ver
 		elif [[ -z "${r}" ]] ; then
 	# Rolling
 			r="3.15"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -1130,6 +1160,8 @@ secure-version_gen_ruby_single_depends() {
 		elif [[ -z "${r}" ]] ; then
 	# Slot used in live distro releases
 			r="4.0"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -1206,6 +1238,8 @@ secure-version_gen_ruby_ng_depends() {
 		elif [[ -z "${r}" ]] ; then
 	# Slot used in live distro releases
 			r="4.0"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -1277,10 +1311,16 @@ secure-version_gen_nvidia_drivers_depends() {
 		l="${range%-*}"
 		r="${range#*-}"
 		if [[ -z "${l}" ]] ; then
+	# Oldest
 			l="580"
+		#else
+	# User choice
 		fi
 		if [[ -z "${r}" ]] ; then
+	# Latest
 			r="620"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -1332,10 +1372,16 @@ secure-version_gen_nginx_depends() {
 		l="${range%-*}"
 		r="${range#*-}"
 		if [[ -z "${l}" ]] ; then
+	# Oldest supported
 			l="1.30"
+		#else
+	# User choice
 		fi
 		if [[ -z "${r}" ]] ; then
+	# Latest supported
 			r="1.31"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
@@ -1415,26 +1461,34 @@ secure-version_rust_depends() {
 		l="${range%-*}"
 		r="${range#*-}"
 		if [[ -z "${l}" ]] ; then
+	# LTS (stable)
 			l="19"
-		elif [[ "${l}" == "s" ]] ; then # LTS (stable)
+		elif [[ "${l}" == "s" ]] ; then
+	# LTS (stable)
 			l="19"
-		elif [[ "${l}" == "r" ]] ; then # Rolling
+		elif [[ "${l}" == "r" ]] ; then
+	# Rolling
 			l="23"
-		elif [[ "${l}" == "l" ]] ; then # Live
+		elif [[ "${l}" == "l" ]] ; then
+	# Live
 			l="23"
-		else # LTS
-			l="19"
+		#else
+	# User choice
 		fi
 		if [[ -z "${r}" ]] ; then
+	# LTS (stable)
 			r="22"
-		elif [[ "${r}" == "s" ]] ; then # LTS (stable)
+		elif [[ "${r}" == "s" ]] ; then
+	# LTS (stable)
 			r="22"
-		elif [[ "${r}" == "r" ]] ; then # Rolling
+		elif [[ "${r}" == "r" ]] ; then
+	# Rolling
 			r="23"
-		elif [[ "${r}" == "l" ]] ; then # Live
+		elif [[ "${r}" == "l" ]] ; then
+	# Live
 			r="23"
-		else # LTS
-			r="22"
+		#else
+	# User choice
 		fi
 	else
 		l="${range}"
